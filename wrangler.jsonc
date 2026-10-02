@@ -1,0 +1,11 @@
+{
+  // Cloudflare Workers with Static Assets. No Worker script: the site is static.
+  // Verified behaviour and the reasons for these values: docs/production/architecture.md and routes.md.
+  "name": "techpi-website",
+  "compatibility_date": "2026-10-02",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}

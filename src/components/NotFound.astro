@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getDictionary } from '../i18n';
+import { homePathFor } from '../i18n/routes';
+import type { Locale } from '../i18n/locales';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getDictionary(locale);
+---
+
+{/* Static 404 foundation. Served by Cloudflare with a real 404 status. Not designed yet. */}
+<BaseLayout locale={locale} title={t.notFound.title} kind="notfound">
+  <h1>{t.notFound.heading}</h1>
+  <p class="not-found-text">{t.notFound.text}</p>
+  <p><a href={homePathFor(locale)}>{t.notFound.home}</a></p>
+</BaseLayout>
+
+<style>
+  h1 {
+    font-size: var(--text-display-m);
+    line-height: 1.04;
+  }
+  .not-found-text {
+    margin: 24px 0 16px;
+    color: var(--color-graphite);
+  }
+</style>

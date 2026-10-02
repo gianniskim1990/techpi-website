@@ -1,0 +1,63 @@
+---
+import '../styles/tokens.css';
+import '../styles/base.css';
+import Header from '../components/Header.astro';
+import TemporaryFonts from '../components/TemporaryFonts.astro';
+import { getDictionary } from '../i18n';
+import type { Locale } from '../i18n/locales';
+import { alternatesFor, pathFor, type PageKey } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+  /** The route key. Omit on a 404, which has no canonical URL and no language alternates. */
+  page?: PageKey;
+  title: string;
+  /** Written copy only. Omitted when there is none, never generated. */
+  description?: string;
+  kind?: 'page' | 'notfound';
+}
+
+const { locale, page, title, description, kind = 'page' } = Astro.props;
+const t = getDictionary(locale);
+
+// Canonical and hreflang URLs come from the route map, never from Astro.url
+// (with build.format "preserve", Astro.url.pathname contains ".html" for normal pages).
+const site = Astro.site;
+if (!site) throw new Error('astro.config.mjs must set `site` so canonical URLs can be absolute.');
+const absolute = (path: string) => new URL(path, site).href;
+
+const hasRoute = kind === 'page' && page !== undefined;
+const canonical = hasRoute ? absolute(pathFor(page, locale)) : undefined;
+const alternates = hasRoute ? alternatesFor(page).map((a) => ({ hreflang: a.hreflang, href: absolute(a.path) })) : [];
+
+// Safe default: nothing is indexable until launch. Only an explicit PUBLIC_ALLOW_INDEXING=true build is,
+// and a 404 is never indexable.
+const indexable = import.meta.env.PUBLIC_ALLOW_INDEXING === 'true' && kind === 'page';
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+    {!indexable && <meta name="robots" content="noindex, nofollow" />}
+    <TemporaryFonts />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t.skipLink}</a>
+    <Header locale={locale} page={hasRoute ? page : undefined} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  main {
+    padding: var(--space-section) var(--space-margin);
+  }
+</style>

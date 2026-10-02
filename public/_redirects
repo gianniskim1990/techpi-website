@@ -1,0 +1,24 @@
+# Permanent canonical-URL redirects (301). Canonical: /, /el/ and slashless pages.
+/index.html /  301
+/el /el/  301
+/el/index.html /el/  301
+/work/ /work  301
+/work.html /work  301
+/capabilities/ /capabilities  301
+/capabilities.html /capabilities  301
+/eu-projects/ /eu-projects  301
+/eu-projects.html /eu-projects  301
+/about/ /about  301
+/about.html /about  301
+/contact/ /contact  301
+/contact.html /contact  301
+/el/work/ /el/work  301
+/el/work.html /el/work  301
+/el/capabilities/ /el/capabilities  301
+/el/capabilities.html /el/capabilities  301
+/el/eu-projects/ /el/eu-projects  301
+/el/eu-projects.html /el/eu-projects  301
+/el/about/ /el/about  301
+/el/about.html /el/about  301
+/el/contact/ /el/contact  301
+/el/contact.html /el/contact  301
