@@ -1,0 +1,270 @@
+/* DESIGN PROTOTYPE CSS. Disposable study code, not production. */
+
+:root {
+  --ink: #080E1E;
+  --paper: #F0EEE9;
+  --sheet: #FAF9F6;
+  --blue: #0841C8;
+  --cyan: #1FDDFC;
+  --graphite: #3B4350;
+  --slate: #5E6672;
+  --fog: #9DA6B2;
+  --rule: #D6D3CC;
+
+  --m: clamp(20px, 4.45vw, 64px);          /* outer margin */
+  --gap: 24px;
+  --d-xl: clamp(2.75rem, 8.3vw, 7.5rem);    /* 44 to 120. Sized so both hero states hold two lines */
+  --d-l: clamp(2rem, 5.3vw, 4.75rem);       /* 32 to 76 */
+  --d-m: clamp(1.75rem, 3.75vw, 3.375rem);  /* 28 to 54 */
+  --lead: clamp(1.125rem, 1.53vw, 1.375rem);
+  --sec: clamp(88px, 11.6vw, 168px);        /* section rhythm */
+  --dw: 450;                                /* locked for the prototype: display 450, body 400, navigation, labels and buttons 500 */
+  /* PROVISIONAL FLAT RENDERING FROM RASTER MASK. The existing symbol PNG's alpha, used as a mask. Not the final SVG identity. */
+  --symbol: url("../../../public/brand/techpi-symbol-color.png");
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 1.0625rem/1.5 "Commissioner", system-ui, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+h1, h2, h3, p, ol, ul, dl, dd, figure { margin: 0; padding: 0; }
+ol, ul { list-style: none; }
+a { color: inherit; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.m-only { display: none !important; }
+
+/* surfaces */
+.s-paper { background: var(--paper); color: var(--ink); --sec-c: var(--graphite); --ter: var(--slate); --line: var(--rule); --link: var(--blue); --focus: var(--blue); }
+.s-ink   { background: var(--ink); color: var(--paper); --sec-c: var(--fog); --ter: var(--fog); --line: rgba(240,238,233,.18); --link: var(--cyan); --focus: var(--cyan); }
+.s-blue  { background: var(--blue); color: var(--sheet); --sec-c: var(--sheet); --ter: var(--sheet); --line: rgba(250,249,246,.32); --link: var(--sheet); --focus: var(--sheet); }
+
+/* type */
+h1, h2, h3 { font-weight: var(--dw); letter-spacing: -.024em; text-wrap: balance; }
+h1 { font-size: var(--d-xl); line-height: .98; }
+h2 { font-size: var(--d-l); line-height: 1.02; }
+h3 { font-size: var(--d-m); line-height: 1.04; letter-spacing: -.02em; }
+.lead { font-size: var(--lead); line-height: 1.42; color: var(--sec-c); }
+/* Greek: longer words and accents need more leading and slightly smaller display sizes */
+h1:lang(el) { font-size: calc(var(--d-xl) * .8); line-height: 1.06; }
+h2:lang(el) { font-size: calc(var(--d-l) * .9); line-height: 1.1; }
+h3:lang(el) { line-height: 1.12; }
+
+/* links, buttons, focus */
+.tlink { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; font-weight: 500; }
+.tlink:hover { color: var(--link); }
+.s-blue .tlink:hover { text-decoration-thickness: 2px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; height: 54px; padding: 0 30px; border-radius: 999px; background: var(--blue); color: var(--sheet); font-weight: 500; font-size: 1rem; text-decoration: none; white-space: nowrap; transition: background-color .15s cubic-bezier(.65,0,.35,1); }
+.btn:hover { background: #06339E; }
+.btn-sm { height: 40px; padding: 0 20px; font-size: .9375rem; }
+.s-blue .btn { background: var(--sheet); color: var(--blue); }
+.s-blue .btn:hover { background: #fff; }
+:focus-visible { outline: 2px solid var(--focus, var(--blue)); outline-offset: 3px; border-radius: 2px; }
+.btn:focus-visible { border-radius: 999px; }
+.skip { position: absolute; left: var(--m); top: -80px; z-index: 20; background: var(--ink); color: var(--paper); padding: 10px 16px; }
+.skip:focus { top: 12px; }
+.tc { color: var(--ter); }
+
+/* ---------- header: quiet ---------- */
+.hd { position: absolute; z-index: 10; top: 0; left: 0; right: 0; display: flex; align-items: center; gap: 44px; padding: 28px var(--m); font-size: .9375rem; --focus: var(--blue); }
+.brand { font-weight: 600; letter-spacing: .09em; font-size: 1rem; text-decoration: none; }
+/* Contact only. The symbol's outer ring is about 84% of the image and sits slightly off centre, so the mask is enlarged to 116%: the ring nearly fills the box without being cut. */
+.symbol { background-color: currentColor; -webkit-mask: var(--symbol) center / 116% no-repeat; mask: var(--symbol) center / 116% no-repeat; }
+.nav { display: flex; gap: 34px; margin-left: auto; font-weight: 500; }
+.nav a, .ft nav a, .ft-col a { text-decoration: none; }
+.nav a:hover, .ft a:hover { text-decoration: underline; text-underline-offset: 6px; }
+.util { display: flex; align-items: center; gap: 22px; }
+.lang { font: inherit; font-size: .8125rem; color: var(--slate); background: none; border: 0; padding: 12px 4px; cursor: pointer; }
+.lang [aria-current="true"] { color: var(--ink); font-weight: 600; }
+.menu { display: none; font-weight: 500; text-decoration: none; padding: 12px 0; }
+
+/* ---------- 01 hero ---------- */
+.hero { position: relative; }
+.hero-pin { position: relative; overflow: hidden; min-height: max(100svh, 720px); padding: 0 var(--m) 64px; display: flex; flex-direction: column; }
+.hero-meta { margin-top: 168px; font-size: .9375rem; font-weight: 500; color: var(--ter); }
+.hero-main { margin-top: auto; position: relative; }
+.st1 .ln { display: block; }
+/* the supporting statement: why we do it this way. Clearly secondary to the statement above it. */
+.st2 { margin-top: clamp(28px, 3.2vw, 46px); font-size: clamp(1.25rem, 2.15vw, 1.9375rem); line-height: 1.26; letter-spacing: -.01em; color: var(--sec-c); }
+.st2 .ln { display: block; }
+.hero-foot { display: none; }
+.hero-act { display: flex; align-items: center; gap: 24px; }
+/* The Constant: the outer sweep of the TechPi symbol, far larger than the screen. Only an arc is visible here. */
+.arc { position: absolute; border-radius: 50%; border: 1.25px solid var(--ink); pointer-events: none; }
+.arc-hero { width: 2828px; height: 2828px; left: calc(100% - 1064px); top: -2314px; }
+
+/* Desktop with motion allowed: a short pin. The statement does not move. The supporting statement rises once from behind a line mask. */
+.pin .hero { height: 150vh; }
+.pin .hero-pin { position: sticky; top: 0; height: 100svh; min-height: 0; }
+/* the header stays with the pinned hero, then scrolls away with it */
+.pin .hd { position: fixed; }
+.pin.past .hd { position: absolute; top: var(--hero-span, 0px); }
+.pin .st2 .ln { overflow: hidden; padding-bottom: .14em; margin-bottom: -.14em; }
+.pin .st2 .ln > span { display: block; transform: translateY(115%); transition: transform .9s cubic-bezier(.16, 1, .3, 1); }
+.pin .st2 .ln:nth-child(2) > span { transition-delay: .08s; }
+.pin.s2 .st2 .ln > span { transform: none; }
+
+/* ---------- 02 statement ---------- */
+.statement { padding: var(--sec) var(--m); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); row-gap: clamp(56px, 8vw, 112px); }
+.statement h2 { grid-column: 1 / span 10; }
+.pair { grid-column: 6 / span 7; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); }
+.pair li { border-top: 1px solid var(--line); padding-top: 18px; }
+.step { font-size: .875rem; font-weight: 500; color: var(--ter); }
+.pair h3 { margin-top: 28px; font-size: clamp(1.375rem, 2vw, 1.75rem); line-height: 1.15; letter-spacing: -.012em; }
+.pair h3 + p { margin-top: 12px; color: var(--sec-c); max-width: 38ch; }
+
+/* ---------- handoff edge (desktop) ---------- */
+/* sized in vw so the curve keeps its proportion at every desktop width */
+.edge { position: relative; height: 18.4vw; overflow: hidden; background: var(--paper); margin-bottom: -1px; } /* -1px closes a sub-pixel seam */
+.work { position: relative; }
+.edge > div { position: absolute; width: 583.4vw; height: 583.4vw; border-radius: 50%; left: calc(100% - 293vw); top: .7vw; }
+.edge-ink > div { background: var(--ink); }
+
+/* ---------- 03 selected work ---------- */
+.case { background: var(--ink); min-height: 100svh; padding: 34px var(--m) 44px; display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.case:first-child { border-top: 0; }
+.case-top { display: flex; justify-content: space-between; font-size: .9375rem; font-weight: 500; color: var(--ter); }
+.case-body { flex: 1; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); align-items: stretch; margin-top: 30px; }
+.ph { grid-column: 1 / span 8; position: relative; overflow: hidden; min-height: 420px; }
+.ph-a { background: #131B36; }
+.ph-b { background: #1E1F23; }
+.ph-c { background: #14232B; }
+.ph-word { position: absolute; left: -.04em; bottom: -.2em; font-size: clamp(7rem, 21vw, 19rem); line-height: 1; font-weight: 600; letter-spacing: -.04em; white-space: nowrap; color: rgba(240,238,233,.055); }
+.ph figcaption { position: absolute; left: 24px; top: 22px; right: 24px; font-size: .8125rem; color: var(--fog); max-width: 46ch; }
+.case-txt { grid-column: 9 / span 4; padding-left: clamp(0px, 2vw, 32px); display: flex; flex-direction: column; justify-content: flex-end; }
+.cat { font-size: .8125rem; font-weight: 500; letter-spacing: .07em; text-transform: uppercase; color: var(--ter); }
+.case-txt h3 { margin-top: 14px; }
+.sum { margin-top: 20px; font-size: var(--lead); line-height: 1.42; }
+.facts { margin-top: 30px; }
+.facts div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid var(--line); font-size: .9375rem; }
+.facts div:last-child { border-bottom: 1px solid var(--line); }
+.facts dd { text-align: right; }
+.facts dt { color: var(--ter); font-weight: 500; }
+.case-txt .tlink { margin-top: 34px; align-self: flex-start; }
+.work-all { padding: 40px var(--m) 72px; border-top: 1px solid var(--line); }
+/* one project owns the viewport, then the next slides over it. Native scroll, CSS only. */
+@media (min-width: 1024px) and (min-height: 700px) {
+  .case { position: sticky; top: 0; height: 100svh; min-height: 0; }
+}
+
+/* ---------- 04 capabilities ---------- */
+.caps { padding: var(--sec) var(--m); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); }
+.caps-head { grid-column: 1 / span 4; }
+.caps-head h2 { position: sticky; top: 48px; }
+.caps-list { grid-column: 5 / span 8; }
+.caps-list article { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--gap); row-gap: 18px; padding: 34px 0 44px; border-top: 1px solid var(--line); }
+.caps-list h3 { grid-column: 1 / -1; }
+.caps-list article p { grid-column: 1 / span 5; color: var(--sec-c); font-size: var(--lead); line-height: 1.42; max-width: 36ch; }
+.caps-list article ul { grid-column: 6 / span 3; font-size: .9375rem; color: var(--ter); display: grid; gap: 4px; align-content: start; padding-top: 4px; }
+
+/* ---------- 05 intelligence ---------- */
+/* exact Paper. Set apart from its neighbours by one hairline, space and scale, not by another colour. */
+.intel { margin: 0 var(--m); padding: var(--sec) 0; border-top: 1px solid var(--line); }
+.intel-body { margin-top: clamp(56px, 8vw, 120px); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); }
+.intel-lead { grid-column: 1 / span 5; }
+.intel-lead .lead { color: var(--ink); max-width: 30ch; }
+.intel-lead .tlink { display: inline-block; margin-top: 32px; color: var(--blue); }
+.intel-list { grid-column: 7 / span 6; }
+.intel-list div { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gap); padding: 18px 0; border-top: 1px solid var(--line); }
+.intel-list div:last-child { border-bottom: 1px solid var(--line); }
+.intel-list dt { font-weight: 500; }
+.intel-list dd { color: var(--sec-c); }
+
+/* ---------- 06 evolution ---------- */
+.evo { margin: 0 var(--m); padding: clamp(80px, 9.5vw, 136px) 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); align-items: start; }
+.evo h2 { grid-column: 1 / span 6; font-size: var(--d-m); line-height: 1.06; }
+.evo-txt { grid-column: 8 / span 5; }
+.evo-txt .lead { color: var(--ink); }
+.evo-txt .lead + p { margin-top: 14px; color: var(--sec-c); max-width: 40ch; }
+.evo-txt .tlink { display: inline-block; margin-top: 30px; }
+
+/* ---------- 07 contact: the arc became a circle, and the circle resolves into the TechPi symbol ---------- */
+.contact { position: relative; overflow: hidden; min-height: max(100svh, 760px); padding: 0 var(--m); display: grid; place-items: center; }
+.symbol { position: absolute; left: 50%; top: 47%; width: min(760px, 78vh, 88vw); aspect-ratio: 1; transform: translate(-50%, -50%); color: var(--sheet); opacity: .14; }
+.ct-mid { position: relative; margin-top: -6vh; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 44px; }
+.ct-mid h2 { font-size: clamp(2.125rem, 5.6vw, 5rem); line-height: 1.02; }
+.ct-foot { position: absolute; left: var(--m); right: var(--m); bottom: 36px; padding-top: 18px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 16px; font-size: .9375rem; }
+.ct-foot .tc { color: var(--sheet); }
+
+/* ---------- 08 footer: minimal ---------- */
+.ft { padding: 56px var(--m) 32px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); row-gap: 48px; font-size: .9375rem; }
+.ft-brand { grid-column: 1 / span 4; display: grid; gap: 6px; align-content: start; color: var(--sec-c); }
+.ft-brand .brand { color: var(--paper); }
+.ft nav { grid-column: 5 / span 2; display: grid; gap: 6px; align-content: start; }
+.ft-col { grid-column: span 3; display: grid; gap: 6px; align-content: start; }
+.ft-legal { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 16px; padding-top: 18px; border-top: 1px solid var(--line); font-size: .8125rem; color: var(--sec-c); }
+
+/* ---------- lightweight motion: the arc drifts slightly with the first scroll ---------- */
+@media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+  @supports (animation-timeline: scroll()) {
+    .arc-hero { animation: arc-drift linear both; animation-timeline: scroll(root); animation-range: 0 85vh; }
+    @keyframes arc-drift { to { transform: translate(-60px, 40px); } }
+  }
+}
+
+/* ---------- mobile: its own composition, not a stacked desktop ---------- */
+@media (max-width: 760px) {
+  .d-only { display: none; }
+  .m-only { display: inline-flex !important; }
+  body { font-size: 1.0625rem; }
+  .hd { padding: 18px var(--m); gap: 16px; }
+  .nav, .hd .btn-sm { display: none; }
+  .util { margin-left: auto; gap: 18px; }
+  .menu { display: inline-block; }
+
+  .hero-pin { min-height: 100svh; padding-bottom: 36px; }
+  .st1 .ln, .st2 .ln { display: inline; }
+  .st2 { margin-top: 22px; font-size: 1.1875rem; line-height: 1.4; letter-spacing: 0; }
+  .hero-foot { display: block; margin-top: 34px; }
+  .hero-meta { margin-top: 104px; font-size: .875rem; }
+  .arc-hero { width: 984px; height: 984px; left: calc(100% - 336px); top: -800px; border-width: 1.1px; }
+  h1 { line-height: 1.04; letter-spacing: -.02em; }
+  h1:lang(el) { font-size: calc(var(--d-xl) * .95); line-height: 1.08; }
+  .hero-act { flex-direction: column; align-items: flex-start; gap: 22px; }
+
+  .statement { display: block; }
+  .statement h2 { line-height: 1.08; }
+  .pair { margin-top: 56px; grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .pair h3 { margin-top: 18px; }
+
+  .edge { display: none; }
+
+  .case { min-height: 0; padding: 0 0 44px; border-top: 0; }
+  .case + .case { margin-top: 20px; padding-top: 0; }
+  .case-top { padding: 22px var(--m) 16px; font-size: .875rem; }
+  .case-body { display: block; margin-top: 0; }
+  .ph { min-height: 0; aspect-ratio: 4 / 3; }
+  .ph figcaption { left: var(--m); right: var(--m); top: 16px; }
+  .case-txt { padding: 26px var(--m) 0; }
+  .case-txt h3 { margin-top: 10px; }
+  .sum { margin-top: 14px; }
+  .facts { margin-top: 22px; }
+  .case-txt .tlink { margin-top: 26px; }
+  .work-all { padding: 28px var(--m) 56px; }
+
+  .caps { display: block; }
+  .caps-head h2 { position: static; }
+  .caps-list { margin-top: 44px; }
+  .caps-list article { display: block; padding: 24px 0 30px; }
+  .caps-list article p { margin-top: 12px; }
+  .caps-list article ul { margin-top: 16px; }
+
+  .intel h2 br { display: none; }
+  .intel-body { display: block; margin-top: 40px; }
+  .intel-list { margin-top: 48px; }
+  .intel-list div { display: block; padding: 16px 0; }
+  .intel-list dd { margin-top: 4px; }
+
+  .evo { display: block; }
+  .evo-txt { margin-top: 28px; }
+
+  .contact { min-height: max(100svh, 700px); display: block; }
+  .symbol { top: 112px; width: calc(100vw - 32px); transform: translateX(-50%); }
+  .ct-mid { position: static; margin: 0; display: block; }
+  .ct-mid h2 { position: absolute; left: 44px; right: 44px; top: 112px; height: calc(100vw - 32px); display: flex; align-items: center; justify-content: center; font-size: 2.25rem; line-height: 1.08; }
+  .ct-mid h2 br { display: none; }
+  .ct-mid .btn { position: absolute; left: var(--m); right: var(--m); top: calc(112px + 100vw - 32px + 36px); }
+  .ct-foot { flex-direction: column; gap: 4px; bottom: 24px; }
+
+  .ft { display: block; padding-top: 44px; }
+  .ft > * + * { margin-top: 30px; }
+  .ft-legal { flex-direction: column; gap: 4px; }
+}

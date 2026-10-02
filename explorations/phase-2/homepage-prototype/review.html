@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TechPi · Homepage prototype review (Gate B, lock pass)</title>
+<!-- DISPOSABLE REVIEW PAGE. Frames the prototype at 1440 and 390 and records the narrative, tests and critique. Not production. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@300..700&display=swap" rel="stylesheet">
+<style>
+  :root { --fg:#15181D; --dim:#555B66; --line:#C6C8CD; --bg:#E2E3E6;
+          --ink:#080E1E; --paper:#F0EEE9; --sheet:#FAF9F6; --blue:#0841C8;
+          --symbol: url("../../../public/brand/techpi-symbol-color.png"); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  header, section, footer { margin: 0 auto; max-width: 1560px; padding: 0 32px; }
+  header { padding-top: 36px; }
+  h1 { margin: 0; font-size: 32px; line-height: 1.1; font-weight: 650; }
+  h2 { margin: 56px 0 6px; font-size: 22px; font-weight: 650; }
+  h3 { margin: 28px 0 8px; font-size: 14px; font-weight: 650; }
+  p { margin: 8px 0 0; max-width: 92ch; }
+  .dim { color: var(--dim); }
+  .note { margin-top: 16px; padding: 12px 16px; background: #FFF7D6; border: 1px solid #E3CF7A; border-radius: 6px; font-size: 14px; max-width: none; }
+  a { color: #0841C8; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .links a { text-decoration: none; color: var(--fg); padding: 7px 12px; border: 1px solid var(--line); border-radius: 6px; background: #EEEFF1; font-size: 14px; }
+  .links a:hover { background: #fff; }
+  .frames { display: flex; gap: 28px; align-items: flex-start; margin-top: 18px; }
+  .dcol { flex: 1; min-width: 0; }
+  .dwrap { overflow: hidden; border: 1px solid var(--line); background: #fff; }
+  .dwrap iframe { width: 1440px; height: 900px; border: 0; display: block; transform-origin: 0 0; }
+  .mwrap { flex: none; width: 392px; border: 1px solid var(--line); background: #fff; }
+  .mwrap iframe { width: 390px; height: 844px; border: 0; display: block; }
+  .cap { font-size: 13px; color: var(--dim); margin-top: 8px; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--line); font-size: 14px; margin-top: 12px; }
+  th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid #E3E4E7; }
+  th { background: #ECEDEF; font-size: 13px; font-weight: 650; }
+  tr:last-child td { border-bottom: 0; }
+  figure { margin: 0; }
+  figcaption { margin-top: 8px; font-size: 13px; color: var(--dim); line-height: 1.4; }
+  figcaption b { color: var(--fg); }
+  ul { margin: 8px 0 0; padding-left: 20px; max-width: 92ch; }
+  li { margin: 4px 0; }
+  footer { padding-top: 40px; padding-bottom: 56px; color: var(--dim); font-size: 13px; }
+
+  /* storyboard frames */
+  .story { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-top: 12px; max-width: 1280px; }
+  .story.three { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 960px; }
+  .fr { position: relative; aspect-ratio: 16 / 10; overflow: hidden; border: 1px solid var(--line); font-family: "Commissioner", system-ui, sans-serif; }
+  .fr.p { background: var(--paper); color: var(--ink); }
+  .fr.b { background: var(--blue); color: var(--sheet); }
+  .fr .arc { position: absolute; border-radius: 50%; border: 1px solid currentColor; }
+  .fr .t { position: absolute; left: 6%; font-weight: 450; letter-spacing: -.02em; line-height: 1; font-size: clamp(13px, 1.75vw, 25px); white-space: nowrap; }
+  .fr .mask { position: absolute; left: 6%; right: 6%; overflow: hidden; }
+  .fr .mask span { display: block; font-weight: 450; letter-spacing: -.02em; line-height: 1.12; font-size: clamp(11px, 1.42vw, 20px); white-space: nowrap; }
+  .fr .mask.sup span { font-size: clamp(8px, .72vw, 11px); font-weight: 400; letter-spacing: 0; color: #3B4350; }
+  .fr .edge-line { position: absolute; left: 6%; right: 6%; border-top: 1px dashed #0841C8; }
+  .sym { position: absolute; background-color: currentColor; -webkit-mask: var(--symbol) center / 116% no-repeat; mask: var(--symbol) center / 116% no-repeat; }
+  .c-t { position: absolute; left: 0; right: 0; top: 41%; text-align: center; font-weight: 450; letter-spacing: -.02em; line-height: 1.05; font-size: clamp(11px, 1.35vw, 19px); }
+
+  /* flat mark panel */
+  .marks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px; background: var(--line); border: 1px solid var(--line); margin-top: 12px; max-width: 1100px; }
+  .marks > div { padding: 26px; display: grid; gap: 14px; justify-items: start; font-size: 13px; }
+  .marks .sym { position: static; width: 96px; height: 96px; }
+  .marks img { width: 96px; height: 96px; }
+
+  /* weight test */
+  .weights { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; background: var(--line); border: 1px solid var(--line); margin-top: 12px; }
+  .weights > div { background: var(--paper); color: var(--ink); padding: 26px 26px 0; font-family: "Commissioner", system-ui, sans-serif; display: flex; flex-direction: column; }
+  .weights .wl { font: 650 13px/1.2 system-ui, sans-serif; color: #5E6672; margin-bottom: 18px; }
+  .weights .d { font-size: clamp(30px, 3.9vw, 58px); line-height: 1; letter-spacing: -.024em; margin: 0; }
+  .weights .d + .d { margin-top: 18px; line-height: 1.08; }
+  .weights .body { margin: 22px 0 26px; font-size: 17px; line-height: 1.5; font-weight: 400; color: #3B4350; max-width: 44ch; }
+  .weights .inkrow { margin: auto -26px 0; padding: 22px 26px; background: var(--ink); color: var(--paper); font-size: clamp(22px, 2.5vw, 36px); line-height: 1.06; letter-spacing: -.02em; }
+
+  @media (max-width: 1100px) {
+    .frames { flex-direction: column; }
+    .dcol { width: 100%; flex: none; }
+    .story, .story.three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .weights, .marks { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="dim" style="margin:0 0 6px;font-size:13px">TechPi · Phase 2 · Gate B · design prototype only · lock pass</p>
+  <h1>Homepage visual prototype</h1>
+  <p class="dim">The approved homepage, after the final restraint pass. The circle is the beginning of the TechPi symbol, and the page ends by resolving into it. Nothing new was added in this pass.</p>
+  <div class="links">
+    <a href="index.html" target="_blank" rel="noopener">Open the prototype full size (English)</a>
+    <a href="index.html?lang=el" target="_blank" rel="noopener">Open with the Greek sample copy</a>
+    <a href="#lock">Gate B lock summary</a>
+    <a href="#narrative">Arc, circle, TechPi</a>
+    <a href="#mark">Provisional symbol</a>
+    <a href="#weight">Typography lock</a>
+  </div>
+  <p class="note"><strong>Design prototype, not production.</strong> No framework, no build, no backend, no form, no GSAP. All copy is draft. Items in square brackets are unconfirmed facts and nothing has been invented to fill them. Image areas are deliberate placeholders. Greek is a representative sample, not a full translation. The flat symbol is a <strong>provisional flat rendering from raster mask</strong>, not the final SVG identity.</p>
+</header>
+
+<section>
+  <h2>Desktop and mobile</h2>
+  <p class="dim">Both frames are live and scroll independently. Desktop is the English page at 1440 × 900. Scroll it a little to see the supporting statement appear under the hero statement. Mobile is the same page at 390 × 844 with the Greek sample on. EN / ΕΛ in either header switches language.</p>
+  <div class="frames">
+    <div class="dcol">
+      <div class="dwrap" id="dwrap"><iframe id="dframe" src="index.html" title="Homepage prototype at 1440 by 900, English"></iframe></div>
+      <p class="cap" id="dcap">Desktop, 1440 × 900.</p>
+    </div>
+    <div>
+      <div class="mwrap"><iframe src="index.html?lang=el" title="Homepage prototype at 390 by 844, Greek sample"></iframe></div>
+      <p class="cap">Mobile, 390 × 844, Greek sample (draft copy for the client to review).</p>
+    </div>
+  </div>
+</section>
+
+<section id="lock">
+  <h2>Gate B lock summary</h2>
+  <h3>Final visual decisions</h3>
+  <table>
+    <tbody>
+      <tr><td style="width:22%"><b>Direction</b></td><td>The Constant. Arc → circle → TechPi. Three appearances on the page: the hero arc, the edge into Selected work, the Contact resolution.</td></tr>
+      <tr><td><b>Typography</b></td><td>Commissioner. Display 450. Body 400. Navigation, labels and buttons 500. A prototype-stage decision until production font files are finalised.</td></tr>
+      <tr><td><b>Palette</b></td><td>Ink #080E1E, Paper #F0EEE9, TechPi Blue #0841C8. Cyan #1FDDFC as an interaction and focus accent only, with no use at rest.</td></tr>
+      <tr><td><b>Surface sequence</b></td><td>Paper, Paper, Ink, Paper, Paper, Paper, TechPi Blue, Ink footer. Intelligence is on exact Paper.</td></tr>
+      <tr><td><b>Header</b></td><td>Typographic TECHPI. No symbol. The production header is expected to use a proper flat vector symbol once the identity master exists. No replacement icon was invented.</td></tr>
+      <tr><td><b>Contact</b></td><td>The flat symbol at 14%, tone on tone, behind "Have something worth building?". Provisional flat rendering from raster mask.</td></tr>
+      <tr><td><b>Selected work</b></td><td>On Ink. One project per viewport. No pills, metrics or dashboard decoration.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Final hero behaviour</h3>
+  <ul>
+    <li><b>The statement does not move and is never replaced.</b> "We design and build digital products." is the only headline.</li>
+    <li>On desktop, as the page starts to scroll, the supporting statement "Technology built around real business needs." rises once from behind a line mask, beneath the statement, at about a quarter of its size and in the secondary text colour. What we do, then why we do it this way.</li>
+    <li>The hero holds for half a screen of scroll, then releases. The arc drifts slightly with the scroll. Scrolling is native throughout.</li>
+    <li>On mobile, with reduced motion, or without scripting, there is no hold and the supporting statement is simply present.</li>
+  </ul>
+
+  <h3>Removed in the final restraint pass</h3>
+  <ul>
+    <li>The raster-mask symbol in the header.</li>
+    <li>The two-headline exchange in the hero. The second statement is now a supporting line.</li>
+    <li>The hairline rule and the "Selected work" link at the foot of the desktop hero. The navigation already offers Work.</li>
+    <li>The Sheet surface. Intelligence is on Paper, set apart by one hairline and by space.</li>
+    <li>The "Selected work" label repeated on the second and third projects. The counter remains.</li>
+    <li>The "All capabilities" link. The navigation already offers Capabilities.</li>
+    <li>The descriptor repeated in the footer.</li>
+    <li>The display-weight preview switch in the prototype. The weight is locked.</li>
+  </ul>
+  <p class="dim">Added: one hairline above Intelligence and one above Evolution, which replace the colour change as the divider between three Paper sections. Nothing else was added.</p>
+
+  <h3>Mobile findings (390 px, Greek sample)</h3>
+  <ul>
+    <li>No horizontal overflow.</li>
+    <li>The Greek hero is readable: four lines at 42 px, weight 450.</li>
+    <li>The supporting statement fits naturally under it in two lines at 19 px, followed by the primary button and one link. All within one 844 px screen.</li>
+    <li>The Contact symbol does not clip. It fits the width with 16 px margins, and the question, button and details do not overlap.</li>
+    <li>The header is balanced without the symbol: name on the left, language switch and Menu on the right. The arc passes between them.</li>
+    <li>Intelligence works on Paper. The hairline and spacing separate it from Capabilities.</li>
+    <li>Checked in one browser engine at one width. Safari, real devices and other widths belong to production QA.</li>
+  </ul>
+
+  <h3>Issues that would block production</h3>
+  <p><strong>No design blocker.</strong> The following are inputs production will need. They do not block approval of the design.</p>
+  <ul>
+    <li><b>Identity master.</b> A flat vector symbol, for the header and to replace the provisional Contact rendering.</li>
+    <li><b>Font files.</b> Self-hosted Commissioner with Greek, which also settles the arrow glyph and lets the tight space before accented Greek capitals be checked properly.</li>
+    <li><b>Content.</b> Project imagery (demo or redacted data for cAIrelink), confirmed project facts, confirmed AI capabilities, contact and legal details, and reviewed Greek copy.</li>
+  </ul>
+  <p><strong>Gate B is ready for approval.</strong></p>
+</section>
+
+<section id="narrative">
+  <h2>Arc → circle → TechPi</h2>
+  <p>The circle is the beginning of the TechPi symbol. Its outer sweep is the architectural starting point of the identity. The device has become more specific, not more frequent: it appears at the same three moments as before, but each one is now a stage of the same form.</p>
+  <table>
+    <thead><tr><th style="width:14%">Stage</th><th style="width:18%">Where</th><th>What the visitor sees</th><th style="width:26%">Live or storyboard</th></tr></thead>
+    <tbody>
+      <tr><td><b>Arc</b></td><td>Hero</td><td>Part of the outer sweep, as one hairline cutting the top-right corner, crossing the header only between the name and the navigation.</td><td>Live. The arc drifts slightly with the scroll where the browser supports it.</td></tr>
+      <tr><td><b>Arc as edge</b></td><td>Into Selected work</td><td>The same curvature as the boundary of the Ink surface. Inside the section, the project image is planned to open behind a mask of the same curve.</td><td>Edge is live and static. The mask is storyboard only.</td></tr>
+      <tr><td><b>Nothing</b></td><td>Statement, Capabilities, Intelligence, Evolution</td><td>No arc, no circle, no symbol. Straight rules only.</td><td>Live.</td></tr>
+      <tr><td><b>Circle</b></td><td>Entering Contact</td><td>The arc returns and closes into a whole circle.</td><td>Storyboard only.</td></tr>
+      <tr><td><b>TechPi</b></td><td>Contact, at rest</td><td>The inner geometry appears inside the circle and the form resolves into the flat TechPi symbol, tone on tone behind the question.</td><td>The resting state is live. The transition is storyboard only.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Contact: the resolution</h3>
+  <div class="story">
+    <figure><div class="fr b"><div class="arc" style="width:150%;aspect-ratio:1;left:-98%;top:14%"></div></div><figcaption><b>1. Arc enters.</b> The blue surface arrives. The outer sweep comes back into view.</figcaption></figure>
+    <figure><div class="fr b"><div class="arc" style="height:74%;aspect-ratio:1;left:50%;top:50%;transform:translate(-50%,-50%)"></div><div class="c-t" style="opacity:.4">Have something<br>worth building?</div></div><figcaption><b>2. Circle.</b> The arc completes into a whole circle, tied to scroll position.</figcaption></figure>
+    <figure><div class="fr b"><div class="arc" style="height:74%;aspect-ratio:1;left:50%;top:50%;transform:translate(-50%,-50%)"></div><div class="sym" style="height:74%;aspect-ratio:1;left:50%;top:50%;transform:translate(-50%,-50%);opacity:.16;clip-path:circle(33% at 50% 50%)"></div><div class="c-t">Have something<br>worth building?</div></div><figcaption><b>3. Inner geometry appears.</b> The symbol's inner forms open from the centre, inside the circle.</figcaption></figure>
+    <figure><div class="fr b"><div class="sym" style="height:74%;aspect-ratio:1;left:50%;top:50%;transform:translate(-50%,-50%);opacity:.16"></div><div class="c-t">Have something<br>worth building?</div></div><figcaption><b>4. TechPi.</b> The hairline is absorbed into the flat symbol. The question and one action sit on top. This is the resting state in the prototype.</figcaption></figure>
+  </div>
+  <p class="dim">The symbol is tone on tone, at 14% white on the blue, so it supports the message and does not compete with it. It is not a production SVG animation. In production the inner geometry would be drawn from the vector master.</p>
+
+  <h3>Hero: what we do, then why</h3>
+  <div class="story three">
+    <figure><div class="fr p"><div class="arc" style="width:196%;aspect-ratio:1;left:27%;top:-256%"></div><div class="mask" style="top:50%"><span>We design and build</span></div><div class="mask" style="top:63%"><span>digital products.</span></div></div><figcaption><b>1. Statement.</b> What TechPi does. It stays in place for the whole sequence.</figcaption></figure>
+    <figure><div class="fr p"><div class="arc" style="width:196%;aspect-ratio:1;left:25%;top:-254%"></div><div class="mask" style="top:50%"><span>We design and build</span></div><div class="mask" style="top:63%"><span>digital products.</span></div><div class="mask sup" style="top:80%"><span style="transform:translateY(55%)">Technology built around real business needs.</span></div><div class="edge-line" style="top:88%"></div></div><figcaption><b>2. Supporting statement rises.</b> Once, from behind a straight mask (dashed), as the page starts to scroll.</figcaption></figure>
+    <figure><div class="fr p"><div class="arc" style="width:196%;aspect-ratio:1;left:23%;top:-252%"></div><div class="mask" style="top:50%"><span>We design and build</span></div><div class="mask" style="top:63%"><span>digital products.</span></div><div class="mask sup" style="top:80%"><span>Technology built around real business needs.</span></div></div><figcaption><b>3. Rest, then release.</b> Why we do it this way, clearly secondary. No second headline.</figcaption></figure>
+  </div>
+  <p class="dim">Live in the desktop frame above as one CSS transition. On mobile, with reduced motion, or without scripting, the supporting statement is simply present.</p>
+
+  <h3>Surface rhythm</h3>
+  <table>
+    <thead><tr><th>Hero</th><th>Statement</th><th>Selected work</th><th>Capabilities</th><th>Intelligence</th><th>Evolution</th><th>Contact</th><th>Footer</th></tr></thead>
+    <tbody><tr>
+      <td style="background:#F0EEE9">Paper</td><td style="background:#F0EEE9">Paper</td><td style="background:#080E1E;color:#F0EEE9">Ink</td><td style="background:#F0EEE9">Paper</td><td style="background:#F0EEE9">Paper</td><td style="background:#F0EEE9">Paper</td><td style="background:#0841C8;color:#FAF9F6">TechPi Blue</td><td style="background:#080E1E;color:#F0EEE9">Ink</td>
+    </tr></tbody>
+  </table>
+  <p class="dim">Three Paper sections follow the work section. They are separated by one hairline each, by spacing and by scale, not by a second near-white colour.</p>
+</section>
+
+<section id="mark">
+  <h2>Provisional flat rendering from raster mask</h2>
+  <p>The logo was not redesigned or traced. The existing transparent PNG's alpha channel is used as a CSS mask over a flat colour, so the exact existing silhouette appears in one colour, without the glossy blue and cyan rendering. <strong>It is not the final SVG identity.</strong></p>
+  <div class="marks">
+    <div style="background:#0B0F1A;color:#9DA6B2"><img src="../../../public/brand/techpi-symbol-color.png" alt="TechPi glossy raster symbol">Source. The glossy raster asset. Not used in the interface.</div>
+    <div style="background:var(--paper);color:var(--ink)"><div class="sym" role="img" aria-label="Flat TechPi symbol, Ink on Paper"></div><span style="color:#3B4350">Ink on Paper. <b>Not used</b> on the page. Removed from the header.</span></div>
+    <div style="background:var(--ink);color:var(--paper)"><div class="sym" role="img" aria-label="Flat TechPi symbol, Paper on Ink"></div><span style="color:#9DA6B2">Paper on Ink. <b>Not used</b> on the page. Shown for completeness.</span></div>
+    <div style="background:var(--blue);color:var(--sheet)"><div class="sym" role="img" aria-label="Flat TechPi symbol, white on TechPi Blue"></div><span>White on TechPi Blue. <b>Used:</b> the Contact resolution, at 14%.</span></div>
+  </div>
+  <ul>
+    <li><b>Used in one place only: the Contact resolution</b>, where it is large enough to carry the arc → circle → TechPi idea.</li>
+    <li><b>Not used in the header.</b> At small size the raster silhouette loses detail and should not become part of the visual language. The header shows a typographic TECHPI. The final production header is expected to use a proper flat vector symbol once the identity master exists.</li>
+    <li>A flat silhouette loses the overlaps that the gloss describes. It still reads as the TechPi symbol, but it is a silhouette, not a designed flat mark.</li>
+    <li>The raster's edge fringing carries through as slightly soft edges at large size. This is a limit of the source.</li>
+  </ul>
+</section>
+
+<section id="weight">
+  <h2>Typography lock and the weight test behind it</h2>
+  <p class="dim">Commissioner, the same statement in English and Greek at three weights, with 400 body text and the statement on Ink. The variable font supports 450 directly.</p>
+  <div class="weights">
+    <div><p class="wl">400</p><p class="d" style="font-weight:400">We design and build digital products.</p><p class="d" lang="el" style="font-weight:400">Σχεδιάζουμε και αναπτύσσουμε ψηφιακά προϊόντα.</p><p class="body">Technology built around real business needs. Έχετε κάτι που αξίζει να χτιστεί;</p><p class="inkrow" style="font-weight:400">AI where it creates value.</p></div>
+    <div><p class="wl">450 · locked</p><p class="d" style="font-weight:450">We design and build digital products.</p><p class="d" lang="el" style="font-weight:450">Σχεδιάζουμε και αναπτύσσουμε ψηφιακά προϊόντα.</p><p class="body">Technology built around real business needs. Έχετε κάτι που αξίζει να χτιστεί;</p><p class="inkrow" style="font-weight:450">AI where it creates value.</p></div>
+    <div><p class="wl">500 · previous</p><p class="d" style="font-weight:500">We design and build digital products.</p><p class="d" lang="el" style="font-weight:500">Σχεδιάζουμε και αναπτύσσουμε ψηφιακά προϊόντα.</p><p class="body">Technology built around real business needs. Έχετε κάτι που αξίζει να χτιστεί;</p><p class="inkrow" style="font-weight:500">AI where it creates value.</p></div>
+  </div>
+  <table id="weight-table">
+    <thead><tr><th style="width:16%">Criterion</th><th>400</th><th>450</th><th>500</th></tr></thead>
+    <tbody>
+      <tr><td>Authority</td><td>Lowest. Reads as text set large</td><td>Enough to carry a 120 px statement</td><td>Highest, but by weight more than by form</td></tr>
+      <tr><td>Precision</td><td>Highest. Clean, sharp joins</td><td>High</td><td>Lower. Counters start to close</td></tr>
+      <tr><td>Warmth</td><td>Cool</td><td>Neutral</td><td>Warm, slightly friendly</td></tr>
+      <tr><td>Editorial character</td><td>Elegant, close to a magazine</td><td>Elegant with presence</td><td>Closer to a product headline</td></tr>
+      <tr><td>Greek</td><td>Light and open. Long words feel airy</td><td>Even colour between Greek and Latin</td><td>Slightly heavy on the long Greek words</td></tr>
+      <tr><td>On Ink</td><td>Thins out. Light text on dark loses weight</td><td>Holds</td><td>Holds, heavier than needed</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Locked for the prototype: display 450, body 400, navigation, labels and buttons 500.</strong> The name in the header is set at 600. 450 keeps the precision of 400 and still holds on the dark work section, where 400 thins.</p>
+</section>
+
+<footer>Disposable review page. <code>explorations/phase-2/homepage-prototype/review.html</code>. Not production code.</footer>
+
+<script>
+(function () {
+  var w = document.getElementById('dwrap'), f = document.getElementById('dframe'), c = document.getElementById('dcap');
+  function fit() { var s = Math.min(1, w.clientWidth / 1440); f.style.transform = 'scale(' + s + ')'; w.style.height = Math.round(900 * s) + 'px'; c.textContent = 'Desktop, 1440 × 900, English, shown at ' + Math.round(s * 100) + '%.'; }
+  fit(); window.addEventListener('resize', fit);
+  var m = window.__MOBILE || [];
+  var ul = document.getElementById('mobile-findings');
+  m.forEach(function (t) { var li = document.createElement('li'); li.innerHTML = t; ul.appendChild(li); });
+})();
+</script>
+</body>
+</html>

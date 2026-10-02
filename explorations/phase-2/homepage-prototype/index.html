@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TechPi · Homepage visual prototype (design study, not production)</title>
+<!--
+  DESIGN PROTOTYPE. Disposable study code. Not the production site, not a framework build.
+  Fonts load from Google Fonts by link for the study only. Production will self-host.
+  All copy is draft. Items marked [to confirm] are not invented facts.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="prototype.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="hd" id="top">
+  <!-- Typographic name only. The production header is expected to use a proper flat vector symbol once the identity master exists. -->
+  <a class="brand" href="#top" aria-label="TechPi, home">TECHPI</a>
+  <nav class="nav" aria-label="Primary">
+    <a href="#work" data-el="Έργα">Work</a>
+    <a href="#capabilities" data-el="Δυνατότητες">Capabilities</a>
+    <a href="#case-sowise" data-el="Ευρωπαϊκά έργα">EU Projects</a>
+    <a href="#evolution" data-el="Εταιρεία">About</a>
+  </nav>
+  <div class="util">
+    <button class="lang" type="button" id="lang" aria-label="Switch language. Greek is partial in this prototype"><span data-l="en">EN</span> / <span data-l="el" lang="el">ΕΛ</span></button>
+    <a class="btn btn-sm" href="#contact" data-el="Επικοινωνία">Contact</a>
+    <a class="menu" href="#footer" data-el="Μενού">Menu</a>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- 01 HERO -->
+<section class="hero s-paper" aria-labelledby="hero-h">
+  <div class="hero-pin">
+    <div class="arc arc-hero" aria-hidden="true"></div>
+    <p class="hero-meta" data-el="Ψηφιακά προϊόντα &amp; τεχνολογία">Digital Products &amp; Technology</p>
+    <div class="hero-main">
+      <!-- What we do, then why we do it this way. The statement stays. The supporting line is revealed quietly beneath it during a short scroll on desktop, and is simply present elsewhere. -->
+      <div class="stage">
+        <h1 id="hero-h" class="st st1" data-el="<span class=&quot;ln&quot;><span>Σχεδιάζουμε και</span></span> <span class=&quot;ln&quot;><span>αναπτύσσουμε</span></span> <span class=&quot;ln&quot;><span>ψηφιακά προϊόντα.</span></span>"><span class="ln"><span>We design and build</span></span> <span class="ln"><span>digital products.</span></span></h1>
+        <p class="st st2" data-el="<span class=&quot;ln&quot;><span>Τεχνολογία χτισμένη</span></span> <span class=&quot;ln&quot;><span>γύρω από πραγματικές</span></span> <span class=&quot;ln&quot;><span>επιχειρηματικές ανάγκες.</span></span>"><span class="ln"><span>Technology built around</span></span> <span class="ln"><span>real business needs.</span></span></p>
+      </div>
+      <div class="hero-foot">
+        <p class="hero-act">
+          <a class="btn m-only" href="#contact" data-el="Ξεκινήστε ένα έργο →">Start a project →</a>
+          <a class="tlink" href="#work" data-el="Επιλεγμένα έργα">Selected work</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 BRAND STATEMENT -->
+<section class="statement s-paper" aria-labelledby="st-h">
+  <h2 id="st-h" data-el="Μετατρέπουμε τις ανάγκες μιας επιχείρησης σε ψηφιακά προϊόντα, πλατφόρμες και ευφυή συστήματα.">We turn business needs into digital products, platforms and intelligent systems.</h2>
+  <ol class="pair">
+    <li>
+      <p class="step" data-el="Πρώτα">First</p>
+      <h3 data-el="Το πρόβλημα της επιχείρησης">The business problem</h3>
+      <p data-el="Ξεκινάμε από το πώς λειτουργεί πραγματικά ο οργανισμός σας: ποιος κάνει τι, πού χάνεται χρόνος, τι πρέπει να ισχύει για να αποδώσει το έργο.">We start with how your organisation actually works: who does what, where time is lost, and what has to be true for the project to pay off.</p>
+    </li>
+    <li>
+      <p class="step" data-el="Μετά">Second</p>
+      <h3 data-el="Η τεχνολογία">The technology</h3>
+      <p data-el="Μόνο τότε επιλέγουμε τεχνολογίες, αρχιτεκτονική και το αν, και πού, έχει θέση η τεχνητή νοημοσύνη.">Only then do we choose the stack, the architecture and where, if anywhere, AI belongs.</p>
+    </li>
+  </ol>
+</section>
+
+<!-- handoff: the Ink surface arrives behind the circle's edge (desktop only) -->
+<div class="edge edge-ink" aria-hidden="true"><div></div></div>
+
+<!-- 03 SELECTED WORK -->
+<section class="work s-ink" id="work" aria-labelledby="work-h">
+  <h2 class="vh" id="work-h">Selected work</h2>
+  <div class="stack">
+
+    <article class="case" id="case-cairelink">
+      <div class="case-top"><span data-el="Επιλεγμένα έργα">Selected work</span><span>1 / 3</span></div>
+      <div class="case-body">
+        <figure class="ph ph-a">
+          <span class="ph-word" aria-hidden="true">cAIrelink</span>
+          <figcaption>Project imagery to be supplied. Demo or redacted data only, no patient information.</figcaption>
+        </figure>
+        <div class="case-txt">
+          <p class="cat">Healthcare platform</p>
+          <h3>cAIrelink</h3>
+          <p class="sum">A custom web application for healthcare. <span class="tc">[purpose and users to confirm]</span></p>
+          <dl class="facts"><div><dt>Scope</dt><dd class="tc">[to confirm]</dd></div><div><dt>Capabilities</dt><dd>Digital products, Intelligence <span class="tc">[to confirm]</span></dd></div></dl>
+          <a class="tlink" href="#case-cairelink">View case study →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="case" id="case-armans">
+      <div class="case-top"><span></span><span>2 / 3</span></div>
+      <div class="case-body">
+        <figure class="ph ph-b">
+          <span class="ph-word" aria-hidden="true">Arman’s</span>
+          <figcaption>Project imagery to be supplied.</figcaption>
+        </figure>
+        <div class="case-txt">
+          <p class="cat">Direct ordering platform</p>
+          <h3>Arman’s Ethnic Street Food</h3>
+          <p class="sum">A platform that lets the restaurant take orders directly from its customers.</p>
+          <dl class="facts"><div><dt>Scope</dt><dd class="tc">[to confirm]</dd></div><div><dt>Capabilities</dt><dd>Digital products, Web experiences <span class="tc">[to confirm]</span></dd></div></dl>
+          <a class="tlink" href="#case-armans">View case study →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="case" id="case-sowise">
+      <div class="case-top"><span></span><span>3 / 3</span></div>
+      <div class="case-body">
+        <figure class="ph ph-c">
+          <span class="ph-word" aria-hidden="true">SOWISE+</span>
+          <figcaption>Project imagery to be supplied.</figcaption>
+        </figure>
+        <div class="case-txt">
+          <p class="cat">EU-funded digital platform</p>
+          <h3>SOWISE+</h3>
+          <p class="sum">The digital platform of an EU-funded project. <span class="tc">[programme and TechPi’s role to confirm]</span></p>
+          <dl class="facts"><div><dt>Scope</dt><dd class="tc">[to confirm]</dd></div><div><dt>Capabilities</dt><dd>Web experiences, EU projects <span class="tc">[to confirm]</span></dd></div></dl>
+          <a class="tlink" href="#case-sowise">View case study →</a>
+        </div>
+      </div>
+    </article>
+
+  </div>
+  <p class="work-all"><a class="tlink" href="#work">See all work</a></p>
+</section>
+
+<!-- 04 CAPABILITIES -->
+<section class="caps s-paper" id="capabilities" aria-labelledby="caps-h">
+  <div class="caps-head"><h2 id="caps-h" data-el="Τι φτιάχνουμε.">What we build.</h2></div>
+  <div class="caps-list">
+    <article>
+      <h3 data-el="Ψηφιακά προϊόντα">Digital products</h3>
+      <p>Custom web applications, SaaS products and platforms, from first idea to a system that runs every day.</p>
+      <ul><li>Product strategy</li><li>UX and UI design</li><li>Engineering</li><li>Operation and support</li></ul>
+    </article>
+    <article>
+      <h3 data-el="Διαδικτυακές εμπειρίες">Web experiences</h3>
+      <p>Corporate websites and e-commerce that carry a brand and a business.</p>
+      <ul><li>Design</li><li>Content structure</li><li>Development</li><li>Commerce</li></ul>
+    </article>
+    <article>
+      <h3 data-el="Νοημοσύνη">Intelligence</h3>
+      <p>AI and automation applied to specific problems inside real workflows.</p>
+      <ul><li>AI integrations</li><li>Assistants</li><li>Intelligent search</li><li>Automation</li></ul>
+    </article>
+    <article>
+      <h3 data-el="Ψηφιακή ορατότητα">Digital visibility</h3>
+      <p>Making sure the right people, and the search and AI systems they ask, can find and understand what you have built.</p>
+      <ul><li>Search strategy and SEO</li><li>Generative engine optimisation (GEO)</li><li>AI visibility</li><li>Technical performance and measurement</li></ul>
+    </article>
+  </div>
+</section>
+
+<!-- 05 INTELLIGENCE -->
+<section class="intel s-paper" id="intelligence" aria-labelledby="intel-h">
+  <h2 id="intel-h" data-el="Τεχνητή νοημοσύνη εκεί που δημιουργεί αξία. Όχι εκεί που δημιουργεί θόρυβο.">AI where it creates value.<br> Not where it creates noise.</h2>
+  <div class="intel-body">
+    <div class="intel-lead">
+      <p class="lead" data-el="Προσθέτουμε τεχνητή νοημοσύνη σε ένα προϊόν όταν αφαιρεί δουλειά, βελτιώνει μια απόφαση ή απαντά πιο γρήγορα σε μια ερώτηση. Όταν δεν κάνει τίποτα από αυτά, την αφήνουμε έξω.">We add AI to a product when it removes work, improves a decision or answers a question faster. When it does none of these, we leave it out.</p>
+      <a class="tlink" href="#intelligence">How we use AI</a>
+    </div>
+    <dl class="intel-list">
+      <div><dt>AI integrations</dt><dd>Language and vision models connected to the systems you already run.</dd></div>
+      <div><dt>Intelligent search</dt><dd>Search that understands a question and answers from your own content.</dd></div>
+      <div><dt>Assistants</dt><dd>Task-specific assistants for staff or customers, with clear limits.</dd></div>
+      <div><dt>Automation</dt><dd>Repetitive steps in a workflow, handled without manual effort.</dd></div>
+      <div><dt>Data-driven workflows</dt><dd>Routing and decisions informed by the data a process already produces.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- 06 EVOLUTION -->
+<section class="evo s-paper" id="evolution" aria-labelledby="evo-h">
+  <h2 id="evo-h" data-el="Η TechPi είναι η εξέλιξη της pigiota314.">TechPi is the evolution of pigiota314.</h2>
+  <div class="evo-txt">
+    <p class="lead" data-el="Το όνομα άλλαξε καθώς εξελίχθηκε η δουλειά.">The name changed as the work evolved.</p>
+    <p data-el="Το Pi μένει. Το Tech δείχνει προς τα πού πηγαίνουμε: ψηφιακά προϊόντα, πλατφόρμες και ευφυή συστήματα.">Pi stays. Tech says where we are going: digital products, platforms and intelligent systems.</p>
+    <a class="tlink" href="#evolution" data-el="Σχετικά με την TechPi">About TechPi</a>
+  </div>
+</section>
+
+<!-- 07 CONTACT -->
+<section class="contact s-blue" id="contact" aria-labelledby="ct-h">
+  <!-- ARC to CIRCLE to TECHPI: the circle resolves here into the flat symbol. PROVISIONAL FLAT RENDERING FROM RASTER MASK. -->
+  <div class="symbol" aria-hidden="true"></div>
+  <div class="ct-mid">
+    <h2 id="ct-h" data-el="Έχετε κάτι που αξίζει να χτιστεί;">Have something<br> worth building?</h2>
+    <a class="btn" href="#contact" data-el="Ξεκινήστε ένα έργο →">Start a project →</a>
+  </div>
+  <p class="ct-foot"><span class="tc">[email to confirm]</span><span class="tc">[phone to confirm]</span><span data-el="Ελλάδα και Ευρώπη">Greece and Europe</span></p>
+</section>
+
+</main>
+
+<!-- 08 FOOTER -->
+<footer class="ft s-ink" id="footer">
+  <div class="ft-brand"><span class="brand">TECHPI</span></div>
+  <nav aria-label="Footer">
+    <a href="#work" data-el="Έργα">Work</a>
+    <a href="#capabilities" data-el="Δυνατότητες">Capabilities</a>
+    <a href="#case-sowise" data-el="Ευρωπαϊκά έργα">EU Projects</a>
+    <a href="#evolution" data-el="Εταιρεία">About</a>
+    <a href="#contact" data-el="Επικοινωνία">Contact</a>
+  </nav>
+  <div class="ft-col"><span class="tc">[email to confirm]</span><span class="tc">[phone to confirm]</span><span class="tc">[address to confirm]</span></div>
+  <div class="ft-col"><a href="#footer">Privacy</a><a href="#footer">Cookies</a><span>English / <span lang="el">Ελληνικά</span></span></div>
+  <p class="ft-legal"><span class="tc">[legal entity details to confirm]</span><span>TechPi, formerly pigiota314.</span><span>Contact symbol: provisional flat rendering from raster mask. Not the final identity.</span></p>
+</footer>
+
+<script src="prototype.js"></script>
+</body>
+</html>
