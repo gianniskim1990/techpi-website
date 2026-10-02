@@ -41,12 +41,31 @@ Notes:
 | Rule | Detail |
 |---|---|
 | One canonical form | `/work`, never `/work/`. `/el/`, never `/el` |
-| The other form | Redirects permanently to the canonical form. It never serves a second copy of the page |
+| The other form | Redirects to the canonical form and never serves a second copy of the page. Cloudflare's asset handling answers with a **307 (temporary)** redirect, not a 301 (verified in Phase 3A, see below). Indexing is consolidated by the canonical tag and by internal links that only ever use the canonical form |
 | Everywhere the same | Canonical tags, hreflang, the sitemap, internal links, Open Graph URLs and structured data all use the canonical form, produced from one route map |
 | Case and characters | Lower case, Latin letters, digits and hyphens only |
 | No file extensions | `/work`, not `/work.html` |
 
-How the platform supports this: the build writes each normal page as a single HTML file (`work.html`) and each language root as a folder index (`el/index.html`). Cloudflare's static asset handling then serves single files without a trailing slash and folder indexes with one, and redirects the other form, which is its default behaviour. The exact Astro output setting that produces this file layout is confirmed in Phase 3A, and a CI check asserts that no page is reachable in both forms.
+**Verified in Phase 3A (2026-10-02).** Astro 7.3.5 with `build.format: "preserve"` writes `work.html`, `el/work.html`, `index.html` and `el/index.html` exactly as intended. Served by Cloudflare's local Workers runtime (Wrangler 4.147.0) with `html_handling: "auto-trailing-slash"`, 23 of 23 assertions passed:
+
+| Request | Result |
+|---|---|
+| `/`, `/work`, `/capabilities`, `/eu-projects`, `/about`, `/contact` | 200 |
+| `/el/`, `/el/work`, `/el/capabilities`, `/el/eu-projects`, `/el/about`, `/el/contact` | 200 |
+| `/work/`, `/el/work/` | 307 to `/work`, `/el/work` |
+| `/work.html`, `/index.html`, `/el/work.html`, `/el/index.html` | 307 to the canonical form |
+| `/el` | 307 to `/el/` |
+| `/nope`, `/work/nope` | 404 with the English not-found page |
+| `/el/nope`, `/el/work/nope` | 404 with the Greek not-found page |
+
+Two details differ from the earlier plan:
+
+1. The redirects are 307, not 301. The platform does not offer a choice here. This is acceptable because the canonical tag, the sitemap and every internal link use the canonical form only. If permanent redirects are ever wanted for specific old URLs, they are added as explicit rules in `_redirects`, which is also how the pigiota314 migration will work.
+2. The not-found page file is itself a normal asset, so `/404` and `/el/404` return **200** with the not-found content. They carry `noindex`, nothing links to them, and they are best excluded from the sitemap and disallowed at launch. This is not harmful, but it is a soft-404 pattern and is recorded so it is not a surprise.
+
+Local results come from Wrangler's local runtime. They are re-checked on the first Cloudflare preview deployment, and an automated check of this table is added to CI in a later stage.
+
+Astro's own dev server and `astro preview` are not authoritative for these rules. `astro preview` serves `/work/` and `/work.html` as 200. Only the Cloudflare runtime decides the production behaviour.
 
 ### 1.2 Host
 
@@ -134,3 +153,5 @@ Routes are derived from the route map and from each case study's slug, which is 
 | Capabilities | One page with anchors at launch |
 | Locale redirect | None. User-controlled only |
 | `techpi.gr` | May redirect to `/el/` later. Not part of this phase |
+| Astro `trailingSlash` | `ignore`. `never` was tried and rejected: in the dev server it makes the canonical Greek root `/el/` return 404. For prerendered pages the host enforces the policy, as Astro's own documentation states |
+| Source of canonical URLs | `src/i18n/routes.ts` only. With `build.format: "preserve"`, `Astro.url.pathname` contains `.html` for normal pages, so it must never be used for canonical, hreflang or sitemap URLs |

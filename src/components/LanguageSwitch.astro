@@ -1,0 +1,53 @@
+---
+import { getDictionary } from '../i18n';
+import { locales, type Locale } from '../i18n/locales';
+import { homePathFor, pathFor, type PageKey } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+  /** The current page. Absent on a 404, where there is no equivalent page and the link goes to each home page. */
+  page?: PageKey;
+}
+
+const { locale, page } = Astro.props;
+const t = getDictionary(locale);
+---
+
+{/* Language choice is always explicit. Plain links to the same page in the other language. No script, no redirect. */}
+<ul class="language-switch" aria-label={t.language.label}>
+  {
+    locales.map((target) => {
+      const href = page ? pathFor(page, target) : homePathFor(target);
+      const label = t.language[target];
+      return (
+        <li>
+          <a
+            href={href}
+            lang={target}
+            hreflang={target}
+            aria-label={label.name}
+            aria-current={target === locale ? 'true' : undefined}>
+            {label.short}
+          </a>
+        </li>
+      );
+    })
+  }
+</ul>
+
+<style>
+  .language-switch {
+    display: flex;
+    gap: 14px;
+    font-size: 0.8125rem;
+  }
+  .language-switch a {
+    color: var(--color-slate);
+    text-decoration: none;
+    padding: 12px 2px;
+  }
+  .language-switch a[aria-current='true'] {
+    color: var(--color-ink);
+    font-weight: var(--weight-name);
+  }
+</style>

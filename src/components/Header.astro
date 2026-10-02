@@ -1,0 +1,78 @@
+---
+import { getDictionary } from '../i18n';
+import type { Locale } from '../i18n/locales';
+import { homePathFor, pathFor, type PageKey } from '../i18n/routes';
+import LanguageSwitch from './LanguageSwitch.astro';
+
+interface Props {
+  locale: Locale;
+  page?: PageKey;
+}
+
+const { locale, page } = Astro.props;
+const t = getDictionary(locale);
+
+// The approved navigation, in order. Nothing is added.
+const items = ['work', 'capabilities', 'euProjects', 'about', 'contact'] as const;
+const target: Record<(typeof items)[number], PageKey> = {
+  work: 'work',
+  capabilities: 'capabilities',
+  euProjects: 'euProjects',
+  about: 'about',
+  contact: 'contact',
+};
+---
+
+{/* Phase 3A functional header. Plain and unstyled beyond the basics: it exists to navigate and to test routes.
+     The designed header, its surfaces and the mobile menu arrive in 3B. */}
+<header class="site-header">
+  <a class="site-name" href={homePathFor(locale)} aria-label={`TechPi, ${t.pages.home.heading}`}>{t.site.name}</a>
+  <nav aria-label={t.nav.label}>
+    <ul class="site-nav">
+      {
+        items.map((key) => (
+          <li>
+            <a href={pathFor(target[key], locale)} aria-current={page === target[key] ? 'page' : undefined}>
+              {t.nav[key]}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+  <LanguageSwitch locale={locale} page={page} />
+</header>
+
+<style>
+  .site-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 40px;
+    padding: 20px var(--space-margin);
+    font-size: var(--text-small);
+  }
+  .site-name {
+    font-weight: var(--weight-name);
+    letter-spacing: 0.09em;
+    text-decoration: none;
+  }
+  .site-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 28px;
+    font-weight: var(--weight-ui);
+  }
+  .site-nav a {
+    display: inline-block;
+    padding: 12px 0;
+    text-decoration: none;
+  }
+  .site-nav a[aria-current='page'] {
+    text-decoration: underline;
+    text-underline-offset: 6px;
+  }
+  nav {
+    margin-left: auto;
+  }
+</style>

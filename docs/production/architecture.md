@@ -350,7 +350,7 @@ Nothing is configured in Cloudflare during this phase. This section records the 
 
 **Review path for every stage:** local preview, then the Git branch, then the Worker Preview URL.
 
-**Behaviour relied on,** checked against Cloudflare's documentation on 2026-10-02 and to be re-checked at setup:
+**Behaviour relied on,** checked against Cloudflare's documentation on 2026-10-02 and **verified in Phase 3A** against the local Workers runtime (see `routes.md` for the full result and two small differences). To be re-checked on the first preview deployment:
 
 | Need | How the platform provides it |
 |---|---|
@@ -375,3 +375,50 @@ Nothing is configured in Cloudflare during this phase. This section records the 
 3. **Push access.** Git currently authenticates as an account without write access to the repository. Preview deployments need pushes. This must be fixed before Phase 3A.
 4. **Scroll-linked CSS is not supported everywhere.** It is never a critical dependency. See `motion-implementation.md`.
 5. **Platform details change.** Cloudflare's configuration options and Astro's output settings are confirmed again at setup, and CI asserts the URL behaviour so a change cannot pass unnoticed.
+
+## 13. Phase 3A as built (2026-10-02)
+
+### 13.1 Versions installed
+
+| Package | Version | Note |
+|---|---|---|
+| Astro | 7.3.5 | Current stable at setup |
+| TypeScript | 6.0.3, pinned `~6.0.3` | The registry's newest is 7.0.2, but `@astrojs/check` 0.9.10 supports TypeScript 5 and 6 only. Move to 7 when the checker does |
+| `@astrojs/check` | 0.9.10 | Development dependency |
+| Wrangler | 4.147.0 | Development dependency. Verifies Cloudflare's asset handling locally, and reads `wrangler.jsonc` |
+| Node (this machine) | 22.12.0 | See 13.3 |
+
+Not installed, by design: Tailwind, React, GSAP, a sitemap integration (3F), an image library beyond Astro's own, a CMS.
+
+### 13.2 Configuration
+
+- `output: 'static'`, `build.format: 'preserve'`, `trailingSlash: 'ignore'`, `site: 'https://techpi.eu'`.
+- i18n: default locale `en` without a prefix, `el` as the prefixed locale, no fallback and no `redirectToDefaultLocale`, so Astro creates no automatic locale redirect.
+- `tsconfig.json` extends Astro's strict preset and includes only `src/` and the Astro config, so `explorations/`, `docs/` and `brand-source/` can never enter the production type check.
+- `wrangler.jsonc`: no Worker script, `assets.directory: "./dist"`, `not_found_handling: "404-page"`, `html_handling: "auto-trailing-slash"`, compatibility date 2026-10-02. Preview settings are not configured. They are set when the repository is connected to Cloudflare.
+- Scripts: `dev`, `build`, `preview`, `check`.
+
+### 13.3 Differences from the approved architecture
+
+| # | Difference | Consequence |
+|---|---|---|
+| 1 | Non-canonical URL forms redirect with **307**, not 301 | Acceptable. Canonical tags and internal links carry the indexing. See `routes.md` |
+| 2 | `/404` and `/el/404` return 200 with `noindex` | Harmless. Exclude from the sitemap and disallow at launch |
+| 3 | `trailingSlash` is `ignore`, not `never` | `never` breaks `/el/` in the dev server. The host enforces the policy |
+| 4 | `Astro.url.pathname` contains `.html` under `preserve` | Canonical, hreflang and the sitemap must come from `src/i18n/routes.ts`. Enforced in `BaseLayout` |
+| 5 | TypeScript 6, not 7 | Tooling compatibility. Revisit later |
+| 6 | Node 22.12.0 here is below what some transitive dependencies request (`undici` asks for 22.19 or later) | npm warns on install. Check, build and the Cloudflare runtime all pass. Upgrade Node to the current 22 LTS, and set the Node version for Workers Builds, before CI is relied on |
+| 7 | `astro preview` is lenient and not authoritative | Use Wrangler's local runtime to check URL behaviour |
+| 8 | A functional header and language switch were built in 3A | Needed to navigate and test routes. They are plain. The designed header is 3B |
+| 9 | Only the `src/` folders 3A needs exist: `components`, `layouts`, `pages`, `i18n`, `styles` | `content`, `data` and `utils` arrive with the stages that use them |
+| 10 | Temporary Google Fonts loader | See 13.4 |
+
+### 13.4 Temporary font loading
+
+`src/components/TemporaryFonts.astro` loads Commissioner from Google Fonts so the 400, 450 and 500 hierarchy is visible on previews. It is one component, used in one place. It must be deleted when the self-hosted files are supplied. It sends visitors' IP addresses to a third party, so it must not ship.
+
+A guard enforces this: a build with `PUBLIC_ALLOW_INDEXING=true` fails while the component is still in use. Verified.
+
+### 13.5 Indexing default
+
+Every page is `noindex, nofollow` unless a build sets `PUBLIC_ALLOW_INDEXING=true`. Nothing is indexable until launch, and a 404 is never indexable. Worker Preview URLs also get a response-header rule in a later stage.
