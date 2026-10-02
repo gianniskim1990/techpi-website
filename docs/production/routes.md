@@ -41,7 +41,7 @@ Notes:
 | Rule | Detail |
 |---|---|
 | One canonical form | `/work`, never `/work/`. `/el/`, never `/el` |
-| The other form | Redirects to the canonical form and never serves a second copy of the page. Cloudflare's asset handling answers with a **307 (temporary)** redirect, not a 301 (verified in Phase 3A, see below). Indexing is consolidated by the canonical tag and by internal links that only ever use the canonical form |
+| The other form | Redirects to the canonical form and never serves a second copy of the page. Explicit rules in `public/_redirects` answer with a **301 (permanent)**. Cloudflare's automatic handling alone would answer 307 (see below). The canonical tag and internal links also use only the canonical form |
 | Everywhere the same | Canonical tags, hreflang, the sitemap, internal links, Open Graph URLs and structured data all use the canonical form, produced from one route map |
 | Case and characters | Lower case, Latin letters, digits and hyphens only |
 | No file extensions | `/work`, not `/work.html` |
@@ -52,15 +52,15 @@ Notes:
 |---|---|
 | `/`, `/work`, `/capabilities`, `/eu-projects`, `/about`, `/contact` | 200 |
 | `/el/`, `/el/work`, `/el/capabilities`, `/el/eu-projects`, `/el/about`, `/el/contact` | 200 |
-| `/work/`, `/el/work/` | 307 to `/work`, `/el/work` |
-| `/work.html`, `/index.html`, `/el/work.html`, `/el/index.html` | 307 to the canonical form |
-| `/el` | 307 to `/el/` |
+| `/work/`, `/el/work/` | 301 to `/work`, `/el/work` |
+| `/work.html`, `/index.html`, `/el/work.html`, `/el/index.html` | 301 to the canonical form |
+| `/el` | 301 to `/el/` |
 | `/nope`, `/work/nope` | 404 with the English not-found page |
 | `/el/nope`, `/el/work/nope` | 404 with the Greek not-found page |
 
 Two details differ from the earlier plan:
 
-1. The redirects are 307, not 301. The platform does not offer a choice here. This is acceptable because the canonical tag, the sitemap and every internal link use the canonical form only. If permanent redirects are ever wanted for specific old URLs, they are added as explicit rules in `_redirects`, which is also how the pigiota314 migration will work.
+1. **Phase 3A.1 update:** without rules, the platform's automatic handling returns 307. `public/_redirects` now lists all 23 non-canonical forms (trailing slash, `.html`, `/index.html`, `/el`) with explicit 301 rules, tested under Wrangler 4.147.0: canonical URLs 200, every listed form 301 straight to the canonical URL in one hop with no loops, query strings preserved, unknown paths 404 with the English or Greek page. The same file is used for the pigiota314 migration.
 2. The not-found page file is itself a normal asset, so `/404` and `/el/404` return **200** with the not-found content. They carry `noindex`, nothing links to them, and they are best excluded from the sitemap and disallowed at launch. This is not harmful, but it is a soft-404 pattern and is recorded so it is not a surprise.
 
 Local results come from Wrangler's local runtime. They are re-checked on the first Cloudflare preview deployment, and an automated check of this table is added to CI in a later stage.

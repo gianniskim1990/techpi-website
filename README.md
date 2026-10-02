@@ -3,7 +3,7 @@ Official website of TechPi — Digital Products &amp; Technology
 
 ## Development
 
-Astro, static output. Requires Node 22.12 or later (the current Node 22 LTS is recommended).
+Astro, static output. Requires Node 24 (see `.node-version`).
 
 ```bash
 npm install

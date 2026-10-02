@@ -386,7 +386,7 @@ Nothing is configured in Cloudflare during this phase. This section records the 
 | TypeScript | 6.0.3, pinned `~6.0.3` | The registry's newest is 7.0.2, but `@astrojs/check` 0.9.10 supports TypeScript 5 and 6 only. Move to 7 when the checker does |
 | `@astrojs/check` | 0.9.10 | Development dependency |
 | Wrangler | 4.147.0 | Development dependency. Verifies Cloudflare's asset handling locally, and reads `wrangler.jsonc` |
-| Node (this machine) | 22.12.0 | See 13.3 |
+| Node | 24 (`.node-version`, `engines: ^24.0.0`) | Tested on 24.15.0. Cloudflare Workers Builds defaults to Node 24.x. Node 22 is rejected |
 
 Not installed, by design: Tailwind, React, GSAP, a sitemap integration (3F), an image library beyond Astro's own, a CMS.
 
@@ -402,12 +402,12 @@ Not installed, by design: Tailwind, React, GSAP, a sitemap integration (3F), an 
 
 | # | Difference | Consequence |
 |---|---|---|
-| 1 | Non-canonical URL forms redirect with **307**, not 301 | Acceptable. Canonical tags and internal links carry the indexing. See `routes.md` |
+| 1 | Non-canonical URL forms redirect with an explicit **301** from `public/_redirects` (copied to `dist/`) | Overrides the automatic 307, verified under Wrangler. See `routes.md` |
 | 2 | `/404` and `/el/404` return 200 with `noindex` | Harmless. Exclude from the sitemap and disallow at launch |
 | 3 | `trailingSlash` is `ignore`, not `never` | `never` breaks `/el/` in the dev server. The host enforces the policy |
 | 4 | `Astro.url.pathname` contains `.html` under `preserve` | Canonical, hreflang and the sitemap must come from `src/i18n/routes.ts`. Enforced in `BaseLayout` |
 | 5 | TypeScript 6, not 7 | Tooling compatibility. Revisit later |
-| 6 | Node 22.12.0 here is below what some transitive dependencies request (`undici` asks for 22.19 or later) | npm warns on install. Check, build and the Cloudflare runtime all pass. Upgrade Node to the current 22 LTS, and set the Node version for Workers Builds, before CI is relied on |
+| 6 | Node policy is 24 (see 13.1) | Replaces the earlier Node 22 setup, which warned about transitive dependencies |
 | 7 | `astro preview` is lenient and not authoritative | Use Wrangler's local runtime to check URL behaviour |
 | 8 | A functional header and language switch were built in 3A | Needed to navigate and test routes. They are plain. The designed header is 3B |
 | 9 | Only the `src/` folders 3A needs exist: `components`, `layouts`, `pages`, `i18n`, `styles` | `content`, `data` and `utils` arrive with the stages that use them |
