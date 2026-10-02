@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "foundation-board",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["explorations/phase-2/serve.js"],
+      "port": 4173
+    }
+  ]
+}
