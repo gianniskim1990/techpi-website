@@ -1,0 +1,136 @@
+---
+import type { HomeCopy } from '../../content/home.en';
+import { pathFor } from '../../i18n/routes';
+import type { Locale } from '../../i18n/locales';
+
+interface Props {
+  copy: HomeCopy['hero'];
+  locale: Locale;
+}
+
+const { copy, locale } = Astro.props;
+---
+
+{/* Static composition. Each statement line sits in .ln > span so a later line mask (3E) can move the span
+    without changing the markup. Today the masks do nothing: no overflow clipping, no transform. */}
+<section class="hero s-paper" aria-labelledby="hero-h">
+  <div class="hero-stage">
+    <div class="arc" aria-hidden="true"></div>
+    <p class="meta">{copy.meta}</p>
+    <div class="main">
+      <h1 id="hero-h" class="statement">
+        {copy.statement.map((line) => <><span class="ln"><span>{line}</span></span>{" "}</>)}
+      </h1>
+      <p class="support">
+        {copy.support.map((line) => <><span class="ln"><span>{line}</span></span>{" "}</>)}
+      </p>
+      <p class="act">
+        <a class="btn" href={pathFor('contact', locale)}>{copy.start}</a>
+        <a class="tlink" href="#work">{copy.work}</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+  }
+  .hero-stage {
+    position: relative;
+    overflow: hidden;
+    min-height: max(100svh, 720px);
+    padding: 0 var(--space-margin) 64px;
+    display: flex;
+    flex-direction: column;
+  }
+  .meta {
+    margin-top: 168px;
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    color: var(--ter);
+  }
+  .main {
+    margin-top: auto;
+    position: relative;
+  }
+  .statement {
+    font-size: var(--text-display-xl);
+    line-height: 0.98;
+  }
+  .statement .ln {
+    display: block;
+  }
+  .support {
+    margin-top: clamp(28px, 3.2vw, 46px);
+    font-size: clamp(1.25rem, 2.15vw, 1.9375rem);
+    line-height: 1.26;
+    letter-spacing: -0.01em;
+    color: var(--sec-c);
+  }
+  .support .ln {
+    display: block;
+  }
+  /* On desktop the call to action stays quiet: the header already carries Contact. It returns on mobile. */
+  .act {
+    display: none;
+    align-items: center;
+    gap: 24px;
+  }
+
+  /* The Constant: the outer sweep of the TechPi symbol, far larger than the screen. Only an arc is visible. */
+  .arc {
+    position: absolute;
+    width: 2828px;
+    height: 2828px;
+    left: calc(100% - 1064px);
+    top: -2314px;
+    border: 1.25px solid var(--color-ink);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  @media (max-width: 760px) {
+    .hero-stage {
+      min-height: 100svh;
+      padding-bottom: 36px;
+    }
+    .meta {
+      margin-top: 104px;
+      font-size: 0.875rem;
+    }
+    .statement {
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+    }
+    .statement .ln,
+    .support .ln {
+      display: inline;
+    }
+    .support {
+      margin-top: 22px;
+      font-size: 1.1875rem;
+      line-height: 1.4;
+      letter-spacing: 0;
+    }
+    .act {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 22px;
+      margin-top: 34px;
+    }
+  }
+
+  /* Up to 900px the header collapses (see Header.astro), so the arc takes the smaller sweep that crosses the top
+     edge in the gap between the name and the language switch, and leaves the text alone. */
+  @media (max-width: 900px) {
+    .arc {
+      width: 984px;
+      height: 984px;
+      left: calc(100% - 336px);
+      top: -800px;
+      border-width: 1.1px;
+    }
+  }
+</style>

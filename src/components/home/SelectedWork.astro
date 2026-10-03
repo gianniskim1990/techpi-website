@@ -1,0 +1,219 @@
+---
+import type { HomeCopy } from '../../content/home.en';
+import { pathFor } from '../../i18n/routes';
+import type { Locale } from '../../i18n/locales';
+
+interface Props {
+  copy: HomeCopy['work'];
+  locale: Locale;
+}
+
+const { copy, locale } = Astro.props;
+const total = copy.projects.length;
+---
+
+{/* The Ink surface arrives behind the edge of a very large circle (desktop only, decorative). */}
+<div class="edge" aria-hidden="true"><div></div></div>
+
+{/* Each .case is one full-screen project. Phase 3E can make `.case` sticky (top: 0) for the viewport handoff
+    without touching this markup. Until then they stack normally. Media is a neutral placeholder: no imagery
+    exists yet and no dashboard is faked. */}
+<section class="work s-ink" id="work" aria-labelledby="work-h">
+  <h2 class="vh" id="work-h">{copy.heading}</h2>
+  <div class="stack">
+    {
+      copy.projects.map((p, i) => (
+        <article class="case" id={`case-${p.id}`}>
+          <div class="case-top">
+            <span>{i === 0 ? copy.label : ''}</span>
+            <span>{i + 1} / {total}</span>
+          </div>
+          <div class="case-body">
+            <div class={`media media-${i + 1}`} aria-hidden="true">
+              <span class="word">{'wordmark' in p ? p.wordmark : p.name}</span>
+            </div>
+            <div class="case-txt">
+              <p class="cat">{p.category}</p>
+              <h3>{p.name}</h3>
+              <p class="sum">{p.summary}</p>
+              <dl class="facts">
+                <div>
+                  <dt>{copy.factsLabel}</dt>
+                  <dd>{p.capabilities}</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+  <p class="all"><a class="tlink" href={pathFor('work', locale)}>{copy.all}</a></p>
+</section>
+
+<style>
+  .edge {
+    position: relative;
+    height: 18.4vw;
+    overflow: hidden;
+    background: var(--color-paper);
+    margin-bottom: -1px; /* closes a sub-pixel seam */
+  }
+  /* Sized in vw so the curve keeps its proportion at every desktop width. */
+  .edge > div {
+    position: absolute;
+    width: 583.4vw;
+    height: 583.4vw;
+    border-radius: 50%;
+    left: calc(100% - 293vw);
+    top: 0.7vw;
+    background: var(--color-ink);
+  }
+  .work {
+    position: relative;
+  }
+  .case {
+    min-height: 100svh;
+    padding: 34px var(--space-margin) 44px;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--line);
+  }
+  .case:first-child {
+    border-top: 0;
+  }
+  .case-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    color: var(--ter);
+  }
+  .case-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    align-items: stretch;
+    margin-top: 30px;
+  }
+  .media {
+    grid-column: 1 / span 8;
+    position: relative;
+    overflow: hidden;
+    min-height: 420px;
+  }
+  .media-1 {
+    background: #131b36;
+  }
+  .media-2 {
+    background: #1e1f23;
+  }
+  .media-3 {
+    background: #14232b;
+  }
+  .word {
+    position: absolute;
+    left: -0.04em;
+    bottom: -0.2em;
+    font-size: clamp(7rem, 21vw, 19rem);
+    line-height: 1;
+    font-weight: var(--weight-name);
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    color: rgba(240, 238, 233, 0.055);
+  }
+  .case-txt {
+    grid-column: 9 / span 4;
+    padding-left: clamp(0px, 2vw, 32px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .cat {
+    font-size: 0.8125rem;
+    font-weight: var(--weight-ui);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ter);
+  }
+  h3 {
+    margin-top: 14px;
+    font-size: var(--text-display-m);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+  }
+  .sum {
+    margin-top: 20px;
+    font-size: var(--text-lead);
+    line-height: 1.42;
+  }
+  .facts {
+    margin-top: 30px;
+  }
+  .facts div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    font-size: var(--text-small);
+  }
+  .facts dt {
+    color: var(--ter);
+    font-weight: var(--weight-ui);
+  }
+  .facts dd {
+    text-align: right;
+  }
+  .all {
+    padding: 40px var(--space-margin) 72px;
+    border-top: 1px solid var(--line);
+  }
+
+  @media (max-width: 760px) {
+    .edge {
+      display: none;
+    }
+  }
+
+  /* Below desktop each project stacks: full-width media, then the text. */
+  @media (max-width: 1023px) {
+    .case {
+      min-height: 0;
+      padding: 0 0 44px;
+      border-top: 0;
+    }
+    .case + .case {
+      margin-top: 20px;
+    }
+    .case-top {
+      padding: 22px var(--space-margin) 16px;
+      font-size: 0.875rem;
+    }
+    .case-body {
+      display: block;
+      margin-top: 0;
+    }
+    .media {
+      min-height: 0;
+      aspect-ratio: 4 / 3;
+    }
+    .case-txt {
+      padding: 26px var(--space-margin) 0;
+    }
+    h3 {
+      margin-top: 10px;
+    }
+    .sum {
+      margin-top: 14px;
+    }
+    .facts {
+      margin-top: 22px;
+    }
+    .all {
+      padding: 28px var(--space-margin) 56px;
+    }
+  }
+</style>

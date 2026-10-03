@@ -17,6 +17,11 @@ export const en = {
     euProjects: 'EU Projects',
     about: 'About',
     contact: 'Contact',
+    menu: 'Menu',
+  },
+  footer: {
+    label: 'Footer',
+    note: 'TechPi, formerly pigiota314.',
   },
   language: {
     label: 'Language',

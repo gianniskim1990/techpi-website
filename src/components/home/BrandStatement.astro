@@ -1,0 +1,82 @@
+---
+import type { HomeCopy } from '../../content/home.en';
+
+interface Props {
+  copy: HomeCopy['statement'];
+}
+
+const { copy } = Astro.props;
+---
+
+<section class="statement s-paper" aria-labelledby="statement-h">
+  <h2 id="statement-h">{copy.heading}</h2>
+  <ol class="pair">
+    {
+      copy.steps.map((s) => (
+        <li>
+          <p class="step">{s.step}</p>
+          <h3>{s.title}</h3>
+          <p class="text">{s.text}</p>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .statement {
+    padding: var(--space-section) var(--space-margin);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    row-gap: clamp(56px, 8vw, 112px);
+  }
+  h2 {
+    grid-column: 1 / span 10;
+    font-size: var(--text-display-l);
+    line-height: 1.02;
+  }
+  .pair {
+    grid-column: 6 / span 7;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-gap);
+  }
+  .pair li {
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+  }
+  .step {
+    font-size: 0.875rem;
+    font-weight: var(--weight-ui);
+    color: var(--ter);
+  }
+  h3 {
+    margin-top: 28px;
+    font-size: clamp(1.375rem, 2vw, 1.75rem);
+    line-height: 1.15;
+    letter-spacing: -0.012em;
+  }
+  .text {
+    margin-top: 12px;
+    color: var(--sec-c);
+    max-width: 38ch;
+  }
+
+  @media (max-width: 760px) {
+    .statement {
+      display: block;
+    }
+    h2 {
+      line-height: 1.08;
+    }
+    .pair {
+      margin-top: 56px;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 36px;
+    }
+    h3 {
+      margin-top: 18px;
+    }
+  }
+</style>
