@@ -1,11 +1,13 @@
 ---
 import type { HomeCopy } from '../../content/home.en';
+import type { Capability } from '../../content/capabilities';
 
 interface Props {
   copy: HomeCopy['capabilities'];
+  items: readonly Capability[];
 }
 
-const { copy } = Astro.props;
+const { copy, items } = Astro.props;
 ---
 
 {/* Editorial index: a heading column and a ruled list. No cards. The heading may become sticky in 3E. */}
@@ -13,12 +15,12 @@ const { copy } = Astro.props;
   <div class="head"><h2 id="caps-h">{copy.heading}</h2></div>
   <ol class="list">
     {
-      copy.items.map((c) => (
+      items.map((c) => (
         <li>
-          <h3>{c.title}</h3>
-          <p class="text">{c.text}</p>
+          <h3>{c.name}</h3>
+          <p class="text">{c.summary}</p>
           <ul class="terms">
-            {c.list.map((term) => <li>{term}</li>)}
+            {c.items.map((term) => <li>{term}</li>)}
           </ul>
         </li>
       ))
