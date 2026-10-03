@@ -20,6 +20,7 @@ export const el: Dictionary = {
     about: 'Εταιρεία',
     contact: 'Επικοινωνία',
     menu: 'Μενού',
+    close: 'Κλείσιμο',
   },
   footer: {
     label: 'Υποσέλιδο',

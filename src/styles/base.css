@@ -179,3 +179,8 @@ main:focus {
 .s-blue .btn:hover {
   background: #fff;
 }
+
+/* While a modal dialog (the mobile menu) is open, the page behind it does not scroll. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
