@@ -1,0 +1,118 @@
+---
+import { capabilityName } from '../../content/capabilities';
+import type { Project } from '../../content/projects';
+import FactRows from './FactRows.astro';
+
+interface Props {
+  project: Project;
+  /** 1, 2 or 3: picks one of the three neutral placeholder tints. */
+  tone: number;
+  capabilitiesLabel: string;
+}
+
+const { project, tone, capabilitiesLabel } = Astro.props;
+// Capabilities are shown only once confirmed. Until then the row carries category, name and summary only.
+const capabilities = project.capabilitiesConfirmed
+  ? [...project.capabilities.map(capabilityName), ...(project.context ?? [])].join(', ')
+  : undefined;
+---
+
+{/* One large editorial row on Ink. The media is a neutral placeholder: no imagery exists yet and no screen is
+    faked. No link yet: a row links to its case study only once that page exists (Phase 3C.2). */}
+<article class="row">
+  <div class={`media tone-${tone}`} aria-hidden="true">
+    <span class="word">{project.wordmark ?? project.name}</span>
+  </div>
+  <div class="text">
+    <p class="cat">{project.category}</p>
+    <h2>{project.name}</h2>
+    <p class="sum">{project.summary}</p>
+    <FactRows rows={[{ label: capabilitiesLabel, value: capabilities }]} />
+  </div>
+</article>
+
+<style>
+  .row {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    padding: 72px 0;
+    border-top: 1px solid var(--line);
+  }
+  .row:first-child {
+    border-top: 0;
+    padding-top: 32px;
+  }
+  .media {
+    grid-column: 1 / span 8;
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+  }
+  .tone-1 {
+    background: #131b36;
+  }
+  .tone-2 {
+    background: #1e1f23;
+  }
+  .tone-3 {
+    background: #14232b;
+  }
+  .word {
+    position: absolute;
+    left: -0.04em;
+    bottom: -0.2em;
+    font-size: clamp(6rem, 18vw, 17rem);
+    line-height: 1;
+    font-weight: var(--weight-name);
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    color: rgba(240, 238, 233, 0.055);
+  }
+  .text {
+    grid-column: 9 / span 4;
+    padding-left: clamp(0px, 2vw, 32px);
+    padding-bottom: 10vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .cat {
+    font-size: 0.8125rem;
+    font-weight: var(--weight-ui);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ter);
+  }
+  h2 {
+    margin-top: 14px;
+    font-size: var(--text-display-m);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+  }
+  .sum {
+    margin-top: 18px;
+    font-size: var(--text-lead);
+    line-height: 1.42;
+  }
+  .text :global(.facts) {
+    margin-top: 26px;
+  }
+
+  @media (max-width: 1023px) {
+    .row {
+      display: block;
+      padding: 0 0 64px;
+      border-top: 0;
+    }
+    .row:first-child {
+      padding-top: 0;
+    }
+    .media {
+      aspect-ratio: 4 / 3;
+    }
+    .text {
+      padding: 22px var(--space-margin) 0;
+    }
+  }
+</style>

@@ -1,0 +1,49 @@
+---
+interface Props {
+  heading: string;
+  lead?: string;
+}
+
+const { heading, lead } = Astro.props;
+---
+
+{/* The page head of every secondary page: one h1 and one lead, offset to the right on desktop. No label, no
+    button, no image. The default slot is for page-specific geometry only (the About arc). */}
+<section class="intro s-paper">
+  <slot />
+  <h1>{heading}</h1>
+  {lead && <p class="lead">{lead}</p>}
+</section>
+
+<style>
+  .intro {
+    position: relative;
+    overflow: hidden;
+    padding: 200px var(--space-margin) 0;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+  }
+  h1 {
+    grid-column: 1 / span 9;
+    font-size: var(--text-display-l);
+    line-height: 1.02;
+  }
+  .lead {
+    grid-column: 7 / span 5;
+    margin-top: 40px;
+    font-size: var(--text-lead);
+    line-height: 1.42;
+    color: var(--sec-c);
+  }
+
+  @media (max-width: 760px) {
+    .intro {
+      display: block;
+      padding-top: 128px;
+    }
+    .lead {
+      margin-top: 24px;
+    }
+  }
+</style>

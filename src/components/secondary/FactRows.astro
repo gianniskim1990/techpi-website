@@ -1,0 +1,53 @@
+---
+interface Row {
+  label: string;
+  value?: string | undefined;
+}
+
+interface Props {
+  rows: readonly Row[];
+}
+
+// A row with no confirmed value is never shown: no dash, no "to confirm".
+const rows = Astro.props.rows.filter((r): r is Required<Row> => Boolean(r.value));
+---
+
+{
+  rows.length > 0 && (
+    <dl class="facts">
+      {
+        rows.map((r) => (
+          <div>
+            <dt>{r.label}</dt>
+            <dd>{r.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  )
+}
+
+<style>
+  .facts div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 16px;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+    font-size: var(--text-small);
+  }
+  .facts div:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  dt {
+    color: var(--ter);
+    font-weight: var(--weight-ui);
+  }
+
+  @media (max-width: 760px) {
+    .facts div {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2px;
+    }
+  }
+</style>

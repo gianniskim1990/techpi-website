@@ -1,5 +1,70 @@
 ---
-import ShellPage from '../components/ShellPage.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ClosingCTA from '../components/secondary/ClosingCTA.astro';
+import PageIntro from '../components/secondary/PageIntro.astro';
+import SectionSplit from '../components/secondary/SectionSplit.astro';
+import { capabilities } from '../content/capabilities';
+import { pagesEn } from '../content/pages.en';
+import { getDictionary } from '../i18n';
+import { pathFor } from '../i18n/routes';
+
+const t = getDictionary('en');
+const copy = pagesEn.capabilities;
 ---
 
-<ShellPage locale="en" page="capabilities" />
+{/* The homepage capability index, opened up. Per the approved spec this page does NOT carry a "How they combine"
+    table (deferred), and shows no "Seen in" links until case studies are publishable (Phase 3C.2). */}
+<BaseLayout locale="en" page="capabilities" title={t.pages.capabilities.title} description={copy.lead} bleed>
+  <PageIntro heading={copy.heading} lead={copy.lead} />
+  <nav class="anchors" aria-label={copy.indexLabel}>
+    {capabilities.map((c) => <a href={`#${c.id}`}>{c.name}</a>)}
+  </nav>
+  {
+    capabilities.map((c) => (
+      <SectionSplit id={c.id} heading={c.name}>
+        <p class="summary">{c.summary}</p>
+        <p class="covers">{copy.covers}</p>
+        <ul class="ruled">
+          {c.items.map((item) => <li>{item}</li>)}
+        </ul>
+      </SectionSplit>
+    ))
+  }
+  <ClosingCTA heading={pagesEn.closer.heading} cta={pagesEn.closer.cta} href={pathFor('contact', 'en')} />
+</BaseLayout>
+
+<style>
+  .anchors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 32px;
+    margin: 64px var(--space-margin) 0;
+    font-weight: var(--weight-ui);
+  }
+  .anchors a {
+    display: inline-block;
+    padding: 8px 0;
+    text-underline-offset: 6px;
+  }
+  .summary {
+    max-width: 36ch;
+    font-size: var(--text-lead);
+    line-height: 1.42;
+  }
+  .covers {
+    margin-top: 40px;
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    color: var(--ter);
+  }
+  .ruled {
+    margin-top: 10px;
+  }
+  .ruled li {
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+  }
+  .ruled li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+</style>

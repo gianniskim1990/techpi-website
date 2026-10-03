@@ -1,0 +1,46 @@
+---
+interface Props {
+  /** Anchor id of the section. The heading id is derived from it. */
+  id: string;
+  heading: string;
+}
+
+const { id, heading } = Astro.props;
+---
+
+{/* A heading column and a content column, from the homepage Capabilities pattern. The heading is not sticky. */}
+<section class="split s-paper" id={id} aria-labelledby={`${id}-h`}>
+  <div class="head"><h2 id={`${id}-h`}>{heading}</h2></div>
+  <div class="body"><slot /></div>
+</section>
+
+<style>
+  .split {
+    margin: var(--space-section) var(--space-margin) 0;
+    padding-top: 34px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+  }
+  .head {
+    grid-column: 1 / span 4;
+  }
+  h2 {
+    font-size: var(--text-display-m);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+  }
+  .body {
+    grid-column: 5 / span 8;
+  }
+
+  @media (max-width: 760px) {
+    .split {
+      display: block;
+    }
+    .body {
+      margin-top: 24px;
+    }
+  }
+</style>
