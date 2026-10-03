@@ -23,12 +23,13 @@ const target: Record<(typeof items)[number], PageKey> = {
 };
 ---
 
-{/* Phase 3A functional header. Plain and unstyled beyond the basics: it exists to navigate and to test routes.
-     The designed header, its surfaces and the mobile menu arrive in 3B. */}
+{/* Typographic name only. No symbol until the vector identity master exists. The header sits over the top of the
+     page and scrolls away with it (no sticky or pinned behaviour yet). Up to 900px wide the links move to the footer,
+     reached by "Menu": plain anchors, no script. */}
 <header class="site-header">
   <a class="site-name" href={homePathFor(locale)} aria-label={`TechPi, ${t.pages.home.heading}`}>{t.site.name}</a>
-  <nav aria-label={t.nav.label}>
-    <ul class="site-nav">
+  <nav class="site-nav" aria-label={t.nav.label}>
+    <ul>
       {
         items.map((key) => (
           <li>
@@ -40,27 +41,38 @@ const target: Record<(typeof items)[number], PageKey> = {
       }
     </ul>
   </nav>
-  <LanguageSwitch locale={locale} page={page} />
+  <div class="util">
+    <LanguageSwitch locale={locale} page={page} />
+    <a class="menu" href="#footer">{t.nav.menu}</a>
+  </div>
 </header>
 
 <style>
   .site-header {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    right: 0;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: 12px 40px;
+    gap: 44px;
     padding: 20px var(--space-margin);
     font-size: var(--text-small);
   }
   .site-name {
+    font-size: 1rem;
     font-weight: var(--weight-name);
     letter-spacing: 0.09em;
     text-decoration: none;
+    padding: 12px 0;
   }
   .site-nav {
+    margin-left: auto;
+  }
+  .site-nav ul {
     display: flex;
-    flex-wrap: wrap;
-    gap: 4px 28px;
+    gap: 34px;
     font-weight: var(--weight-ui);
   }
   .site-nav a {
@@ -68,11 +80,37 @@ const target: Record<(typeof items)[number], PageKey> = {
     padding: 12px 0;
     text-decoration: none;
   }
+  .site-nav a:hover,
   .site-nav a[aria-current='page'] {
     text-decoration: underline;
     text-underline-offset: 6px;
   }
-  nav {
-    margin-left: auto;
+  .util {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+  .menu {
+    display: none;
+    padding: 12px 0;
+    font-weight: var(--weight-ui);
+    text-decoration: none;
+  }
+
+  @media (max-width: 900px) {
+    .site-header {
+      padding: 10px var(--space-margin);
+      gap: 16px;
+    }
+    .site-nav {
+      display: none;
+    }
+    .util {
+      margin-left: auto;
+      gap: 18px;
+    }
+    .menu {
+      display: inline-block;
+    }
   }
 </style>

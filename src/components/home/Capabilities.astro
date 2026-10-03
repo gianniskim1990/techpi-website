@@ -1,0 +1,95 @@
+---
+import type { HomeCopy } from '../../content/home.en';
+
+interface Props {
+  copy: HomeCopy['capabilities'];
+}
+
+const { copy } = Astro.props;
+---
+
+{/* Editorial index: a heading column and a ruled list. No cards. The heading may become sticky in 3E. */}
+<section class="caps s-paper" id="capabilities" aria-labelledby="caps-h">
+  <div class="head"><h2 id="caps-h">{copy.heading}</h2></div>
+  <ol class="list">
+    {
+      copy.items.map((c) => (
+        <li>
+          <h3>{c.title}</h3>
+          <p class="text">{c.text}</p>
+          <ul class="terms">
+            {c.list.map((term) => <li>{term}</li>)}
+          </ul>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .caps {
+    padding: var(--space-section) var(--space-margin);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+  }
+  .head {
+    grid-column: 1 / span 4;
+  }
+  h2 {
+    font-size: var(--text-display-l);
+    line-height: 1.02;
+  }
+  .list {
+    grid-column: 5 / span 8;
+  }
+  .list > li {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    row-gap: 18px;
+    padding: 34px 0 44px;
+    border-top: 1px solid var(--line);
+  }
+  h3 {
+    grid-column: 1 / -1;
+    font-size: var(--text-display-m);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+  }
+  .text {
+    grid-column: 1 / span 5;
+    color: var(--sec-c);
+    font-size: var(--text-lead);
+    line-height: 1.42;
+    max-width: 36ch;
+  }
+  .terms {
+    grid-column: 6 / span 3;
+    font-size: var(--text-small);
+    color: var(--ter);
+    display: grid;
+    gap: 4px;
+    align-content: start;
+    padding-top: 4px;
+  }
+
+  @media (max-width: 760px) {
+    .caps {
+      display: block;
+    }
+    .list {
+      margin-top: 44px;
+    }
+    .list > li {
+      display: block;
+      padding: 24px 0 30px;
+    }
+    .text {
+      margin-top: 12px;
+    }
+    .terms {
+      margin-top: 16px;
+    }
+  }
+</style>

@@ -1,6 +1,7 @@
 ---
 import '../styles/tokens.css';
 import '../styles/base.css';
+import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import TemporaryFonts from '../components/TemporaryFonts.astro';
 import { getDictionary } from '../i18n';
@@ -15,9 +16,11 @@ interface Props {
   /** Written copy only. Omitted when there is none, never generated. */
   description?: string;
   kind?: 'page' | 'notfound';
+  /** Full-bleed pages (the homepage) lay out their own sections. Shell pages get the padded container. */
+  bleed?: boolean;
 }
 
-const { locale, page, title, description, kind = 'page' } = Astro.props;
+const { locale, page, title, description, kind = 'page', bleed = false } = Astro.props;
 const t = getDictionary(locale);
 
 // Canonical and hreflang URLs come from the route map, never from Astro.url
@@ -50,14 +53,18 @@ const indexable = import.meta.env.PUBLIC_ALLOW_INDEXING === 'true' && kind === '
   <body>
     <a class="skip-link" href="#main">{t.skipLink}</a>
     <Header locale={locale} page={hasRoute ? page : undefined} />
-    <main id="main" tabindex="-1">
+    <main id="main" tabindex="-1" class={bleed ? 'bleed' : undefined}>
       <slot />
     </main>
+    <Footer locale={locale} page={hasRoute ? page : undefined} />
   </body>
 </html>
 
 <style>
   main {
-    padding: var(--space-section) var(--space-margin);
+    padding: calc(var(--space-section) + 40px) var(--space-margin) var(--space-section);
+  }
+  main.bleed {
+    padding: 0;
   }
 </style>

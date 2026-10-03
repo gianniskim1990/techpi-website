@@ -1,0 +1,103 @@
+---
+import { getDictionary } from '../i18n';
+import type { Locale } from '../i18n/locales';
+import { pathFor, type PageKey } from '../i18n/routes';
+import LanguageSwitch from './LanguageSwitch.astro';
+
+interface Props {
+  locale: Locale;
+  page?: PageKey;
+}
+
+const { locale, page } = Astro.props;
+const t = getDictionary(locale);
+const items = ['work', 'capabilities', 'euProjects', 'about', 'contact'] as const;
+const target: Record<(typeof items)[number], PageKey> = {
+  work: 'work',
+  capabilities: 'capabilities',
+  euProjects: 'euProjects',
+  about: 'about',
+  contact: 'contact',
+};
+---
+
+{/* Minimal. Only what is justified: name, navigation, language. Contact details, address, legal entity and the
+     Privacy and Cookies links are added when the facts and the routes exist (see docs/production/routes.md). */}
+<footer class="site-footer s-ink" id="footer" tabindex="-1">
+  <div class="brand">
+    <span class="name">{t.site.name}</span>
+    {t.footer.note && <p>{t.footer.note}</p>}
+  </div>
+  <nav aria-label={t.footer.label}>
+    <ul>
+      {
+        items.map((key) => (
+          <li>
+            <a href={pathFor(target[key], locale)}>{t.nav[key]}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+  <div class="lang">
+    <LanguageSwitch locale={locale} page={page} />
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding: 56px var(--space-margin) 40px;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    row-gap: 40px;
+    font-size: var(--text-small);
+  }
+  .site-footer:focus {
+    outline: none;
+  }
+  .brand {
+    grid-column: 1 / span 4;
+    color: var(--sec-c);
+  }
+  .name {
+    display: block;
+    color: var(--color-paper);
+    font-weight: var(--weight-name);
+    letter-spacing: 0.09em;
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+  nav {
+    grid-column: 5 / span 4;
+  }
+  nav a {
+    display: inline-block;
+    padding: 6px 0;
+    text-decoration: none;
+  }
+  nav a:hover {
+    text-decoration: underline;
+    text-underline-offset: 6px;
+  }
+  .lang {
+    grid-column: 9 / span 4;
+  }
+  /* The language switch is shared with the header. On Ink its colours are lifted to stay readable. */
+  .lang :global(.language-switch a) {
+    color: var(--color-fog);
+  }
+  .lang :global(.language-switch a[aria-current='true']) {
+    color: var(--color-paper);
+  }
+
+  @media (max-width: 760px) {
+    .site-footer {
+      display: block;
+      padding-top: 44px;
+    }
+    .site-footer > * + * {
+      margin-top: 28px;
+    }
+  }
+</style>

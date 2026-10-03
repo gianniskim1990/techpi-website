@@ -19,6 +19,12 @@ export const el: Dictionary = {
     euProjects: 'Ευρωπαϊκά έργα',
     about: 'Εταιρεία',
     contact: 'Επικοινωνία',
+    menu: 'Μενού',
+  },
+  footer: {
+    label: 'Υποσέλιδο',
+    // Greek legal line is written in Phase 3D, not invented here. Empty means it is not shown.
+    note: '',
   },
   language: {
     label: 'Γλώσσα',

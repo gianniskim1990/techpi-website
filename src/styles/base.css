@@ -61,7 +61,7 @@ svg {
 
 /* Visible keyboard focus on every interactive element. Per-surface colours arrive with the surfaces in 3B. */
 :focus-visible {
-  outline: 2px solid var(--color-techpi-blue);
+  outline: 2px solid var(--focus, var(--color-techpi-blue));
   outline-offset: 3px;
   border-radius: 2px;
 }
@@ -95,4 +95,87 @@ main:focus {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Surfaces. Each sets the text roles that components read, so a section only has to pick a surface.
+   Cyan is interaction and focus only, and only on Ink. */
+.s-paper {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  --sec-c: var(--color-graphite);
+  --ter: var(--color-slate);
+  --line: var(--color-rule);
+  --link: var(--color-techpi-blue);
+  --focus: var(--color-techpi-blue);
+}
+.s-ink {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  --sec-c: var(--color-fog);
+  --ter: var(--color-fog);
+  --line: rgba(240, 238, 233, 0.18);
+  --link: var(--color-cyan);
+  --focus: var(--color-cyan);
+}
+.s-blue {
+  background: var(--color-techpi-blue);
+  color: var(--color-sheet);
+  --sec-c: var(--color-sheet);
+  --ter: var(--color-sheet);
+  --line: rgba(250, 249, 246, 0.32);
+  --link: var(--color-sheet);
+  --focus: var(--color-sheet);
+}
+
+/* Text link: underlined, medium weight. Hover only changes colour or thickness. */
+.tlink {
+  font-weight: var(--weight-ui);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+}
+.tlink:hover {
+  color: var(--link);
+}
+.s-blue .tlink:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* The one button style. Pill, TechPi Blue on Paper, Sheet on Blue. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 0 30px;
+  border-radius: 999px;
+  background: var(--color-techpi-blue);
+  color: var(--color-sheet);
+  font-size: 1rem;
+  font-weight: var(--weight-ui);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--duration-fast) var(--ease-state);
+}
+.btn:hover {
+  background: #06339e;
+}
+.btn:focus-visible {
+  border-radius: 999px;
+}
+.s-blue .btn {
+  background: var(--color-sheet);
+  color: var(--color-techpi-blue);
+}
+.s-blue .btn:hover {
+  background: #fff;
 }

@@ -38,13 +38,16 @@ const t = getDictionary(locale);
 <style>
   .language-switch {
     display: flex;
-    gap: 14px;
+    gap: 4px;
     font-size: 0.8125rem;
   }
   .language-switch a {
+    display: inline-block;
+    min-width: 28px;
+    text-align: center;
     color: var(--color-slate);
     text-decoration: none;
-    padding: 12px 2px;
+    padding: 12px 6px;
   }
   .language-switch a[aria-current='true'] {
     color: var(--color-ink);

@@ -3,6 +3,8 @@
   // Verified behaviour and the reasons for these values: docs/production/architecture.md and routes.md.
   "name": "techpi-website",
   "compatibility_date": "2026-10-02",
+  // Enables Worker Previews (non-production branch preview builds). Inherits the settings above.
+  "previews": {},
   "assets": {
     "directory": "./dist",
     "not_found_handling": "404-page",

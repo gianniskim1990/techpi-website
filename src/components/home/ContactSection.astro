@@ -1,0 +1,113 @@
+---
+import type { HomeCopy } from '../../content/home.en';
+import { pathFor } from '../../i18n/routes';
+import type { Locale } from '../../i18n/locales';
+
+interface Props {
+  copy: HomeCopy['contact'];
+  locale: Locale;
+}
+
+const { copy, locale } = Astro.props;
+---
+
+{/* ARC to CIRCLE to TECHPI. The outer circle is built here. The final inner TechPi symbol is NOT: the vector
+    identity master does not exist, and the provisional raster must not be traced, approximated or published.
+    PRODUCTION TODO (vector asset handoff): resolve the circle into the real symbol inside `.ring`, as an inline
+    or imported SVG, and layer the Contact motion (3E) on top. Until then the ring stands on its own. */}
+<section class="contact s-blue" id="contact" aria-labelledby="contact-h">
+  <div class="ring" aria-hidden="true"></div>
+  <div class="mid">
+    <h2 id="contact-h">
+      {copy.heading.map((line) => <><span class="ln">{line}</span>{" "}</>)}
+    </h2>
+    <a class="btn" href={pathFor('contact', locale)}>{copy.cta}</a>
+  </div>
+  <p class="foot"><span>{copy.region}</span></p>
+</section>
+
+<style>
+  .contact {
+    position: relative;
+    overflow: hidden;
+    min-height: max(100svh, 760px);
+    padding: 0 var(--space-margin);
+    display: grid;
+    place-items: center;
+  }
+  .ring {
+    position: absolute;
+    left: 50%;
+    top: 47%;
+    width: min(760px, 78vh, 88vw);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border: 1.25px solid var(--color-sheet);
+    border-radius: 50%;
+    opacity: 0.5;
+  }
+  .mid {
+    position: relative;
+    margin-top: -6vh;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 44px;
+  }
+  h2 {
+    font-size: clamp(2.125rem, 5.6vw, 5rem);
+    line-height: 1.02;
+  }
+  h2 .ln {
+    display: block;
+  }
+  .foot {
+    position: absolute;
+    left: var(--space-margin);
+    right: var(--space-margin);
+    bottom: 36px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: var(--text-small);
+  }
+
+  @media (max-width: 760px) {
+    .contact {
+      min-height: max(100svh, 700px);
+      display: block;
+    }
+    .ring {
+      top: 112px;
+      width: calc(100vw - 32px);
+      transform: translateX(-50%);
+    }
+    .mid {
+      position: static;
+      margin: 0;
+      display: block;
+    }
+    h2 {
+      position: absolute;
+      left: 44px;
+      right: 44px;
+      top: 112px;
+      height: calc(100vw - 32px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.25rem;
+      line-height: 1.08;
+    }
+    .btn {
+      position: absolute;
+      left: var(--space-margin);
+      right: var(--space-margin);
+      top: calc(112px + 100vw - 32px + 36px);
+    }
+    .foot {
+      bottom: 24px;
+    }
+  }
+</style>
