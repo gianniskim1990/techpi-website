@@ -2,14 +2,16 @@
 interface Props {
   heading: string;
   lead?: string;
+  /** Extra room under the page head, for page-specific geometry that must finish clear of the text (About). */
+  roomBelow?: boolean;
 }
 
-const { heading, lead } = Astro.props;
+const { heading, lead, roomBelow = false } = Astro.props;
 ---
 
 {/* The page head of every secondary page: one h1 and one lead, offset to the right on desktop. No label, no
     button, no image. The default slot is for page-specific geometry only (the About arc). */}
-<section class="intro s-paper">
+<section class:list={['intro', 's-paper', { room: roomBelow }]}>
   <slot />
   <h1>{heading}</h1>
   {lead && <p class="lead">{lead}</p>}
@@ -37,7 +39,14 @@ const { heading, lead } = Astro.props;
     color: var(--sec-c);
   }
 
+  .room {
+    padding-bottom: 72px;
+  }
+
   @media (max-width: 760px) {
+    .room {
+      padding-bottom: 0;
+    }
     .intro {
       display: block;
       padding-top: 128px;

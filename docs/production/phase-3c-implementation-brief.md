@@ -213,3 +213,18 @@ SOWISE+ also shows "EU projects" as a capability, which is not one of the four f
 - Contact: no form and no fake form. Only the lead, "Greece and Europe", and the structure. Launch blocker: no confirmed email or phone.
 - **Launch blockers recorded:** `/eu-projects` is still a Phase 3A shell. Contact has no confirmed direct contact method. Case studies are not published. Privacy and Cookies pages are not built.
 - cAIrelink: no screenshots in 3C.1. Future media demo, mock or redacted only, with "All screens shown use demo data."
+
+---
+
+## 15. About: principles resolved (3C.1 completion)
+
+The blocked principles were replaced by approved wording. The four principles now used on `/about`, as headings:
+
+1. The business problem first. (supporting copy: "We start with how an organisation actually works, and choose technology after that.")
+2. AI where it creates value. Not where it creates noise.
+3. Built to run every day.
+4. Technology built around real business needs.
+
+"Not only to launch" and the "real work only / no stock imagery" line are not published. About also carries the approved evolution statement, the "Stayed / Changed" pair (verbatim from the brand brief, section 8) and "Pi stays. Tech says where we are going…" from the homepage. The hairline arc is shown at 1280px and up only, because below that width there is no position clear of the header and the lead.
+
+Facts still optional for About (omitted until supplied): founding year, base location beyond "Greece and Europe", legal entity name, when the name changed.

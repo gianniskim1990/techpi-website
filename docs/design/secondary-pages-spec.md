@@ -411,17 +411,17 @@ Short and forward-looking. Not a traditional agency About page: no team grid, no
 
 ### 6.1 Structure
 
-1. **Page head with the arc.** h1 "TechPi is the evolution of pigiota314." (approved). Lead "The name changed as the work evolved." (approved). **One cropped arc**, the same 1.25 px Ink line as the homepage hero, desktop only. Unlike the homepage it does not cross the header: it enters from the right edge below the header and leaves through the bottom of the page head, to the right of the lead. This is the only secondary page that carries the arc, because this is the page about the Pi.
-2. **"What changed, what stayed"**: the homepage Brand Statement pair layout (two columns, hairline above each):
+1. **Page head with the arc.** h1 "TechPi is the evolution of pigiota314." (approved). Lead "The name changed as the work evolved." (approved). **One cropped arc**, the same 1.25 px Ink line as the homepage hero, wide desktop only (1280px and up, the 12-column grid). Unlike the homepage it does not cross the header: it enters from the right edge below the header and leaves through the bottom of the page head, to the right of the lead. This is the only secondary page that carries the arc, because this is the page about the Pi.
+2. **"What stayed, what changed"**: the homepage Brand Statement pair layout (two columns, hairline above each):
    - Stayed: the Pi, the circular mark, the blue family, the client relationships and the people (from `techpi-brand-brief.md` section 8, approved).
    - Changed: a name that reads in any European language, a scope stated as technology and products, a refined visual language (same source).
    - One line on the name: "Pi stays. Tech says where we are going." (approved homepage copy).
-3. **"How we work"**: four or five principles as an index list (h3 plus one or two sentences each). Drafted only from approved positions:
-   - The business problem first, the technology second.
-   - AI where it creates value, not where it creates noise.
-   - Built to run every day, not just to launch.
-   - Real work only: no invented results, no stock imagery.
-   - **[to confirm]** A principle on European and international work, only if TechPi wants to state it.
+3. **"How we work"**: four principles as an index list, headings as approved (**approved final wording; do not restyle**):
+   - The business problem first. (supporting line: "We start with how an organisation actually works, and choose technology after that.")
+   - AI where it creates value. Not where it creates noise.
+   - Built to run every day.
+   - Technology built around real business needs.
+   Only the first carries supporting copy. No principle on European or international work, and none about imagery or results, is published.
 4. **Facts**, fact rows, **only if supplied**: founded, based in, languages, legal entity. If none are supplied, the section is omitted.
 5. Closer. Footer.
 

@@ -12,6 +12,33 @@ export const pagesEn = {
     covers: 'What it covers',
     indexLabel: 'Capabilities',
   },
+  about: {
+    heading: 'TechPi is the evolution of pigiota314.',
+    lead: 'The name changed as the work evolved.',
+    changeHeading: 'What stayed, what changed',
+    // From the approved brand brief, section 8 (kept and changed). Not rewritten.
+    stayed: {
+      label: 'Stayed',
+      text: 'The Pi, the circular mark, the blue and cyan family, the client relationships and the people.',
+    },
+    changed: {
+      label: 'Changed',
+      text: 'The name is now pronounceable and spellable in any European language, the scope is stated as technology and products, the visual language is refined.',
+    },
+    // Approved homepage Evolution copy.
+    name: 'Pi stays. Tech says where we are going: digital products, platforms and intelligent systems.',
+    principlesHeading: 'How we work',
+    // The four approved principles. Headings are used as approved. Only the first has supporting copy.
+    principles: [
+      {
+        heading: 'The business problem first.',
+        text: 'We start with how an organisation actually works, and choose technology after that.',
+      },
+      { heading: 'AI where it creates value. Not where it creates noise.' },
+      { heading: 'Built to run every day.' },
+      { heading: 'Technology built around real business needs.' },
+    ] as readonly { heading: string; text?: string }[],
+  },
   contact: {
     heading: 'Have something worth building?',
     lead: 'Tell us about the problem you need to solve.',
