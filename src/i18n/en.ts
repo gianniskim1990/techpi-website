@@ -18,6 +18,7 @@ export const en = {
     about: 'About',
     contact: 'Contact',
     menu: 'Menu',
+    close: 'Close',
   },
   footer: {
     label: 'Footer',

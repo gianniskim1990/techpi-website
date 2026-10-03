@@ -3,6 +3,8 @@
  * Components take this object as a prop, so the Greek homepage (Phase 3D) is a second object of the same type
  * and no component needs to change. Greek is not written here: it is not invented before 3D.
  *
+ * Project and capability data live in projects.ts and capabilities.ts, shared with the Work and Capabilities pages.
+ *
  * Nothing below states a metric, an outcome or a technology that is not confirmed.
  *
  * TODO (content, before launch): confirm each project's purpose, scope and capabilities with the client, then add a
@@ -36,61 +38,10 @@ export const homeEn = {
     heading: 'Selected work',
     label: 'Selected work',
     all: 'See all work',
-    projects: [
-      {
-        id: 'cairelink',
-        name: 'cAIrelink',
-        category: 'Healthcare platform',
-        summary: 'A custom web application for healthcare.',
-        capabilities: 'Digital products, Intelligence',
-      },
-      {
-        id: 'armans',
-        name: 'Arman’s Ethnic Street Food',
-        wordmark: 'Arman’s',
-        category: 'Direct ordering platform',
-        summary: 'A platform that lets the restaurant take orders directly from its customers.',
-        capabilities: 'Digital products, Web experiences',
-      },
-      {
-        id: 'sowise',
-        name: 'SOWISE+',
-        category: 'EU-funded digital platform',
-        summary: 'The digital platform of an EU-funded project.',
-        capabilities: 'Web experiences, EU projects',
-      },
-    ],
     factsLabel: 'Capabilities',
   },
   capabilities: {
     heading: 'What we build.',
-    items: [
-      {
-        title: 'Digital products',
-        text: 'Custom web applications, SaaS products and platforms, from first idea to a system that runs every day.',
-        list: ['Product strategy', 'UX and UI design', 'Engineering', 'Operation and support'],
-      },
-      {
-        title: 'Web experiences',
-        text: 'Corporate websites and e-commerce that carry a brand and a business.',
-        list: ['Design', 'Content structure', 'Development', 'Commerce'],
-      },
-      {
-        title: 'Intelligence',
-        text: 'AI and automation applied to specific problems inside real workflows.',
-        list: ['AI integrations', 'Assistants', 'Intelligent search', 'Automation'],
-      },
-      {
-        title: 'Digital visibility',
-        text: 'Making sure the right people, and the search and AI systems they ask, can find and understand what you have built.',
-        list: [
-          'Search strategy and SEO',
-          'Generative engine optimisation (GEO)',
-          'AI visibility',
-          'Technical performance and measurement',
-        ],
-      },
-    ],
   },
   intelligence: {
     heading: ['AI where it creates value.', 'Not where it creates noise.'],

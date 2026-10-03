@@ -7,7 +7,9 @@ import Evolution from '../components/home/Evolution.astro';
 import Hero from '../components/home/Hero.astro';
 import Intelligence from '../components/home/Intelligence.astro';
 import SelectedWork from '../components/home/SelectedWork.astro';
+import { capabilities } from '../content/capabilities';
 import { homeEn } from '../content/home.en';
+import { projects } from '../content/projects';
 import { getDictionary } from '../i18n';
 
 const t = getDictionary('en');
@@ -16,8 +18,8 @@ const t = getDictionary('en');
 <BaseLayout locale="en" page="home" title={t.pages.home.title} bleed>
   <Hero copy={homeEn.hero} locale="en" />
   <BrandStatement copy={homeEn.statement} />
-  <SelectedWork copy={homeEn.work} locale="en" />
-  <Capabilities copy={homeEn.capabilities} />
+  <SelectedWork copy={homeEn.work} projects={projects} locale="en" />
+  <Capabilities copy={homeEn.capabilities} items={capabilities} />
   <Intelligence copy={homeEn.intelligence} />
   <Evolution copy={homeEn.evolution} locale="en" />
   <ContactSection copy={homeEn.contact} locale="en" />

@@ -1,15 +1,20 @@
 ---
 import type { HomeCopy } from '../../content/home.en';
+import { capabilityName } from '../../content/capabilities';
+import type { Project } from '../../content/projects';
 import { pathFor } from '../../i18n/routes';
 import type { Locale } from '../../i18n/locales';
 
 interface Props {
   copy: HomeCopy['work'];
+  projects: readonly Project[];
   locale: Locale;
 }
 
-const { copy, locale } = Astro.props;
-const total = copy.projects.length;
+const { copy, projects, locale } = Astro.props;
+const total = projects.length;
+// Same visible text as the Gate B homepage: capability names, then any context. Homepage only.
+const facts = (p: Project) => [...p.capabilities.map(capabilityName), ...(p.context ?? [])].join(', ');
 ---
 
 {/* The Ink surface arrives behind the edge of a very large circle (desktop only, decorative). */}
@@ -22,8 +27,8 @@ const total = copy.projects.length;
   <h2 class="vh" id="work-h">{copy.heading}</h2>
   <div class="stack">
     {
-      copy.projects.map((p, i) => (
-        <article class="case" id={`case-${p.id}`}>
+      projects.map((p, i) => (
+        <article class="case" id={`case-${p.slug}`}>
           <div class="case-top">
             <span>{i === 0 ? copy.label : ''}</span>
             <span>{i + 1} / {total}</span>
@@ -39,7 +44,7 @@ const total = copy.projects.length;
               <dl class="facts">
                 <div>
                   <dt>{copy.factsLabel}</dt>
-                  <dd>{p.capabilities}</dd>
+                  <dd>{facts(p)}</dd>
                 </div>
               </dl>
             </div>
