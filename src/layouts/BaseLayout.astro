@@ -48,6 +48,8 @@ const indexable = import.meta.env.PUBLIC_ALLOW_INDEXING === 'true' && kind === '
     {canonical && <link rel="canonical" href={canonical} />}
     {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
     {!indexable && <meta name="robots" content="noindex, nofollow" />}
+    {/* No favicon exists yet (the final identity comes later). An empty icon stops the browser requesting /favicon.ico. */}
+    <link rel="icon" href="data:," />
     <TemporaryFonts />
   </head>
   <body>
@@ -59,6 +61,18 @@ const indexable = import.meta.env.PUBLIC_ALLOW_INDEXING === 'true' && kind === '
     <Footer locale={locale} page={hasRoute ? page : undefined} />
   </body>
 </html>
+
+<style is:global>
+  /* On short pages (a route shell) the footer stays at the bottom of the window instead of floating mid-page. */
+  body {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+  }
+  main {
+    flex: 1 0 auto;
+  }
+</style>
 
 <style>
   main {

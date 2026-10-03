@@ -109,10 +109,16 @@ const capabilities = project.capabilitiesConfirmed
       padding-top: 0;
     }
     .media {
-      aspect-ratio: 4 / 3;
+      aspect-ratio: 16 / 10;
     }
     .text {
       padding: 22px var(--space-margin) 0;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .media {
+      aspect-ratio: 4 / 3;
     }
   }
 </style>
