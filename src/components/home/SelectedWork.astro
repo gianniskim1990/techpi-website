@@ -126,6 +126,8 @@ const total = copy.projects.length;
   .case-txt {
     grid-column: 9 / span 4;
     padding-left: clamp(0px, 2vw, 32px);
+    /* Still low and editorial, but lifted off the media's bottom edge. Reset below 1024px. */
+    padding-bottom: 10vh;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
