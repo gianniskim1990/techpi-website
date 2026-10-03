@@ -4,6 +4,7 @@
  */
 export const pagesEn = {
   work: {
+    linkLabel: 'View case study',
     lead: 'Products, platforms and systems, each built around a real business need.',
   },
   capabilities: {
@@ -11,6 +12,7 @@ export const pagesEn = {
     lead: 'Four capabilities, brought together around the problem.',
     covers: 'What it covers',
     indexLabel: 'Capabilities',
+    seenIn: 'Seen in',
   },
   about: {
     heading: 'TechPi is the evolution of pigiota314.',
@@ -38,6 +40,19 @@ export const pagesEn = {
       { heading: 'Built to run every day.' },
       { heading: 'Technology built around real business needs.' },
     ] as readonly { heading: string; text?: string }[],
+  },
+  caseStudy: {
+    back: 'Work',
+    client: 'Client',
+    year: 'Year',
+    live: 'Live website',
+    overview: 'Overview',
+    need: 'The business need',
+    built: 'What we built',
+    capabilities: 'Capabilities',
+    technology: 'Technology',
+    outcome: 'Outcome',
+    next: 'Next project',
   },
   contact: {
     heading: 'Have something worth building?',

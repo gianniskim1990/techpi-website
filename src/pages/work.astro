@@ -16,7 +16,12 @@ const copy = pagesEn.work;
   <PageIntro heading={t.pages.work.heading} lead={copy.lead} />
   {/* All projects as large rows. No count thresholds or filters: scaling is design guidance only for now. */}
   <section class="list s-ink" aria-label={t.pages.work.heading}>
-    {projects.map((p, i) => <ProjectRow project={p} tone={(i % 3) + 1} capabilitiesLabel="Capabilities" />)}
+    {projects.map((p, i) => <ProjectRow
+        project={p}
+        tone={(i % 3) + 1}
+        capabilitiesLabel={pagesEn.capabilities.indexLabel}
+        linkLabel={copy.linkLabel}
+      />)}
   </section>
   <ClosingCTA heading={pagesEn.closer.heading} cta={pagesEn.closer.cta} href={pathFor('contact', 'en')} />
 </BaseLayout>

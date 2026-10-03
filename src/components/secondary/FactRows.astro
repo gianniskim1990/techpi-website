@@ -2,6 +2,8 @@
 interface Row {
   label: string;
   value?: string | undefined;
+  /** Makes the value an external link. The visible text should be the address. */
+  href?: string;
 }
 
 interface Props {
@@ -19,7 +21,15 @@ const rows = Astro.props.rows.filter((r): r is Required<Row> => Boolean(r.value)
         rows.map((r) => (
           <div>
             <dt>{r.label}</dt>
-            <dd>{r.value}</dd>
+            <dd>
+              {r.href ? (
+                <a class="tlink" href={r.href} rel="noopener" aria-label={`${r.value} (opens the live website)`}>
+                  {r.value} <span aria-hidden="true">↗</span>
+                </a>
+              ) : (
+                r.value
+              )}
+            </dd>
           </div>
         ))
       }

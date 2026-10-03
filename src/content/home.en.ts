@@ -38,6 +38,7 @@ export const homeEn = {
     heading: 'Selected work',
     label: 'Selected work',
     all: 'See all work',
+    caseLink: 'View case study',
     factsLabel: 'Capabilities',
   },
   capabilities: {
