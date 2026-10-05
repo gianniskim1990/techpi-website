@@ -24,11 +24,11 @@ Case studies at launch (revised in Phase 3C.2). The portfolio comes from the pub
 
 | Project | English | Greek |
 |---|---|---|
-| Rocketeer | `/work/rocketeer` | `/el/work/rocketeer` (Phase 3D) |
-| Arman's Ethnic Street Food | `/work/armans` | `/el/work/armans` (Phase 3D) |
-| Logotherapia Xanthi | `/work/logotherapia-xanthi` | `/el/work/logotherapia-xanthi` (Phase 3D) |
+| Rocketeer | `/work/rocketeer` | `/el/work/rocketeer` |
+| Arman's Ethnic Street Food | `/work/armans` | `/el/work/armans` |
+| Logotherapia Xanthi | `/work/logotherapia-xanthi` | `/el/work/logotherapia-xanthi` |
 
-Index-only projects have a row on `/work` and no page of their own: Level Up Education App, Saloon, Physio and Project4You. A project gets a route only when it has a published case study. The Greek case-study pages are built in Phase 3D, and until then each English case study declares itself as its only language alternate.
+Index-only projects have a row on `/work` and no page of their own: Level Up Education App, Saloon, Physio and Project4You. A project gets a route only when it has a published case study. Since Phase 3D every case study exists in both languages with reciprocal hreflang. Route pairs and Greek terminology: `localisation.md`.
 
 Notes:
 

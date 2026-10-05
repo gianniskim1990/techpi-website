@@ -77,6 +77,11 @@ const copy = pages.about;
     }
   }
 
+  /* The Greek lead is longer: it wraps earlier so the arc still passes clear of it. */
+  :global(.intro:has(.arc) .lead:lang(el)) {
+    max-width: 22ch;
+  }
+
   .pair {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

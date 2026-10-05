@@ -141,6 +141,16 @@ const target: Record<(typeof items)[number], PageKey> = {
     align-items: center;
     gap: 22px;
   }
+  /* Greek labels are longer. Tighter gaps keep the desktop navigation clear of the homepage arc. */
+  .site-header:lang(el) {
+    gap: 32px;
+  }
+  .site-nav ul:lang(el) {
+    gap: 22px;
+  }
+  .util:lang(el) {
+    gap: 16px;
+  }
   .menu {
     display: none;
     padding: 12px 0;
