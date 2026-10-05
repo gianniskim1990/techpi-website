@@ -16,11 +16,16 @@ interface Props {
   /** Written copy only. Omitted when there is none, never generated. */
   description?: string;
   kind?: 'page' | 'notfound';
+  /**
+   * Canonical path for a page that is not in the route map (a case study). Its language alternates are limited to
+   * itself until the Greek version exists. Pass `page` too, so the header marks the right section.
+   */
+  path?: string;
   /** Full-bleed pages (the homepage) lay out their own sections. Shell pages get the padded container. */
   bleed?: boolean;
 }
 
-const { locale, page, title, description, kind = 'page', bleed = false } = Astro.props;
+const { locale, page, title, description, kind = 'page', path, bleed = false } = Astro.props;
 const t = getDictionary(locale);
 
 // Canonical and hreflang URLs come from the route map, never from Astro.url
@@ -30,8 +35,12 @@ if (!site) throw new Error('astro.config.mjs must set `site` so canonical URLs c
 const absolute = (path: string) => new URL(path, site).href;
 
 const hasRoute = kind === 'page' && page !== undefined;
-const canonical = hasRoute ? absolute(pathFor(page, locale)) : undefined;
-const alternates = hasRoute ? alternatesFor(page).map((a) => ({ hreflang: a.hreflang, href: absolute(a.path) })) : [];
+const canonical = path ? absolute(path) : hasRoute ? absolute(pathFor(page, locale)) : undefined;
+const alternates = path
+  ? [{ hreflang: locale, href: absolute(path) }, { hreflang: 'x-default', href: absolute(path) }]
+  : hasRoute
+    ? alternatesFor(page).map((a) => ({ hreflang: a.hreflang, href: absolute(a.path) }))
+    : [];
 
 // Safe default: nothing is indexable until launch. Only an explicit PUBLIC_ALLOW_INDEXING=true build is,
 // and a 404 is never indexable.

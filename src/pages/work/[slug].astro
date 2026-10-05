@@ -1,0 +1,338 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FactRows from '../../components/secondary/FactRows.astro';
+import SectionSplit from '../../components/secondary/SectionSplit.astro';
+import { capabilityName } from '../../content/capabilities';
+import { pagesEn } from '../../content/pages.en';
+import { caseStudies, nextCaseStudy, type Project, type ProjectImage } from '../../content/projects';
+import { caseStudyPath, pathFor } from '../../i18n/routes';
+
+export function getStaticPaths() {
+  return caseStudies.map((project) => ({ params: { slug: project.slug }, props: { project } }));
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const study = project.caseStudy;
+if (!study) throw new Error(`${project.slug} has no case study.`);
+
+const copy = pagesEn.caseStudy;
+const next = nextCaseStudy(project.slug);
+const gallery: readonly ProjectImage[] = study.gallery ?? [];
+const imageSizes = '(min-width: 1440px) 1312px, 100vw';
+---
+
+{/* The reusable case-study template. Every block except the hero, cover, overview, need, what we built and next
+    project is optional: a block with no supported content is simply not rendered. No metrics, no KPI blocks, no
+    testimonials. */}
+<BaseLayout
+  locale="en"
+  page="work"
+  path={caseStudyPath(project.slug)}
+  title={`${project.name} | TechPi`}
+  description={project.summary}
+  bleed
+>
+  <section class="hero s-paper">
+    <div class="intro">
+      <a class="back" href={pathFor('work', 'en')}>← {copy.back}</a>
+      <p class="cat">{project.category}</p>
+      <h1>{project.name}</h1>
+      <p class="lead">{project.summary}</p>
+    </div>
+    <div class="facts">
+      <FactRows
+        rows={[
+          { label: copy.client, value: study.client },
+          { label: copy.year, value: study.year ? String(study.year) : undefined },
+          {
+            label: copy.live,
+            value: study.liveUrl ? study.liveUrl.replace(/^https?:\/\//, '').replace(/\/$/, '') : undefined,
+            href: study.liveUrl,
+          },
+        ]}
+      />
+    </div>
+  </section>
+
+  <figure class="media s-ink cover">
+    <Image
+      src={study.cover.src}
+      alt={study.cover.alt}
+      widths={[640, 960, 1440, 1920]}
+      sizes={imageSizes}
+      format="webp"
+      quality={85}
+      loading="eager"
+    />
+    {study.cover.caption && <figcaption>{study.cover.caption}</figcaption>}
+  </figure>
+
+  <SectionSplit id="overview" heading={copy.overview}>
+    {study.overview.map((p, i) => <p class={i === 0 ? 'lead-text' : 'read'}>{p}</p>)}
+  </SectionSplit>
+
+  <SectionSplit id="need" heading={copy.need}>
+    {study.need.map((p) => <p class="read">{p}</p>)}
+  </SectionSplit>
+
+  <SectionSplit id="built" heading={copy.built}>
+    {study.built.intro && <p class="read">{study.built.intro}</p>}
+    <ul class="ruled">
+      {study.built.items.map((item) => <li>{item}</li>)}
+    </ul>
+    <p class="capline">
+      <span class="label">{copy.capabilities}</span>
+      {
+        project.capabilities.map((id, i) => (
+          <>
+            {i > 0 && ', '}
+            <a class="tlink" href={`${pathFor('capabilities', 'en')}#${id}`}>
+              {capabilityName(id)}
+            </a>
+          </>
+        ))
+      }
+    </p>
+  </SectionSplit>
+
+  {
+    gallery.length > 0 && (
+      <section class="media s-ink gallery" aria-label={project.name}>
+        {gallery.map((image) => (
+          <figure>
+            <Image
+              src={image.src}
+              alt={image.alt}
+              widths={[640, 960, 1440, 1920]}
+              sizes={imageSizes}
+              format="webp"
+              quality={85}
+            />
+            {image.caption && <figcaption>{image.caption}</figcaption>}
+          </figure>
+        ))}
+      </section>
+    )
+  }
+
+  {
+    study.technology && study.technology.length > 0 && (
+      <SectionSplit id="technology" heading={copy.technology}>
+        <ul class="ruled">
+          {study.technology.map((item) => <li>{item}</li>)}
+        </ul>
+      </SectionSplit>
+    )
+  }
+
+  {
+    study.outcome && study.outcome.length > 0 && (
+      <SectionSplit id="outcome" heading={copy.outcome}>
+        <ul class="ruled">
+          {study.outcome.map((item) => <li>{item}</li>)}
+        </ul>
+      </SectionSplit>
+    )
+  }
+
+  {/* The curved Ink edge hands over to the next project. Desktop only, decorative. */}
+  <div class="edge" aria-hidden="true"><div></div></div>
+  <a class="next s-ink" href={caseStudyPath(next.slug)} aria-label={`${copy.next}: ${next.name}`}>
+    <span class="cat">{copy.next}</span>
+    <span class="next-name">{next.name}</span>
+    <span class="next-cat">{next.category}</span>
+    <span class="tlink">{copy.next} →</span>
+  </a>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: 168px var(--space-margin) 72px;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+  }
+  .intro {
+    grid-column: 1 / span 7;
+  }
+  .back {
+    display: inline-block;
+    margin-bottom: 48px;
+    padding: 8px 0;
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    text-decoration: none;
+  }
+  .back:hover {
+    text-decoration: underline;
+    text-underline-offset: 6px;
+  }
+  .cat {
+    font-size: 0.8125rem;
+    font-weight: var(--weight-ui);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ter);
+  }
+  h1 {
+    margin-top: 14px;
+    font-size: var(--text-display-l);
+    line-height: 1.02;
+  }
+  .lead {
+    margin-top: 28px;
+    max-width: 34ch;
+    font-size: var(--text-lead);
+    line-height: 1.42;
+    color: var(--sec-c);
+  }
+  .facts {
+    grid-column: 9 / span 4;
+    align-self: end;
+  }
+
+  /* Media bands on Ink. Images keep their own proportions, centred on the field and never cropped. */
+  .media {
+    margin: 0;
+    padding: 56px var(--space-margin);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .media figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%;
+  }
+  .media :global(img) {
+    max-width: 100%;
+    max-height: min(80vh, 760px);
+    width: auto;
+    height: auto;
+  }
+  .media figcaption {
+    margin-top: 14px;
+    align-self: flex-start;
+    font-size: var(--text-small);
+    color: var(--ter);
+  }
+  .gallery {
+    margin-top: var(--space-section);
+    gap: 40px;
+  }
+  .gallery + :global(section) {
+    margin-top: var(--space-section);
+  }
+
+  .lead-text {
+    max-width: 36ch;
+    font-size: var(--text-lead);
+    line-height: 1.42;
+  }
+  .read {
+    max-width: 640px;
+    color: var(--sec-c);
+  }
+  .read + .read,
+  .lead-text + .read {
+    margin-top: 16px;
+  }
+  .ruled {
+    margin-top: 28px;
+  }
+  .read + .ruled {
+    margin-top: 24px;
+  }
+  .capline {
+    margin-top: 32px;
+    font-size: var(--text-small);
+  }
+  .label {
+    margin-right: 12px;
+    font-weight: var(--weight-ui);
+    color: var(--ter);
+  }
+
+  .edge {
+    position: relative;
+    height: 18.4vw;
+    overflow: hidden;
+    margin-top: var(--space-section);
+    margin-bottom: -1px;
+    background: var(--color-paper);
+  }
+  .edge > div {
+    position: absolute;
+    width: 583.4vw;
+    height: 583.4vw;
+    border-radius: 50%;
+    left: calc(100% - 293vw);
+    top: 0.7vw;
+    background: var(--color-ink);
+  }
+  .next {
+    display: block;
+    padding: 40px var(--space-margin) 120px;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+  }
+  .next-name {
+    display: block;
+    margin: 18px 0 10px;
+    font-size: var(--text-display-l);
+    font-weight: var(--weight-display);
+    line-height: 1.02;
+    letter-spacing: -0.024em;
+    text-wrap: balance;
+  }
+  .next-cat {
+    display: block;
+    font-size: var(--text-lead);
+    line-height: 1.42;
+    color: var(--sec-c);
+  }
+  .next .tlink {
+    display: inline-block;
+    margin-top: 36px;
+  }
+  .next:hover .tlink {
+    color: var(--link);
+  }
+
+  @media (max-width: 760px) {
+    .hero {
+      display: block;
+      padding-top: 112px;
+      padding-bottom: 40px;
+    }
+    .back {
+      margin-bottom: 32px;
+    }
+    .facts {
+      margin-top: 32px;
+    }
+    .media {
+      padding: 32px 0;
+    }
+    .media figcaption {
+      padding: 0 var(--space-margin);
+    }
+    .gallery {
+      gap: 28px;
+    }
+    .edge {
+      display: none;
+    }
+    .next {
+      margin-top: var(--space-section);
+      padding-top: 64px;
+    }
+  }
+</style>

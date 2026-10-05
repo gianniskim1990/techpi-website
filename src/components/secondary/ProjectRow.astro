@@ -1,33 +1,72 @@
 ---
+import { Image } from 'astro:assets';
 import { capabilityName } from '../../content/capabilities';
 import type { Project } from '../../content/projects';
+import { caseStudyPath } from '../../i18n/routes';
 import FactRows from './FactRows.astro';
 
 interface Props {
   project: Project;
-  /** 1, 2 or 3: picks one of the three neutral placeholder tints. */
+  /** 1, 2 or 3: picks one of the three neutral tints for the media field. */
   tone: number;
   capabilitiesLabel: string;
+  linkLabel: string;
 }
 
-const { project, tone, capabilitiesLabel } = Astro.props;
-// Capabilities are shown only once confirmed. Until then the row carries category, name and summary only.
-const capabilities = project.capabilitiesConfirmed
-  ? [...project.capabilities.map(capabilityName), ...(project.context ?? [])].join(', ')
-  : undefined;
+const { project, tone, capabilitiesLabel, linkLabel } = Astro.props;
+const capabilities = project.capabilities.map(capabilityName).join(', ');
+// A row links to its case study only when that page exists. Index-only projects stay plain.
+const href = project.caseStudy ? caseStudyPath(project.slug) : undefined;
+const placeholderWord = project.name.split(' ')[0];
 ---
 
-{/* One large editorial row on Ink. The media is a neutral placeholder: no imagery exists yet and no screen is
-    faked. No link yet: a row links to its case study only once that page exists (Phase 3C.2). */}
+{/* One large editorial row on Ink. Real project imagery where it exists, flat on a neutral field and never
+    cropped. Without an image, a neutral placeholder. The media is decorative for assistive technology: the row's
+    heading and link carry the meaning. */}
 <article class="row">
-  <div class={`media tone-${tone}`} aria-hidden="true">
-    <span class="word">{project.wordmark ?? project.name}</span>
-  </div>
+  {
+    href ? (
+      <a class={`media tone-${tone}`} href={href} tabindex="-1" aria-hidden="true">
+        {project.image && (
+          <Image
+            src={project.image.src}
+            alt=""
+            widths={[640, 960, 1280]}
+            sizes="(min-width: 1024px) 60vw, 100vw"
+            format="webp"
+            quality={82}
+          />
+        )}
+      </a>
+    ) : (
+      <div class={`media tone-${tone}`} aria-hidden="true">
+        {project.image ? (
+          <Image
+            src={project.image.src}
+            alt=""
+            widths={[640, 960, 1280]}
+            sizes="(min-width: 1024px) 60vw, 100vw"
+            format="webp"
+            quality={82}
+          />
+        ) : (
+          <span class="word">{placeholderWord}</span>
+        )}
+      </div>
+    )
+  }
   <div class="text">
     <p class="cat">{project.category}</p>
     <h2>{project.name}</h2>
     <p class="sum">{project.summary}</p>
     <FactRows rows={[{ label: capabilitiesLabel, value: capabilities }]} />
+    {
+      href && (
+        <a class="tlink" href={href} aria-label={`${linkLabel}: ${project.name}`}>
+          {linkLabel} →
+        </a>
+      )
+    }
   </div>
 </article>
 
@@ -48,6 +87,17 @@ const capabilities = project.capabilitiesConfirmed
     position: relative;
     overflow: hidden;
     aspect-ratio: 16 / 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4%;
+  }
+  .media :global(img) {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
   }
   .tone-1 {
     background: #131b36;
@@ -98,6 +148,10 @@ const capabilities = project.capabilitiesConfirmed
   .text :global(.facts) {
     margin-top: 26px;
   }
+  .text .tlink {
+    margin-top: 28px;
+    align-self: flex-start;
+  }
 
   @media (max-width: 1023px) {
     .row {
@@ -119,6 +173,7 @@ const capabilities = project.capabilitiesConfirmed
   @media (max-width: 760px) {
     .media {
       aspect-ratio: 4 / 3;
+      padding: 5%;
     }
   }
 </style>

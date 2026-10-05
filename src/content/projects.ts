@@ -1,59 +1,285 @@
+import type { ImageMetadata } from 'astro';
 import type { CapabilityId } from './capabilities';
+import armansAdmin from '../assets/projects/armans-admin.png';
+import armansDevices from '../assets/projects/armans-devices.png';
+import logotherapiaSite from '../assets/projects/logotherapia-site.jpg';
+import rocketeerAdmin from '../assets/projects/rocketeer-admin-dashboard.png';
+import rocketeerSignIn from '../assets/projects/rocketeer-sign-in.png';
 
 /**
- * The single source of truth for the three current projects. The homepage and the Work index read from here.
- * English text, from the approved homepage. Greek arrives in Phase 3D.
+ * The single source of truth for TechPi's v1 portfolio. The homepage, the Work index, the Capabilities page and the
+ * case-study pages all read from here. English text. Greek arrives in Phase 3D.
  *
- * Only confirmed facts are stored. Everything else a case study needs (purpose, scope, role, technology, year,
- * imagery, URL, outcomes, EU data) is deliberately absent: see docs/production/phase-3c-implementation-brief.md.
- * No field exists for metrics or results.
+ * Every fact comes from the public pigiota314 portfolio, as recorded in docs/content/portfolio-migration.md
+ * (which lists each source URL). Nothing here is inferred. There is no field for metrics or results: a case study
+ * states outcomes only where the source states them, and then in words.
  *
- * `capabilities` holds ONLY the four capability ids. Other classification is `context`, kept separate, because
- * something like "EU projects" is not a TechPi capability.
+ * Three different things are kept separate on purpose:
+ *   featured    appears in Selected work on the homepage
+ *   listed      appears in the Work index (every project here is listed)
+ *   caseStudy   has a published case-study page. A project with no `caseStudy` is an index row with no link.
  */
+
+export interface ProjectImage {
+  src: ImageMetadata;
+  /** Describes what is shown. Required for every image. */
+  alt: string;
+  caption?: string;
+}
+
+export interface CaseStudy {
+  /** The client as named publicly, where the source names one. */
+  client?: string;
+  year?: number;
+  /** The public website of the project, where the source gives one. Shown only on the case-study page. */
+  liveUrl?: string;
+  overview: readonly string[];
+  need: readonly string[];
+  built: {
+    intro?: string;
+    items: readonly string[];
+  };
+  technology?: readonly string[];
+  /** Only where the source states real outcomes, and only qualitatively. Absent otherwise. */
+  outcome?: readonly string[];
+  cover: ProjectImage;
+  gallery?: readonly ProjectImage[];
+}
+
 export interface Project {
-  /** Stable, Latin, lower case. Matches docs/production/routes.md. Not used as a link target until 3C.2. */
+  /** Stable, Latin, lower case. Locked in docs/production/routes.md. */
   slug: string;
   name: string;
-  /** Large faint word on the neutral media placeholder, where the full name is too long. */
-  wordmark?: string;
   category: string;
   summary: string;
+  /** Only the four capability ids, and only where the source supports the mapping. */
   capabilities: readonly CapabilityId[];
-  /** Additional classification that is not a capability, for example the funding context. */
-  context?: readonly string[];
-  /**
-   * False until TechPi confirms the capability assignment for this project. Unconfirmed values are kept for
-   * design continuity on the homepage (where they were approved at Gate B), and are not shown anywhere new.
-   */
-  capabilitiesConfirmed: boolean;
+  featured: boolean;
+  /** The real image shown on the homepage and Work rows. Absent: a neutral placeholder is shown. */
+  image?: ProjectImage;
+  /** Present only for a published case study. */
+  caseStudy?: CaseStudy;
+  /** The public pigiota314 page this entry was migrated from (internal traceability). */
+  source: string;
 }
+
+const src = 'https://pigiota314.gr/case-studies/';
 
 export const projects: readonly Project[] = [
   {
-    slug: 'cairelink',
-    name: 'cAIrelink',
-    category: 'Healthcare platform',
-    summary: 'A custom web application for healthcare.',
-    capabilities: ['digital-products', 'intelligence'],
-    capabilitiesConfirmed: false,
+    slug: 'rocketeer',
+    name: 'Rocketeer',
+    category: 'Delivery operations platform',
+    summary: 'A custom web application that organises delivery requests, drivers and assignments in one place.',
+    capabilities: ['digital-products'],
+    featured: true,
+    source: `${src}rocketeer-custom-web-application/`,
+    image: {
+      src: rocketeerAdmin,
+      alt: 'The Rocketeer administration dashboard: a side menu, summary counts for pending and active requests, businesses and drivers, and a list of recent requests.',
+    },
+    caseStudy: {
+      client: 'Rocketeer',
+      year: 2026,
+      liveUrl: 'https://rocketeer.gr/',
+      overview: [
+        'Rocketeer Dispatch is a custom web application for running a delivery service. It brings partner businesses, the administrator and drivers into one digital environment, where requests are created, assigned and followed through to delivery.',
+      ],
+      need: [
+        'Three groups needed different things from the same system. Partner businesses needed a simple way to submit delivery or shift requests. Drivers needed a clear view of their current and upcoming assignments and of the status of each request. The administrator needed full oversight of requests, drivers, businesses, assignments and key financial figures.',
+        'All of it had to be fast and simple to use in real operating conditions, where decisions are made on the spot.',
+      ],
+      built: {
+        items: [
+          'Role-based dashboards for administrators, businesses and drivers, each showing only what that role needs',
+          'An admin panel for managing businesses, drivers, requests and assignments',
+          'A business panel for creating delivery or shift requests',
+          'A driver panel showing active and upcoming assignments',
+          'Manual driver assignment, so the administrator keeps control',
+          'A request flow that keeps new requests manageable even when no driver is immediately available',
+          'A mobile-friendly interface for everyday use by drivers and businesses',
+        ],
+      },
+      technology: [
+        'React',
+        'TypeScript',
+        'Tailwind CSS',
+        'Supabase, including Supabase Auth',
+        'Leaflet and OpenStreetMap',
+      ],
+      outcome: [
+        'Businesses, drivers and requests are managed in one place.',
+        'Active and upcoming assignments are clearer.',
+        'Less need for constant coordination by phone or message.',
+        'Easier everyday use on mobile devices for drivers and businesses.',
+        'A base that can be extended with further features.',
+      ],
+      cover: {
+        src: rocketeerAdmin,
+        alt: 'The Rocketeer administration dashboard: a side menu, summary counts for pending and active requests, businesses and drivers, and a list of recent requests.',
+      },
+      gallery: [
+        {
+          src: rocketeerSignIn,
+          alt: 'The Rocketeer sign-in screen, with the Rocketeer logo above an email and password form.',
+        },
+      ],
+    },
   },
   {
     slug: 'armans',
     name: 'Arman’s Ethnic Street Food',
-    wordmark: 'Arman’s',
     category: 'Direct ordering platform',
     summary: 'A platform that lets the restaurant take orders directly from its customers.',
     capabilities: ['digital-products', 'web-experiences'],
-    capabilitiesConfirmed: false,
+    featured: true,
+    source: `${src}armans-ethnic-street-food-online-ordering/`,
+    image: {
+      src: armansDevices,
+      alt: 'The Arman’s Ethnic Street Food website shown on a laptop, a tablet and a phone.',
+    },
+    caseStudy: {
+      client: 'Arman’s Ethnic Street Food',
+      year: 2026,
+      liveUrl: 'https://armanstreetfood.gr/',
+      overview: [
+        'A custom online ordering platform for Arman’s Ethnic Street Food. Customers browse the digital menu, add items to their basket and complete the order on the restaurant’s own website. A separate management environment lets the business run its products, orders and the overall flow of the system.',
+      ],
+      need: [
+        'The restaurant needed its own online ordering channel: easy for customers, and giving the business more control over its digital orders without depending entirely on third-party marketplace platforms.',
+        'The experience had to reflect the brand and keep ordering quick, especially on mobile. Behind it, the business needed one central system for the menu and incoming orders.',
+      ],
+      built: {
+        intro:
+          'One platform that combines the restaurant’s website, digital menu, basket, checkout and order management.',
+        items: [
+          'An administration dashboard for the menu and for orders',
+          'Support for different payment methods',
+          'A mobile-first build that works across phones, tablets and desktops',
+          'Progressive Web App support, for an app-like experience directly in the browser',
+        ],
+      },
+      technology: [
+        'Custom web application',
+        'Progressive Web App',
+        'Responsive web development',
+        'Online payment integration',
+        'Custom administration dashboard',
+        'Order management system',
+      ],
+      outcome: [
+        'The restaurant has its own direct channel for online orders.',
+        'Its online presence, menu and ordering sit in one branded experience.',
+        'The business has more control over the menu, the orders and the customer experience.',
+      ],
+      cover: {
+        src: armansDevices,
+        alt: 'The Arman’s Ethnic Street Food website shown on a laptop, a tablet and a phone.',
+      },
+      gallery: [
+        {
+          src: armansAdmin,
+          alt: 'The management area of the Arman’s website, with four sections: menu, settings, orders and statistics.',
+        },
+      ],
+    },
   },
   {
-    slug: 'sowise-plus',
-    name: 'SOWISE+',
-    category: 'EU-funded digital platform',
-    summary: 'The digital platform of an EU-funded project.',
-    capabilities: ['web-experiences'],
-    context: ['EU projects'],
-    capabilitiesConfirmed: false,
+    slug: 'logotherapia-xanthi',
+    name: 'Logotherapia Xanthi',
+    category: 'Therapy centre website',
+    summary:
+      'A redesigned website for a speech and occupational therapy centre in Xanthi, organised so families can find information and get in touch easily.',
+    capabilities: ['web-experiences', 'digital-visibility'],
+    featured: true,
+    source: `${src}logotherapia-xanthi-website-redesign/`,
+    image: {
+      src: logotherapiaSite,
+      alt: 'The Logotherapia Xanthi website: the site navigation above a section explaining speech therapy and occupational therapy.',
+    },
+    caseStudy: {
+      client: 'Speech and Occupational Therapy Centre, Xanthi',
+      year: 2026,
+      liveUrl: 'https://logotherapia-xanthi.gr/',
+      overview: [
+        'A redesign of the website of a speech and occupational therapy centre in Xanthi, aiming for a more modern, friendly and usable presence. The design reflects the centre’s human, child-centred character while keeping a clean, professional image.',
+        'Content is organised so parents can easily find the services offered, the conditions treated, the therapy space and how to make contact.',
+      ],
+      need: [
+        'The existing site needed renewing to present the centre’s services and approach more clearly. The main challenge was to organise a wide range of information simply for parents, without the site feeling cold or overly clinical.',
+        'It also needed modern navigation that works on every device and leads visitors quickly to the information and contact details they need.',
+      ],
+      built: {
+        items: [
+          'A clear information architecture, with separate sections for services, conditions, the therapy space, insurance funds and contact',
+          'A design with soft colours, readable typography, photography of the therapy environment and clear calls to action for an assessment or appointment',
+          'A responsive layout for phones, tablets and desktops',
+          'A content structure that helps both visitors and search engines understand the centre’s services',
+        ],
+      },
+      technology: ['WordPress', 'Responsive design', 'On-page SEO', 'Performance optimisation'],
+      cover: {
+        src: logotherapiaSite,
+        alt: 'The Logotherapia Xanthi website: the site navigation above a section explaining speech therapy and occupational therapy.',
+        caption: 'A capture of the live website.',
+      },
+    },
+  },
+  {
+    slug: 'level-up-education-app',
+    name: 'Level Up Education App',
+    category: 'Education management application',
+    summary:
+      'A web application for managing students, courses and the day-to-day operations of a tutoring centre.',
+    capabilities: ['digital-products'],
+    featured: false,
+    source: `${src}level-up-education-app/`,
+  },
+  {
+    slug: 'saloon',
+    name: 'Saloon',
+    category: 'Booking platform',
+    summary:
+      'An online booking web application for beauty businesses, with a public booking page, a client dashboard and plan-based features.',
+    capabilities: ['digital-products'],
+    featured: false,
+    source: `${src}saloon/`,
+  },
+  {
+    slug: 'physio',
+    name: 'Physio',
+    category: 'Appointment management platform',
+    summary: 'A platform for physiotherapists and physiotherapy clinics to organise appointments and sessions.',
+    capabilities: ['digital-products'],
+    featured: false,
+    source: `${src}physio/`,
+  },
+  {
+    slug: 'project4you',
+    name: 'Project4You',
+    category: 'CMS platform',
+    summary: 'A CMS web application for creating digital invitations and websites, built on builder-style logic.',
+    capabilities: ['digital-products'],
+    featured: false,
+    source: `${src}project4you/`,
   },
 ];
+
+/** Projects shown in Selected work on the homepage, in order. */
+export const featuredProjects: readonly Project[] = projects.filter((p) => p.featured);
+
+/** Projects with a published case study, in a fixed order. Drives the case-study routes and "Next project". */
+export const caseStudies: readonly Project[] = projects.filter((p) => p.caseStudy);
+
+/** The case study that follows this one, wrapping from the last back to the first. Deterministic. */
+export function nextCaseStudy(slug: string): Project {
+  const i = caseStudies.findIndex((p) => p.slug === slug);
+  const next = caseStudies[(i + 1) % caseStudies.length];
+  if (i < 0 || !next) throw new Error(`No published case study with slug: ${slug}`);
+  return next;
+}
+
+/** Published case studies that show a capability. Used for "Seen in". */
+export function caseStudiesFor(capability: CapabilityId): readonly Project[] {
+  return caseStudies.filter((p) => p.capabilities.includes(capability));
+}

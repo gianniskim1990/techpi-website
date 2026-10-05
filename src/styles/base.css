@@ -184,3 +184,12 @@ main:focus {
 html:has(dialog[open]) {
   overflow: hidden;
 }
+
+/* A plain ruled list: hairline above each item and below the last. */
+.ruled > li {
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+.ruled > li:last-child {
+  border-bottom: 1px solid var(--line);
+}

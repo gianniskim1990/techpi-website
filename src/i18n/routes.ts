@@ -44,3 +44,8 @@ export function alternatesFor(page: PageKey): Alternate[] {
   const versions: Alternate[] = locales.map((locale) => ({ hreflang: locale, path: pathFor(page, locale) }));
   return [...versions, { hreflang: 'x-default', path: pathFor(page, defaultLocale) }];
 }
+
+/** The canonical path of a case study. Case studies are English-only until Phase 3D adds the Greek versions. */
+export function caseStudyPath(slug: string, locale: Locale = defaultLocale): string {
+  return `${prefix(locale)}/work/${slug}`;
+}

@@ -20,13 +20,15 @@ English is the default language and has no prefix. Greek lives under `/el/`. Slu
 | Cookies | `/cookies` | `/el/cookies` |
 | Not found | `404` | Greek `404` under `/el/` |
 
-Case studies at launch:
+Case studies at launch (revised in Phase 3C.2). The portfolio comes from the public pigiota314 portfolio, audited in `docs/content/portfolio-migration.md`. The earlier cAIrelink and SOWISE+ routes were never built, launched or indexed, so they are removed from the plan with no redirects.
 
 | Project | English | Greek |
 |---|---|---|
-| cAIrelink | `/work/cairelink` | `/el/work/cairelink` |
-| Arman's Ethnic Street Food | `/work/armans` | `/el/work/armans` |
-| SOWISE+ | `/work/sowise-plus` | `/el/work/sowise-plus` |
+| Rocketeer | `/work/rocketeer` | `/el/work/rocketeer` (Phase 3D) |
+| Arman's Ethnic Street Food | `/work/armans` | `/el/work/armans` (Phase 3D) |
+| Logotherapia Xanthi | `/work/logotherapia-xanthi` | `/el/work/logotherapia-xanthi` (Phase 3D) |
+
+Index-only projects have a row on `/work` and no page of their own: Level Up Education App, Saloon, Physio and Project4You. A project gets a route only when it has a published case study. The Greek case-study pages are built in Phase 3D, and until then each English case study declares itself as its only language alternate.
 
 Notes:
 
@@ -149,7 +151,7 @@ Routes are derived from the route map and from each case study's slug, which is 
 | Topic | Decision |
 |---|---|
 | Trailing slash | None on normal pages. `/` and `/el/` keep theirs |
-| Case-study slugs | `cairelink`, `armans`, `sowise-plus` |
+| Case-study slugs | `rocketeer`, `armans`, `logotherapia-xanthi` |
 | Capabilities | One page with anchors at launch |
 | Locale redirect | None. User-controlled only |
 | `techpi.gr` | May redirect to `/el/` later. Not part of this phase |

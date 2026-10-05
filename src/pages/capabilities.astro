@@ -4,16 +4,17 @@ import ClosingCTA from '../components/secondary/ClosingCTA.astro';
 import PageIntro from '../components/secondary/PageIntro.astro';
 import SectionSplit from '../components/secondary/SectionSplit.astro';
 import { capabilities } from '../content/capabilities';
+import { caseStudiesFor } from '../content/projects';
 import { pagesEn } from '../content/pages.en';
 import { getDictionary } from '../i18n';
-import { pathFor } from '../i18n/routes';
+import { caseStudyPath, pathFor } from '../i18n/routes';
 
 const t = getDictionary('en');
 const copy = pagesEn.capabilities;
 ---
 
-{/* The homepage capability index, opened up. Per the approved spec this page does NOT carry a "How they combine"
-    table (deferred), and shows no "Seen in" links until case studies are publishable (Phase 3C.2). */}
+{/* The homepage capability index, opened up. No "How they combine" table (deferred). "Seen in" lists only
+    published case studies that show the capability, so Intelligence has none for now. */}
 <BaseLayout locale="en" page="capabilities" title={t.pages.capabilities.title} description={copy.lead} bleed>
   <PageIntro heading={copy.heading} lead={copy.lead} />
   <nav class="anchors" aria-label={copy.indexLabel}>
@@ -27,6 +28,19 @@ const copy = pagesEn.capabilities;
         <ul class="ruled">
           {c.items.map((item) => <li>{item}</li>)}
         </ul>
+        {caseStudiesFor(c.id).length > 0 && (
+          <p class="seen">
+            <span class="label">{copy.seenIn}</span>
+            {caseStudiesFor(c.id).map((p, i) => (
+              <>
+                {i > 0 && ', '}
+                <a class="tlink" href={caseStudyPath(p.slug)}>
+                  {p.name}
+                </a>
+              </>
+            ))}
+          </p>
+        )}
       </SectionSplit>
     ))
   }
@@ -60,11 +74,13 @@ const copy = pagesEn.capabilities;
   .ruled {
     margin-top: 10px;
   }
-  .ruled li {
-    padding: 14px 0;
-    border-top: 1px solid var(--line);
+  .seen {
+    margin-top: 28px;
+    font-size: var(--text-small);
   }
-  .ruled li:last-child {
-    border-bottom: 1px solid var(--line);
+  .label {
+    margin-right: 12px;
+    font-weight: var(--weight-ui);
+    color: var(--ter);
   }
 </style>
