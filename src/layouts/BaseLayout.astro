@@ -5,7 +5,7 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import TemporaryFonts from '../components/TemporaryFonts.astro';
 import { getDictionary } from '../i18n';
-import type { Locale } from '../i18n/locales';
+import { defaultLocale, locales, type Locale } from '../i18n/locales';
 import { alternatesFor, pathFor, type PageKey } from '../i18n/routes';
 
 interface Props {
@@ -17,15 +17,15 @@ interface Props {
   description?: string;
   kind?: 'page' | 'notfound';
   /**
-   * Canonical path for a page that is not in the route map (a case study). Its language alternates are limited to
-   * itself until the Greek version exists. Pass `page` too, so the header marks the right section.
+   * Canonical paths in every language, for a page that is not in the route map (a case study). They drive the
+   * canonical URL, reciprocal hreflang and the language switch. Pass `page` too, so the header marks the right section.
    */
-  path?: string;
+  paths?: Record<Locale, string>;
   /** Full-bleed pages (the homepage) lay out their own sections. Shell pages get the padded container. */
   bleed?: boolean;
 }
 
-const { locale, page, title, description, kind = 'page', path, bleed = false } = Astro.props;
+const { locale, page, title, description, kind = 'page', paths, bleed = false } = Astro.props;
 const t = getDictionary(locale);
 
 // Canonical and hreflang URLs come from the route map, never from Astro.url
@@ -35,9 +35,12 @@ if (!site) throw new Error('astro.config.mjs must set `site` so canonical URLs c
 const absolute = (path: string) => new URL(path, site).href;
 
 const hasRoute = kind === 'page' && page !== undefined;
-const canonical = path ? absolute(path) : hasRoute ? absolute(pathFor(page, locale)) : undefined;
-const alternates = path
-  ? [{ hreflang: locale, href: absolute(path) }, { hreflang: 'x-default', href: absolute(path) }]
+const canonical = paths ? absolute(paths[locale]) : hasRoute ? absolute(pathFor(page, locale)) : undefined;
+const alternates = paths
+  ? [
+      ...locales.map((l) => ({ hreflang: l, href: absolute(paths[l]) })),
+      { hreflang: 'x-default', href: absolute(paths[defaultLocale]) },
+    ]
   : hasRoute
     ? alternatesFor(page).map((a) => ({ hreflang: a.hreflang, href: absolute(a.path) }))
     : [];
@@ -63,11 +66,11 @@ const indexable = import.meta.env.PUBLIC_ALLOW_INDEXING === 'true' && kind === '
   </head>
   <body>
     <a class="skip-link" href="#main">{t.skipLink}</a>
-    <Header locale={locale} page={hasRoute ? page : undefined} />
+    <Header locale={locale} page={hasRoute ? page : undefined} languageHrefs={paths} />
     <main id="main" tabindex="-1" class={bleed ? 'bleed' : undefined}>
       <slot />
     </main>
-    <Footer locale={locale} page={hasRoute ? page : undefined} />
+    <Footer locale={locale} page={hasRoute ? page : undefined} languageHrefs={paths} />
   </body>
 </html>
 

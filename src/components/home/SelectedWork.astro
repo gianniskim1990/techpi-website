@@ -14,7 +14,7 @@ interface Props {
 
 const { copy, projects, locale } = Astro.props;
 const total = projects.length;
-const facts = (p: Project) => p.capabilities.map(capabilityName).join(', ');
+const facts = (p: Project) => p.capabilities.map((id) => capabilityName(id, locale)).join(', ');
 ---
 
 {/* The Ink surface arrives behind the edge of a very large circle (desktop only, decorative). */}
@@ -59,7 +59,7 @@ const facts = (p: Project) => p.capabilities.map(capabilityName).join(', ');
                 </div>
               </dl>
               {p.caseStudy && (
-                <a class="tlink" href={caseStudyPath(p.slug)} aria-label={`${copy.caseLink}: ${p.name}`}>
+                <a class="tlink" href={caseStudyPath(p.slug, locale)} aria-label={`${copy.caseLink}: ${p.name}`}>
                   {copy.caseLink} →
                 </a>
               )}

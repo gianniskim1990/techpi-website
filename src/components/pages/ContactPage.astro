@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FactRows from '../../components/secondary/FactRows.astro';
+import PageIntro from '../../components/secondary/PageIntro.astro';
+import SectionSplit from '../../components/secondary/SectionSplit.astro';
+import { pagesCopy } from '../../content/copy';
+import { getDictionary } from '../../i18n';
+import type { Locale } from '../../i18n/locales';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getDictionary(locale);
+const pages = pagesCopy[locale];
+const copy = pages.contact;
+---
+
+{/* Simplified Contact. No form and no fake form: submission handling is not planned yet. Only confirmed facts are
+    shown. Email and phone are not confirmed, so they are absent. This page cannot launch until a direct contact
+    method is confirmed (docs/production/phase-3c-implementation-brief.md). Approved form fields for later: name,
+    organisation, email, what you need to solve, optional timeframe. No budget field. */}
+<BaseLayout locale={locale} page="contact" title={t.pages.contact.title} description={copy.lead} bleed>
+  <PageIntro heading={copy.heading} lead={copy.lead} />
+  <SectionSplit id="direct" heading={copy.direct}>
+    <FactRows rows={[{ label: copy.location, value: copy.locationValue }]} />
+  </SectionSplit>
+  <div class="end"></div>
+</BaseLayout>
+
+<style>
+  .end {
+    height: var(--space-section);
+  }
+</style>

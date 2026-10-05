@@ -1,5 +1,7 @@
 import type { ImageMetadata } from 'astro';
+import type { Locale } from '../i18n/locales';
 import type { CapabilityId } from './capabilities';
+import { projectsEl } from './projects.el';
 import armansAdmin from '../assets/projects/armans-admin.png';
 import armansDevices from '../assets/projects/armans-devices.png';
 import logotherapiaSite from '../assets/projects/logotherapia-site.jpg';
@@ -265,21 +267,72 @@ export const projects: readonly Project[] = [
   },
 ];
 
+/** The portfolio in a language. English is the source; Greek takes its editorial text from projects.el.ts. */
+export function projectsIn(locale: Locale): readonly Project[] {
+  return locale === 'en' ? projects : projects.map(toGreek);
+}
+
 /** Projects shown in Selected work on the homepage, in order. */
-export const featuredProjects: readonly Project[] = projects.filter((p) => p.featured);
+export function featuredIn(locale: Locale): readonly Project[] {
+  return projectsIn(locale).filter((p) => p.featured);
+}
 
 /** Projects with a published case study, in a fixed order. Drives the case-study routes and "Next project". */
-export const caseStudies: readonly Project[] = projects.filter((p) => p.caseStudy);
+export function caseStudiesIn(locale: Locale): readonly Project[] {
+  return projectsIn(locale).filter((p) => p.caseStudy);
+}
 
 /** The case study that follows this one, wrapping from the last back to the first. Deterministic. */
-export function nextCaseStudy(slug: string): Project {
-  const i = caseStudies.findIndex((p) => p.slug === slug);
-  const next = caseStudies[(i + 1) % caseStudies.length];
+export function nextCaseStudy(slug: string, locale: Locale): Project {
+  const list = caseStudiesIn(locale);
+  const i = list.findIndex((p) => p.slug === slug);
+  const next = list[(i + 1) % list.length];
   if (i < 0 || !next) throw new Error(`No published case study with slug: ${slug}`);
   return next;
 }
 
 /** Published case studies that show a capability. Used for "Seen in". */
-export function caseStudiesFor(capability: CapabilityId): readonly Project[] {
-  return caseStudies.filter((p) => p.capabilities.includes(capability));
+export function caseStudiesWith(capability: CapabilityId, locale: Locale): readonly Project[] {
+  return caseStudiesIn(locale).filter((p) => p.capabilities.includes(capability));
+}
+
+/**
+ * The Greek version of a project: shared facts, Greek text. Fails the build if a project, or a case-study part,
+ * has no Greek text, so the Greek site can never silently fall back to English.
+ */
+function toGreek(p: Project): Project {
+  const el = projectsEl[p.slug];
+  if (!el) throw new Error(`Missing Greek text for project: ${p.slug}`);
+  const image = p.image && { ...p.image, alt: required(el.imageAlt, p.slug, 'imageAlt') };
+  const study = p.caseStudy;
+  if (!study) return { ...p, category: el.category, summary: el.summary, image };
+  const s = el.caseStudy;
+  if (!s) throw new Error(`Missing Greek case study for project: ${p.slug}`);
+  const gallery = study.gallery?.map((g, i) => ({ ...g, alt: required(s.galleryAlts?.[i], p.slug, 'galleryAlts') }));
+  return {
+    ...p,
+    category: el.category,
+    summary: el.summary,
+    image,
+    caseStudy: {
+      ...study,
+      client: s.client ?? study.client,
+      overview: s.overview,
+      need: s.need,
+      built: s.built,
+      technology: study.technology && required(s.technology, p.slug, 'technology'),
+      outcome: study.outcome && required(s.outcome, p.slug, 'outcome'),
+      cover: {
+        ...study.cover,
+        alt: s.coverAlt,
+        caption: study.cover.caption && required(s.coverCaption, p.slug, 'coverCaption'),
+      },
+      gallery,
+    },
+  };
+}
+
+function required<T>(value: T | undefined, slug: string, field: string): T {
+  if (value === undefined) throw new Error(`Missing Greek ${field} for project: ${slug}`);
+  return value;
 }

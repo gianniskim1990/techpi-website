@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BrandStatement from '../home/BrandStatement.astro';
+import Capabilities from '../home/Capabilities.astro';
+import ContactSection from '../home/ContactSection.astro';
+import Evolution from '../home/Evolution.astro';
+import Hero from '../home/Hero.astro';
+import Intelligence from '../home/Intelligence.astro';
+import SelectedWork from '../home/SelectedWork.astro';
+import { capabilitiesIn } from '../../content/capabilities';
+import { homeCopy } from '../../content/copy';
+import { featuredIn } from '../../content/projects';
+import { getDictionary } from '../../i18n';
+import type { Locale } from '../../i18n/locales';
+
+interface Props {
+  locale: Locale;
+  /** Written copy only. The English homepage has none yet. */
+  description?: string;
+}
+
+const { locale, description } = Astro.props;
+const t = getDictionary(locale);
+const copy = homeCopy[locale];
+---
+
+<BaseLayout locale={locale} page="home" title={t.pages.home.title} description={description} bleed>
+  <Hero copy={copy.hero} locale={locale} />
+  <BrandStatement copy={copy.statement} />
+  <SelectedWork copy={copy.work} projects={featuredIn(locale)} locale={locale} />
+  <Capabilities copy={copy.capabilities} items={capabilitiesIn(locale)} />
+  <Intelligence copy={copy.intelligence} />
+  <Evolution copy={copy.evolution} locale={locale} />
+  <ContactSection copy={copy.contact} locale={locale} />
+</BaseLayout>

@@ -7,9 +7,11 @@ import LanguageSwitch from './LanguageSwitch.astro';
 interface Props {
   locale: Locale;
   page?: PageKey;
+  /** Exact language counterparts for a page outside the route map, passed to the language switch. */
+  languageHrefs?: Record<Locale, string>;
 }
 
-const { locale, page } = Astro.props;
+const { locale, page, languageHrefs } = Astro.props;
 const t = getDictionary(locale);
 
 // The approved navigation, in order. Nothing is added.
@@ -47,7 +49,7 @@ const target: Record<(typeof items)[number], PageKey> = {
     </ul>
   </nav>
   <div class="util">
-    <LanguageSwitch locale={locale} page={page} />
+    <LanguageSwitch locale={locale} page={page} hrefs={languageHrefs} />
     <a class="menu menu-link" href="#footer">{t.nav.menu}</a>
     <button class="menu menu-button" type="button" aria-expanded="false" aria-controls="site-menu" data-menu-open>
       {t.nav.menu}
@@ -73,7 +75,7 @@ const target: Record<(typeof items)[number], PageKey> = {
       }
     </ul>
   </nav>
-  <div class="menu-lang"><LanguageSwitch locale={locale} page={page} /></div>
+  <div class="menu-lang"><LanguageSwitch locale={locale} page={page} hrefs={languageHrefs} /></div>
 </dialog>
 
 <script>

@@ -34,6 +34,10 @@
   --text-body: 1.0625rem;
   --text-small: 0.9375rem;
 
+  /* Greek display text runs about 0.88 of the English size, so a statement holds a similar number of lines
+     (design-system.md, section 3). Body, lead and UI sizes are unchanged. */
+  --greek-display: 0.88;
+
   /* Space */
   --space-margin: clamp(20px, 4.45vw, 64px);
   --space-gap: 24px;
@@ -43,4 +47,9 @@
   --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-state: cubic-bezier(0.65, 0, 0.35, 1);
   --duration-fast: 150ms;
+}
+
+:root:lang(el) {
+  --text-display-xl: calc(clamp(2.75rem, 8.3vw, 7.5rem) * var(--greek-display));
+  --text-display-l: calc(clamp(2rem, 5.3vw, 4.75rem) * var(--greek-display));
 }

@@ -46,6 +46,7 @@ export const pagesEn = {
     client: 'Client',
     year: 'Year',
     live: 'Live website',
+    liveAria: 'opens the live website',
     overview: 'Overview',
     need: 'The business need',
     built: 'What we built',
@@ -67,3 +68,5 @@ export const pagesEn = {
     cta: 'Start a project →',
   },
 };
+
+export type PagesCopy = typeof pagesEn;
