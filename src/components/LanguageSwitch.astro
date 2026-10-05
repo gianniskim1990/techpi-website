@@ -7,9 +7,11 @@ interface Props {
   locale: Locale;
   /** The current page. Absent on a 404, where there is no equivalent page and the link goes to each home page. */
   page?: PageKey;
+  /** Exact counterparts for a page outside the route map (a case study). Takes precedence over `page`. */
+  hrefs?: Record<Locale, string>;
 }
 
-const { locale, page } = Astro.props;
+const { locale, page, hrefs } = Astro.props;
 const t = getDictionary(locale);
 ---
 
@@ -17,7 +19,7 @@ const t = getDictionary(locale);
 <ul class="language-switch" aria-label={t.language.label}>
   {
     locales.map((target) => {
-      const href = page ? pathFor(page, target) : homePathFor(target);
+      const href = hrefs ? hrefs[target] : page ? pathFor(page, target) : homePathFor(target);
       const label = t.language[target];
       return (
         <li>

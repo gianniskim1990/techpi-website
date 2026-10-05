@@ -1,10 +1,8 @@
 import type { Dictionary } from './en';
 
 /**
- * DRAFT Greek, for review by the client. Not machine-translated.
- * The navigation labels come from the Gate B prototype's Greek sample.
- * The route-shell strings are provisional placeholders and are replaced in Phase 3D.
- * Typed as Dictionary: a missing or extra key fails `npm run check`.
+ * Greek interface strings (Phase 3D). Written in Greek, not machine-translated. Navigation labels come from the
+ * approved Gate B Greek sample. Typed as Dictionary: a missing or extra key fails `npm run check`.
  */
 export const el: Dictionary = {
   site: {
@@ -23,9 +21,9 @@ export const el: Dictionary = {
     close: 'Κλείσιμο',
   },
   footer: {
-    label: 'Υποσέλιδο',
-    // Greek legal line is written in Phase 3D, not invented here. Empty means it is not shown.
-    note: '',
+    // The accessible name of the footer navigation (not visible).
+    label: 'Δευτερεύουσα πλοήγηση',
+    note: 'TechPi, πρώην pigiota314.',
   },
   language: {
     label: 'Γλώσσα',
@@ -41,7 +39,7 @@ export const el: Dictionary = {
     contact: { title: 'Επικοινωνία | TechPi', heading: 'Επικοινωνία' },
   },
   shell: {
-    note: 'Προσωρινή σελίδα για δοκιμή της δρομολόγησης. Η σελίδα δεν έχει σχεδιαστεί ακόμη.',
+    note: 'Η σελίδα βρίσκεται υπό προετοιμασία.',
   },
   notFound: {
     title: 'Η σελίδα δεν βρέθηκε | TechPi',

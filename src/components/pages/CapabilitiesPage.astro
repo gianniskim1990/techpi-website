@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ClosingCTA from '../../components/secondary/ClosingCTA.astro';
+import PageIntro from '../../components/secondary/PageIntro.astro';
+import SectionSplit from '../../components/secondary/SectionSplit.astro';
+import { capabilitiesIn } from '../../content/capabilities';
+import { caseStudiesWith } from '../../content/projects';
+import { pagesCopy } from '../../content/copy';
+import { getDictionary } from '../../i18n';
+import type { Locale } from '../../i18n/locales';
+import { caseStudyPath, pathFor } from '../../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getDictionary(locale);
+const pages = pagesCopy[locale];
+const copy = pages.capabilities;
+const capabilities = capabilitiesIn(locale);
+---
+
+{/* The homepage capability index, opened up. No "How they combine" table (deferred). "Seen in" lists only
+    published case studies that show the capability, so Intelligence has none for now. */}
+<BaseLayout locale={locale} page="capabilities" title={t.pages.capabilities.title} description={copy.lead} bleed>
+  <PageIntro heading={copy.heading} lead={copy.lead} />
+  <nav class="anchors" aria-label={copy.indexLabel}>
+    {capabilities.map((c) => <a href={`#${c.id}`}>{c.name}</a>)}
+  </nav>
+  {
+    capabilities.map((c) => (
+      <SectionSplit id={c.id} heading={c.name}>
+        <p class="summary">{c.summary}</p>
+        <p class="covers">{copy.covers}</p>
+        <ul class="ruled">
+          {c.items.map((item) => <li>{item}</li>)}
+        </ul>
+        {caseStudiesWith(c.id, locale).length > 0 && (
+          <p class="seen">
+            <span class="label">{copy.seenIn}</span>
+            {caseStudiesWith(c.id, locale).map((p, i) => (
+              <>
+                {i > 0 && ', '}
+                <a class="tlink" href={caseStudyPath(p.slug, locale)}>
+                  {p.name}
+                </a>
+              </>
+            ))}
+          </p>
+        )}
+      </SectionSplit>
+    ))
+  }
+  <ClosingCTA heading={pages.closer.heading} cta={pages.closer.cta} href={pathFor('contact', locale)} />
+</BaseLayout>
+
+<style>
+  .anchors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 32px;
+    margin: 64px var(--space-margin) 0;
+    font-weight: var(--weight-ui);
+  }
+  .anchors a {
+    display: inline-block;
+    padding: 8px 0;
+    text-underline-offset: 6px;
+  }
+  .summary {
+    max-width: 36ch;
+    font-size: var(--text-lead);
+    line-height: 1.42;
+  }
+  .covers {
+    margin-top: 40px;
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    color: var(--ter);
+  }
+  .ruled {
+    margin-top: 10px;
+  }
+  .seen {
+    margin-top: 28px;
+    font-size: var(--text-small);
+  }
+  .label {
+    margin-right: 12px;
+    font-weight: var(--weight-ui);
+    color: var(--ter);
+  }
+</style>

@@ -2,21 +2,23 @@
 import { Image } from 'astro:assets';
 import { capabilityName } from '../../content/capabilities';
 import type { Project } from '../../content/projects';
+import type { Locale } from '../../i18n/locales';
 import { caseStudyPath } from '../../i18n/routes';
 import FactRows from './FactRows.astro';
 
 interface Props {
   project: Project;
+  locale: Locale;
   /** 1, 2 or 3: picks one of the three neutral tints for the media field. */
   tone: number;
   capabilitiesLabel: string;
   linkLabel: string;
 }
 
-const { project, tone, capabilitiesLabel, linkLabel } = Astro.props;
-const capabilities = project.capabilities.map(capabilityName).join(', ');
+const { project, locale, tone, capabilitiesLabel, linkLabel } = Astro.props;
+const capabilities = project.capabilities.map((id) => capabilityName(id, locale)).join(', ');
 // A row links to its case study only when that page exists. Index-only projects stay plain.
-const href = project.caseStudy ? caseStudyPath(project.slug) : undefined;
+const href = project.caseStudy ? caseStudyPath(project.slug, locale) : undefined;
 const placeholderWord = project.name.split(' ')[0];
 ---
 
