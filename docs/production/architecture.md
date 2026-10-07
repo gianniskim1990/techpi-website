@@ -150,6 +150,8 @@ About twenty components. The test for making one: it is used in more than one pl
 
 ### 4.2 Brand
 
+> **Not built (audit 2026-10-07).** `Wordmark` and `Symbol` do not exist as components. The identity is referenced directly in the header, the footer and the Contact section. The real integration points are listed in `identity-font-readiness.md`, section D.2. The table below is the original plan.
+
 | Component | Responsibility |
 |---|---|
 | `Wordmark` | The name. Typographic now. Swaps to the vector wordmark later without touching the header |
@@ -207,7 +209,7 @@ No font files are downloaded in this phase.
 | Axes | Keep the weight axis only, limited to 400 to 600. The flare, volume and slant axes are not used and are removed when the font is prepared. No italic is shipped |
 | Subsets | Two files: **Latin** (basic Latin, Latin-1, the punctuation and symbols in use) and **Greek** (monotonic modern Greek: both cases, accented vowels, dialytika forms, final sigma, Greek punctuation) |
 | Loading by language | `unicode-range` on each face, so English pages never download the Greek file |
-| Arrows | The → and ↗ glyphs must be in the Latin subset. The prototype showed them falling back to a system font under Google Fonts delivery. To be verified against the real font file |
+| Arrows | The ←, → and ↗ glyphs (U+2190, U+2192, U+2197) must be in the Latin subset. The prototype showed → falling back to a system font under Google Fonts delivery. To be verified against the real font file. Also: U+0395 and U+039B ("ΕΛ" in the language switch) belong in the Latin range so English pages do not fetch the Greek file. Full contract: `identity-font-readiness.md` |
 | Preload | The Latin file on every page. The Greek file on `/el/` pages only. Nothing else is preloaded |
 | `font-display` | `swap`, paired with a metrics-matched fallback so the swap does not move the layout |
 | Fallback stack | `"Commissioner", "Commissioner Fallback", system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`, where "Commissioner Fallback" is a local system font adjusted with `size-adjust`, `ascent-override`, `descent-override` and `line-gap-override` |
@@ -224,10 +226,10 @@ This remains a prototype-stage typeface decision until the files are prepared an
 
 | Item | Current form |
 |---|---|
-| Symbol | Four provisional raster PNGs with edge fringing |
+| Symbol | Four provisional raster PNGs with edge fringing, in `brand-source/provisional/` (not deployed) |
 | Header | Typographic TECHPI |
-| Contact | Flat rendering of the symbol from the raster's alpha, as a CSS mask, at 14% |
-| Favicon | None |
+| Contact | **Corrected 2026-10-07:** a plain CSS ring. The CSS-mask rendering of the symbol was a prototype technique and was not built. The raster is not traced or published |
+| Favicon | An empty `data:,` icon, so browsers do not request `/favicon.ico`. No icon files exist |
 
 ### 7.2 Required before launch
 
@@ -243,8 +245,8 @@ This remains a prototype-stage typeface decision until the files are prepared an
 
 ### 7.3 How the architecture absorbs the change
 
-- The identity is referenced in exactly two components: `Wordmark` and `Symbol`. Their props do not change when the files do.
-- `Symbol` renders through a mask today. With the SVG it renders inline, which is also what the Contact animation needs.
+- The identity is meant to be referenced in as few places as possible. Today those are the header (twice: desktop and the mobile menu), the footer name and the Contact ring. A single small brand component is recommended when the SVG exists (`identity-font-readiness.md`, D.2).
+- With the SVG the symbol renders inline, which is also what the Contact animation needs.
 - The Contact sequence is built in two steps: the resting state first, the full arc → circle → TechPi drawing only once vector paths exist. No layout depends on the difference.
 - Favicons and the Open Graph image are files with fixed names. They can be replaced at any time.
 

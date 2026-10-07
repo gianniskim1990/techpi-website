@@ -54,8 +54,8 @@ Each of these must be resolved, or consciously accepted, before indexing is enab
 | 1 | Legal entity details | Legal name, registered address, registration and VAT numbers | Footer legal line, Privacy and Cookies pages, Organization schema |
 | 2 | Privacy and Cookies pages | Item 1, and the tracking decision | Footer links, consent handling |
 | 3 | Tracking and analytics decision | Choice of product, or a decision to use none | Privacy, cookies, whether a consent banner is needed |
-| 4 | Self-hosted Commissioner | The prepared font files (Latin and Greek subsets) | Removes the temporary Google Fonts loader. A build with indexing enabled fails until then |
-| 5 | Final vector identity and favicon | The vector master: symbol, wordmark, lockup, favicon set | Header mark, Contact symbol, favicon, structured-data logo |
+| 4 | Self-hosted Commissioner | The prepared font files (Latin and Greek subsets). Exact contract: `identity-font-readiness.md`, section C | Removes the temporary Google Fonts loader. A build with indexing enabled fails until then |
+| 5 | Final vector identity and favicon | The vector master: symbol, wordmark, lockup, favicon set. Exact contract: `identity-font-readiness.md`, section B | Header mark, Contact symbol, favicon, structured-data logo |
 | 6 | Open Graph metadata and social images | Final images, in both languages | Social previews |
 | 7 | English homepage meta description | An approved line | Search snippet |
 | 8 | Native-speaker Greek editorial read | A reviewer | All Greek pages |
@@ -70,4 +70,5 @@ Resolved in Phase 3F: confirmed email, phone and town (section 1).
 ## 6. For the owner to decide
 
 - **Repository visibility.** The GitHub repository is public, and `docs/` contains internal planning, including references to a project that must not appear on the website. Consider making the repository private. This is outside what was changed in this phase.
-- **Node version on this machine.** The project targets Node 24 (`.node-version`, `engines`). The work machine runs Node 22.12.0. Check, build and the Cloudflare runtime all pass on it, but upgrade before relying on local results as a match for CI.
+- **Node version on this machine.** Resolved 2026-10-07: Node 24.18.0 is installed and active through `nvm-windows`, matching `.node-version`, `engines` and Cloudflare's build image. `npm ci` leaves the lockfile unchanged.
+- **Dependency advisories.** `npm audit` now reports 4 high-severity advisories (Astro's `http-cache-semantics`, and `sharp` through Wrangler). They are build-time or dev-only and do not ship in the static site. Handle as a separate dependency-update step, not as part of identity or fonts.
