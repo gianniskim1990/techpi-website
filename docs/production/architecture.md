@@ -109,8 +109,9 @@ The production application lives at the repository root, beside the existing doc
 ├── docs/                      Phase 1 to 3 documentation (kept)
 ├── explorations/              Design studies (kept, never deployed)
 ├── brand-source/
-│   └── provisional/           Current raster brand explorations. Reference only, never deployed (see 7.3)
-├── public/                    Files copied as-is: favicons, fonts, and public/brand/ for production-ready assets only
+│   └── final/3d/              The approved 3D identity masters. Never deployed (see 7)
+├── scripts/brand/             derive-identity.mjs: regenerates the web derivatives from the masters
+├── public/                    Files copied as-is: _redirects and the browser icons
 ├── src/
 │   ├── pages/                 Routes. English at the root, Greek under el/
 │   ├── layouts/               One base layout
@@ -150,7 +151,7 @@ About twenty components. The test for making one: it is used in more than one pl
 
 ### 4.2 Brand
 
-> **Not built (audit 2026-10-07).** `Wordmark` and `Symbol` do not exist as components. The identity is referenced directly in the header, the footer and the Contact section. The real integration points are listed in `identity-font-readiness.md`, section D.2. The table below is the original plan.
+> **As built (Phase 3G.2).** One component, `BrandSymbol.astro`, renders the approved 3D symbol as an optimised raster. It is used once, in the homepage Contact section. There is no `Wordmark` component: the header and footer name is real text by decision. See `identity-font-readiness.md`, sections B.3 to B.5. The table below is the original plan.
 
 | Component | Responsibility |
 |---|---|
@@ -200,7 +201,7 @@ Section wrappers, grid helpers, spacers, an "arc" component, an "eyebrow" compon
 
 ## 6. Typography: self-hosted Commissioner
 
-No font files are downloaded in this phase.
+> **As built (Phase 3G.2).** Commissioner 1.001, two official Google Fonts WOFF2 files (Latin 36.7 KB, Greek 15.4 KB), unmodified, variable weight, declared `400 600`. One preload per page: Latin on English pages, Greek on Greek pages, as measured. The fallback is metric-matched per script, and the swap measured CLS 0. Commissioner has no arrows, so ← → ↗ use the system font, by decision. English pages also fetch the Greek file for "ΕΛ". Full record: `identity-font-readiness.md`, section C. The table below is the original plan. Where it differs, the record wins.
 
 | Decision | Plan |
 |---|---|
@@ -222,16 +223,19 @@ This remains a prototype-stage typeface decision until the files are prepared an
 
 ## 7. Brand asset handoff
 
-### 7.1 Temporary state (now)
+### 7.1 Current state (Phase 3G.2)
 
 | Item | Current form |
 |---|---|
-| Symbol | Four provisional raster PNGs with edge fringing, in `brand-source/provisional/` (not deployed) |
-| Header | Typographic TECHPI |
-| Contact | **Corrected 2026-10-07:** a plain CSS ring. The CSS-mask rendering of the symbol was a prototype technique and was not built. The raster is not traced or published |
-| Favicon | An empty `data:,` icon, so browsers do not request `/favicon.ico`. No icon files exist |
+| Identity | **Approved:** four 3D raster masters in `brand-source/final/3d/` (symbol blue, symbol white, app icon, glossy wordmark). Not deployed |
+| Header, footer | Typographic TECHPI, by decision |
+| Contact | The white 3D symbol, decorative, tone on tone at 16% on TechPi Blue, in the box the ring had. The static resting state Phase 3E animates into |
+| Favicon | `favicon-32.png`, `favicon-192.png`, `apple-touch-icon.png`, from the app icon. No `favicon.ico`, no manifest |
+| Flat vector | None exists, and none was fabricated. A future brand-system deliverable, not a launch blocker |
 
-### 7.2 Required before launch
+### 7.2 Original pre-launch list (superseded)
+
+> Superseded in Phase 3G.2: the approved 3D identity replaces the vector-first plan for launch. Open Graph images and the structured-data logo are still required (`launch-blockers.md`, blocker 6). The vector items move to the future brand system (`identity-font-readiness.md`, B.7).
 
 | Asset | Notes |
 |---|---|
@@ -245,9 +249,8 @@ This remains a prototype-stage typeface decision until the files are prepared an
 
 ### 7.3 How the architecture absorbs the change
 
-- The identity is meant to be referenced in as few places as possible. Today those are the header (twice: desktop and the mobile menu), the footer name and the Contact ring. A single small brand component is recommended when the SVG exists (`identity-font-readiness.md`, D.2).
-- With the SVG the symbol renders inline, which is also what the Contact animation needs.
-- The Contact sequence is built in two steps: the resting state first, the full arc → circle → TechPi drawing only once vector paths exist. No layout depends on the difference.
+- The identity is referenced in as few places as possible: the typographic name in the header and footer, and `BrandSymbol` once, in Contact.
+- The Contact sequence is built in two steps. The resting state now exists with the approved raster. The motion (3E) reveals the raster with opacity, masks or clip-paths. Drawing the inner paths stroke by stroke would need a flat vector master. No layout depends on the difference.
 - Favicons and the Open Graph image are files with fixed names. They can be replaced at any time.
 
 **Transition for the source files (approved, not yet carried out).** The existing PNG brand explorations are source and reference files, not public production assets. Anything inside `public/` is published, so they must not stay there when the site is deployed.
@@ -258,7 +261,7 @@ This remains a prototype-stage typeface decision until the files are prepared an
 | Phase 3A, before the first preview deployment | They move to `brand-source/provisional/`, which is never deployed. The build reads the one file it needs for the Contact mask from there and emits an optimised version |
 | Phase 3H, before launch | `public/brand/` contains only intentionally published, production-ready, optimised assets from the vector master |
 
-**Launch is blocked without the vector master.** Development is not.
+**As carried out:** Phase 3A moved the rasters to `brand-source/provisional/`. Phase 3G.2 approved them and moved them to `brand-source/final/3d/`. The build reads lossless crops from `src/assets/brand/` and emits only optimised WebP. Launch is no longer blocked on a vector master.
 
 ## 8. Performance budget
 
@@ -372,7 +375,7 @@ Nothing is configured in Cloudflare during this phase. This section records the 
 
 ## 12. Risks
 
-1. **The vector identity is not available.** Mitigated by the two-component boundary in section 7. It still blocks launch.
+1. **No flat vector identity.** Resolved for launch in Phase 3G.2: the approved 3D identity is integrated as optimised raster, and a flat master is a future brand-system deliverable.
 2. **Real content is missing.** Project facts, imagery and Greek copy. Development can proceed with marked placeholders, but a build guard prevents placeholders from reaching production. See `content-model.md`.
 3. **Push access.** Git currently authenticates as an account without write access to the repository. Preview deployments need pushes. This must be fixed before Phase 3A.
 4. **Scroll-linked CSS is not supported everywhere.** It is never a critical dependency. See `motion-implementation.md`.
@@ -413,13 +416,11 @@ Not installed, by design: Tailwind, React, GSAP, a sitemap integration (3F), an 
 | 7 | `astro preview` is lenient and not authoritative | Use Wrangler's local runtime to check URL behaviour |
 | 8 | A functional header and language switch were built in 3A | Needed to navigate and test routes. They are plain. The designed header is 3B |
 | 9 | Only the `src/` folders 3A needs exist: `components`, `layouts`, `pages`, `i18n`, `styles` | `content`, `data` and `utils` arrive with the stages that use them |
-| 10 | Temporary Google Fonts loader | See 13.4 |
+| 10 | Temporary Google Fonts loader | Removed in Phase 3G.2. See 13.4 |
 
-### 13.4 Temporary font loading
+### 13.4 Temporary font loading (removed)
 
-`src/components/TemporaryFonts.astro` loads Commissioner from Google Fonts so the 400, 450 and 500 hierarchy is visible on previews. It is one component, used in one place. It must be deleted when the self-hosted files are supplied. It sends visitors' IP addresses to a third party, so it must not ship.
-
-A guard enforces this: a build with `PUBLIC_ALLOW_INDEXING=true` fails while the component is still in use. Verified.
+Until Phase 3G.2, `src/components/TemporaryFonts.astro` loaded Commissioner from Google Fonts, and its guard failed any build with `PUBLIC_ALLOW_INDEXING=true`. Both are deleted. The same font files are now self-hosted (section 6), and no third-party request is made. An explicit indexing build now succeeds, so the environment variable is the only switch: it must stay unset in Cloudflare until launch (`launch-blockers.md`, blocker 14).
 
 ### 13.5 Indexing default
 
