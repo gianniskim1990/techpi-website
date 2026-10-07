@@ -1,7 +1,7 @@
 ---
 import { getDictionary } from '../i18n';
 import type { Locale } from '../i18n/locales';
-import { pathFor, type PageKey } from '../i18n/routes';
+import { navPages, pathFor, type PageKey } from '../i18n/routes';
 import LanguageSwitch from './LanguageSwitch.astro';
 
 interface Props {
@@ -13,18 +13,13 @@ interface Props {
 
 const { locale, page, languageHrefs } = Astro.props;
 const t = getDictionary(locale);
-const items = ['work', 'capabilities', 'euProjects', 'about', 'contact'] as const;
-const target: Record<(typeof items)[number], PageKey> = {
-  work: 'work',
-  capabilities: 'capabilities',
-  euProjects: 'euProjects',
-  about: 'about',
-  contact: 'contact',
-};
+// The same visible navigation as the header, from the route map.
+const items = navPages;
 ---
 
-{/* Minimal. Only what is justified: name, navigation, language. Contact details, address, legal entity and the
-     Privacy and Cookies links are added when the facts and the routes exist (see docs/production/routes.md). */}
+{/* Minimal. Only what is justified: name, navigation, language. Contact details live on the Contact page, not here.
+     Address, legal entity and the Privacy and Cookies links are added when the facts and the routes exist
+     (docs/production/launch-blockers.md). No link points at a page that does not exist. */}
 <footer class="site-footer s-ink" id="footer" tabindex="-1">
   <div class="brand">
     <span class="name">{t.site.name}</span>
@@ -35,7 +30,7 @@ const target: Record<(typeof items)[number], PageKey> = {
       {
         items.map((key) => (
           <li>
-            <a href={pathFor(target[key], locale)}>{t.nav[key]}</a>
+            <a href={pathFor(key, locale)}>{t.nav[key]}</a>
           </li>
         ))
       }

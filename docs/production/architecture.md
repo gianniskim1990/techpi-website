@@ -140,7 +140,7 @@ About twenty components. The test for making one: it is used in more than one pl
 |---|---|
 | `BaseLayout` | Document shell: `lang`, metadata, fonts, skip link, header, footer, structured data slot |
 | `Header` | Name, four links, language switch, Contact action. Surface-aware colours. Mobile menu as a proper disclosure |
-| `Footer` | Minimal: name, navigation, contact, legal, language |
+| `Footer` | Minimal: name, navigation, language. Contact details live on the Contact page. A legal line and Privacy and Cookies links are added when the facts and the pages exist (`launch-blockers.md`) |
 | `LanguageSwitch` | Links to the same page in the other language, from the route map |
 | `Button` | The pill. Primary and outline. Renders a link or a button |
 | `TextLink` | The underlined text action, with the arrow rule built in as an explicit option |

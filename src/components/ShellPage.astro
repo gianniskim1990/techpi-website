@@ -14,8 +14,10 @@ const t = getDictionary(locale);
 const { title, heading } = t.pages[page];
 ---
 
-{/* A labelled placeholder that tests routing. Not a page design and not page content. */}
-<BaseLayout locale={locale} page={page} title={title}>
+{/* A labelled placeholder that tests routing. Not a page design and not page content. It is an unpublished route
+    shell, so it stays noindex even when indexing is enabled for the rest of the site (EU Projects, until approved
+    content exists: docs/production/launch-blockers.md). */}
+<BaseLayout locale={locale} page={page} title={title} noindex>
   <h1>{heading}</h1>
   <p class="shell-note">{t.shell.note}</p>
 </BaseLayout>

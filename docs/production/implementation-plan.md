@@ -246,7 +246,7 @@ All architecture decisions are locked:
 | Tailwind | Not used |
 | GSAP | Not installed at setup. Decided at 3E for the Contact sequence only |
 | Content | Local typed content. Markdown case studies, typed dictionaries. No CMS for v1 |
-| URLs | No trailing slash on normal pages. Slugs `cairelink`, `armans`, `sowise-plus` |
+| URLs | No trailing slash on normal pages. Slugs `rocketeer`, `armans`, `logotherapia-xanthi` |
 | Locale | English unprefixed, Greek under `/el/`, no automatic redirect |
 | Brand files | Provisional rasters move to `brand-source/provisional/` in 3A |
 | Secondary pages | A design step precedes implementation in 3C |

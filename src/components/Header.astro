@@ -1,7 +1,7 @@
 ---
 import { getDictionary } from '../i18n';
 import type { Locale } from '../i18n/locales';
-import { homePathFor, pathFor, type PageKey } from '../i18n/routes';
+import { homePathFor, navPages, pathFor, type PageKey } from '../i18n/routes';
 import LanguageSwitch from './LanguageSwitch.astro';
 
 interface Props {
@@ -14,15 +14,8 @@ interface Props {
 const { locale, page, languageHrefs } = Astro.props;
 const t = getDictionary(locale);
 
-// The approved navigation, in order. Nothing is added.
-const items = ['work', 'capabilities', 'euProjects', 'about', 'contact'] as const;
-const target: Record<(typeof items)[number], PageKey> = {
-  work: 'work',
-  capabilities: 'capabilities',
-  euProjects: 'euProjects',
-  about: 'about',
-  contact: 'contact',
-};
+// The visible navigation, in order, from the route map. The desktop links and the mobile dialog share it.
+const items = navPages;
 ---
 
 {/* Typographic name only. No symbol until the vector identity master exists. The header sits over the top of the
@@ -40,7 +33,7 @@ const target: Record<(typeof items)[number], PageKey> = {
       {
         items.map((key) => (
           <li>
-            <a href={pathFor(target[key], locale)} aria-current={page === target[key] ? 'page' : undefined}>
+            <a href={pathFor(key, locale)} aria-current={page === key ? 'page' : undefined}>
               {t.nav[key]}
             </a>
           </li>
@@ -67,7 +60,7 @@ const target: Record<(typeof items)[number], PageKey> = {
       {
         items.map((key) => (
           <li>
-            <a href={pathFor(target[key], locale)} aria-current={page === target[key] ? 'page' : undefined}>
+            <a href={pathFor(key, locale)} aria-current={page === key ? 'page' : undefined}>
               {t.nav[key]}
             </a>
           </li>

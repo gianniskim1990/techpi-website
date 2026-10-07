@@ -23,9 +23,11 @@ interface Props {
   paths?: Record<Locale, string>;
   /** Full-bleed pages (the homepage) lay out their own sections. Shell pages get the padded container. */
   bleed?: boolean;
+  /** Keeps this page out of search indexes even in a build that enables indexing. For unpublished route shells. */
+  noindex?: boolean;
 }
 
-const { locale, page, title, description, kind = 'page', paths, bleed = false } = Astro.props;
+const { locale, page, title, description, kind = 'page', paths, bleed = false, noindex = false } = Astro.props;
 const t = getDictionary(locale);
 
 // Canonical and hreflang URLs come from the route map, never from Astro.url
@@ -46,8 +48,8 @@ const alternates = paths
     : [];
 
 // Safe default: nothing is indexable until launch. Only an explicit PUBLIC_ALLOW_INDEXING=true build is,
-// and a 404 is never indexable.
-const indexable = import.meta.env.PUBLIC_ALLOW_INDEXING === 'true' && kind === 'page';
+// a 404 is never indexable, and neither is a page flagged noindex (an unpublished route shell).
+const indexable = import.meta.env.PUBLIC_ALLOW_INDEXING === 'true' && kind === 'page' && !noindex;
 ---
 
 <!doctype html>
