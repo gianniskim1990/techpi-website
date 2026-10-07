@@ -1,9 +1,10 @@
 /*
  * Design tokens. Approved at Gate B (docs/design, explorations/phase-2/homepage-prototype).
- * Colour values are the working palette and stay provisional until the vector identity master exists.
+ * The four brand colours are the approved palette (Phase 3G.2). The 3D identity artwork has a wider blue and
+ * cyan tonal range of its own; that range is part of the artwork and is not turned into tokens.
  */
 :root {
-  /* Working palette */
+  /* Approved palette */
   --color-ink: #080e1e;
   --color-paper: #f0eee9;
   --color-techpi-blue: #0841c8;
@@ -18,10 +19,10 @@
   --color-rule: #d6d3cc; /* hairlines on Paper. Decorative only */
 
   /*
-   * Typography. Commissioner is the production typeface direction. Until the self-hosted files
-   * are supplied it is loaded by TemporaryFonts.astro. The stack below is the permanent fallback order.
+   * Typography. Commissioner, self-hosted (fonts.css). 'Commissioner Fallback' is a local font scaled to
+   * Commissioner's metrics, shown only until Commissioner loads. The rest is the system fallback order.
    */
-  --font-sans: 'Commissioner', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-sans: 'Commissioner', 'Commissioner Fallback', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --weight-body: 400;
   --weight-display: 450; /* statements */
   --weight-ui: 500; /* navigation, labels, buttons */
