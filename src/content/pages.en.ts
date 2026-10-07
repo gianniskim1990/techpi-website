@@ -1,6 +1,6 @@
 /**
- * English copy for the secondary pages (Phase 3C.1). Leads are the approved lines. Greek arrives in Phase 3D.
- * Only confirmed facts appear here. Contact details (email, phone) are not confirmed, so they are not here.
+ * English copy for the secondary pages (Phase 3C.1). Leads are the approved lines. Greek is in pages.el.ts.
+ * Only confirmed facts appear here. The contact values themselves (email, phone) live in site.ts.
  */
 export const pagesEn = {
   work: {
@@ -59,8 +59,11 @@ export const pagesEn = {
     heading: 'Have something worth building?',
     lead: 'Tell us about the problem you need to solve.',
     direct: 'Direct',
+    email: 'Email',
+    phone: 'Phone',
     location: 'Location',
-    locationValue: 'Greece and Europe',
+    // The town only. No street address is confirmed or shown.
+    locationValue: 'Xanthi, Greece',
   },
   /** The quiet closing line on secondary pages: the homepage question, without the Blue surface or the circle. */
   closer: {

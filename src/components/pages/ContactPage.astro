@@ -4,6 +4,7 @@ import FactRows from '../../components/secondary/FactRows.astro';
 import PageIntro from '../../components/secondary/PageIntro.astro';
 import SectionSplit from '../../components/secondary/SectionSplit.astro';
 import { pagesCopy } from '../../content/copy';
+import { contactFacts } from '../../content/site';
 import { getDictionary } from '../../i18n';
 import type { Locale } from '../../i18n/locales';
 
@@ -17,14 +18,19 @@ const pages = pagesCopy[locale];
 const copy = pages.contact;
 ---
 
-{/* Simplified Contact. No form and no fake form: submission handling is not planned yet. Only confirmed facts are
-    shown. Email and phone are not confirmed, so they are absent. This page cannot launch until a direct contact
-    method is confirmed (docs/production/phase-3c-implementation-brief.md). Approved form fields for later: name,
-    organisation, email, what you need to solve, optional timeframe. No budget field. */}
+{/* Contact. The lead plus the three confirmed direct facts: email, phone, location. Editorial fact rows, no cards.
+    No form and no fake form: a form is deferred (docs/production/launch-blockers.md). No WhatsApp, social links,
+    office hours, street address or map: none is confirmed. The location is the town only. */}
 <BaseLayout locale={locale} page="contact" title={t.pages.contact.title} description={copy.lead} bleed>
   <PageIntro heading={copy.heading} lead={copy.lead} />
   <SectionSplit id="direct" heading={copy.direct}>
-    <FactRows rows={[{ label: copy.location, value: copy.locationValue }]} />
+    <FactRows
+      rows={[
+        { label: copy.email, value: contactFacts.email, href: `mailto:${contactFacts.email}` },
+        { label: copy.phone, value: contactFacts.phoneDisplay, href: `tel:${contactFacts.phoneDial}` },
+        { label: copy.location, value: copy.locationValue },
+      ]}
+    />
   </SectionSplit>
   <div class="end"></div>
 </BaseLayout>

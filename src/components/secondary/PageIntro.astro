@@ -37,6 +37,8 @@ const { heading, lead, roomBelow = false } = Astro.props;
     font-size: var(--text-lead);
     line-height: 1.42;
     color: var(--sec-c);
+    /* Avoids a single word alone on the last line (seen on the mobile Contact lead). Ignored where unsupported. */
+    text-wrap: pretty;
   }
 
   .room {

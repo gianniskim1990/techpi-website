@@ -59,6 +59,6 @@ Slugs are Latin and identical in both languages. Index-only projects have no rou
 
 - The Greek homepage has a meta description. The English homepage still has none (no approved English line yet).
 - Open Graph tags do not exist yet in either language. They arrive with the final social images.
-- EU Projects stays a placeholder in both languages until its facts are confirmed.
-- Contact details, the contact form, Privacy, Cookies and legal entity details are still missing in both languages.
+- EU Projects stays a placeholder in both languages until its facts are confirmed. Since Phase 3F it is not in the visible navigation.
+- Contact now shows the confirmed email, phone and town in both languages ("Xanthi, Greece" / "Ξάνθη, Ελλάδα"). The contact form, Privacy, Cookies and legal entity details are still missing in both languages. See `launch-blockers.md`.
 - The Greek copy should get a final read by a native-speaking TechPi reviewer before launch.
