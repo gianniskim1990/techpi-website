@@ -2,9 +2,13 @@
 interface Row {
   label: string;
   value?: string | undefined;
-  /** Makes the value an external link. The visible text should be the address. */
+  /**
+   * Makes the value a link. The visible text should be the address or number itself.
+   * An http(s) address is an external site: it gets the ↗ arrow and `rel="noopener"`.
+   * A `mailto:` or `tel:` address is an action on this device, not another site: plain link, no arrow.
+   */
   href?: string;
-  /** Added to the link's accessible name, in the page language, for example "opens the live website". */
+  /** Added to the link's accessible name, in the page language, for example "opens the live website". External links only. */
   hrefLabel?: string;
 }
 
@@ -14,6 +18,7 @@ interface Props {
 
 // A row with no confirmed value is never shown: no dash, no "to confirm".
 const rows = Astro.props.rows.filter((r): r is Row & { value: string } => Boolean(r.value));
+const isAction = (href: string) => href.startsWith('mailto:') || href.startsWith('tel:');
 ---
 
 {
@@ -24,7 +29,11 @@ const rows = Astro.props.rows.filter((r): r is Row & { value: string } => Boolea
           <div>
             <dt>{r.label}</dt>
             <dd>
-              {r.href ? (
+              {r.href && isAction(r.href) ? (
+                <a class="tlink action" href={r.href}>
+                  {r.value}
+                </a>
+              ) : r.href ? (
                 <a class="tlink" href={r.href} rel="noopener" aria-label={r.hrefLabel ? `${r.value} (${r.hrefLabel})` : undefined}>
                   {r.value} <span aria-hidden="true">↗</span>
                 </a>
@@ -54,6 +63,17 @@ const rows = Astro.props.rows.filter((r): r is Row & { value: string } => Boolea
   dt {
     color: var(--ter);
     font-weight: var(--weight-ui);
+  }
+  /* Email and phone are tapped on a phone. The visible link stays text-sized, so the focus ring stays tight,
+     and an invisible area grows the touch target to about 46px high. It stays inside the row, so the targets of
+     neighbouring rows never overlap. */
+  .action {
+    position: relative;
+  }
+  .action::after {
+    content: '';
+    position: absolute;
+    inset: -14px -6px;
   }
 
   @media (max-width: 760px) {

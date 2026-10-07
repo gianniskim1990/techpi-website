@@ -48,7 +48,7 @@ Typed and validated at build time. A field marked optional may be absent. Nothin
 | Field | Type | Required | Notes |
 |---|---|---|---|
 | `title` | text | yes | The project name, as the client writes it |
-| `slug` | text, explicit | yes | Latin, lower case, identical in both languages. Locked at launch: `cairelink`, `armans`, `sowise-plus` |
+| `slug` | text, explicit | yes | Latin, lower case, identical in both languages. Locked at launch: `rocketeer`, `armans`, `logotherapia-xanthi` |
 | `locale` | `en` or `el` | yes | From the folder |
 | `status` | `draft` or `published` | yes | Drafts are never built for production |
 | `order` | number | yes | Position in the work index |
@@ -87,7 +87,7 @@ Present only on EU-funded projects.
 | `fundingStatement` | The acknowledgement text required by the programme |
 | `showEmblem` | Whether the EU emblem must be displayed |
 
-EU-funded projects usually carry visibility obligations: the emblem and a funding statement. The exact wording and whether it applies to a partner's own website depends on the programme and the grant agreement. This must be confirmed with the project coordinator before the SOWISE+ page is published. The schema makes room for it. It does not assume the answer.
+EU-funded projects usually carry visibility obligations: the emblem and a funding statement. The exact wording and whether it applies to a partner's own website depends on the programme and the grant agreement. This must be confirmed with the project coordinator before any EU-funded project page is published. No EU-project content is approved yet (`launch-blockers.md`). The schema makes room for it. It does not assume the answer.
 
 ## 3. No invented facts: enforced, not just promised
 
@@ -141,13 +141,15 @@ The guardrails from Phase 1 apply to the copy: Digital visibility is described i
 - Navigation structure and order.
 - Structured data templates.
 
-## 8. Site facts, all still to confirm
+## 8. Site facts
 
-One file feeds the footer, the contact page and the structured data.
+Confirmed facts live in one typed file, `src/content/site.ts`, so the pages that show them cannot disagree.
 
-Legal name. Registered address. Email. Phone. Company registration and VAT numbers. Social profile URLs. Founding year, if it is to be stated.
+**Confirmed (2026-10-07):** email `info@techpi.eu`, phone `+30 697 594 6984` (dialled as `+306975946984`), and the town, Xanthi, Greece. They are shown on the Contact pages only. The town is localised in the page copy ("Xanthi, Greece" / "Ξάνθη, Ελλάδα").
 
-None of these is assumed. Until they are supplied, the build guard in section 3 keeps the affected pages out of production.
+**Not confirmed, so not in the file and not shown:** legal name, registered address, street address, company registration and VAT numbers, social profile URLs, office hours, founding year.
+
+None of these is assumed. Until they are supplied, the build guard in section 3 keeps the affected pages out of production. The full list of what is confirmed, deferred and blocking is in `launch-blockers.md`.
 
 ## 9. Status
 
@@ -157,4 +159,4 @@ Content inputs still needed from TechPi. These are not architecture decisions:
 
 1. Case-study facts and Greek text, per project, before that project is published.
 2. Who signs off imagery for `demo-only` projects.
-3. The EU visibility requirements for SOWISE+, confirmed with the coordinator.
+3. The EU visibility requirements for any EU-funded project, confirmed with its coordinator, before that project is published.

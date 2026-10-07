@@ -1,6 +1,8 @@
 # Phase 3C implementation brief
 
 Status: **final decisions recorded. Phase 3C.1 in implementation.** 3C.2 is blocked on content.
+
+> **Update 2026-10-07 (Phase 3F, contact foundation).** This brief is a dated record. Where it differs, the following now applies. Contact shows the confirmed email, phone and Xanthi, Greece. SOWISE+ must not be displayed on the TechPi website and is no longer a planned case study. The EU Projects link is removed from the visible navigation while the route shell stays. See `launch-blockers.md`.
 Date: 2026-10-03
 Source of truth: `docs/design/secondary-pages-spec.md` (approved with revisions). Where the disposable study in `explorations/phase-3/secondary-pages/` differs from the spec, **the spec wins**. In particular, the study's "How they combine" table on Capabilities is obsolete and is not built.
 

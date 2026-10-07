@@ -33,7 +33,8 @@ Index-only projects have a row on `/work` and no page of their own: Level Up Edu
 Notes:
 
 - Capabilities is one page with four sections and anchors (`#digital-products`, `#web-experiences`, `#intelligence`, `#digital-visibility`). Separate pages per capability can be added later under `/capabilities/[slug]` without changing existing URLs.
-- EU Projects is a page in its own right, for institutional visitors. It lists the case studies that carry EU project data and adds partner information. It does not duplicate case-study content.
+- EU Projects is a page in its own right, for institutional visitors. It lists the case studies that carry EU project data and adds partner information. It does not duplicate case-study content. **Until approved factual content exists it is an unpublished route shell: it is not in the visible navigation and it stays `noindex` even when indexing is enabled for the rest of the site.** See `launch-blockers.md`, section 4.
+- The visible navigation (header, mobile menu and footer) lists Work, Capabilities, About and Contact, from one list in `src/i18n/routes.ts`. The EU Projects routes are unchanged and still return 200.
 - Privacy and Cookies are included because a company site in the EU needs them.
 
 ### 1.1 URL style (locked)

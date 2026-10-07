@@ -11,6 +11,16 @@ import { defaultLocale, locales, type Locale } from './locales';
 export const pages = ['home', 'work', 'capabilities', 'euProjects', 'about', 'contact'] as const;
 export type PageKey = (typeof pages)[number];
 
+/**
+ * The pages shown in the visible navigation: the header, the mobile menu and the footer, in order.
+ *
+ * EU Projects is deliberately NOT listed. /eu-projects and /el/eu-projects exist as route shells, but no EU-project
+ * content is approved for publication, so the unfinished page must not be promoted as if it were complete.
+ * Add 'euProjects' back here, between 'capabilities' and 'about', when approved content exists
+ * (docs/production/launch-blockers.md). The route, its redirects and its dictionary entries are unchanged.
+ */
+export const navPages = ['work', 'capabilities', 'about', 'contact'] as const satisfies readonly PageKey[];
+
 /** Slugs are Latin and identical in both languages. */
 const slugs: Record<Exclude<PageKey, 'home'>, string> = {
   work: 'work',
