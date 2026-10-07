@@ -20,7 +20,7 @@
   --sec: clamp(88px, 11.6vw, 168px);        /* section rhythm */
   --dw: 450;                                /* locked for the prototype: display 450, body 400, navigation, labels and buttons 500 */
   /* PROVISIONAL FLAT RENDERING FROM RASTER MASK. The existing symbol PNG's alpha, used as a mask. Not the final SVG identity. */
-  --symbol: url("../../../brand-source/provisional/techpi-symbol-color.png");
+  --symbol: url("../../../brand-source/final/3d/techpi-symbol-blue-3d.png");
 }
 
 *, *::before, *::after { box-sizing: border-box; }

@@ -1,0 +1,58 @@
+---
+/**
+ * The approved 3D TechPi symbol, served as an optimised raster.
+ *
+ * The variants are lossless square crops of the approved masters (brand-source/final/3d/, never published),
+ * made by scripts/brand/derive-identity.mjs:
+ *   src/assets/brand/techpi-symbol-white.png  for TechPi Blue and Ink surfaces
+ *   src/assets/brand/techpi-symbol-blue.png   for Paper
+ * The caller imports the variant it renders and passes it as `symbol`. That keeps the other variant out of the
+ * build entirely: Astro emits every image module it compiles, and only drops originals it has transformed.
+ * Astro resizes and encodes the variant, so a page never receives a crop or a master at full weight.
+ * There is no flat vector symbol yet, and none is approximated here.
+ *
+ * Use it rarely: the identity is strongest when it appears once, where the page resolves (homepage Contact).
+ * It is not for headers, footers, cards or headings. The header and footer name stays typographic.
+ *
+ * Accessibility: decorative by default (empty alt, ignored by assistive technology). Pass `alt` only where the
+ * symbol carries meaning on its own, and then say what it is ("TechPi"), not what it looks like.
+ */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  /** An imported variant from src/assets/brand/: techpi-symbol-white.png or techpi-symbol-blue.png. */
+  symbol: ImageMetadata;
+  /** Omit for decorative use. Set it, for example to "TechPi", only when the symbol is meaningful on its own. */
+  alt?: string;
+  /** The rendered width in CSS, as an image `sizes` value. Keep it honest so the browser picks the right file. */
+  sizes: string;
+  widths?: number[];
+  /** Below the fold by default. Use "eager" only if the symbol is ever above the fold. */
+  loading?: 'lazy' | 'eager';
+  class?: string;
+}
+
+const { symbol, alt = '', sizes, widths = [480, 720, 1080], loading = 'lazy', class: className } = Astro.props;
+---
+
+<Image
+  src={symbol}
+  alt={alt}
+  widths={widths}
+  sizes={sizes}
+  format="webp"
+  quality={88}
+  loading={loading}
+  decoding="async"
+  class:list={['brand-symbol', className]}
+/>
+
+<style>
+  .brand-symbol {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+</style>

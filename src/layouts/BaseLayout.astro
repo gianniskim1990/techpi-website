@@ -62,8 +62,10 @@ const indexable = import.meta.env.PUBLIC_ALLOW_INDEXING === 'true' && kind === '
     {canonical && <link rel="canonical" href={canonical} />}
     {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
     {!indexable && <meta name="robots" content="noindex, nofollow" />}
-    {/* No favicon exists yet (the final identity comes later). An empty icon stops the browser requesting /favicon.ico. */}
-    <link rel="icon" href="data:," />
+    {/* From the approved app icon (scripts/brand/derive-identity.mjs). No web manifest: there is no app requirement. */}
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/favicon-192.png" sizes="192x192" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <TemporaryFonts />
   </head>
   <body>
