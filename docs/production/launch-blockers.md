@@ -39,12 +39,22 @@ Internal information does not go into public page copy. This repository is curre
 
 Updated 2026-10-08: EU-funded projects are approved as a **target market and service offering**.
 
-- `/eu-projects` and `/el/eu-projects` are real service pages (`EuProjectsPage.astro`, copy in `src/content/eu.ts`):
-  what TechPi builds for EU-funded projects and consortia, who it is for, and how it is built. The homepage has a
-  matching section between Capabilities and Intelligence.
+- `/eu-projects` and `/el/eu-projects` are full service pages (`EuProjectsPage.astro`, copy in `src/content/eu.ts`),
+  expanded 2026-10-08 from the services publicly described on pigiota314.eu (approved as a source): lifecycle, EU
+  project websites, digital platforms, an offer for communication and dissemination partners, programmes, technical
+  priorities, process, proposal-stage and long-term support. The homepage keeps a short teaser between Capabilities
+  and Intelligence.
 - **It is not a portfolio.** No specific EU project, programme participation, partner, result, certification or
-  compliance is claimed. Programmes (Horizon Europe, Interreg, Erasmus+, LIFE, Digital Europe) are named only as
-  examples: "Suitable for projects funded through programmes such as…".
+  compliance is claimed. Horizon Europe, Interreg, Erasmus+, EDIHs and European R&I projects are named as the kinds of
+  projects the approach is built for; LIFE and Digital Europe only as examples TechPi can technically support. The
+  page carries: "TechPi is an independent technology company and is not affiliated with or endorsed by these
+  programmes or the European Commission."
+- **Deliberately softened or left out, for the launch copy review:**
+  - Accessibility reads "designed with WCAG 2.2 AA requirements in mind", not a guaranteed baseline. Decide whether
+    TechPi commits to WCAG 2.2 AA as a baseline before changing it.
+  - The source's "six to ten weeks" delivery time is not used; no budgets, dates or proposal outcomes are promised.
+    Proposal-stage estimates are labelled indicative.
+  - The partner offer (white-label delivery, direct subcontracting, etc.) implies no procurement or legal arrangement.
 - **SOWISE+ is not mentioned** anywhere (section 2).
 - **Navigation restored:** EU Projects / Ευρωπαϊκά έργα is back in the header, the mobile menu and the footer
   (`navPages` in `src/i18n/routes.ts`), between Capabilities and About.

@@ -2,9 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ClosingCTA from '../../components/secondary/ClosingCTA.astro';
 import PageIntro from '../../components/secondary/PageIntro.astro';
-import SectionSplit from '../../components/secondary/SectionSplit.astro';
 import { euCopy } from '../../content/eu';
-import { pagesCopy } from '../../content/copy';
 import { getDictionary } from '../../i18n';
 import type { Locale } from '../../i18n/locales';
 import { pathFor } from '../../i18n/routes';
@@ -15,163 +13,915 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = getDictionary(locale);
-const copy = euCopy[locale];
-const pages = pagesCopy[locale];
+const c = euCopy[locale].page;
+const contact = pathFor('contact', locale);
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-{/* EU Projects: what TechPi builds for EU-funded projects and consortia. A service page, not a portfolio: no
-    specific EU project, programme participation, partner, result, certification or compliance is claimed.
-    Programmes are named only as examples. In the same family as the other secondary pages: page head, numbered
-    sections with a heading column, ruled lists, the quiet closing line. No EU flag, stars or blue and yellow. */}
-<BaseLayout locale={locale} page="euProjects" title={t.pages.euProjects.title} description={copy.page.description} bleed>
-  <PageIntro heading={copy.page.heading} lead={copy.page.lead} />
+{/* EU Projects: one specialist market within TechPi, told as technology: websites, platforms, applications,
+    infrastructure and support for EU-funded projects. Not a portfolio and not a consultancy: no project, programme
+    participation, result, certification, delivery time or proposal outcome is claimed (src/content/eu.ts).
 
-  <section class="statement s-paper" aria-label={copy.page.statement}>
-    <p data-reveal="mask">{copy.page.statement}</p>
+    The longest secondary page, so its rhythm is varied on purpose: Paper sections in the secondary-page pattern, one
+    Ink band for the lifecycle, one TechPi Blue band for partners, and three kinds of list (a run, ruled columns,
+    numbered rows) so no two neighbouring sections look alike. Motion is calmer than the homepage: line drawing and
+    one-shot reveals, no pinning. No EU flag, no stars, no blue and yellow. */}
+<BaseLayout locale={locale} page="euProjects" title={t.pages.euProjects.title} description={c.description} bleed>
+  <PageIntro heading={c.hero.heading} lead={c.hero.lead}>
+    <Fragment slot="after">
+      <p class="context">{c.hero.context}</p>
+      <a class="tlink hero-cta" href={contact}>{c.hero.cta}<span class="arr" aria-hidden="true">→</span></a>
+    </Fragment>
+  </PageIntro>
+
+  {/* 01 More than a project website */}
+  <section class="sec s-paper rule" aria-labelledby="infra-h" data-reveal="fade">
+    <span class="num idx" aria-hidden="true">01</span>
+    <h2 id="infra-h" class="h-l"><span>{c.infra.heading}</span></h2>
+    <p class="lead-p">{c.infra.text}</p>
+    <div class="support">
+      <p class="meta-label">{c.infra.supportLabel}</p>
+      <ul class="run">{c.infra.support.map((s) => <li>{s}</li>)}</ul>
+      <p class="audience">{c.infra.audience}</p>
+    </div>
   </section>
 
-  <SectionSplit id="build" heading={copy.page.buildHeading} index="01">
-    <ol class="services">
+  {/* The lifecycle: one Ink band, a hairline that draws through six stages and closes on a circle. */}
+  <section class="cycle-band s-ink" aria-labelledby="cycle-h">
+    <p class="meta-label">{c.lifecycle.label}</p>
+    <h2 id="cycle-h" class="h-l" data-reveal="mask">{c.lifecycle.heading}</h2>
+    <ol class="cycle" data-reveal="cycle">
       {
-        copy.services.map((s, i) => (
-          <li>
-            <span class="num" aria-hidden="true">
-              {pad(i + 1)}
-            </span>
+        c.lifecycle.stages.map((s, i) => (
+          <li style={`--i:${i}`}>
+            <span class="node" aria-hidden="true" />
+            <span class="num">{pad(i + 1)}</span>
             <h3>{s.name}</h3>
             <p>{s.text}</p>
           </li>
         ))
       }
     </ol>
-  </SectionSplit>
+  </section>
 
-  <SectionSplit id="for" heading={copy.page.whoHeading} index="02">
-    <ul class="ruled pairs">
-      {copy.audiences.map((a) => <li>{a}</li>)}
-    </ul>
-    <p class="programmes">{copy.page.programmes}</p>
-  </SectionSplit>
+  {/* 02 EU project websites */}
+  <section class="sec s-paper rule" aria-labelledby="web-h" data-reveal="fade">
+    <span class="num idx" aria-hidden="true">02</span>
+    <h2 id="web-h" class="h-l">{c.websites.heading}</h2>
+    <p class="lead-p">{c.websites.intro}</p>
 
-  <SectionSplit id="approach" heading={copy.page.approachHeading} index="03">
-    <dl class="approach">
+    <div class="structure">
+      <div class="structure-txt">
+        <h3 class="h-m">{c.websites.structureHeading}</h3>
+        <p>{c.websites.structureText}</p>
+      </div>
+      {/* A content model, drawn: the project at the root, its own entities as branches. Conceptual, not a sitemap. */}
+      <div class="model" aria-hidden="true" data-reveal="model">
+        <span class="root"><i></i>{c.websites.modelRoot}</span>
+        <ul>
+          {c.websites.model.map((m, i) => <li style={`--i:${i}`}>{m}</li>)}
+        </ul>
+      </div>
+    </div>
+
+    <div class="groups">
       {
-        copy.approach.map((a) => (
+        c.websites.groups.map((g) => (
+          <div class="group">
+            <h3 class="meta-label">{g.name}</h3>
+            <ul class="ruled">
+              {g.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  {/* 03 Digital platforms */}
+  <section class="sec s-paper rule" aria-labelledby="plat-h" data-reveal="fade">
+    <span class="num idx" aria-hidden="true">03</span>
+    <h2 id="plat-h" class="h-l">{c.platforms.heading}</h2>
+    <p class="lead-p">{c.platforms.text}</p>
+    <ul class="grid4">
+      {
+        c.platforms.items.map((p) => (
+          <li>
+            <h3>{p.name}</h3>
+            <p>{p.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="principles">
+      <p class="meta-label">{c.platforms.principlesLabel}</p>
+      <ol>
+        {
+          c.platforms.principles.map((p, i) => (
+            <li>
+              <span class="num">{pad(i + 1)}</span>
+              <h3 class="h-s">{p.name}</h3>
+              <p>{p.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  {/* 04 For communication and dissemination partners: the one TechPi Blue band. B2B. */}
+  <section class="partners s-blue" aria-labelledby="part-h">
+    <p class="meta-label">{c.partners.label}</p>
+    <h2 id="part-h" class="h-l" data-reveal="mask">{c.partners.heading}</h2>
+    <p class="lead-p">{c.partners.text}</p>
+    <div class="who">
+      <h3 class="sub">{c.partners.whoLabel}</h3>
+      <ul class="ruled">{c.partners.who.map((w) => <li>{w}</li>)}</ul>
+    </div>
+    <div class="offer">
+      <h3 class="sub">{c.partners.offerLabel}</h3>
+      <dl>
+        {
+          c.partners.offer.map((o) => (
+            <div>
+              <dt>{o.name}</dt>
+              <dd>{o.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+    <p class="partners-cta"><a class="btn" href={contact}>{c.partners.cta}<span class="arr" aria-hidden="true">→</span></a></p>
+  </section>
+
+  {/* 05 Programmes: restrained. Named only as the kinds of projects the approach is built for. */}
+  <section class="sec s-paper rule compact" aria-labelledby="prog-h" data-reveal="fade">
+    <span class="num idx" aria-hidden="true">05</span>
+    <h2 id="prog-h" class="h-m">{c.programmes.heading}</h2>
+    <div class="prog">
+      <p>{c.programmes.text}</p>
+      <ul class="ruled prog-list">{c.programmes.list.map((p) => <li>{p}</li>)}</ul>
+      <p class="also">{c.programmes.also}</p>
+      <p class="disclaimer">{c.programmes.disclaimer}</p>
+    </div>
+  </section>
+
+  {/* 06 Technical priorities */}
+  <section class="sec s-paper rule" aria-labelledby="prio-h" data-reveal="fade">
+    <span class="num idx" aria-hidden="true">06</span>
+    <h2 id="prio-h" class="h-l">{c.priorities.heading}</h2>
+    <dl class="grid3">
+      {
+        c.priorities.items.map((p) => (
           <div>
-            <dt>{a.name}</dt>
-            <dd>{a.text}</dd>
+            <dt>{p.name}</dt>
+            <dd>{p.text}</dd>
           </div>
         ))
       }
     </dl>
-  </SectionSplit>
+  </section>
 
-  <ClosingCTA heading={copy.page.closer} cta={pages.closer.cta} href={pathFor('contact', locale)} />
+  {/* 07 Process: numbered rows, the sequence drawn as a line down the numbers. */}
+  <section class="sec s-paper rule" aria-labelledby="proc-h" data-reveal="fade">
+    <span class="num idx" aria-hidden="true">07</span>
+    <h2 id="proc-h" class="h-l">{c.process.heading}</h2>
+    <p class="lead-p">{c.process.intro}</p>
+    <ol class="steps">
+      {
+        c.process.steps.map((s, i) => (
+          <li>
+            <span class="step-n">{pad(i + 1)}</span>
+            <h3 class="h-s">{s.name}</h3>
+            <p>{s.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  {/* 08 Before and after delivery */}
+  <section class="sec s-paper rule pairs-sec" aria-label={`${c.before.heading} / ${c.after.heading}`} data-reveal="fade">
+    <span class="num idx" aria-hidden="true">08</span>
+    <div class="pair">
+      <div>
+        <h2 class="h-m">{c.before.heading}</h2>
+        <p class="pair-text">{c.before.text}</p>
+        <ul class="ruled">{c.before.items.map((x) => <li>{x}</li>)}</ul>
+        <p class="note">{c.before.note}</p>
+      </div>
+      <div>
+        <h2 class="h-m">{c.after.heading}</h2>
+        <p class="pair-text">{c.after.text}</p>
+        <ul class="ruled">{c.after.items.map((x) => <li>{x}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <ClosingCTA heading={c.closer.heading} text={c.closer.text} cta={c.closer.cta} href={contact} />
 </BaseLayout>
 
 <style>
-  /* The answer to the lead, set large: the one sentence the page exists to say. */
-  .statement {
-    margin: clamp(56px, 7vw, 112px) var(--space-margin) 0;
+  /* ---------- Shared type ---------- */
+  .h-l {
+    font-size: var(--text-display-l);
+    line-height: 1.02;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+  }
+  .h-l:lang(el) {
+    line-height: 1.08;
+  }
+  .h-m {
+    font-size: var(--text-display-m);
+    font-weight: var(--weight-display);
+    line-height: 1.06;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+  .h-s {
+    font-size: var(--text-heading);
+    font-weight: var(--weight-display);
+    line-height: 1.18;
+    letter-spacing: -0.012em;
+  }
+  .lead-p {
+    font-size: var(--text-lead);
+    line-height: 1.42;
+    color: var(--sec-c);
+  }
+
+  /* ---------- Hero additions ---------- */
+  .context {
+    margin-top: 22px;
+    font-size: var(--text-small);
+    color: var(--ter);
+    max-width: 46ch;
+  }
+  .hero-cta {
+    display: inline-block;
+    margin-top: 26px;
+  }
+
+  /* ---------- A Paper section: index, heading, lead, then its own body ---------- */
+  .sec {
+    margin: var(--space-section) var(--space-margin) 0;
+    padding-top: 28px;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    align-content: start;
+  }
+  .idx {
+    grid-column: 1 / -1;
+    color: var(--color-techpi-blue);
+  }
+  .sec > .h-l {
+    grid-column: 1 / span 9;
+    margin-top: 22px;
+  }
+  .sec > .lead-p {
+    grid-column: 5 / span 6;
+    margin-top: clamp(28px, 3vw, 44px);
+  }
+
+  /* 01 */
+  .support {
+    grid-column: 5 / span 8;
+    margin-top: clamp(40px, 4.5vw, 64px);
+  }
+  .run {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 40px;
+    overflow: hidden;
+    font-size: var(--text-heading);
+    line-height: 1.25;
+    letter-spacing: -0.012em;
+  }
+  .run li {
+    position: relative;
+  }
+  .run li::before {
+    content: '';
+    position: absolute;
+    left: -25px;
+    top: 0.5em;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1px solid var(--color-slate);
+  }
+  .audience {
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    color: var(--sec-c);
+    max-width: 60ch;
+  }
+
+  /* ---------- The lifecycle band ---------- */
+  .cycle-band {
+    margin-top: var(--space-section);
+    padding: clamp(72px, 8vw, 128px) var(--space-margin) clamp(80px, 9vw, 136px);
+  }
+  .cycle-band .h-l {
+    margin-top: 20px;
+    max-width: 18ch;
+  }
+  .cycle {
+    position: relative;
+    margin-top: clamp(56px, 6vw, 96px);
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+  }
+  /* The line through the stages. */
+  .cycle::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 5px;
+    height: 1px;
+    background: rgba(240, 238, 233, 0.4);
+    transform-origin: 0 50%;
+  }
+  .cycle li {
+    position: relative;
+    padding-top: 36px;
+  }
+  .node {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 1px solid var(--color-fog);
+    background: var(--color-ink);
+    transition:
+      background-color 300ms var(--ease-state),
+      border-color 300ms var(--ease-state);
+  }
+  /* Sustain: the last stage closes on a circle, in the one accent of a dark surface. */
+  .cycle li:last-child .node {
+    width: 19px;
+    height: 19px;
+    left: -4px;
+    top: -4px;
+    border: 1.25px solid var(--color-cyan);
+  }
+  .cycle li:last-child .node::after {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    background: var(--color-cyan);
+  }
+  .cycle .num {
+    color: var(--color-fog);
+  }
+  .cycle h3 {
+    margin-top: 10px;
+    font-size: var(--text-heading);
+    font-weight: var(--weight-display);
+    line-height: 1.15;
+    letter-spacing: -0.012em;
+  }
+  .cycle p {
+    margin-top: 10px;
+    font-size: var(--text-small);
+    color: var(--sec-c);
+    padding-right: 8px;
+  }
+  @media (hover: hover) {
+    .cycle li:hover .node {
+      background: var(--color-cyan);
+      border-color: var(--color-cyan);
+    }
+  }
+  /* One-shot: the line draws from the first stage to the last; each node fills as the line reaches it. */
+  :global(.mo) .cycle::before {
+    transition: transform 1600ms var(--ease-reveal);
+  }
+  :global(.mo) .cycle:not(:global(.in))::before {
+    transform: scaleX(0);
+  }
+  :global(.mo) .cycle li {
+    transition:
+      opacity 700ms var(--ease-reveal),
+      transform 700ms var(--ease-reveal);
+    transition-delay: calc(200ms + var(--i) * 170ms);
+  }
+  :global(.mo) .cycle:not(:global(.in)) li {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  /* ---------- 02 Websites ---------- */
+  .structure {
+    grid-column: 1 / -1;
+    margin-top: clamp(64px, 7vw, 112px);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    align-items: start;
+  }
+  .structure-txt {
+    grid-column: 1 / span 6;
+  }
+  .structure-txt p {
+    margin-top: 22px;
+    max-width: 56ch;
+    color: var(--sec-c);
+  }
+  /* The content model: a root in a ring, a trunk, and six branches. */
+  .model {
+    grid-column: 8 / span 5;
+    position: relative;
+    padding-top: 6px;
+  }
+  .root {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: var(--text-label);
+    font-weight: var(--weight-ui);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .root i {
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    border: 1.25px solid var(--color-techpi-blue);
+    position: relative;
+  }
+  .root i::after {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    background: var(--color-techpi-blue);
+  }
+  .model ul {
+    position: relative;
+    margin: 10px 0 0 9px;
+    padding-left: 0;
+  }
+  .model ul::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 21px;
+    width: 1px;
+    background: var(--color-ink);
+    opacity: 0.6;
+    transform-origin: 50% 0;
+  }
+  .model li {
+    position: relative;
+    padding: 12px 0 12px 44px;
+    font-size: var(--text-heading);
+    line-height: 1.2;
+    letter-spacing: -0.012em;
+    border-bottom: 1px solid var(--line);
+  }
+  .model li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 30px;
+    height: 1px;
+    background: var(--color-ink);
+    opacity: 0.6;
+  }
+  .model li::after {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: calc(50% - 2.5px);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-ink);
+  }
+  :global(.mo) .model ul::before {
+    transition: transform 900ms var(--ease-reveal) 150ms;
+  }
+  :global(.mo) .model:not(:global(.in)) ul::before {
+    transform: scaleY(0);
+  }
+  :global(.mo) .model li {
+    transition:
+      opacity 600ms var(--ease-reveal),
+      transform 600ms var(--ease-reveal);
+    transition-delay: calc(300ms + var(--i) * 90ms);
+  }
+  :global(.mo) .model:not(:global(.in)) li {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  .groups {
+    grid-column: 1 / -1;
+    margin-top: clamp(64px, 7vw, 112px);
+    display: grid;
+    grid-template-columns: 5fr 4fr 3fr;
+    column-gap: var(--space-gap);
+    align-items: start;
+  }
+  .group .ruled {
+    margin-top: 14px;
+  }
+
+  /* ---------- 03 Platforms ---------- */
+  .grid4 {
+    grid-column: 1 / -1;
+    margin-top: clamp(56px, 6vw, 96px);
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    row-gap: 36px;
+  }
+  .grid4 li {
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .grid4 h3,
+  .grid3 dt,
+  .offer dt {
+    font-size: 1.0625rem;
+    font-weight: var(--weight-ui);
+    line-height: 1.3;
+  }
+  .grid4 p,
+  .grid3 dd {
+    margin-top: 8px;
+    color: var(--sec-c);
+    font-size: var(--text-small);
+    line-height: 1.5;
+  }
+  .principles {
+    grid-column: 1 / -1;
+    margin-top: clamp(64px, 7vw, 112px);
+  }
+  .principles ol {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+  }
+  .principles li {
+    padding-top: 18px;
+    border-top: 1px solid var(--color-ink);
+  }
+  .principles .num {
+    color: var(--color-techpi-blue);
+  }
+  .principles h3 {
+    margin-top: 18px;
+  }
+  .principles p {
+    margin-top: 10px;
+    color: var(--sec-c);
+    max-width: 34ch;
+  }
+
+  /* ---------- 04 Partners (TechPi Blue) ---------- */
+  .partners {
+    margin-top: var(--space-section);
+    padding: clamp(72px, 8vw, 128px) var(--space-margin);
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
   }
-  .statement p {
-    grid-column: 1 / span 9;
-    font-size: var(--text-display-m);
-    font-weight: var(--weight-display);
-    line-height: 1.06;
-    letter-spacing: -0.024em;
-    text-wrap: balance;
+  .partners > .meta-label {
+    grid-column: 1 / -1;
+    color: var(--color-sheet);
+    opacity: 0.85;
+  }
+  .partners .h-l {
+    grid-column: 1 / span 10;
+    margin-top: 20px;
+  }
+  .partners .lead-p {
+    grid-column: 1 / span 7;
+    margin-top: clamp(28px, 3vw, 44px);
+    opacity: 0.9;
+  }
+  .sub {
+    font-size: var(--text-label);
+    font-weight: var(--weight-ui);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+  .who {
+    grid-column: 1 / span 4;
+    margin-top: clamp(56px, 6vw, 88px);
+  }
+  .who .ruled {
+    margin-top: 14px;
+  }
+  .offer {
+    grid-column: 6 / span 7;
+    margin-top: clamp(56px, 6vw, 88px);
+  }
+  .offer dl {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+  }
+  .offer dl div {
+    padding: 14px 0 16px;
+    border-top: 1px solid var(--line);
+  }
+  .offer dd {
+    margin-top: 4px;
+    font-size: var(--text-small);
+    line-height: 1.5;
+    opacity: 0.85;
+  }
+  .partners-cta {
+    grid-column: 1 / -1;
+    margin-top: clamp(48px, 5vw, 72px);
   }
 
-  /* What we build: numbered ruled rows, the name and one sentence side by side. */
-  .services li {
-    display: grid;
-    grid-template-columns: 3.2em minmax(0, 5fr) minmax(0, 6fr);
-    column-gap: var(--space-gap);
-    padding: 20px 0 22px;
-    border-top: 1px solid var(--line);
-    align-items: baseline;
+  /* ---------- 05 Programmes ---------- */
+  .compact > .h-m {
+    grid-column: 1 / span 4;
+    margin-top: 22px;
   }
-  .services li:last-child {
-    border-bottom: 1px solid var(--line);
+  .prog {
+    grid-column: 5 / span 8;
+    margin-top: 22px;
   }
-  .services h3 {
+  .prog > p:first-child {
+    color: var(--sec-c);
+    max-width: 60ch;
+  }
+  /* The programmes as a quiet ruled list at heading size: names, not badges or logos. */
+  .prog-list {
+    margin-top: 28px;
     font-size: var(--text-heading);
-    line-height: 1.18;
+    line-height: 1.25;
     letter-spacing: -0.012em;
   }
-  .services p {
+  .also {
+    margin-top: 28px;
     color: var(--sec-c);
+    max-width: 60ch;
+  }
+  .disclaimer {
+    margin-top: 28px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-size: var(--text-small);
+    color: var(--ter);
+    max-width: 70ch;
   }
 
-  /* Who it is for: a ruled list in two columns. */
-  .pairs {
+  /* ---------- 06 Priorities ---------- */
+  .grid3 {
+    grid-column: 1 / -1;
+    margin-top: clamp(48px, 5vw, 80px);
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--space-gap);
-    font-size: var(--text-lead);
-    line-height: 1.35;
-  }
-  .pairs li:nth-last-child(2):nth-child(odd) {
-    border-bottom: 1px solid var(--line);
-  }
-  .programmes {
-    margin-top: 32px;
-    max-width: 56ch;
-    color: var(--sec-c);
-  }
-
-  /* How we build it: eight principles in two columns, a name and one line each. */
-  .approach {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     column-gap: var(--space-gap);
   }
-  .approach div {
-    padding: 18px 0 22px;
+  .grid3 div {
+    padding: 18px 0 26px;
     border-top: 1px solid var(--line);
   }
-  .approach div:nth-last-child(-n + 2) {
+
+  /* ---------- 07 Process ---------- */
+  .steps {
+    grid-column: 1 / -1;
+    margin-top: clamp(48px, 5vw, 80px);
+    position: relative;
+  }
+  .steps li {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    align-items: baseline;
+    padding: 22px 0 24px;
+    border-top: 1px solid var(--line);
+  }
+  .steps li:last-child {
     border-bottom: 1px solid var(--line);
   }
-  .approach dt {
-    font-weight: var(--weight-ui);
+  .step-n {
+    grid-column: 1 / span 1;
+    font-size: var(--text-display-m);
+    font-weight: var(--weight-display);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    color: var(--color-techpi-blue);
+    line-height: 1;
   }
-  .approach dd {
-    margin-top: 6px;
+  .steps h3 {
+    grid-column: 3 / span 4;
+  }
+  .steps p {
+    grid-column: 7 / span 5;
     color: var(--sec-c);
-    max-width: 40ch;
   }
 
+  /* ---------- 08 Before and after ---------- */
+  .pair {
+    grid-column: 1 / -1;
+    margin-top: 22px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: calc(var(--space-gap) * 3);
+  }
+  .pair-text {
+    margin-top: 18px;
+    color: var(--sec-c);
+    max-width: 44ch;
+  }
+  .pair .ruled {
+    margin-top: 24px;
+  }
+  .note {
+    margin-top: 16px;
+    font-size: var(--text-small);
+    color: var(--ter);
+  }
+
+  /* ---------- Tablet ---------- */
   @media (max-width: 1023px) {
-    .statement p {
+    .sec,
+    .structure,
+    .partners {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .sec > .h-l,
+    .partners .h-l,
+    .partners .lead-p {
       grid-column: 1 / -1;
     }
-    .services li {
-      grid-template-columns: 2.6em minmax(0, 1fr);
-      row-gap: 8px;
+    .sec > .lead-p,
+    .support,
+    .prog {
+      grid-column: 2 / -1;
     }
-    .services p {
-      grid-column: 2;
+    .compact > .h-m {
+      grid-column: 1 / -1;
+    }
+    .prog {
+      margin-top: 28px;
+    }
+    .structure-txt,
+    .model {
+      grid-column: 1 / -1;
+    }
+    .model {
+      margin-top: 48px;
+      max-width: 520px;
+    }
+    .groups {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: 48px;
+    }
+    .groups .group:first-child {
+      grid-row: span 2;
+    }
+    .grid4 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .grid3 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: 32px;
+    }
+    .who,
+    .offer {
+      grid-column: 1 / -1;
+    }
+    .steps li {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .steps h3 {
+      grid-column: 2 / span 3;
+    }
+    .steps p {
+      grid-column: 5 / span 4;
+    }
+    /* The lifecycle becomes vertical: the line runs down the left, the stages read in order. */
+    .cycle {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 34px;
+      padding-left: 40px;
+    }
+    .cycle::before {
+      left: 5px;
+      right: auto;
+      top: 6px;
+      bottom: 30px;
+      width: 1px;
+      height: auto;
+      transform-origin: 50% 0;
+    }
+    :global(.mo) .cycle:not(:global(.in))::before {
+      transform: scaleY(0);
+    }
+    .cycle li {
+      padding-top: 0;
+      display: grid;
+      grid-template-columns: 3em minmax(0, 14em) minmax(0, 1fr);
+      column-gap: var(--space-gap);
+      align-items: baseline;
+    }
+    .node {
+      left: -40px;
+      top: 0.35em;
+    }
+    .cycle li:last-child .node {
+      left: -44px;
+      top: calc(0.35em - 4px);
+    }
+    .cycle h3,
+    .cycle p {
+      margin-top: 0;
     }
   }
+
+  /* ---------- Phone ---------- */
   @media (max-width: 760px) {
-    .statement {
+    .sec,
+    .structure,
+    .partners {
       display: block;
     }
-    .pairs,
-    .approach {
+    .sec > .h-l,
+    .partners .h-l {
+      margin-top: 16px;
+    }
+    .groups,
+    .grid4,
+    .principles ol,
+    .grid3,
+    .offer dl,
+    .pair {
       display: block;
     }
-    .pairs li:nth-last-child(2):nth-child(odd) {
-      border-bottom: 0;
+    .groups .group + .group,
+    .pair > div + div {
+      margin-top: 48px;
     }
-    .approach div:nth-last-child(2) {
-      border-bottom: 0;
+    .grid4 li + li {
+      margin-top: 22px;
+    }
+    .principles li + li {
+      margin-top: 28px;
+    }
+    .run {
+      font-size: 1.1875rem;
+      gap: 6px 30px;
+    }
+    .run li::before {
+      left: -19px;
+      width: 7px;
+      height: 7px;
+    }
+    .cycle {
+      padding-left: 34px;
+    }
+    .cycle li {
+      display: block;
+    }
+    .node {
+      left: -34px;
+    }
+    .cycle li:last-child .node {
+      left: -38px;
+    }
+    .cycle h3 {
+      margin-top: 6px;
+    }
+    .cycle p {
+      margin-top: 6px;
+    }
+    .steps li {
+      display: block;
+    }
+    .steps h3 {
+      margin-top: 12px;
+    }
+    .steps p {
+      margin-top: 8px;
+    }
+    .step-n {
+      font-size: 1.5rem;
     }
   }
 </style>

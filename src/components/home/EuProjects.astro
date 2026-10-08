@@ -22,7 +22,7 @@ const copy = euCopy[locale];
   <h2 id="eu-h" data-reveal="mask"><Unbroken text={copy.home.heading} /></h2>
   <p class="text" data-reveal="fade" style="--delay:120ms">{copy.home.text}</p>
   <ul class="run" data-reveal="fade" style="--delay:200ms">
-    {copy.services.map((s) => <li>{s.name}</li>)}
+    {copy.home.items.map((item) => <li>{item}</li>)}
   </ul>
   {/* Last in reading order; on desktop it sits at the right end of the top line. */}
   <p class="more" data-reveal="fade">

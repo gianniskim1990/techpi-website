@@ -20,6 +20,7 @@ const { heading, lead, roomBelow = false } = Astro.props;
     lead && (
       <div class="lead-row rule" data-reveal="fade" style="--delay:140ms">
         <p class="lead">{lead}</p>
+        <div class="after"><slot name="after" /></div>
       </div>
     )
   }
@@ -61,12 +62,20 @@ const { heading, lead, roomBelow = false } = Astro.props;
     text-wrap: pretty;
   }
 
+  .after {
+    grid-column: 7 / span 5;
+  }
+  .after:empty {
+    display: none;
+  }
+
   .room {
     padding-bottom: 72px;
   }
 
   @media (max-width: 1023px) {
-    .lead {
+    .lead,
+    .after {
       grid-column: 5 / span 8;
     }
   }

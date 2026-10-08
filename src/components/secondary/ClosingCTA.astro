@@ -1,18 +1,24 @@
 ---
 import Arrowed from '../Arrowed.astro';
+import Unbroken from '../Unbroken.astro';
 interface Props {
   heading: string;
+  /** An optional supporting sentence under the question. */
+  text?: string;
   cta: string;
   href: string;
 }
 
-const { heading, cta, href } = Astro.props;
+const { heading, text, cta, href } = Astro.props;
 ---
 
 {/* The quiet closing line of a secondary page: the homepage question on Paper. No circle and no symbol here: the
     identity resolves once, on the homepage. The Ink footer follows. */}
 <section class="closer s-paper rule" aria-label={heading} data-reveal="fade">
-  <p class="question">{heading}</p>
+  <div class="q">
+    <p class="question"><Unbroken text={heading} /></p>
+    {text && <p class="support">{text}</p>}
+  </div>
   <p class="act"><a class="btn" href={href}><Arrowed text={cta} /></a></p>
 </section>
 
@@ -25,8 +31,17 @@ const { heading, cta, href } = Astro.props;
     column-gap: var(--space-gap);
     align-items: end;
   }
-  .question {
+  .q {
     grid-column: 1 / span 8;
+  }
+  .support {
+    margin-top: 24px;
+    max-width: 52ch;
+    font-size: var(--text-lead);
+    line-height: 1.42;
+    color: var(--sec-c);
+  }
+  .question {
     font-size: var(--text-display-l);
     font-weight: var(--weight-display);
     line-height: 1.02;
@@ -43,7 +58,7 @@ const { heading, cta, href } = Astro.props;
   }
 
   @media (max-width: 1023px) {
-    .question {
+    .q {
       grid-column: 1 / -1;
     }
     .act {

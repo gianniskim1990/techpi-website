@@ -134,10 +134,24 @@ A service offering, not a portfolio (copy in `src/content/eu.ts`, rules in `laun
 - **Homepage**, between Capabilities and Intelligence (`home/EuProjects.astro`): a top hairline with a small label
   and "Explore EU Projects", one large sentence, the supporting line, and what can be built as a single typographic
   run with small hairline circles between items. No cards, no EU flag, stars or blue and yellow.
-- **EU Projects page** (`pages/EuProjectsPage.astro`): page head, the answer to the lead set large ("TechPi designs
-  and builds those systems."), then three numbered sections in the secondary-page pattern: what we build (seven
-  services, each with one sentence), who it is for (six audiences, with programmes named only as examples), how we
-  build it (eight principles, with no certification or compliance claimed), and the closing question.
+- **EU Projects page** (`pages/EuProjectsPage.astro`), expanded 2026-10-08 from the services described on
+  pigiota314.eu (approved source; adapted, not copied). More information-rich than the other secondary pages, but
+  in the same editorial system, and paced by surface changes rather than by cards:
+  1. Page head: h1, lead, a smaller context line and a quiet "Discuss your project" link.
+  2. **01** A digital infrastructure for the full project lifecycle: what the site may need to support, as one
+     typographic run, and who it is for.
+  3. **Ink band:** the lifecycle, Launch → Communicate → Publish → Engage → Measure → Sustain, as a hairline timeline
+     with six nodes (the last a Cyan ring). On reveal the line draws and the stages follow; vertical below 1024.
+  4. **02** EU project websites: "Structure before visuals" beside a small content-model tree (Project → partners,
+     work packages, deliverables, results, events, stakeholders), then the twelve capabilities in three ruled groups.
+  5. **03** When a project needs more than a website: eight platform types and three principles. No interface
+     mock-up, so nothing reads as a client system.
+  6. **TechPi Blue band:** for communication and dissemination partners: who, the ten-part offer, "Discuss a
+     partnership".
+  7. **05** Programmes and project types, as a plain ruled list with the independence disclaimer.
+  8. **06** Technical priorities (3×3), **07** the six-step process, **08** before the project / throughout and after.
+  9. Closing question with a supporting sentence (`ClosingCTA` gained an optional `text`).
+  Motion is calmer than the homepage: reveals and the lifecycle line only, no pinning, no scroll scenes.
 - **Navigation:** EU Projects restored to header, mobile menu and footer, in both languages; checked against the hero
   arc at every desktop width in Greek, the longest labels.
 - Hyphenated words in large headings ("EU-funded") never break at the hyphen (`Unbroken.astro`; Commissioner has no
@@ -155,3 +169,12 @@ A service offering, not a portfolio (copy in `src/content/eu.ts`, rules in `laun
 | Scroll scenes | Frame sequences of the whole homepage at 1440 × 900 (EN), 1280 × 800 (EL) and 1024 × 768 (EN) |
 | Horizontal overflow, console errors | None on any reviewed page and width |
 | Mobile dialog | Opens, traps focus, closes on Escape, returns focus to the Menu button |
+
+### EU Projects expansion QA (2026-10-08)
+
+`/eu-projects` and `/el/eu-projects` at 1440, 1280, 1024, 768, 390 and 360: no horizontal overflow, no console
+errors, one h1, mobile menu opens and closes (Escape) with EU Projects marked current, Greek wraps cleanly. Fixes
+made in review: programmes moved from a large wrapping run to a ruled list; the closing question no longer breaks
+"EU-funded" at the hyphen; the three platform principles stay in one row on tablet. The homepage teaser was
+re-checked in both languages. Static audit: the only differences from the baseline are the new meta descriptions on
+the two EU pages; `noindex` unchanged.
