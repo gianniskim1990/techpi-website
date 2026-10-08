@@ -62,7 +62,7 @@ const { copy, locale } = Astro.props;
     position: relative;
     overflow: clip;
     min-height: max(100svh, 720px);
-    padding: 168px var(--space-margin) 40px;
+    padding: 120px var(--space-margin) 40px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -138,9 +138,19 @@ const { copy, locale } = Astro.props;
     fill: none;
     stroke: var(--color-ink);
     stroke-width: 1.25px;
+    transition: stroke 700ms var(--ease-state);
     transform-box: fill-box;
     transform-origin: center;
     transform: rotate(146deg) scaleY(-1);
+  }
+
+  /* When the reader hovers the transformation map, the trace reaches the arc and the arc turns TechPi Blue for as
+     long as the pointer stays: the connected system has become TechPi. */
+  @media (hover: hover) {
+    .stage:has(:global(.tmap:hover)) .arc circle {
+      stroke: var(--color-techpi-blue);
+      transition-delay: 1300ms;
+    }
   }
 
   /* Tablet: the statement spans the width, the support line moves under it. */

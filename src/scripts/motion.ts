@@ -165,6 +165,105 @@ function initScenes() {
   setActive();
 }
 
+/**
+ * The hero transformation map ends where its line meets the hero arc. The arc is placed from the top right and the
+ * line from the headline, so the meeting point depends on the window: measure it and hand it to CSS as --hit.
+ * Runs whatever the motion setting, since it is layout, not animation. Without it the line ends at a resting
+ * position and nothing is lost.
+ */
+function initHeroMap() {
+  const map = document.querySelector<HTMLElement>('.tmap');
+  const arc = document.querySelector<SVGSVGElement>('.hero .arc');
+  const box = map?.querySelector<HTMLElement>('.inner');
+  if (!map || !arc || !box) return;
+  const shift = (el: Element) => {
+    const t = getComputedStyle(el).translate;
+    if (!t || t === 'none') return [0, 0];
+    const [x = '0', y = '0'] = t.split(' ');
+    return [parseFloat(x) || 0, parseFloat(y) || 0];
+  };
+  const place = () => {
+    const [ax, ay] = shift(arc);
+    const [mx, my] = shift(map);
+    const a = arc.getBoundingClientRect();
+    const b = box.getBoundingClientRect();
+    const r = a.width * 0.4995;
+    const cx = a.left - ax + a.width / 2;
+    const cy = a.top - ay + a.height / 2;
+    const y = b.bottom - my;
+    const left = b.left - mx;
+    const dy = y - cy;
+    let hit = NaN;
+    if (Math.abs(dy) < r) hit = cx - Math.sqrt(r * r - dy * dy) - left;
+    // Only a meeting point well to the right of the turning point, inside the box, is used.
+    const ok = hit > b.width * 0.55 && hit < b.width - 24;
+    map.classList.toggle('on-arc', ok);
+    if (ok) map.style.setProperty('--hit', `${hit.toFixed(1)}px`);
+    else map.style.removeProperty('--hit');
+    tidy(cx + mx, cy + my, r);
+  };
+
+  // Labels never collide and nothing crosses the arc: a caption that would is dropped, and the line keeps its
+  // nodes in order of importance (systems goes first, then AI's label).
+  const crosses = (el: Element, cx: number, cy: number, r: number) => {
+    const q = el.getBoundingClientRect();
+    if (!q.width) return false;
+    const nx = Math.max(q.left, Math.min(cx, q.right));
+    const ny = Math.max(q.top, Math.min(cy, q.bottom));
+    const near = Math.hypot(nx - cx, ny - cy);
+    const far = Math.max(
+      ...[
+        [q.left, q.top],
+        [q.right, q.top],
+        [q.left, q.bottom],
+        [q.right, q.bottom],
+      ].map(([x, y]) => Math.hypot(x - cx, y - cy)),
+    );
+    return near < r + 4 && far > r - 4;
+  };
+  const overlap = (a: Element, b: Element) => {
+    const p = a.getBoundingClientRect();
+    const q = b.getBoundingClientRect();
+    return p.width > 0 && q.width > 0 && p.left < q.right + 14 && q.left < p.right + 14 && p.top < q.bottom && q.top < p.bottom;
+  };
+  const tidy = (cx: number, cy: number, r: number) => {
+    map.querySelectorAll('.cut').forEach((el) => el.classList.remove('cut'));
+    const capTo = map.querySelector('.cap-to');
+    const marker = map.querySelector('.mark-turn');
+    if (capTo && (crosses(capTo, cx, cy, r) || (marker && crosses(marker, cx, cy, r)))) {
+      capTo.classList.add('cut');
+      marker?.classList.add('cut');
+    }
+    const nodes = Array.from(map.querySelectorAll<HTMLElement>('.pt-node'));
+    const endLabel = map.querySelector('.end-lbl');
+    const label = (n: Element) => n.querySelector('.lbl');
+    const clashes = (n: HTMLElement) => {
+      const l = label(n);
+      if (!l || n.classList.contains('cut') || l.classList.contains('cut')) return false;
+      if (crosses(n, cx, cy, r) || crosses(l, cx, cy, r)) return true;
+      if (endLabel && overlap(l, endLabel)) return true;
+      return nodes.some((m) => m !== n && !m.classList.contains('cut') && label(m) && !label(m)!.classList.contains('cut') && overlap(l, label(m)!));
+    };
+    const [automation, ai, systems] = nodes;
+    if (systems && clashes(systems)) systems.classList.add('cut');
+    if (ai && clashes(ai)) label(ai)?.classList.add('cut');
+    if (automation && clashes(automation)) label(automation)?.classList.add('cut');
+  };
+  let queued = false;
+  const request = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      place();
+    });
+  };
+  place();
+  document.fonts?.ready.then(request);
+  window.addEventListener('resize', request);
+}
+
+initHeroMap();
 initReveals();
 initHeader();
 initScenes();

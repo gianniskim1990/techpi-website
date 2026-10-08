@@ -102,21 +102,30 @@ Pointer devices only (`hover: hover`). Nothing essential depends on hover; touch
 Arrows written in the copy ("Start a project →") are rendered as a separate decorative span (`Arrowed.astro`), so
 they can move on their own and screen readers read only the words. No copy changed.
 
-## 6. Hero transformation map (2026-10-08)
+## 6. Hero transformation map (2026-10-08, refined)
 
-The free space above the headline holds a hairline map (`TransformationMap.astro`), read left to right: three
-separate, broken threads (websites, ordering, visibility: fragmented, manual work) converge into one continuous line
-through automation, AI and systems, ending in a small circle in TechPi Blue labelled "Digital products". The circle is
-the site's shape at its smallest, before the arc closes into the symbol at Contact.
+The upper half of the hero is a hairline map (`TransformationMap.astro`) built into the hero's structure:
 
-- Clearly secondary: 11px labels, hairlines, one blue accent. Its auto margins centre it in the space above the
-  headline, and its width is limited so it never meets the hero arc.
-- Accessible as one image with a sentence label (EN and EL in `home.*.ts`); the parts are hidden from assistive
+- **Its bottom edge is the line above the headline**, the twin of the rule below it, so the statement sits between
+  two hairlines. Left of the turning point the line is broken (manual work); from there it is whole.
+- **Three broken threads** (websites, ordering, visibility) start apart in the upper left and turn down into it.
+- **On the hero grid:** "Fragmented" sits over the descriptor (column 1) and "Connected" and the turning point over
+  the supporting line (column 5), with a fine dotted marker between them.
+- **It ends on the arc.** The whole line runs through automation, AI and systems and stops exactly where it meets the
+  hero arc; the blue circle sits on the arc and "Digital products" is labelled inside the TechPi circle. The arc is
+  placed from the right and the line from the headline, so the motion module measures the meeting point (`--hit`).
+  It also drops any caption that would cross the arc and any node label that would collide (systems first, then
+  AI's label). Without scripting the line ends at a resting position.
+- **Hover (pointer devices):** the broken wires draw whole and the threads darken, a short stretch of TechPi Blue
+  travels along the line to the arc, each node lights as it passes, the end circle opens, and the hero arc turns blue
+  while the pointer stays. About a second and a half, once per hover; leaving resets quietly. Touch: static.
+- **Motion:** draws in from left to right after the headline on load. In the scroll scene it leaves just ahead of the
+  headline and fades early, so the headline never passes over it. Reduced motion: static, hover is a plain change of
+  colour.
+- **Responsive:** full map from 1200px; "Systems" drops where the line is short; phones keep only the threads, the line
+  and the outcome.
+- Accessible as one image with a sentence label (EN and EL in `home.*.ts`); its parts are hidden from assistive
   technology.
-- Motion: on load it draws in from left to right after the headline, and the end circle settles last. CSS only,
-  once. In the scroll scene it sits behind the headline in depth.
-- Responsive: full map from 1200px; "Systems" drops out below 1200px; phones keep only the threads, the line and
-  the outcome.
 
 ## 7. QA record (2026-10-08)
 

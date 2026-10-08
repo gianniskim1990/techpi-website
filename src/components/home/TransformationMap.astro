@@ -8,93 +8,92 @@ interface Props {
 const { copy } = Astro.props;
 
 /*
- * The transformation map: the upper half of the hero, read left to right.
- * Three separate threads (websites, ordering, visibility) start apart, broken and uneven: fragmented, manual.
- * They converge into one continuous line that runs through automation, AI and systems and ends in a small circle in
- * TechPi Blue: the connected product. The circle is the site's one shape, seen here at its smallest, before the
- * arc that runs down the page closes into the symbol at Contact.
+ * The transformation map: the upper half of the hero, part of its structure rather than an object above it.
  *
- * Geometry: one coordinate system in percent of the box. The lines are SVG stretched to the box with non-scaling
- * hairlines; nodes and labels are HTML placed with the same percentages, so text never scales.
+ *   - Its bottom edge is a hairline directly above the headline, the twin of the rule below it, so the statement
+ *     sits between two lines. Left of the turning point the line is broken (manual work); from there it is whole.
+ *   - Three broken threads (websites, ordering, visibility) start apart in the upper left and turn down into it.
+ *   - The turning point and the captions sit on the hero's own columns: "Fragmented" over the descriptor (column 1),
+ *     "Connected" over the supporting line (column 5).
+ *   - The whole line runs through automation, AI and systems and ends exactly where it meets the hero arc
+ *     (measured by src/scripts/motion.ts, since the arc is placed from the right and the line from the headline).
+ *     The connected product sits inside the TechPi circle: ARC → CIRCLE → TECHPI, from the first screen.
+ *
+ * Coordinates are percent of the box. Curves are SVG stretched to the box with non-scaling hairlines; straight lines,
+ * nodes and labels are HTML, so text never scales and the line can end at a measured pixel position (--hit).
  */
-const BUS = 62; // the connected line, in % of the height
-const JOIN = 40; // where the threads meet it, in % of the width
-const frags = [
-  { key: 'websites', x: 1, y: 38, dash: [2.6, 12], from: 15 },
-  { key: 'ordering', x: 5, y: BUS, dash: [6.6, 13.5], from: 17 },
-  { key: 'visibility', x: 0, y: 88, dash: [1.6, 10.5], from: 14 },
+const TURN = 34; // the turning point, at the start of column 5, in % of the width
+const threads = [
+  { key: 'websites', x: 1.5, y: 30, to: 14 },
+  { key: 'ordering', x: 8, y: 54, to: 18 },
+  { key: 'visibility', x: 3.5, y: 78, to: 13 },
 ] as const;
 const nodes = [
-  { key: 'automation', x: 53, side: 'below', tier: 1 },
-  { key: 'ai', x: 67, side: 'above', tier: 1 },
-  { key: 'systems', x: 80, side: 'below', tier: 2 },
+  { key: 'automation', f: 0.24, tier: 1 },
+  { key: 'ai', f: 0.5, tier: 1 },
+  { key: 'systems', f: 0.76, tier: 2 },
 ] as const;
-const END = 97.5;
 ---
 
-<div class="map" role="img" aria-label={copy.label}>
-  <div class="inner" aria-hidden="true">
+<div class="tmap" role="img" aria-label={copy.label}>
+  <div class="inner" aria-hidden="true" style={`--turn:${TURN}%`}>
     <svg viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
       {
-        frags.map((f) => (
-          <>
-            <line class="frag" x1={f.dash[0]} x2={f.dash[1]} y1={f.y} y2={f.y} />
-            <path
-              class="join"
-              d={
-                f.y === BUS
-                  ? `M${f.from} ${f.y} L${JOIN} ${BUS}`
-                  : `M${f.from} ${f.y} C${f.from + 11} ${f.y} ${JOIN - 12} ${BUS} ${JOIN} ${BUS}`
-              }
-            />
-          </>
+        threads.map((t, i) => (
+          <path
+            class="curve"
+            style={`--i:${i}`}
+            d={`M${t.to} ${t.y} C${t.to + 10} ${t.y} ${TURN - 9} 100 ${TURN} 100`}
+          />
         ))
       }
-      <line class="bus" x1={JOIN} x2={END} y1={BUS} y2={BUS} />
     </svg>
 
     <span class="cap cap-from">{copy.from}</span>
-    <span class="cap cap-to" style={`left:${JOIN}%`}>{copy.to}</span>
+    <span class="cap cap-to">{copy.to}</span>
+    <span class="mark-turn"></span>
 
     {
-      frags.map((f) => (
-        <span class="pt pt-frag" style={`left:${f.x}%;top:${f.y}%`}>
-          <i />
-          <span class="lbl above">{copy[f.key]}</span>
+      threads.map((t, i) => (
+        <span class="thread" style={`--i:${i};left:${t.x}%;top:${t.y}%;width:${t.to - t.x}%`}>
+          <i class="dot" />
+          <span class="wire" />
+          <span class="lbl">{copy[t.key]}</span>
         </span>
       ))
     }
-    <span class="pt pt-join" style={`left:${JOIN}%;top:${BUS}%`}><i /></span>
+
+    <span class="bus-before"><span class="wire"></span></span>
+    <span class="bus"></span>
+    <span class="pt pt-turn"><i></i></span>
     {
-      nodes.map((n) => (
-        <span class={`pt pt-node tier-${n.tier}`} style={`left:${n.x}%;top:${BUS}%`}>
+      nodes.map((n, i) => (
+        <span class={`pt pt-node tier-${n.tier}`} style={`--f:${n.f};--i:${i}`}>
           <i />
-          <span class={`lbl ${n.side}`}>{copy[n.key]}</span>
+          <span class="lbl">{copy[n.key]}</span>
         </span>
       ))
     }
-    <span class="pt pt-end" style={`left:${END}%;top:${BUS}%`}>
-      <i />
-      <span class="lbl above end-lbl">{copy.products}</span>
+    <span class="pt pt-end">
+      <i></i>
+      <span class="lbl end-lbl">{copy.products}</span>
     </span>
   </div>
 </div>
 
 <style>
-  /* The map takes the free space above the headline: its auto margins centre it there, and the padding keeps a
-     minimum distance from the headline on short windows. */
-  .map {
+  /* The map takes the free space above the headline; its bottom edge is the line above the headline. */
+  .tmap {
     position: relative;
-    width: min(860px, calc(100% - 470px));
-    height: clamp(140px, 22vh, 210px);
-    box-sizing: content-box;
+    height: clamp(170px, 27vh, 280px);
     margin-top: auto;
-    margin-bottom: auto;
-    padding-bottom: clamp(36px, 7vh, 80px);
+    margin-bottom: clamp(26px, 3.6vh, 40px);
+    /* Where the line ends: measured on the hero arc by the motion module; without it, a resting position. */
+    --end: var(--hit, 88%);
   }
   .inner {
     position: absolute;
-    inset: 0 0 clamp(36px, 7vh, 80px) 0;
+    inset: 0;
   }
   svg {
     position: absolute;
@@ -103,33 +102,19 @@ const END = 97.5;
     height: 100%;
     overflow: visible;
   }
-  svg * {
+  .curve {
     fill: none;
+    stroke: var(--color-ink);
+    stroke-width: 1px;
     vector-effect: non-scaling-stroke;
-  }
-  /* Fragmented: short, broken, uneven. */
-  .frag {
-    stroke: var(--color-slate);
-    stroke-width: 1px;
-    stroke-dasharray: 2 5;
-    opacity: 0.8;
-  }
-  /* Connected: continuous hairlines. */
-  .join {
-    stroke: var(--color-ink);
-    stroke-width: 1px;
-    opacity: 0.55;
-  }
-  .bus {
-    stroke: var(--color-ink);
-    stroke-width: 1.25px;
+    opacity: 0.38;
   }
 
-  /* Labels: the site's metadata label, smaller. Uppercase is dropped for nothing: these are short terms. */
+  /* ---------- Labels: the site's metadata label ---------- */
   .cap,
   .lbl {
     position: absolute;
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
     font-weight: var(--weight-ui);
     letter-spacing: 0.08em;
     line-height: 1;
@@ -139,23 +124,113 @@ const END = 97.5;
   }
   .cap {
     top: 0;
-    font-variant-numeric: tabular-nums;
   }
   .cap::before {
     content: '';
     display: inline-block;
-    width: 14px;
+    width: 16px;
     height: 1px;
-    margin-right: 8px;
-    vertical-align: 0.3em;
+    margin-right: 10px;
+    vertical-align: 0.32em;
     background: currentColor;
   }
+  .cap-from {
+    left: 0;
+  }
   .cap-to {
+    left: var(--turn);
     color: var(--color-ink);
+  }
+  /* A fine dotted marker from the caption down to the turning point: the moment of change, annotated. */
+  .mark-turn {
+    position: absolute;
+    left: var(--turn);
+    top: 26px;
+    bottom: 10px;
+    width: 1px;
+    background: repeating-linear-gradient(to bottom, var(--color-rule) 0 2px, transparent 2px 6px);
+  }
+
+  /* ---------- Threads: a hollow point, a broken wire, a label above ---------- */
+  .thread {
+    position: absolute;
+    height: 0;
+  }
+  .dot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1px solid var(--color-slate);
+    background: var(--color-paper);
+    transform: translate(-50%, -50%);
+    transition:
+      border-color 400ms var(--ease-state),
+      background-color 400ms var(--ease-state);
+  }
+  /* A wire is two layers: the broken state, and a whole line that can draw over it. */
+  .wire {
+    position: absolute;
+    left: 10px;
+    right: 0;
+    top: -0.5px;
+    height: 1px;
+    background: repeating-linear-gradient(to right, var(--color-slate) 0 2px, transparent 2px 7px);
+    opacity: 0.85;
+  }
+  .wire::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--color-ink);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 520ms var(--ease-reveal);
+  }
+  .thread .lbl {
+    left: -4px;
+    bottom: 13px;
+    transition: color 400ms var(--ease-state);
+  }
+
+  /* ---------- The line above the headline ---------- */
+  .bus-before {
+    position: absolute;
+    left: 0;
+    width: var(--turn);
+    bottom: 0;
+    height: 0;
+  }
+  .bus-before .wire {
+    left: 0;
+  }
+  .bus {
+    position: absolute;
+    left: var(--turn);
+    width: calc(var(--end) - var(--turn));
+    bottom: -0.5px;
+    height: 1.25px;
+    background: var(--color-ink);
+  }
+  /* The trace that runs along the line on hover: a short stretch of TechPi Blue, a little heavier than the line. */
+  .bus::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -0.75px;
+    height: 2.5px;
+    background-image: linear-gradient(90deg, transparent, var(--color-techpi-blue) 75%, transparent);
+    background-repeat: no-repeat;
+    background-size: 180px 100%;
+    background-position: -180px 0;
   }
 
   .pt {
     position: absolute;
+    bottom: 0;
     width: 0;
     height: 0;
   }
@@ -166,124 +241,171 @@ const END = 97.5;
     border-radius: 50%;
     transform: translate(-50%, -50%);
   }
-  .pt-frag i {
-    width: 7px;
-    height: 7px;
-    border: 1px solid var(--color-slate);
-    background: var(--color-paper);
+  .pt-turn {
+    left: var(--turn);
   }
-  .pt-join i {
-    width: 5px;
-    height: 5px;
+  .pt-turn i {
+    width: 6px;
+    height: 6px;
     background: var(--color-ink);
+  }
+  .pt-node {
+    left: calc(var(--turn) + (var(--end) - var(--turn)) * var(--f));
   }
   .pt-node i {
     width: 5px;
     height: 5px;
     background: var(--color-ink);
+    transition:
+      transform 420ms var(--ease-reveal),
+      background-color 300ms var(--ease-state);
   }
-  /* The connected product: a small circle in TechPi Blue, the one accent of the map. */
+  .pt .lbl {
+    left: 0;
+    bottom: 14px;
+    transform: translateX(-50%);
+    transition: color 300ms var(--ease-state);
+  }
+  /* The connected product: a small circle in TechPi Blue, on the hero arc. */
+  .pt-end {
+    left: var(--end);
+  }
   .pt-end i {
-    width: 19px;
-    height: 19px;
+    width: 22px;
+    height: 22px;
     border: 1.25px solid var(--color-techpi-blue);
     background: var(--color-paper);
+    transition: transform 600ms var(--ease-reveal);
   }
   .pt-end i::after {
     content: '';
     position: absolute;
-    inset: 5px;
+    inset: 6px;
     border-radius: 50%;
     background: var(--color-techpi-blue);
+    transition: inset 600ms var(--ease-reveal);
   }
-  .lbl.above {
-    left: -4px;
+  /* On the arc, the outcome is labelled inside the circle, to the right; otherwise above, right-aligned. */
+  .pt-end .end-lbl {
+    color: var(--color-ink);
+    transform: none;
+    left: auto;
+    right: -11px;
+    bottom: 20px;
+  }
+  .tmap:global(.on-arc) .pt-end .end-lbl {
+    right: auto;
+    left: 20px;
     bottom: 12px;
   }
-  .pt-frag .lbl.above {
-    left: -3px;
-  }
-  .pt-node .lbl.above {
-    left: 0;
-    transform: translateX(-50%);
-  }
-  .lbl.below {
-    left: 0;
-    top: 14px;
-    transform: translateX(-50%);
-  }
-  /* The outcome sits above its circle, right-aligned, in Ink: the one label that is a result, not an input. */
-  .end-lbl {
-    left: auto !important;
-    right: -9px;
-    bottom: 18px !important;
-    transform: none !important;
-    color: var(--color-ink);
+  /* Set by the motion module where a label would collide with another or cross the arc. */
+  .tmap :global(.cut) {
+    display: none;
   }
 
-  /* ---------- Narrower windows: fewer labels, never a crowded line ---------- */
-  @media (max-width: 1279px) {
-    .map {
-      width: min(720px, calc(100% - 420px));
+  /* ---------- Hover (pointer devices): the systems connect ----------
+     The broken wires draw whole and the threads darken, a soft trace of TechPi Blue runs along the line from the
+     turning point to the arc, each node lights as it passes, the end circle opens, and the hero arc itself turns
+     blue for a moment: the system has become TechPi. One pass, about a second and a half. Leaving resets quietly. */
+  @media (hover: hover) {
+    .tmap:hover .wire::after {
+      transform: scaleX(1);
+      transition-delay: calc(var(--i, 0) * 70ms);
+    }
+    .tmap:hover .bus-before .wire::after {
+      transition-delay: 120ms;
+    }
+    .tmap:hover .dot {
+      border-color: var(--color-ink);
+      background: var(--color-ink);
+    }
+    .tmap:hover .thread .lbl,
+    .tmap:hover .pt .lbl {
+      color: var(--color-ink);
+    }
+    .tmap:hover .curve {
+      opacity: 0.85;
+    }
+    .curve {
+      transition: opacity 500ms var(--ease-state);
+    }
+    .tmap:hover .bus::after {
+      animation: trace 1300ms linear 260ms 1 both;
+    }
+    .tmap:hover .pt-node i {
+      transform: translate(-50%, -50%) scale(1.7);
+      background: var(--color-techpi-blue);
+      transition-delay: calc(320ms + var(--f) * 870ms);
+    }
+    .tmap:hover .pt-node .lbl {
+      color: var(--color-techpi-blue);
+      transition-delay: calc(320ms + var(--f) * 870ms);
+    }
+    .tmap:hover .pt-end i {
+      transform: translate(-50%, -50%) scale(1.18);
+      transition-delay: 1250ms;
+    }
+    .tmap:hover .pt-end i::after {
+      inset: 4px;
+      transition-delay: 1250ms;
     }
   }
+  @keyframes trace {
+    from {
+      background-position: -180px 0;
+    }
+    to {
+      background-position: calc(100% + 180px) 0;
+    }
+  }
+
+  /* ---------- Narrower windows ---------- */
   @media (max-width: 1199px) {
     .tier-2 {
       display: none;
     }
   }
-  /* The small arc takes over below 900px, so the map can use the width. */
-  @media (max-width: 900px) {
-    .map {
-      width: min(560px, 82%);
-      height: 150px;
-      padding-bottom: 48px;
-    }
-    .inner {
-      bottom: 48px;
+  @media (max-width: 1023px) {
+    .tmap {
+      height: clamp(170px, 30vh, 330px);
     }
   }
+  /* Phones: the threads, the line and the outcome only. */
   @media (max-width: 760px) {
-    .map {
-      width: 100%;
-      height: 84px;
-      padding-bottom: 36px;
+    .tmap {
+      height: clamp(104px, 18vh, 160px);
+      margin-bottom: 22px;
+      --end: 94%;
     }
-    .inner {
-      bottom: 36px;
-    }
-    /* Phones: the threads, the line and the outcome only. The captions would meet the arc. */
-    .cap {
-      display: none;
-    }
-    .end-lbl {
-      bottom: auto !important;
-      top: 20px;
-    }
-    .pt-frag .lbl,
+    .cap,
+    .mark-turn,
+    .thread .lbl,
     .pt-node .lbl {
       display: none;
     }
     .tier-1 + .tier-1 {
       display: none;
     }
+    .end-lbl {
+      font-size: 0.6875rem;
+    }
   }
 
-  /* ---------- Motion ---------- */
-  /* On load, after the headline: the map draws in from left to right, the direction of the transformation, and
-     the end circle settles last. CSS only, once. */
+  /* ---------- Entrance ---------- */
+  /* On load, after the headline: the map draws in from left to right, the direction of the change; the end circle
+     settles last. CSS only, once. */
   :global(.mo) .inner {
     animation: map-wipe 1200ms var(--ease-reveal) 650ms both;
   }
   :global(.mo) .pt-end i {
-    animation: end-in 700ms var(--ease-reveal) 1450ms both;
+    animation: end-in 700ms var(--ease-reveal) 1500ms both;
   }
   @keyframes map-wipe {
     from {
-      clip-path: inset(-24px 100% -24px -12px);
+      clip-path: inset(-30px 100% -30px -14px);
     }
     to {
-      clip-path: inset(-24px -24px -24px -12px);
+      clip-path: inset(-30px -200px -30px -14px);
     }
   }
   @keyframes end-in {
@@ -292,9 +414,11 @@ const END = 97.5;
       transform: translate(-50%, -50%) scale(0.4);
     }
   }
-  /* Scroll scene: the map sits behind the headline in depth, so it leaves more slowly. */
-  :global(.sc) .map {
-    translate: 0 calc(var(--out, 0) * 10vh);
-    opacity: calc(1 - var(--out, 0) * 1.4);
+
+  /* Scroll scene: the map leaves just ahead of the headline, a little faster, so the headline never passes over
+     it, and fades out early. */
+  :global(.sc) .tmap {
+    translate: 0 calc(var(--out, 0) * -24vh);
+    opacity: calc(1 - var(--out, 0) * 3);
   }
 </style>
