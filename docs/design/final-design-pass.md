@@ -1,6 +1,7 @@
 # Phase 3: final design pass
 
-Status: implemented on `phase-3-final-design`, for review as one complete site.
+Status: **design complete and frozen** (final design release QA passed 2026-10-08, section 11). Implemented on
+`phase-3-final-design`.
 Date: 2026-10-08
 
 This pass changes presentation only. Content, routes, redirects, canonicals, hreflang, the language architecture,
@@ -50,7 +51,9 @@ CSS first, with one small first-party module (`src/scripts/motion.ts`, no depend
 - Hidden starting states apply only under `html.mo`, set inline when scripting runs and reduced motion is not
   requested. If the module does not confirm itself within 3 s, `mo` is removed and everything shows.
 - One IntersectionObserver adds `.in` once per element: block fades, statement masks, line reveals, hairlines that
-  draw in, and a circular image uncover from the direction of the arc (a plain fade below 1024px).
+  draw in, and a circular image uncover from the direction of the arc (a plain fade below 1024px). A bounding-box
+  check backs it up for the two reveals that clip themselves to nothing while waiting (`mask` and `image`): a clipped
+  element leaves the observer only a zero-area overlap, whose result depends on sub-pixel rounding (section 11).
 - The hero statement animates with CSS only and never waits for the script.
 - Scroll-linked geometry (hero arc drift, the edge, the Intelligence field, the Evolution half circle, the closing
   circle) uses scroll-driven CSS timelines on desktop where supported. Elsewhere the same states play once as a timed
@@ -244,3 +247,57 @@ resting state.
   capability and Work index rows fill with an Ink band from the left and turn to Paper; the text-link underline
   redraws; buttons fill with a growing circle and their arrow leans forward (arrows only on buttons); the hero map's
   connect sequence; next-project crop leans in.
+
+## 11. Final design release QA (2026-10-08)
+
+Design frozen: nothing was redesigned, restyled or reworded. Checked as built, in a real Chromium, on the Wrangler
+runtime, in English and Greek.
+
+**One defect found and fixed.** At a window about 768px wide (tablet portrait), the page heading of About, Contact,
+Capabilities and EU Projects stayed invisible, in both languages. A hidden `data-reveal="mask"` heading is clipped to
+nothing, so the IntersectionObserver saw only a zero-area overlap along one edge. Whether the browser counts that as
+intersecting depends on sub-pixel rounding, and at that width it did not, so `.in` was never added. Fix:
+`src/scripts/motion.ts` adds a bounding-box check (which ignores `clip-path`) for the two self-clipping reveals,
+`mask` and `image`. It only looks at elements still waiting, uses the observer's own threshold, and removes its listeners
+when none is left. Verified on 1,248 loads (39 window widths, 4 heights, 8 pages): 0 unrevealed elements in the first
+window. The unfixed commit fails the same grid at 768px (6 of 54 loads), so the test is sensitive. A second comparison of the
+revealed state at identical scroll positions (192 combinations) found the same fault at desktop widths, on other mask
+headings: the homepage statement heading, the EU Projects "Six stages" and "Programmes" headings and the Greek Evolution
+heading were each left invisible while on screen at some scroll positions. The fix reveals them, and revealed nothing
+below the window early.
+
+**Results.**
+
+| Check | Result |
+|---|---|
+| `npm run check`, `npm run build` | 0 errors, 0 warnings, 0 hints; 20 pages |
+| Static audit (updated for the five-item navigation and the Contact scene) | 39 / 39 |
+| Wrangler route and redirect matrix | 97 / 97, identical to `main` |
+| Indexing | Every page `noindex, nofollow`. `PUBLIC_ALLOW_INDEXING` unset. Canonical, hreflang, x-default, `lang` unchanged |
+| Page sweep (20 pages, 6 viewports, EN and EL) | No overflow, broken image, clipped text, console error or layout shift (CLS at most 0.0007), every page scrolls to the bottom and back |
+| Native scroll (real wheel input, 18 pages, 1440, 1024, 390) | Every 100px notch moves exactly 100px. No easing, snapping or capture. No section holds the reader |
+| Reduced motion (20 pages, 4 sizes) | No motion states applied, nothing animating, nothing hidden, nothing changes on scroll |
+| JavaScript off (scripts blocked by CSP; 20 pages, 5 sizes) | Everything visible, navigation reachable (full nav on desktop, Menu link to the footer below 900px) |
+| Mobile menu (EN and EL, 390 and 360) | 130 checks per size, all pass: open and close, Escape, focus trap, focus return, scroll lock, inert background, language switch to the exact counterpart, `aria-expanded`, closes on resize |
+| Accessibility smoke | One `h1` per page, no skipped levels; no unnamed control, missing alt or duplicate id; skip link and landmarks; no hover-only function. Keyboard: visible focus on every stop, none covered by the header, document order, no trap. Contrast: 1,316 text elements, 0 below AA, lowest margin 1.11x |
+| Network (20 pages, 2 sizes) | 297 requests, all to the site itself. 2 font files. No third party, cookie or storage. No analytics, tag manager, pixel or consent code |
+| Dependencies | `package.json` and `package-lock.json` identical to `main`. One runtime dependency (`astro`) |
+
+**Performance (static `main` against this branch).** JavaScript added: one 5.8 KB module (about 2 KB over the wire), no
+library. CSS on the homepage 5 KB to 11 KB. CLS about 0. LCP: desktop 0.25 s, throttled phone (4x CPU, slow 4G)
+0.74 to 1.43 s. Scroll frames: p50 16.7 ms; on a desktop slowed 4x, p95 33 ms and at most one frame at the 50 ms mark.
+At load the English homepage has one long task of 450 to 480 ms on a desktop slowed 4x in all three runs (834 ms on the
+throttled phone profile), where `main` has none or 53 ms. The Greek homepage is comparable on both (branch 136 to 633
+ms, `main` 177 to 437 ms). Unthrottled, no run showed one on the English homepage. It is the cost of the hero map and
+the scroll scenes, recorded as a watch item, not a blocker.
+
+**Not changed, recorded for the owner.**
+
+- At 1440x900 and 1280x800 the Greek hero is taller than the window (978px and 890px), because the Greek headline runs to
+  three lines. Nothing is clipped, but the supporting line sits 38 to 50px below the first screen, where the English
+  one fits exactly. Fixing it means giving up some hero spacing or Greek display size, which is a design decision.
+- The five original project captures (1.3 MB) are emitted into `dist/` but no page references them: the aspect-ratio code
+  in `Crop` and `ProjectMedia` reads `image.src.width`, which makes Astro keep the original. Visitors never download
+  them. Remove by reading the dimensions another way, in a later cleanup.
+- In a browser with a warm cache, Chromium logs "preloaded but not used" for the font preload on later page views. It is
+  identical on `main`, absent on a cold load, and harmless.

@@ -57,6 +57,40 @@ function initReveals() {
     if (!el.classList.contains('in')) io.observe(el);
   });
 
+  // Safety net for the two reveals that clip themselves to nothing while waiting (`mask` and `image`). The observer
+  // then sees only a zero-area overlap along an edge or at a point, and whether that counts as "intersecting"
+  // depends on sub-pixel rounding: at 768px wide the page headings never revealed and stayed invisible. A bounding
+  // box ignores clip-path, so this check cannot fail that way. It looks only at what is still waiting, uses the
+  // observer's own threshold (the top 90% of the window), and removes its listeners once nothing is waiting.
+  let stragglers = targets.filter((el) => !el.classList.contains('in') && /^(mask|image)$/.test((el as HTMLElement).dataset.reveal ?? ''));
+  let sweepQueued = false;
+  const sweep = () => {
+    sweepQueued = false;
+    const edge = window.innerHeight * 0.9;
+    stragglers = stragglers.filter((el) => {
+      if (el.classList.contains('in')) return false;
+      const r = el.getBoundingClientRect();
+      if (r.top >= edge || r.bottom <= 0) return true;
+      reveal(el);
+      io.unobserve(el);
+      return false;
+    });
+    if (!stragglers.length) {
+      window.removeEventListener('scroll', queueSweep);
+      window.removeEventListener('resize', queueSweep);
+    }
+  };
+  function queueSweep() {
+    if (sweepQueued) return;
+    sweepQueued = true;
+    requestAnimationFrame(sweep);
+  }
+  if (stragglers.length) {
+    window.addEventListener('scroll', queueSweep, { passive: true });
+    window.addEventListener('resize', queueSweep);
+    queueSweep();
+  }
+
   // Keyboard focus never waits for an animation: a focused element and everything around it is shown at rest.
   document.addEventListener('focusin', (e) => {
     let el = (e.target as Element | null)?.closest('[data-reveal]:not(.in), [data-sequence]:not(.in)');
