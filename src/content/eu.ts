@@ -25,7 +25,6 @@ interface Item {
 export interface EuCopy {
   home: { label: string; heading: string; text: string; cta: string; items: readonly string[] };
   page: {
-    description: string;
     hero: { heading: string; lead: string; context: string; cta: string };
     infra: { heading: string; text: string; supportLabel: string; support: readonly string[]; audience: string };
     lifecycle: { label: string; heading: string; stages: readonly Item[] };
@@ -74,8 +73,6 @@ const en: EuCopy = {
     ],
   },
   page: {
-    description:
-      'EU project websites, digital platforms and web applications: TechPi builds the technology behind European research, innovation and cooperation projects.',
     hero: {
       heading: 'Technology for EU-funded projects.',
       lead: 'We design and build websites, digital platforms, web applications and technical systems for European research, innovation and cooperation projects.',
@@ -286,8 +283,6 @@ const el: EuCopy = {
     ],
   },
   page: {
-    description:
-      'Ιστοσελίδες ευρωπαϊκών έργων, ψηφιακές πλατφόρμες και web εφαρμογές: η TechPi αναπτύσσει την τεχνολογία πίσω από έργα έρευνας, καινοτομίας και συνεργασίας.',
     hero: {
       heading: 'Τεχνολογία για ευρωπαϊκά χρηματοδοτούμενα έργα.',
       lead: 'Σχεδιάζουμε και αναπτύσσουμε ιστοσελίδες, ψηφιακές πλατφόρμες, web εφαρμογές και τεχνικά συστήματα για ευρωπαϊκά έργα έρευνας, καινοτομίας και συνεργασίας.',

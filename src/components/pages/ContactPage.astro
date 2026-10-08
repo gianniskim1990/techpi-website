@@ -4,8 +4,8 @@ import FactRows from '../../components/secondary/FactRows.astro';
 import PageIntro from '../../components/secondary/PageIntro.astro';
 import SectionSplit from '../../components/secondary/SectionSplit.astro';
 import { pagesCopy } from '../../content/copy';
+import { pageMeta } from '../../content/seo';
 import { contactFacts } from '../../content/site';
-import { getDictionary } from '../../i18n';
 import type { Locale } from '../../i18n/locales';
 
 interface Props {
@@ -13,15 +13,15 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const t = getDictionary(locale);
 const pages = pagesCopy[locale];
 const copy = pages.contact;
+const meta = pageMeta[locale].contact;
 ---
 
 {/* Contact. The lead plus the three confirmed direct facts: email, phone, location. Editorial fact rows, no cards.
     No form and no fake form: a form is deferred (docs/production/launch-blockers.md). No WhatsApp, social links,
     office hours, street address or map: none is confirmed. The location is the town only. */}
-<BaseLayout locale={locale} page="contact" title={t.pages.contact.title} description={copy.lead} bleed>
+<BaseLayout locale={locale} page="contact" title={meta.title} description={meta.description} pageType="ContactPage" bleed>
   <PageIntro heading={copy.heading} lead={copy.lead} />
   <SectionSplit id="direct" heading={copy.direct}>
     <FactRows

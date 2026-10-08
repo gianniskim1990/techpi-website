@@ -3,7 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ClosingCTA from '../../components/secondary/ClosingCTA.astro';
 import PageIntro from '../../components/secondary/PageIntro.astro';
 import { euCopy } from '../../content/eu';
-import { getDictionary } from '../../i18n';
+import { pageMeta } from '../../content/seo';
+import { service } from '../../seo/schema';
 import type { Locale } from '../../i18n/locales';
 import { pathFor } from '../../i18n/routes';
 
@@ -12,9 +13,15 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const t = getDictionary(locale);
 const c = euCopy[locale].page;
 const contact = pathFor('contact', locale);
+const meta = pageMeta[locale].euProjects;
+// The service the page describes, in its own visible words: the hero, and the project-website service it details.
+const url = new URL(pathFor('euProjects', locale), Astro.site).href;
+const services = [
+  service(url, { id: 'eu-projects', name: c.hero.heading.replace(/.$/, ''), description: c.hero.lead, locale }),
+  service(url, { id: 'eu-project-websites', name: c.websites.heading, description: c.websites.intro, locale }),
+];
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
@@ -26,7 +33,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     Ink band for the lifecycle, one TechPi Blue band for partners, and three kinds of list (a run, ruled columns,
     numbered rows) so no two neighbouring sections look alike. Motion is calmer than the homepage: line drawing and
     one-shot reveals, no pinning. No EU flag, no stars, no blue and yellow. */}
-<BaseLayout locale={locale} page="euProjects" title={t.pages.euProjects.title} description={c.description} bleed>
+<BaseLayout locale={locale} page="euProjects" title={meta.title} description={meta.description} schema={services} bleed>
   <PageIntro heading={c.hero.heading} lead={c.hero.lead}>
     <Fragment slot="after">
       <p class="context">{c.hero.context}</p>

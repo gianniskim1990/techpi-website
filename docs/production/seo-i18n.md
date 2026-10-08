@@ -3,6 +3,8 @@
 Status: **locked** after the Phase 3 review. Planning only.
 Date: 2026-10-02 (revised after approval)
 Related: `routes.md` for URLs, canonicals and hreflang.
+Implemented: Phase 4 (2026-10-08). What was built, and where it differs from this plan (one image per language rather than
+per case study, no CreativeWork, Service also on EU Projects, no `lastmod` in the sitemap), is in `seo.md`.
 
 ## 1. Internationalisation architecture
 

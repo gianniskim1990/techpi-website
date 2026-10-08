@@ -9,6 +9,8 @@ import Header from '../components/Header.astro';
 import { getDictionary } from '../i18n';
 import { defaultLocale, locales, type Locale } from '../i18n/locales';
 import { alternatesFor, pathFor, type PageKey } from '../i18n/routes';
+import { ogLocale, socialImage } from '../content/seo';
+import { breadcrumb, organization, serialise, webPage, website, type WebPageType } from '../seo/schema';
 
 interface Props {
   locale: Locale;
@@ -27,9 +29,27 @@ interface Props {
   bleed?: boolean;
   /** Keeps this page out of search indexes even in a build that enables indexing. For unpublished route shells. */
   noindex?: boolean;
+  /** The schema.org type of the page's WebPage node. */
+  pageType?: WebPageType;
+  /** A breadcrumb trail (paths, not URLs), only where it matches the real hierarchy of the site. */
+  trail?: readonly { name: string; path: string }[];
+  /** Further JSON-LD nodes the page describes (services). Built with src/seo/schema.ts. */
+  schema?: readonly Record<string, unknown>[];
 }
 
-const { locale, page, title, description, kind = 'page', paths, bleed = false, noindex = false } = Astro.props;
+const {
+  locale,
+  page,
+  title,
+  description,
+  kind = 'page',
+  paths,
+  bleed = false,
+  noindex = false,
+  pageType = 'WebPage',
+  trail,
+  schema = [],
+} = Astro.props;
 const t = getDictionary(locale);
 
 // Canonical and hreflang URLs come from the route map, never from Astro.url
@@ -52,6 +72,28 @@ const alternates = paths
 // Safe default: nothing is indexable until launch. Only an explicit PUBLIC_ALLOW_INDEXING=true build is,
 // a 404 is never indexable, and neither is a page flagged noindex (an unpublished route shell).
 const indexable = import.meta.env.PUBLIC_ALLOW_INDEXING === 'true' && kind === 'page' && !noindex;
+
+// Sharing metadata and JSON-LD, for content pages only: a 404 has no URL of its own to share or describe.
+// Everything is absolute on the production origin and static: no client script reads or writes any of it.
+const ogImage = absolute(socialImage.path[locale]);
+const ogAlternates = locales.filter((l) => l !== locale).map((l) => ogLocale[l]);
+const jsonLd = canonical
+  ? serialise([
+      organization(),
+      website(),
+      webPage({
+        type: pageType,
+        url: canonical,
+        name: title,
+        description,
+        locale,
+        breadcrumb: Boolean(trail),
+        aboutOrganization: page === 'home' || page === 'about',
+      }),
+      ...(trail ? [breadcrumb(canonical, trail.map((c) => ({ name: c.name, url: absolute(c.path) })))] : []),
+      ...schema,
+    ])
+  : undefined;
 
 // Preload only the font file for the script the page is mostly written in. Measured on a throttled connection
 // (docs/production/identity-font-readiness.md): it brings that file in before or just after first paint, while
@@ -91,6 +133,31 @@ const primaryFont = locale === 'el' ? commissionerGreek : commissionerLatin;
         }
       })(document, window);
     </script>
+    {/* Sharing metadata and JSON-LD last, after the font preload and the motion flags that affect first paint. */}
+    {
+      canonical && (
+        <>
+          <meta property="og:type" content="website" />
+          <meta property="og:site_name" content="TechPi" />
+          <meta property="og:title" content={title} />
+          {description && <meta property="og:description" content={description} />}
+          <meta property="og:url" content={canonical} />
+          <meta property="og:locale" content={ogLocale[locale]} />
+          {ogAlternates.map((l) => <meta property="og:locale:alternate" content={l} />)}
+          <meta property="og:image" content={ogImage} />
+          <meta property="og:image:type" content={socialImage.type} />
+          <meta property="og:image:width" content={String(socialImage.width)} />
+          <meta property="og:image:height" content={String(socialImage.height)} />
+          <meta property="og:image:alt" content={socialImage.alt[locale]} />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={title} />
+          {description && <meta name="twitter:description" content={description} />}
+          <meta name="twitter:image" content={ogImage} />
+          <meta name="twitter:image:alt" content={socialImage.alt[locale]} />
+          <script type="application/ld+json" set:html={jsonLd} />
+        </>
+      )
+    }
   </head>
   <body>
     <a class="skip-link" href="#main">{t.skipLink}</a>
