@@ -1,14 +1,15 @@
 /*
- * Design tokens. Approved at Gate B (docs/design, explorations/phase-2/homepage-prototype).
- * The four brand colours are the approved palette (Phase 3G.2). The 3D identity artwork has a wider blue and
- * cyan tonal range of its own; that range is part of the artwork and is not turned into tokens.
+ * Design tokens. Approved at Gate B (docs/design, explorations/phase-2/homepage-prototype), refined in the Phase 3
+ * final design pass. The four brand colours are the approved palette (Phase 3G.2). The 3D identity artwork has a
+ * wider blue and cyan tonal range of its own; that range is part of the artwork and is not turned into tokens.
  */
 :root {
   /* Approved palette */
   --color-ink: #080e1e;
   --color-paper: #f0eee9;
   --color-techpi-blue: #0841c8;
-  /* Interaction and focus accent on dark surfaces only. No use at rest. Never on light surfaces (1.4:1). */
+  /* Cyan lives on Ink only: focus, interaction, and the one geometry accent of a dark section (the clarity line,
+     the closing circle). Never text at rest, never on a light surface (1.4:1). */
   --color-cyan: #1fddfc;
 
   /* Neutrals actually required */
@@ -16,7 +17,8 @@
   --color-graphite: #3b4350; /* secondary text on Paper */
   --color-slate: #5e6672; /* tertiary text and labels on Paper */
   --color-fog: #9da6b2; /* secondary text on Ink */
-  --color-rule: #d6d3cc; /* hairlines on Paper. Decorative only */
+  --color-rule: #d3d0c8; /* hairlines on Paper. Decorative only */
+  --color-ink-raised: #0e1630; /* a quiet second Ink, for media fields */
 
   /*
    * Typography. Commissioner, self-hosted (fonts.css). 'Commissioner Fallback' is a local font scaled to
@@ -28,29 +30,49 @@
   --weight-ui: 500; /* navigation, labels, buttons */
   --weight-name: 600; /* the TECHPI name */
 
-  --text-display-xl: clamp(2.75rem, 8.3vw, 7.5rem);
-  --text-display-l: clamp(2rem, 5.3vw, 4.75rem);
-  --text-display-m: clamp(1.75rem, 3.75vw, 3.375rem);
+  /* One scale for the whole site. xxl is the hero only. */
+  --text-display-xxl: clamp(3rem, 9.6vw, 8.75rem);
+  --text-display-xl: clamp(2.5rem, 7.4vw, 7rem);
+  --text-display-l: clamp(2.125rem, 5.4vw, 5rem);
+  --text-display-m: clamp(1.75rem, 3.7vw, 3.375rem);
+  --text-heading: clamp(1.375rem, 2vw, 1.75rem);
   --text-lead: clamp(1.125rem, 1.53vw, 1.375rem);
   --text-body: 1.0625rem;
   --text-small: 0.9375rem;
+  --text-label: 0.8125rem;
 
   /* Greek display text runs about 0.88 of the English size, so a statement holds a similar number of lines
      (design-system.md, section 3). Body, lead and UI sizes are unchanged. */
   --greek-display: 0.88;
 
-  /* Space */
+  /* Space and grid */
   --space-margin: clamp(20px, 4.45vw, 64px);
-  --space-gap: 24px;
-  --space-section: clamp(88px, 11.6vw, 168px);
+  --space-gap: clamp(16px, 1.7vw, 24px);
+  --space-section: clamp(96px, 11.6vw, 176px);
+  --space-block: clamp(48px, 6vw, 96px);
+  --header-h: 72px;
 
-  /* Motion. Defined now, used from the motion stage. */
+  /* Motion */
   --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-state: cubic-bezier(0.65, 0, 0.35, 1);
   --duration-fast: 150ms;
+  --duration-base: 400ms;
+  --duration-reveal: 900ms;
+  --duration-slow: 1100ms;
+  --stagger: 80ms;
+}
+
+/* Tablet keeps the same language, quicker. Phones are calmer still. */
+@media (max-width: 1023px) {
+  :root {
+    --duration-reveal: 650ms;
+    --duration-slow: 800ms;
+    --stagger: 60ms;
+  }
 }
 
 :root:lang(el) {
-  --text-display-xl: calc(clamp(2.75rem, 8.3vw, 7.5rem) * var(--greek-display));
-  --text-display-l: calc(clamp(2rem, 5.3vw, 4.75rem) * var(--greek-display));
+  --text-display-xxl: calc(clamp(3rem, 9.6vw, 8.75rem) * var(--greek-display));
+  --text-display-xl: calc(clamp(2.5rem, 7.4vw, 7rem) * var(--greek-display));
+  --text-display-l: calc(clamp(2.125rem, 5.4vw, 5rem) * var(--greek-display));
 }

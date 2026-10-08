@@ -38,9 +38,6 @@ export const en = {
     about: { title: 'About | TechPi', heading: 'About' },
     contact: { title: 'Contact | TechPi', heading: 'Contact' },
   },
-  shell: {
-    note: 'Route shell. A placeholder that tests routing. The page is not designed yet.',
-  },
   notFound: {
     title: 'Page not found | TechPi',
     heading: 'Page not found',

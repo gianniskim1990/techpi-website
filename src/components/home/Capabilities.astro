@@ -1,97 +1,172 @@
 ---
 import type { HomeCopy } from '../../content/home.en';
 import type { Capability } from '../../content/capabilities';
+import { pathFor } from '../../i18n/routes';
+import type { Locale } from '../../i18n/locales';
 
 interface Props {
   copy: HomeCopy['capabilities'];
   items: readonly Capability[];
+  locale: Locale;
 }
 
-const { copy, items } = Astro.props;
+const { copy, items, locale } = Astro.props;
+const capabilitiesPath = pathFor('capabilities', locale);
 ---
 
-{/* Editorial index: a heading column and a ruled list. No cards. The heading may become sticky in 3E. */}
+{/* Capabilities as an index: the densest moment of the page, after the Ink chapter of work. One row per
+    capability, read across: the name, what it is, what it covers. Hairlines here are table rules, because this is a
+    table. No numbers (it is not a sequence), no icons, no cards. Each row leads to its section on the Capabilities
+    page; on hover an Ink band wipes in behind the row. */}
 <section class="caps s-paper" id="capabilities" aria-labelledby="caps-h">
-  <div class="head"><h2 id="caps-h">{copy.heading}</h2></div>
-  <ol class="list">
+  <h2 id="caps-h" data-reveal="mask">{copy.heading}</h2>
+  <ul class="index">
     {
-      items.map((c) => (
-        <li>
-          <h3>{c.name}</h3>
+      items.map((c, i) => (
+        <li data-reveal="fade" style={`--delay:${i * 90}ms`}>
+          <h3>
+            <a class="cap-link" href={`${capabilitiesPath}#${c.id}`}>
+              {c.name}
+            </a>
+          </h3>
           <p class="text">{c.summary}</p>
           <ul class="terms">
-            {c.items.map((term) => <li>{term}</li>)}
+            {c.items.map((term) => (
+              <li>{term}</li>
+            ))}
           </ul>
         </li>
       ))
     }
-  </ol>
+  </ul>
 </section>
 
 <style>
   .caps {
-    padding: var(--space-section) var(--space-margin);
+    padding: clamp(96px, 10vw, 152px) var(--space-margin) clamp(40px, 4vw, 56px);
+  }
+  h2 {
+    font-size: var(--text-display-m);
+    line-height: 1;
+    letter-spacing: -0.024em;
+  }
+  .index {
+    margin-top: clamp(40px, 4.5vw, 64px);
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .index > li {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
-  }
-  .head {
-    grid-column: 1 / span 4;
-  }
-  h2 {
-    font-size: var(--text-display-l);
-    line-height: 1.02;
-  }
-  .list {
-    grid-column: 5 / span 8;
-  }
-  .list > li {
-    display: grid;
-    grid-template-columns: repeat(8, minmax(0, 1fr));
-    column-gap: var(--space-gap);
-    row-gap: 18px;
-    padding: 34px 0 44px;
-    border-top: 1px solid var(--line);
+    align-items: baseline;
+    padding: clamp(22px, 2.2vw, 30px) 0 clamp(26px, 2.6vw, 36px);
+    border-top: 1px solid var(--color-rule);
   }
   h3 {
-    grid-column: 1 / -1;
-    font-size: var(--text-display-m);
-    line-height: 1.04;
-    letter-spacing: -0.02em;
+    grid-column: 1 / span 4;
+    font-size: clamp(1.625rem, 2.6vw, 2.375rem);
+    line-height: 1.05;
+    letter-spacing: -0.022em;
+  }
+  .cap-link {
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-state);
+  }
+  /* The whole row is the target. */
+  .cap-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .cap-link:focus-visible {
+    outline-offset: 6px;
+  }
+  /* Hover (pointer devices): an Ink band wipes in behind the row from the left, edge to edge, and the row turns
+     to Paper; the name steps forward. The index becomes a lit line of a table. */
+  .index > li::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: -1px;
+    bottom: 0;
+    left: calc(-1 * var(--space-margin));
+    right: calc(-1 * var(--space-margin));
+    background: var(--color-ink);
+    transform: scaleX(0);
+    transform-origin: 100% 50%;
+    transition: transform 620ms var(--ease-reveal);
+  }
+  .index {
+    position: relative;
+    isolation: isolate;
+  }
+  h3,
+  .text,
+  .terms {
+    transition:
+      color 300ms var(--ease-state),
+      translate 620ms var(--ease-reveal);
+  }
+  @media (hover: hover) {
+    .index > li:hover::before {
+      transform: scaleX(1);
+      transform-origin: 0 50%;
+    }
+    .index > li:hover h3 {
+      color: var(--color-paper);
+      translate: 14px 0;
+    }
+    .index > li:hover .text {
+      color: var(--color-paper);
+    }
+    .index > li:hover .terms {
+      color: var(--color-cyan);
+    }
   }
   .text {
-    grid-column: 1 / span 5;
+    grid-column: 5 / span 4;
     color: var(--sec-c);
-    font-size: var(--text-lead);
-    line-height: 1.42;
-    max-width: 36ch;
+    max-width: 38ch;
   }
   .terms {
-    grid-column: 6 / span 3;
+    grid-column: 10 / span 3;
     font-size: var(--text-small);
+    line-height: 1.55;
     color: var(--ter);
-    display: grid;
-    gap: 4px;
-    align-content: start;
-    padding-top: 4px;
+  }
+
+  @media (max-width: 1023px) {
+    .index > li {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    h3 {
+      grid-column: 1 / span 3;
+    }
+    .text {
+      grid-column: 4 / span 3;
+    }
+    .terms {
+      grid-column: 7 / span 2;
+    }
   }
 
   @media (max-width: 760px) {
-    .caps {
+    .index > li {
       display: block;
-    }
-    .list {
-      margin-top: 44px;
-    }
-    .list > li {
-      display: block;
-      padding: 24px 0 30px;
+      padding: 22px 0 26px;
     }
     .text {
-      margin-top: 12px;
+      margin-top: 10px;
     }
     .terms {
-      margin-top: 16px;
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 6px;
+    }
+    .terms li:not(:last-child)::after {
+      content: ',';
     }
   }
 </style>

@@ -16,8 +16,22 @@ export const homeEn = {
     meta: 'Digital Products & Technology',
     statement: ['We design and build', 'digital products.'],
     support: ['Technology built around', 'real business needs.'],
-    start: 'Start a project →',
+    start: 'Start a project',
     work: 'Selected work',
+    // The transformation map above the headline. Short labels, not claims: the themes TechPi works across.
+    map: {
+      label:
+        'From fragmented tools to connected digital systems: websites, ordering and visibility, linked through automation and AI into systems and digital products.',
+      from: 'Fragmented',
+      to: 'Connected',
+      websites: 'Websites',
+      ordering: 'Ordering',
+      visibility: 'Visibility',
+      automation: 'Automation',
+      ai: 'AI',
+      systems: 'Systems',
+      products: 'Digital products',
+    },
   },
   statement: {
     heading: 'We turn business needs into digital products, platforms and intelligent systems.',
@@ -63,7 +77,7 @@ export const homeEn = {
   },
   contact: {
     heading: ['Have something', 'worth building?'],
-    cta: 'Start a project →',
+    cta: 'Start a project',
     region: 'Greece and Europe',
   },
 };

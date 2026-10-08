@@ -13,106 +13,229 @@ interface Props {
 const { copy, locale } = Astro.props;
 ---
 
-{/* ARC to CIRCLE to TECHPI, the static resting state. The arc that crosses the page has closed into the circle,
-    and the circle has resolved into the approved TechPi symbol: white, tone on tone behind the question.
-    `.mark` is the circle's box (the same size and position the hairline ring had), and the symbol's outer ring
-    fills it. Phase 3E animates into this state (arc closes, inner geometry appears). It must end exactly here. */}
-<section class="contact s-blue" id="contact" aria-labelledby="contact-h">
-  <div class="mark">
-    <BrandSymbol symbol={symbolWhite} sizes="(max-width: 760px) calc(100vw - 32px), min(760px, 78vh, 88vw)" />
+{/* ARC → CIRCLE → TECHPI. The resolution of the page. The arc first seen in the hero, which opened into a half
+    circle in Evolution, closes here into a whole circle for the only time on the site, and the circle resolves into
+    the approved TechPi symbol, in white on TechPi Blue: the one Blue chapter of the homepage, so the page ends on the
+    brand colour and the Ink footer stays clearly separate.
+
+    Resting state (no script, reduced motion, print): the closed circle with the symbol inside it.
+    Scroll scene (html.sc): the Blue arrives behind the horizon, then the stage holds while a
+    white arc, wider than the figure, closes into a circle and contracts onto the figure, and the symbol turns and
+    settles into it. Elsewhere with motion: the same states as one timed sequence. All end at the resting state. */}
+<section class="contact s-blue horizon" id="contact" aria-labelledby="contact-h" data-sequence data-scene>
+  <div class="stage">
+    <div class="figure" aria-hidden="true">
+      <svg class="ring" focusable="false">
+        {/* Pixel units, so the hairline keeps its weight. Turned to start at the left, where the Evolution half
+            circle began, and to close clockwise over the top. Two strokes: the bright one draws, the quiet one rests. */}
+        <circle class="rest" cx="50%" cy="50%" r="49.4%" pathLength="1"></circle>
+        <circle class="draw" cx="50%" cy="50%" r="49.4%" pathLength="1"></circle>
+      </svg>
+      <div class="mark">
+        <BrandSymbol symbol={symbolWhite} sizes="(max-width: 760px) 70vw, (max-width: 1023px) 52vw, min(560px, 40vw)" />
+      </div>
+    </div>
+
+    <div class="txt">
+      <h2 id="contact-h" data-reveal="lines">
+        {
+          copy.heading.map((line, i) => (
+            <>
+              <span class="ln" style={`--i:${i}`}>
+                <span>{line}</span>
+              </span>{' '}
+            </>
+          ))
+        }
+      </h2>
+      <p class="act" data-reveal="fade" style="--delay:200ms">
+        <a class="btn" href={pathFor('contact', locale)}>{copy.cta}<span class="arr" aria-hidden="true">→</span></a>
+      </p>
+    </div>
+
+    <p class="foot rule"><span>{copy.region}</span></p>
   </div>
-  <div class="mid">
-    <h2 id="contact-h">
-      {copy.heading.map((line) => <><span class="ln">{line}</span>{" "}</>)}
-    </h2>
-    <a class="btn" href={pathFor('contact', locale)}>{copy.cta}</a>
-  </div>
-  <p class="foot"><span>{copy.region}</span></p>
 </section>
 
 <style>
-  .contact {
+  .stage {
     position: relative;
-    overflow: hidden;
     min-height: max(100svh, 760px);
-    padding: 0 var(--space-margin);
+    padding: var(--space-section) var(--space-margin) 0;
     display: grid;
-    place-items: center;
-  }
-  /* Decorative: the image has an empty alt. Tone on tone, so it supports the question and never competes with it.
-     16%: the 3D shading averages darker than the prototype's flat white at 14%, so this gives the same weight. */
-  .mark {
-    position: absolute;
-    left: 50%;
-    top: 47%;
-    width: min(760px, 78vh, 88vw);
-    aspect-ratio: 1;
-    transform: translate(-50%, -50%);
-    opacity: 0.16;
-    pointer-events: none;
-  }
-  .mid {
-    position: relative;
-    margin-top: -6vh;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: 1fr auto;
+    column-gap: var(--space-gap);
     align-items: center;
-    gap: 44px;
+    overflow: clip;
+  }
+
+  .txt {
+    grid-column: 1 / span 7;
+    grid-row: 1;
+    position: relative;
+    z-index: 1;
   }
   h2 {
-    font-size: clamp(2.125rem, 5.6vw, 5rem);
-    line-height: 1.02;
+    font-size: clamp(2.5rem, 6.4vw, 6rem);
+    line-height: 0.98;
+    letter-spacing: -0.034em;
+  }
+  h2:lang(el) {
+    line-height: 1.04;
   }
   h2 .ln {
     display: block;
   }
-  .foot {
-    position: absolute;
-    left: var(--space-margin);
-    right: var(--space-margin);
-    bottom: 36px;
-    padding-top: 18px;
-    border-top: 1px solid var(--line);
-    font-size: var(--text-small);
+  .act {
+    margin-top: clamp(40px, 4.5vw, 64px);
   }
 
-  @media (max-width: 760px) {
-    .contact {
-      min-height: max(100svh, 700px);
-      display: block;
-    }
-    .mark {
-      top: 112px;
-      width: calc(100vw - 32px);
-      transform: translateX(-50%);
-    }
-    .mid {
-      position: static;
-      margin: 0;
-      display: block;
-    }
-    h2 {
-      position: absolute;
-      left: 44px;
-      right: 44px;
-      top: 112px;
-      height: calc(100vw - 32px);
+  /* The circle's box. The symbol fills it with a small margin, so the hairline reads as the symbol's own outer
+     edge closing. */
+  .figure {
+    grid-column: 8 / span 5;
+    grid-row: 1;
+    justify-self: end;
+    position: relative;
+    width: min(100%, 64vh, 640px);
+    aspect-ratio: 1;
+  }
+  .ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .ring circle {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: rotate(180deg);
+    fill: none;
+    stroke-width: 1.25px;
+  }
+  .rest {
+    stroke: var(--color-sheet);
+    opacity: 0.4;
+  }
+  .draw {
+    stroke: var(--color-sheet);
+    opacity: 0;
+  }
+  .mark {
+    position: absolute;
+    inset: 4.5%;
+  }
+
+  .foot {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-top: clamp(48px, 6vw, 96px);
+    padding: 20px 0 28px;
+    font-size: var(--text-small);
+    color: var(--sec-c);
+  }
+
+  /* ---------- Timed sequence (motion allowed, scroll scenes off) ---------- */
+  :global(.mo:not(.sc)) .draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    transition:
+      stroke-dashoffset 1200ms var(--ease-reveal) 100ms,
+      opacity 600ms var(--ease-state) 1200ms;
+  }
+  :global(.mo:not(.sc)) .contact:not(.in) .draw {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  :global(.mo:not(.sc)) .rest {
+    transition: opacity 600ms var(--ease-state) 1100ms;
+  }
+  :global(.mo:not(.sc)) .contact:not(.in) .rest {
+    opacity: 0;
+  }
+  :global(.mo:not(.sc)) .mark {
+    transition:
+      opacity 1100ms var(--ease-reveal) 700ms,
+      transform 1200ms var(--ease-reveal) 700ms;
+  }
+  :global(.mo:not(.sc)) .contact:not(.in) .mark {
+    opacity: 0;
+    transform: scale(0.9) rotate(-14deg);
+  }
+
+  /* ---------- Scroll scene (html.sc) ----------
+     --k runs from 0 as the section enters, through 0.4 when the stage takes the screen, to 1 at the end of the
+     hold. The arc closes first, wide, and contracts onto the figure; then the symbol turns into place. */
+  :global(.sc) .contact {
+    /* 30vh of Blue for the horizon to sweep across, then the stage and a 60svh hold. */
+    padding-top: 30vh;
+    height: calc(160svh + 30vh);
+    --k: calc(var(--in, 1) * 0.4 + var(--pin, 1) * 0.6);
+    --ring: clamp(0, (var(--k) - 0.12) / 0.5, 1);
+    --mark: clamp(0, (var(--k) - 0.46) / 0.42, 1);
+  }
+  :global(.sc) .stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 0;
+    padding-top: calc(var(--header-h) + 24px);
+  }
+  :global(.sc) .ring {
+    scale: calc(1.25 - 0.25 * var(--ring));
+  }
+  :global(.sc) .draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(1 - var(--ring));
+    opacity: calc(1 - clamp(0, (var(--k) - 0.7) / 0.2, 1));
+  }
+  :global(.sc) .rest {
+    opacity: calc(clamp(0, (var(--k) - 0.6) / 0.25, 1) * 0.4);
+  }
+  :global(.sc) .mark {
+    opacity: var(--mark);
+    scale: calc(0.82 + 0.18 * var(--mark));
+    rotate: calc((1 - var(--mark)) * -28deg);
+  }
+
+  /* ---------- Tablet and phone: the figure first, then the question ---------- */
+  @media (max-width: 1023px) {
+    .stage {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.25rem;
-      line-height: 1.08;
+      align-items: stretch;
+      min-height: 0;
+      padding-top: 104px;
     }
-    .btn {
-      position: absolute;
-      left: var(--space-margin);
-      right: var(--space-margin);
-      top: calc(112px + 100vw - 32px + 36px);
+    .figure {
+      order: -1;
+      align-self: center;
+      width: min(64vw, 440px);
+    }
+    .txt {
+      margin-top: 64px;
     }
     .foot {
-      bottom: 24px;
+      margin-top: 88px;
+    }
+  }
+  @media (max-width: 760px) {
+    .stage {
+      padding-top: 88px;
+    }
+    .figure {
+      width: min(72vw, 340px);
+    }
+    .txt {
+      margin-top: 52px;
+    }
+    .act .btn {
+      display: flex;
+    }
+    .foot {
+      margin-top: 72px;
     }
   }
 </style>

@@ -1,45 +1,79 @@
 ---
+import Unbroken from '../Unbroken.astro';
 interface Props {
   heading: string;
+  /** An optional supporting sentence under the question. */
+  text?: string;
   cta: string;
   href: string;
 }
 
-const { heading, cta, href } = Astro.props;
+const { heading, text, cta, href } = Astro.props;
 ---
 
-{/* The quiet closing line. The homepage question on Paper: no Blue surface, no circle. The Ink footer follows. */}
-<section class="closer s-paper" aria-label={heading}>
-  <p class="question">{heading}</p>
-  <a class="btn" href={href}>{cta}</a>
+{/* The closing invitation of a secondary page, on TechPi Blue: across the site, Blue is where TechPi asks to work
+    together (the homepage contact chapter, the EU partners band). Compact, a size below the homepage question. No
+    circle and no symbol: the identity resolves once, on the homepage. The Ink footer follows. */}
+<section class="closer s-blue" aria-label={heading}>
+  <div class="q" data-reveal="fade">
+    <p class="question"><Unbroken text={heading} /></p>
+    {text && <p class="support">{text}</p>}
+  </div>
+  <p class="act"><a class="btn" href={href}>{cta}<span class="arr" aria-hidden="true">→</span></a></p>
 </section>
 
 <style>
   .closer {
-    margin: var(--space-section) var(--space-margin) 0;
-    padding: 104px 0;
-    border-top: 1px solid var(--line);
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 32px;
+    margin-top: var(--space-section);
+    padding: clamp(64px, 7vw, 112px) var(--space-margin) clamp(72px, 8vw, 120px);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    align-items: end;
+  }
+  .q {
+    grid-column: 1 / span 8;
+  }
+  .support {
+    margin-top: 24px;
+    max-width: 52ch;
+    font-size: var(--text-lead);
+    line-height: 1.42;
+    opacity: 0.88;
   }
   .question {
     font-size: var(--text-display-m);
     font-weight: var(--weight-display);
-    line-height: 1.04;
-    letter-spacing: -0.02em;
+    line-height: 1.02;
+    letter-spacing: -0.028em;
     text-wrap: balance;
+  }
+  .question:lang(el) {
+    line-height: 1.08;
+  }
+  .act {
+    grid-column: 10 / span 3;
+    justify-self: end;
+    padding-bottom: 0.4em;
+  }
+
+  @media (max-width: 1023px) {
+    .q {
+      grid-column: 1 / -1;
+    }
+    .act {
+      grid-column: 1 / -1;
+      justify-self: start;
+      margin-top: 36px;
+    }
   }
 
   @media (max-width: 760px) {
     .closer {
       display: block;
-      padding: 72px 0;
     }
-    .btn {
+    .act .btn {
       display: flex;
-      margin-top: 28px;
     }
   }
 </style>

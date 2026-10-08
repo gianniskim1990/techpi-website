@@ -4,6 +4,7 @@ import BrandStatement from '../home/BrandStatement.astro';
 import Capabilities from '../home/Capabilities.astro';
 import ContactSection from '../home/ContactSection.astro';
 import Evolution from '../home/Evolution.astro';
+import EuProjects from '../home/EuProjects.astro';
 import Hero from '../home/Hero.astro';
 import Intelligence from '../home/Intelligence.astro';
 import SelectedWork from '../home/SelectedWork.astro';
@@ -28,7 +29,8 @@ const copy = homeCopy[locale];
   <Hero copy={copy.hero} locale={locale} />
   <BrandStatement copy={copy.statement} />
   <SelectedWork copy={copy.work} projects={featuredIn(locale)} locale={locale} />
-  <Capabilities copy={copy.capabilities} items={capabilitiesIn(locale)} />
+  <Capabilities copy={copy.capabilities} items={capabilitiesIn(locale)} locale={locale} />
+  <EuProjects locale={locale} />
   <Intelligence copy={copy.intelligence} />
   <Evolution copy={copy.evolution} locale={locale} />
   <ContactSection copy={copy.contact} locale={locale} />

@@ -1,0 +1,130 @@
+---
+import Unbroken from '../Unbroken.astro';
+import { euCopy } from '../../content/eu';
+import { pathFor } from '../../i18n/routes';
+import type { Locale } from '../../i18n/locales';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = euCopy[locale];
+---
+
+{/* EU-funded projects: one specialist market, set as the last entry of the capabilities index rather than a
+    chapter of its own. A heavier TechPi Blue rule marks it out; the row is a little larger than the four above it.
+    Concise on purpose: the full offer lives on /eu-projects. No flag, no stars, no blue and yellow. */}
+<section class="eu s-paper" id="eu-projects" aria-labelledby="eu-h">
+  <div class="row" data-reveal="fade">
+    <div class="id">
+      <p class="label">{copy.home.label}</p>
+      <h2 id="eu-h" data-reveal="mask"><Unbroken text={copy.home.heading} /></h2>
+    </div>
+    <div class="body">
+      <p class="text">{copy.home.text}</p>
+      <a class="tlink" href={pathFor('euProjects', locale)}>{copy.home.cta}</a>
+    </div>
+    <ul class="items">
+      {copy.home.items.map((item) => <li>{item}</li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .eu {
+    padding: 0 var(--space-margin) clamp(104px, 11vw, 168px);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    align-items: start;
+    padding-top: clamp(28px, 3vw, 40px);
+    border-top: 2px solid var(--color-techpi-blue);
+    border-top-color: transparent;
+  }
+  /* The blue rule draws in from the left when the row arrives. */
+  .row::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -2px;
+    height: 2px;
+    background: var(--color-techpi-blue);
+    transform-origin: 0 50%;
+    transition: transform 1100ms var(--ease-reveal) 150ms;
+  }
+  :global(.mo) .row:not(:global(.in))::after {
+    transform: scaleX(0);
+  }
+  .row {
+    position: relative;
+  }
+  .id {
+    grid-column: 1 / span 6;
+  }
+  .label {
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    color: var(--color-techpi-blue);
+  }
+  h2 {
+    margin-top: 14px;
+    font-size: var(--text-display-m);
+    line-height: 1.04;
+    letter-spacing: -0.024em;
+  }
+  .body {
+    grid-column: 7 / span 3;
+    padding-top: 0.2em;
+  }
+  .text {
+    color: var(--sec-c);
+  }
+  .tlink {
+    display: inline-block;
+    margin-top: 22px;
+  }
+  .items {
+    grid-column: 10 / span 3;
+    padding-top: 0.2em;
+    font-size: var(--text-small);
+    line-height: 1.55;
+    color: var(--ter);
+  }
+
+  @media (max-width: 1023px) {
+    .row {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      row-gap: 28px;
+    }
+    .id {
+      grid-column: 1 / -1;
+    }
+    .body {
+      grid-column: 1 / span 5;
+    }
+    .items {
+      grid-column: 6 / span 3;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .row {
+      display: flex;
+      flex-direction: column;
+      row-gap: 0;
+    }
+    .body {
+      margin-top: 18px;
+    }
+    .items {
+      margin-top: 18px;
+    }
+    .body .tlink {
+      margin-top: 20px;
+    }
+  }
+</style>

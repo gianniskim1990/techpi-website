@@ -68,7 +68,7 @@ export const pagesEn = {
   /** The quiet closing line on secondary pages: the homepage question, without the Blue surface or the circle. */
   closer: {
     heading: 'Have something worth building?',
-    cta: 'Start a project →',
+    cta: 'Start a project',
   },
 };
 

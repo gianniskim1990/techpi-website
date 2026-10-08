@@ -74,6 +74,23 @@ const primaryFont = locale === 'el' ? commissionerGreek : commissionerLatin;
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="/favicon-192.png" sizes="192x192" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {/* `js`: scripting runs (the mobile menu button replaces the footer link). `mo`: motion may run, so the hidden
+        starting states of the reveal system apply. `sc`: scroll scenes run (desktop-sized windows only): the homepage
+        sections hand over to each other with scroll-linked geometry (src/scripts/motion.ts). If the motion module has not confirmed itself (`mo-ready`)
+        shortly after load, `mo` is removed again and every reveal simply shows: a failed script never hides text. */}
+    <script is:inline>
+      (function (d, w) {
+        var c = d.documentElement.classList;
+        c.add('js');
+        if (w.matchMedia && w.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+          c.add('mo');
+          if (w.matchMedia('(min-width: 1024px) and (min-height: 700px)').matches) c.add('sc');
+          w.setTimeout(function () {
+            if (!c.contains('mo-ready')) c.remove('mo', 'sc');
+          }, 3000);
+        }
+      })(document, window);
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">{t.skipLink}</a>
@@ -82,6 +99,9 @@ const primaryFont = locale === 'el' ? commissionerGreek : commissionerLatin;
       <slot />
     </main>
     <Footer locale={locale} page={hasRoute ? page : undefined} languageHrefs={paths} />
+    <script>
+      import '../scripts/motion';
+    </script>
   </body>
 </html>
 

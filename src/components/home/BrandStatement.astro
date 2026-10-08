@@ -8,12 +8,15 @@ interface Props {
 const { copy } = Astro.props;
 ---
 
-<section class="statement s-paper" aria-labelledby="statement-h">
-  <h2 id="statement-h">{copy.heading}</h2>
-  <ol class="pair">
+{/* The brand statement: the quiet beat after the loud hero. The sentence is set a size down and keeps the left;
+    beside it, the order of work is drawn in the hero map's own notation: a hollow point (the problem) joined by a
+    hairline to a filled TechPi Blue point (the technology). Two steps, one direction. */}
+<section class="statement s-paper" aria-labelledby="statement-h" data-scene>
+  <h2 id="statement-h" data-reveal="mask">{copy.heading}</h2>
+  <ol class="steps">
     {
-      copy.steps.map((s) => (
-        <li>
+      copy.steps.map((s, i) => (
+        <li class={i === 0 ? 'from' : 'to'} data-reveal="fade" style={`--delay:${200 + i * 160}ms`}>
           <p class="step">{s.step}</p>
           <h3>{s.title}</h3>
           <p class="text">{s.text}</p>
@@ -25,58 +28,114 @@ const { copy } = Astro.props;
 
 <style>
   .statement {
-    padding: var(--space-section) var(--space-margin);
+    padding: clamp(88px, 10vw, 152px) var(--space-margin) clamp(96px, 11vw, 168px);
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
-    row-gap: clamp(56px, 8vw, 112px);
+    align-items: start;
   }
   h2 {
-    grid-column: 1 / span 10;
-    font-size: var(--text-display-l);
-    line-height: 1.02;
+    grid-column: 1 / span 7;
+    font-size: var(--text-display-m);
+    line-height: 1.08;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
   }
-  .pair {
-    grid-column: 6 / span 7;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-gap);
+
+  /* The steps: a hairline spine with a point at each step. */
+  .steps {
+    grid-column: 9 / span 4;
+    position: relative;
+    padding-top: 0.35em;
   }
-  .pair li {
-    border-top: 1px solid var(--line);
-    padding-top: 18px;
+  .steps li {
+    position: relative;
+    padding-left: 30px;
+  }
+  .steps li + li {
+    margin-top: 44px;
+  }
+  .steps li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.42em;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    box-sizing: border-box;
+  }
+  .from::before {
+    border: 1px solid var(--color-slate);
+    background: var(--color-paper);
+  }
+  .to::before {
+    background: var(--color-techpi-blue);
+  }
+  /* The spine runs from the first point to the second. */
+  .from::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: calc(0.42em + 13px);
+    bottom: -40px;
+    width: 1px;
+    background: var(--color-ink);
+    opacity: 0.35;
   }
   .step {
-    font-size: 0.875rem;
-    font-weight: var(--weight-ui);
+    font-size: var(--text-small);
     color: var(--ter);
   }
+  .to .step {
+    color: var(--color-techpi-blue);
+  }
   h3 {
-    margin-top: 28px;
-    font-size: clamp(1.375rem, 2vw, 1.75rem);
+    margin-top: 6px;
+    font-size: var(--text-heading);
     line-height: 1.15;
     letter-spacing: -0.012em;
   }
   .text {
-    margin-top: 12px;
+    margin-top: 10px;
     color: var(--sec-c);
-    max-width: 38ch;
+    font-size: var(--text-small);
+    line-height: 1.5;
+    max-width: 36ch;
+  }
+
+  /* Scroll scene (html.sc): the spine draws from the problem down to the technology as the section rises, and the
+     blue point lights when the line arrives. The sentence trails a little behind the page. */
+  :global(.sc) .from::after {
+    transform-origin: 50% 0;
+    transform: scaleY(clamp(0, (var(--in, 1) - 0.35) / 0.35, 1));
+  }
+  :global(.sc) .to::before {
+    scale: calc(0.4 + 0.6 * clamp(0, (var(--in, 1) - 0.66) / 0.08, 1));
+    opacity: clamp(0.25, (var(--in, 1) - 0.62) / 0.1, 1);
+  }
+  :global(.sc) h2 {
+    translate: 0 calc((1 - var(--in, 1)) * 10vh);
+  }
+
+  @media (max-width: 1023px) {
+    .statement {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    h2 {
+      grid-column: 1 / span 5;
+    }
+    .steps {
+      grid-column: 6 / span 3;
+    }
   }
 
   @media (max-width: 760px) {
     .statement {
       display: block;
     }
-    h2 {
-      line-height: 1.08;
-    }
-    .pair {
-      margin-top: 56px;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 36px;
-    }
-    h3 {
-      margin-top: 18px;
+    .steps {
+      margin-top: 48px;
     }
   }
 </style>

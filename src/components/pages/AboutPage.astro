@@ -20,19 +20,18 @@ const copy = pages.about;
 
 {/* Concise and forward-looking. Evolution statement, what stayed and what changed, and four principles.
     No founder story, timeline, team, years, client counts, countries or statistics: none is confirmed.
-    The one hairline arc of the secondary pages lives here, desktop only. */}
+    The hairline arc that sat in the page head was removed in the final design pass: the arc now belongs to the
+    homepage sequence only, where it resolves into the symbol. */}
 <BaseLayout locale={locale} page="about" title={t.pages.about.title} description={copy.lead} bleed>
-  <PageIntro heading={copy.heading} lead={copy.lead} roomBelow>
-    <div class="arc" aria-hidden="true"></div>
-  </PageIntro>
+  <PageIntro heading={copy.heading} lead={copy.lead} />
 
   <SectionSplit id="evolution" heading={copy.changeHeading}>
     <ul class="pair">
-      <li>
+      <li class="rule">
         <p class="step">{copy.stayed.label}</p>
         <p class="text">{copy.stayed.text}</p>
       </li>
-      <li>
+      <li class="rule">
         <p class="step">{copy.changed.label}</p>
         <p class="text">{copy.changed.text}</p>
       </li>
@@ -57,38 +56,12 @@ const copy = pages.about;
 </BaseLayout>
 
 <style>
-  /* The same 1.25px Ink hairline as the homepage hero arc. It enters from the right edge below the header and
-     leaves through the bottom of the page head, to the right of the lead, so it never crosses the header or the
-     text. Wide desktop only (the 12-column grid, 1280px and up): below that there is no position clear of the header, the h1 and the lead. */
-  .arc {
-    display: none;
-  }
-  @media (min-width: 1280px) {
-    .arc {
-      display: block;
-      position: absolute;
-      width: 3600px;
-      height: 3600px;
-      left: calc(100% - 800px);
-      bottom: -3000px;
-      border: 1.25px solid var(--color-ink);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-  }
-
-  /* The Greek lead is longer: it wraps earlier so the arc still passes clear of it. */
-  :global(.intro:has(.arc) .lead:lang(el)) {
-    max-width: 22ch;
-  }
-
   .pair {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-gap);
   }
   .pair li {
-    border-top: 1px solid var(--line);
     padding-top: 18px;
   }
   .step {
@@ -109,19 +82,19 @@ const copy = pages.about;
   }
 
   .principles li {
-    padding: 26px 0 30px;
+    padding: 26px 0 32px;
     border-top: 1px solid var(--line);
   }
   .principles li:last-child {
     border-bottom: 1px solid var(--line);
   }
   h3 {
-    font-size: clamp(1.375rem, 2vw, 1.75rem);
-    line-height: 1.15;
-    letter-spacing: -0.012em;
+    font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+    line-height: 1.1;
+    letter-spacing: -0.018em;
   }
   .principles p {
-    margin-top: 10px;
+    margin-top: 8px;
     color: var(--sec-c);
     max-width: 52ch;
   }

@@ -16,16 +16,20 @@ const t = getDictionary(locale);
 <BaseLayout locale={locale} title={t.notFound.title} kind="notfound">
   <h1>{t.notFound.heading}</h1>
   <p class="not-found-text">{t.notFound.text}</p>
-  <p><a href={homePathFor(locale)}>{t.notFound.home}</a></p>
+  <p><a class="tlink" href={homePathFor(locale)}>{t.notFound.home}</a></p>
 </BaseLayout>
 
 <style>
   h1 {
-    font-size: var(--text-display-m);
-    line-height: 1.04;
+    font-size: clamp(2.5rem, 6.6vw, 6rem);
+    line-height: 1;
+    letter-spacing: -0.032em;
   }
   .not-found-text {
-    margin: 24px 0 16px;
+    margin: 32px 0 28px;
+    max-width: 40ch;
+    font-size: var(--text-lead);
+    line-height: 1.42;
     color: var(--color-graphite);
   }
 </style>

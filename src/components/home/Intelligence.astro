@@ -6,20 +6,81 @@ interface Props {
 }
 
 const { copy } = Astro.props;
+
+/*
+ * The field: clarity against noise, without any AI imagery. A row of hairlines of uneven height (noise) settles,
+ * from left to right, into one straight line (clarity). The resting state shows both at once: residual noise at the
+ * left, a clean line across the rest. With motion, the row starts fully noisy and settles as the section arrives.
+ * Heights come from a fixed seed, so every build draws the same field.
+ */
+const COUNT = 72;
+const W = 1200;
+const H = 120;
+const MID = H / 2;
+let seed = 314159;
+const rand = () => {
+  seed = (seed * 16807) % 2147483647;
+  return seed / 2147483647;
+};
+const smooth = (a: number, b: number, x: number) => {
+  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+};
+const CLEAR = 0.6; // where the clean line begins, as a fraction of the width
+const lines = Array.from({ length: COUNT }, (_, i) => {
+  const p = i / (COUNT - 1);
+  const x = 6 + p * (W * CLEAR - 6);
+  const half = 6 + Math.pow(rand(), 1.6) * 50;
+  const rest = 1 - smooth(0.12, 1, p); // how much noise remains at rest
+  return { x: x.toFixed(1), y1: (MID - half).toFixed(1), y2: (MID + half).toFixed(1), rest: rest.toFixed(3), i };
+});
 ---
 
-{/* Exact Paper. Set apart from its neighbours by one hairline, space and scale, not by another colour.
+{/* Ink. The strongest typographic moment of the page. The second line is set quieter on purpose: it is the noise.
     Wording is capability-oriented: it does not claim any of this has been delivered. */}
-<section class="intel s-paper" id="intelligence" aria-labelledby="intel-h">
-  <h2 id="intel-h">
-    {copy.heading.map((line) => <><span class="ln">{line}</span>{" "}</>)}
+<section class="intel s-ink horizon" id="intelligence" aria-labelledby="intel-h" data-sequence data-scene>
+  <div class="hold" data-scene="hold">
+  <div class="stage">
+  <h2 id="intel-h" data-reveal="lines">
+    {
+      copy.heading.map((line, i) => (
+        <>
+          <span class={`ln ln-${i + 1}`} style={`--i:${i * 2}`}>
+            <span>{line}</span>
+          </span>{' '}
+        </>
+      ))
+    }
   </h2>
+
+  <div class="field" aria-hidden="true">
+  <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" focusable="false">
+    <g class="noise">
+      {
+        lines.map((l) => (
+          <line
+            x1={l.x}
+            x2={l.x}
+            y1={l.y1}
+            y2={l.y2}
+            vector-effect="non-scaling-stroke"
+            style={`--rest:${l.rest};--k:${COUNT - 1 - l.i};--st:${(0.04 + ((COUNT - 1 - l.i) / (COUNT - 1)) * 0.5).toFixed(3)}`}
+          />
+        ))
+      }
+    </g>
+  </svg>
+  <span class="clear" style={`left:${(CLEAR * 100).toFixed(2)}%`}></span>
+  </div>
+  </div>
+  </div>
+
   <div class="body">
-    <p class="lead">{copy.lead}</p>
-    <dl class="areas">
+    <p class="lead" data-reveal="fade">{copy.lead}</p>
+    <dl class="areas" data-reveal="fade" style="--delay:120ms">
       {
         copy.areas.map((a) => (
-          <div>
+          <div class="rule">
             <dt>{a.title}</dt>
             <dd>{a.text}</dd>
           </div>
@@ -31,19 +92,106 @@ const { copy } = Astro.props;
 
 <style>
   .intel {
-    margin: 0 var(--space-margin);
-    padding: var(--space-section) 0;
-    border-top: 1px solid var(--line);
+    position: relative;
+    padding: calc(var(--space-section) * 1.15) var(--space-margin) var(--space-section);
   }
   h2 {
-    font-size: var(--text-display-l);
-    line-height: 1.02;
+    font-size: clamp(2.375rem, 6.5vw, 6.25rem);
+    line-height: 1;
+    letter-spacing: -0.034em;
+  }
+  h2:lang(el) {
+    font-size: clamp(2.125rem, 5.4vw, 5.25rem);
+    line-height: 1.06;
   }
   h2 .ln {
     display: block;
   }
+  .ln-2 {
+    color: var(--color-fog);
+  }
+
+  /* ---------- The field ---------- */
+  .field {
+    position: relative;
+    height: clamp(72px, 9vw, 128px);
+    margin: clamp(56px, 7vw, 104px) 0 clamp(56px, 7vw, 112px);
+  }
+  .field svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .noise line {
+    stroke: var(--color-fog);
+    stroke-width: 1.25px;
+    opacity: 0.7;
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scaleY(var(--rest));
+  }
+  .clear {
+    position: absolute;
+    right: 0;
+    top: calc(50% - 0.75px);
+    height: 1.5px;
+    background: var(--color-cyan);
+    transform-origin: 0 50%;
+  }
+
+  /* With motion: the row starts noisy and settles, from the right, into the clean line. Timed by the section's
+     arrival (src/scripts/motion.ts adds `.in`). Used where scroll scenes are off (tablet, short windows). */
+  :global(.mo:not(.sc)) .noise line {
+    transition: transform 900ms var(--ease-reveal);
+    transition-delay: calc(var(--k) * 12ms);
+  }
+  :global(.mo:not(.sc)) .intel:not(.in) .noise line {
+    transform: scaleY(1);
+  }
+  :global(.mo:not(.sc)) .clear {
+    transition: transform 1100ms var(--ease-reveal) 500ms;
+  }
+  :global(.mo:not(.sc)) .intel:not(.in) .clear {
+    transform: scaleX(0);
+  }
+  /* Scroll scene (html.sc): the statement holds the screen for a short, fixed distance while the noise settles,
+     from the right, into the clean line, and the second sentence (the noise) recedes. Then the page moves on.
+     Every value follows the scroll position, and the end of the hold is exactly the resting state. */
+  /* Room for the horizon to sweep across empty Ink before the statement arrives. */
+  :global(.sc) .intel {
+    padding-top: 30vh;
+  }
+  :global(.sc) .hold {
+    height: 185svh;
+  }
+  :global(.sc) .stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  :global(.sc) .field {
+    margin-bottom: 0;
+  }
+  :global(.sc) .noise line {
+    --t: clamp(0, (var(--pin, 1) - var(--st)) / 0.3, 1);
+    transform: scaleY(calc(1 - (1 - var(--rest)) * var(--t)));
+  }
+  :global(.sc) .clear {
+    transform: scaleX(clamp(0, (var(--pin, 1) - 0.42) / 0.4, 1));
+  }
+  :global(.sc) .ln-2 > span {
+    opacity: calc(1 - clamp(0, (var(--pin, 1) - 0.25) / 0.55, 1) * 0.55);
+  }
+  :global(.sc) h2 {
+    translate: 0 calc((1 - var(--in, 1)) * 12vh);
+  }
+
+  /* ---------- Body ---------- */
   .body {
-    margin-top: clamp(56px, 8vw, 120px);
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
@@ -52,7 +200,7 @@ const { copy } = Astro.props;
     grid-column: 1 / span 5;
     font-size: var(--text-lead);
     line-height: 1.42;
-    max-width: 30ch;
+    max-width: 32ch;
   }
   .areas {
     grid-column: 7 / span 6;
@@ -62,7 +210,6 @@ const { copy } = Astro.props;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     column-gap: var(--space-gap);
     padding: 18px 0;
-    border-top: 1px solid var(--line);
   }
   .areas div:last-child {
     border-bottom: 1px solid var(--line);
@@ -74,16 +221,21 @@ const { copy } = Astro.props;
     color: var(--sec-c);
   }
 
-  @media (max-width: 760px) {
-    h2 .ln {
-      display: inline;
-    }
+  @media (max-width: 1023px) {
     .body {
       display: block;
-      margin-top: 40px;
+    }
+    .lead {
+      max-width: 40ch;
     }
     .areas {
-      margin-top: 48px;
+      margin-top: 56px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .areas {
+      margin-top: 44px;
     }
     .areas div {
       display: block;

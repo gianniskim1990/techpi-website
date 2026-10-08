@@ -11,9 +11,24 @@ interface Props {
 const { copy, locale } = Astro.props;
 ---
 
-<section class="evo s-paper" id="evolution" aria-labelledby="evo-h">
-  <h2 id="evo-h">{copy.heading}</h2>
-  <div class="txt">
+{/* Evolution. The geometry is halfway: the hero's arc has opened into a half circle that runs from the old name
+    to the new one. It is a diagram of the sentence, not a logo morph. The names in it are decorative: the heading
+    already says them. With motion, the half circle draws from left to right as the section arrives. */}
+<section class="evo s-paper" id="evolution" aria-labelledby="evo-h" data-sequence data-scene>
+  <h2 id="evo-h" data-reveal="mask">{copy.heading}</h2>
+
+  <div class="diagram" aria-hidden="true">
+    {/* Pixel units, so the hairline keeps its weight at every size. The circle's lower half lies outside the box.
+        Its stroke starts at the right and runs clockwise, so the visible upper half draws from left to right. */}
+    <svg focusable="false">
+      <circle class="half" cx="50%" cy="100%" r="63.2456%" pathLength="1"></circle>
+      <line class="base" x1="0" x2="100%" y1="100%" y2="100%"></line>
+    </svg>
+    <span class="end end-from"><i></i>pigiota314</span>
+    <span class="end end-to"><i></i>TechPi</span>
+  </div>
+
+  <div class="txt" data-reveal="fade">
     <p class="lead">{copy.lead}</p>
     <p class="more">{copy.text}</p>
     <a class="tlink" href={pathFor('about', locale)}>{copy.link}</a>
@@ -22,21 +37,95 @@ const { copy, locale } = Astro.props;
 
 <style>
   .evo {
-    margin: 0 var(--space-margin);
-    padding: clamp(80px, 9.5vw, 136px) 0;
-    border-top: 1px solid var(--line);
+    padding: var(--space-section) var(--space-margin);
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
-    align-items: start;
+    row-gap: clamp(48px, 6vw, 88px);
   }
   h2 {
     grid-column: 1 / span 6;
-    font-size: var(--text-display-m);
-    line-height: 1.06;
+    grid-row: 1;
+    font-size: var(--text-display-l);
+    line-height: 1.02;
+    letter-spacing: -0.028em;
   }
-  .txt {
+  h2:lang(el) {
+    line-height: 1.08;
+  }
+
+  .diagram {
     grid-column: 8 / span 5;
+    grid-row: 1 / span 2;
+    align-self: end;
+    position: relative;
+    padding-bottom: 44px;
+  }
+  .diagram svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2;
+    overflow: visible;
+    /* Shows only the upper half of the circle, with room for the hairline at the top and the ends. */
+    clip-path: inset(-6px -6px 0 -6px);
+  }
+  .half {
+    fill: none;
+    stroke: var(--color-ink);
+    stroke-width: 1.25px;
+  }
+  .base {
+    stroke: var(--color-rule);
+    stroke-width: 1px;
+  }
+  .end {
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    white-space: nowrap;
+  }
+  .end i {
+    display: block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    margin-top: -4.5px;
+  }
+  .end-from {
+    left: 0;
+    color: var(--ter);
+    transform: translateX(-4px);
+  }
+  .end-from i {
+    border: 1.25px solid var(--color-slate);
+    background: var(--color-paper);
+  }
+  .end-to {
+    right: 0;
+    align-items: flex-end;
+    color: var(--color-ink);
+    font-weight: var(--weight-name);
+    letter-spacing: 0.01em;
+    transform: translateX(4px);
+  }
+  .end-to i {
+    background: var(--color-techpi-blue);
+  }
+  /* The dots sit on the ends of the half circle's diameter. */
+  .end {
+    top: calc(100% - 44px);
+    bottom: auto;
+  }
+
+  .txt {
+    grid-column: 1 / span 5;
+    grid-row: 2;
+    align-self: end;
   }
   .lead {
     font-size: var(--text-lead);
@@ -52,12 +141,64 @@ const { copy, locale } = Astro.props;
     margin-top: 30px;
   }
 
+  /* ---------- Motion ---------- */
+  :global(.mo:not(.sc)) .half {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    /* The first half of the stroke is the hidden lower half: drawing starts at 0.5. */
+    transition: stroke-dashoffset 1200ms var(--ease-reveal) 150ms;
+  }
+  :global(.mo:not(.sc)) .evo:not(.in) .half {
+    stroke-dashoffset: 0.5;
+  }
+  :global(.mo:not(.sc)) .end-to {
+    transition: opacity 500ms var(--ease-reveal) 1000ms;
+  }
+  :global(.mo:not(.sc)) .evo:not(.in) .end-to {
+    opacity: 0;
+  }
+  /* Scroll scene (html.sc): the half circle draws from the old name to the new one as the section rises, and the
+     TechPi end lights up when the line arrives. The diagram sits deeper than the heading, so it rises more slowly. */
+  :global(.sc) .half {
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(0.5 - 0.5 * clamp(0, (var(--in, 1) - 0.3) / 0.5, 1));
+  }
+  :global(.sc) .end-to {
+    opacity: clamp(0, (var(--in, 1) - 0.76) / 0.08, 1);
+  }
+  :global(.sc) .diagram {
+    translate: 0 calc((1 - var(--in, 1)) * -12vh);
+  }
+  :global(.sc) .txt {
+    translate: 0 calc((1 - var(--in, 1)) * 8vh);
+  }
+
+  @media (max-width: 1023px) {
+    .evo {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    h2 {
+      grid-column: 1 / -1;
+    }
+    .diagram {
+      grid-column: 3 / -1;
+      grid-row: 2;
+    }
+    .txt {
+      grid-column: 1 / span 6;
+      grid-row: 3;
+    }
+  }
+
   @media (max-width: 760px) {
     .evo {
       display: block;
     }
+    .diagram {
+      margin: 56px 8px 0;
+    }
     .txt {
-      margin-top: 28px;
+      margin-top: 48px;
     }
   }
 </style>

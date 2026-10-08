@@ -1,6 +1,8 @@
 ---
-import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectMedia from '../../components/ProjectMedia.astro';
+import Crop from '../../components/Crop.astro';
+import { compositions } from '../../components/workCompositions';
 import FactRows from '../../components/secondary/FactRows.astro';
 import SectionSplit from '../../components/secondary/SectionSplit.astro';
 import { capabilityName } from '../../content/capabilities';
@@ -24,12 +26,16 @@ const next = nextCaseStudy(project.slug, locale);
 // Both languages exist for every published case study, so the canonical, hreflang and language switch pair them.
 const paths = Object.fromEntries(locales.map((l) => [l, caseStudyPath(project.slug, l)])) as Record<Locale, string>;
 const gallery: readonly ProjectImage[] = study.gallery ?? [];
-const imageSizes = '(min-width: 1440px) 1312px, 100vw';
+const imageSizes = '(min-width: 1440px) 1312px, (min-width: 761px) 92vw, 100vw';
+
+const hasTechnology = Boolean(study.technology && study.technology.length > 0);
+const hasOutcome = Boolean(study.outcome && study.outcome.length > 0);
+const comp = compositions[project.slug];
 ---
 
-{/* The reusable case-study template. Every block except the hero, cover, overview, need, what we built and next
-    project is optional: a block with no supported content is simply not rendered. No metrics, no KPI blocks, no
-    testimonials. */}
+{/* The reusable case-study template: a product story, told editorially. Every block except the head, cover,
+    overview, need, what we built and next project is optional: a block with no supported content is not rendered.
+    No metrics, no KPI blocks, no testimonials. */}
 <BaseLayout
   locale={locale}
   page="work"
@@ -38,15 +44,14 @@ const imageSizes = '(min-width: 1440px) 1312px, 100vw';
   description={project.summary}
   bleed
 >
-  <section class="hero s-paper">
-    <div class="intro">
-      <a class="back" href={pathFor('work', locale)}>← {copy.back}</a>
-      <p class="cat">{project.category}</p>
-      <h1>{project.name}</h1>
-      <p class="lead">{project.summary}</p>
-    </div>
-    <div class="facts">
+  <section class="head s-paper">
+    <a class="back" href={pathFor('work', locale)}><span aria-hidden="true">←</span> {copy.back}</a>
+    <p class="meta-label cat">{project.category}</p>
+    <h1 data-reveal="mask">{project.name}</h1>
+    <p class="lead">{project.summary}</p>
+    <div class="strip">
       <FactRows
+        variant="strip"
         rows={[
           { label: copy.client, value: study.client },
           { label: copy.year, value: study.year ? String(study.year) : undefined },
@@ -61,32 +66,36 @@ const imageSizes = '(min-width: 1440px) 1312px, 100vw';
     </div>
   </section>
 
-  <figure class="media s-ink cover">
-    <Image
-      src={study.cover.src}
-      alt={study.cover.alt}
-      widths={[640, 960, 1440, 1920]}
-      sizes={imageSizes}
-      format="webp"
-      quality={85}
-      loading="eager"
-    />
+  {/* The cover: the product at a scale where its interface reads, cropped to a band and run edge to edge. The
+      whole capture follows later, after what was built. */}
+  <figure class="cover s-ink">
+    {
+      comp?.cover ? (
+        <Crop image={study.cover} crop={comp.cover} small={comp.thumb} vw={[100, 100]} loading="eager" />
+      ) : (
+        <ProjectMedia image={study.cover} sizes={imageSizes} loading="eager" class="shot" />
+      )
+    }
     {study.cover.caption && <figcaption>{study.cover.caption}</figcaption>}
   </figure>
 
-  <SectionSplit id="overview" heading={copy.overview}>
+  <SectionSplit id="overview" heading={copy.overview} size="s">
     {study.overview.map((p, i) => <p class={i === 0 ? 'lead-text' : 'read'}>{p}</p>)}
   </SectionSplit>
 
-  <SectionSplit id="need" heading={copy.need}>
+  <SectionSplit id="need" heading={copy.need} size="s">
     {study.need.map((p) => <p class="read">{p}</p>)}
   </SectionSplit>
 
-  <SectionSplit id="built" heading={copy.built}>
-    {study.built.intro && <p class="read">{study.built.intro}</p>}
-    <ul class="ruled">
-      {study.built.items.map((item) => <li>{item}</li>)}
-    </ul>
+  <SectionSplit id="built" heading={copy.built} size="s">
+    {study.built.intro && <p class="lead-text">{study.built.intro}</p>}
+    <ol class="items">
+      {
+        study.built.items.map((item) => (
+          <li>{item}</li>
+        ))
+      }
+    </ol>
     <p class="capline">
       <span class="label">{copy.capabilities}</span>
       {
@@ -102,69 +111,74 @@ const imageSizes = '(min-width: 1440px) 1312px, 100vw';
     </p>
   </SectionSplit>
 
-  {
-    gallery.length > 0 && (
-      <section class="media s-ink gallery" aria-label={project.name}>
-        {gallery.map((image) => (
-          <figure>
-            <Image
-              src={image.src}
-              alt={image.alt}
-              widths={[640, 960, 1440, 1920]}
-              sizes={imageSizes}
-              format="webp"
-              quality={85}
-            />
-            {image.caption && <figcaption>{image.caption}</figcaption>}
-          </figure>
-        ))}
-      </section>
-    )
-  }
+  {/* The whole picture: the full capture, and beside it the project's other real screens at a smaller scale. */}
+  <section class="whole s-ink horizon" aria-label={project.name} data-scene>
+    <figure class="whole-main">
+      <ProjectMedia image={study.cover} sizes="(min-width: 1024px) 64vw, 100vw" class="shot" />
+    </figure>
+    {
+      gallery.map((image) => (
+        <figure class="whole-side">
+          <ProjectMedia image={image} sizes="(min-width: 1024px) 30vw, 100vw" class="shot" />
+          {image.caption && <figcaption>{image.caption}</figcaption>}
+        </figure>
+      ))
+    }
+  </section>
 
   {
-    study.technology && study.technology.length > 0 && (
-      <SectionSplit id="technology" heading={copy.technology}>
-        <ul class="ruled">
-          {study.technology.map((item) => <li>{item}</li>)}
+    hasTechnology && (
+      <SectionSplit id="technology" heading={copy.technology} size="s">
+        <ul class="ruled tech">
+          {study.technology?.map((item) => (
+            <li>{item}</li>
+          ))}
         </ul>
       </SectionSplit>
     )
   }
 
   {
-    study.outcome && study.outcome.length > 0 && (
-      <SectionSplit id="outcome" heading={copy.outcome}>
-        <ul class="ruled">
-          {study.outcome.map((item) => <li>{item}</li>)}
+    hasOutcome && (
+      <SectionSplit id="outcome" heading={copy.outcome} size="s">
+        <ul class="ruled outcome">
+          {study.outcome?.map((item) => (
+            <li>{item}</li>
+          ))}
         </ul>
       </SectionSplit>
     )
   }
 
-  {/* The curved Ink edge hands over to the next project. Desktop only, decorative. */}
-  <div class="edge" aria-hidden="true"><div></div></div>
   <a class="next s-ink" href={caseStudyPath(next.slug, locale)} aria-label={`${copy.next}: ${next.name}`}>
-    <span class="cat">{copy.next}</span>
-    <span class="next-name">{next.name}</span>
-    <span class="next-cat">{next.category}</span>
-    <span class="tlink">{copy.next} →</span>
+    <span class="next-txt">
+      <span class="meta-label">{copy.next}</span>
+      <span class="next-name">{next.name}</span>
+      <span class="next-cat">{next.category}</span>
+      <span class="tlink">{copy.next}</span>
+    </span>
+    {
+      next.image && (
+        <span class="next-media" aria-hidden="true">
+          <Crop image={next.image} alt="" crop={compositions[next.slug]?.thumb} vw={[36, 100]} />
+        </span>
+      )
+    }
   </a>
 </BaseLayout>
 
 <style>
-  .hero {
-    padding: 168px var(--space-margin) 72px;
+  /* ---------- Head ---------- */
+  .head {
+    padding: clamp(136px, 13vw, 184px) var(--space-margin) clamp(56px, 6vw, 88px);
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
   }
-  .intro {
-    grid-column: 1 / span 7;
-  }
   .back {
-    display: inline-block;
-    margin-bottom: 48px;
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-bottom: clamp(40px, 5vw, 72px);
     padding: 8px 0;
     font-size: var(--text-small);
     font-weight: var(--weight-ui);
@@ -175,82 +189,99 @@ const imageSizes = '(min-width: 1440px) 1312px, 100vw';
     text-underline-offset: 6px;
   }
   .cat {
-    font-size: 0.8125rem;
-    font-weight: var(--weight-ui);
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: var(--ter);
+    grid-column: 1 / -1;
   }
   h1 {
-    margin-top: 14px;
-    font-size: var(--text-display-l);
-    line-height: 1.02;
+    grid-column: 1 / span 10;
+    margin-top: 18px;
+    font-size: clamp(2.75rem, 7vw, 6.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.034em;
   }
   .lead {
-    margin-top: 28px;
-    max-width: 34ch;
+    grid-column: 1 / span 6;
+    margin-top: clamp(28px, 3vw, 44px);
     font-size: var(--text-lead);
     line-height: 1.42;
     color: var(--sec-c);
   }
-  .facts {
-    grid-column: 9 / span 4;
-    align-self: end;
+  .strip {
+    grid-column: 1 / -1;
+    margin-top: clamp(48px, 6vw, 88px);
   }
 
-  /* Media bands on Ink. Images keep their own proportions, centred on the field and never cropped. */
-  .media {
+  /* ---------- The cover band and the whole picture, on Ink ---------- */
+  .cover {
     margin: 0;
-    padding: 56px var(--space-margin);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
   }
-  .media figure {
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 100%;
+  .cover:has(figcaption) {
+    padding-bottom: 14px;
   }
-  .media :global(img) {
-    max-width: 100%;
-    max-height: min(80vh, 760px);
-    width: auto;
-    height: auto;
-  }
-  .media figcaption {
-    margin-top: 14px;
-    align-self: flex-start;
-    font-size: var(--text-small);
+  .cover figcaption,
+  .whole figcaption {
+    margin-top: 12px;
+    font-size: var(--text-label);
     color: var(--ter);
   }
-  .gallery {
-    margin-top: var(--space-section);
-    gap: 40px;
+  .cover figcaption {
+    padding: 0 var(--space-margin);
   }
-  .gallery + :global(section) {
+  .cover > :global(.pm) {
+    margin: 0 auto;
+    --maxh: min(80vh, 760px);
+  }
+  .whole {
     margin-top: var(--space-section);
+    padding: clamp(56px, 6vw, 96px) var(--space-margin);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    row-gap: 40px;
+    align-items: end;
+  }
+  .whole figure {
+    margin: 0;
+  }
+  .whole-main {
+    grid-column: 1 / span 8;
+  }
+  .whole-main :global(.pm) {
+    --maxh: 72vh;
+  }
+  .whole-side {
+    grid-column: 9 / span 4;
+  }
+  .whole-side + .whole-side {
+    grid-column: 9 / span 4;
   }
 
+  /* ---------- Story text ---------- */
   .lead-text {
-    max-width: 36ch;
-    font-size: var(--text-lead);
-    line-height: 1.42;
+    max-width: 34ch;
+    font-size: clamp(1.375rem, 2.2vw, 2rem);
+    line-height: 1.3;
+    letter-spacing: -0.012em;
   }
   .read {
-    max-width: 640px;
+    max-width: 62ch;
     color: var(--sec-c);
   }
   .read + .read,
   .lead-text + .read {
-    margin-top: 16px;
+    margin-top: 18px;
   }
-  .ruled {
-    margin-top: 28px;
+  .items {
+    margin-top: 8px;
   }
-  .read + .ruled {
-    margin-top: 24px;
+  .lead-text + .items {
+    margin-top: 32px;
+  }
+  .items li {
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+  }
+  .items li:last-child {
+    border-bottom: 1px solid var(--line);
   }
   .capline {
     margin-top: 32px;
@@ -261,37 +292,51 @@ const imageSizes = '(min-width: 1440px) 1312px, 100vw';
     font-weight: var(--weight-ui);
     color: var(--ter);
   }
-
-  .edge {
-    position: relative;
-    height: 18.4vw;
-    overflow: hidden;
-    margin-top: var(--space-section);
-    margin-bottom: -1px;
-    background: var(--color-paper);
+  .tech {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-gap);
   }
-  .edge > div {
-    position: absolute;
-    width: 583.4vw;
-    height: 583.4vw;
-    border-radius: 50%;
-    left: calc(100% - 293vw);
-    top: 0.7vw;
-    background: var(--color-ink);
-  }
-  .next {
-    display: block;
-    padding: 40px var(--space-margin) 120px;
+  .tech li:nth-last-child(2):nth-child(odd) {
     border-bottom: 1px solid var(--line);
+  }
+  .outcome li {
+    font-size: var(--text-lead);
+    line-height: 1.38;
+    padding: 18px 0;
+  }
+
+  /* ---------- Next project ---------- */
+  .next {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    align-items: end;
+    margin-top: var(--space-section);
+    padding: clamp(56px, 6vw, 88px) var(--space-margin) clamp(80px, 9vw, 136px);
     text-decoration: none;
+  }
+  /* Separates the next project from the Ink footer that follows. */
+  .next::after {
+    content: '';
+    position: absolute;
+    left: var(--space-margin);
+    right: var(--space-margin);
+    bottom: 0;
+    height: 1px;
+    background: var(--line);
+  }
+  .next-txt {
+    grid-column: 1 / span 6;
   }
   .next-name {
     display: block;
-    margin: 18px 0 10px;
+    margin: 18px 0 12px;
     font-size: var(--text-display-l);
     font-weight: var(--weight-display);
     line-height: 1.02;
-    letter-spacing: -0.024em;
+    letter-spacing: -0.028em;
     text-wrap: balance;
   }
   .next-cat {
@@ -306,35 +351,97 @@ const imageSizes = '(min-width: 1440px) 1312px, 100vw';
   }
   .next:hover .tlink {
     color: var(--link);
+    text-underline-offset: 8px;
+  }
+  .next-media {
+    grid-column: 9 / span 4;
+    display: block;
+  }
+  .next-name {
+    transition: color var(--duration-fast) var(--ease-state);
+  }
+  .next-media :global(img) {
+    transition: scale 1100ms var(--ease-reveal);
+  }
+  @media (hover: hover) {
+    .next:hover .next-name {
+      color: var(--color-cyan);
+    }
+    .next:hover .next-media :global(img) {
+      scale: 1.06;
+    }
+  }
+  /* The cover is uncovered from the left on first paint, after the heading. */
+  :global(.mo) .cover > :global(.crop),
+  :global(.mo) .cover > :global(.pm) {
+    animation: cover-in 1300ms var(--ease-reveal) 350ms both;
+  }
+  @keyframes cover-in {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .head {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    h1,
+    .lead {
+      grid-column: 1 / -1;
+    }
+    .lead {
+      max-width: 40ch;
+    }
+    .next {
+      display: block;
+    }
+    .next-media {
+      margin-top: 48px;
+      max-width: 420px;
+    }
+    .whole {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .whole-main {
+      grid-column: 1 / -1;
+    }
+    .whole-side {
+      grid-column: 1 / span 5;
+    }
   }
 
   @media (max-width: 760px) {
-    .hero {
+    .head {
       display: block;
       padding-top: 112px;
-      padding-bottom: 40px;
     }
     .back {
-      margin-bottom: 32px;
+      display: inline-block;
+      margin-bottom: 36px;
     }
-    .facts {
-      margin-top: 32px;
+    h1 {
+      margin-top: 14px;
     }
-    .media {
-      padding: 32px 0;
+    .whole {
+      display: block;
+      padding: 0 0 40px;
     }
-    .media figcaption {
-      padding: 0 var(--space-margin);
+    .whole-side {
+      margin: 24px var(--space-margin) 0;
     }
-    .gallery {
-      gap: 28px;
+    .whole-main :global(.pm) {
+      width: 100%;
     }
-    .edge {
-      display: none;
+    .tech {
+      display: block;
     }
-    .next {
-      margin-top: var(--space-section);
-      padding-top: 64px;
+    .tech li:nth-last-child(2):nth-child(odd) {
+      border-bottom: 0;
     }
+
   }
 </style>

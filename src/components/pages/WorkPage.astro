@@ -20,31 +20,27 @@ const copy = pages.work;
 ---
 
 <BaseLayout locale={locale} page="work" title={t.pages.work.title} description={copy.lead} bleed>
-  <PageIntro heading={t.pages.work.heading} lead={copy.lead} />
-  {/* All projects as large rows. No count thresholds or filters: scaling is design guidance only for now. */}
-  <section class="list s-ink" aria-label={t.pages.work.heading}>
-    {projectsIn(locale).map((p, i) => <ProjectRow
-        project={p}
-        locale={locale}
-        tone={(i % 3) + 1}
-        capabilitiesLabel={pages.capabilities.indexLabel}
-        linkLabel={copy.linkLabel}
-      />)}
+  <PageIntro heading={t.pages.work.heading} lead={copy.lead} variant="word" />
+  {/* The Work page is a catalogue, not a second homepage: every project on one index, read across, on Paper.
+      The homepage composes the three case studies; here they are lines among the others, each with a small crop. */}
+  <section class="list s-paper" aria-label={t.pages.work.heading}>
+    {
+      projectsIn(locale).map((p) => (
+        <ProjectRow
+          project={p}
+          locale={locale}
+          capabilitiesLabel={pages.capabilities.indexLabel}
+          linkLabel={copy.linkLabel}
+        />
+      ))
+    }
   </section>
   <ClosingCTA heading={pages.closer.heading} cta={pages.closer.cta} href={pathFor('contact', locale)} />
 </BaseLayout>
 
 <style>
   .list {
-    margin-top: var(--space-section);
-    padding: 40px var(--space-margin) 64px;
-  }
-
-  @media (max-width: 1023px) {
-    .list {
-      padding-left: 0;
-      padding-right: 0;
-      padding-top: 0;
-    }
+    margin: clamp(64px, 7vw, 112px) var(--space-margin) 0;
+    border-bottom: 1px solid var(--color-rule);
   }
 </style>

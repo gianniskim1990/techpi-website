@@ -26,15 +26,27 @@ const capabilities = capabilitiesIn(locale);
 <BaseLayout locale={locale} page="capabilities" title={t.pages.capabilities.title} description={copy.lead} bleed>
   <PageIntro heading={copy.heading} lead={copy.lead} />
   <nav class="anchors" aria-label={copy.indexLabel}>
-    {capabilities.map((c) => <a href={`#${c.id}`}>{c.name}</a>)}
+    <ol>
+      {
+        capabilities.map((c) => (
+          <li>
+            <a href={`#${c.id}`}>
+              <span class="name">{c.name}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
   </nav>
   {
     capabilities.map((c) => (
       <SectionSplit id={c.id} heading={c.name}>
         <p class="summary">{c.summary}</p>
         <p class="covers">{copy.covers}</p>
-        <ul class="ruled">
-          {c.items.map((item) => <li>{item}</li>)}
+        <ul class="ruled cover-list">
+          {c.items.map((item) => (
+            <li>{item}</li>
+          ))}
         </ul>
         {caseStudiesWith(c.id, locale).length > 0 && (
           <p class="seen">
@@ -56,17 +68,40 @@ const capabilities = capabilitiesIn(locale);
 </BaseLayout>
 
 <style>
+  /* The four capabilities as an index under the page head: number and name, a hairline above each. */
   .anchors {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 32px;
-    margin: 64px var(--space-margin) 0;
-    font-weight: var(--weight-ui);
+    margin: clamp(56px, 7vw, 104px) var(--space-margin) 0;
+  }
+  .anchors ol {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+  }
+  .anchors li {
+    border-top: 1px solid var(--line);
   }
   .anchors a {
-    display: inline-block;
-    padding: 8px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 0 8px;
+    text-decoration: none;
+  }
+  .anchors .num {
+    color: var(--color-techpi-blue);
+  }
+  .anchors .name {
+    font-size: var(--text-heading);
+    line-height: 1.15;
+    letter-spacing: -0.012em;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 1px;
     text-underline-offset: 6px;
+    transition: text-decoration-color var(--duration-fast) var(--ease-state);
+  }
+  .anchors a:hover .name {
+    text-decoration-color: currentColor;
   }
   .summary {
     max-width: 36ch;
@@ -74,13 +109,19 @@ const capabilities = capabilitiesIn(locale);
     line-height: 1.42;
   }
   .covers {
-    margin-top: 40px;
+    margin-top: 44px;
     font-size: var(--text-small);
     font-weight: var(--weight-ui);
     color: var(--ter);
   }
-  .ruled {
-    margin-top: 10px;
+  .cover-list {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+  }
+  .cover-list li:nth-last-child(2):nth-child(odd) {
+    border-bottom: 1px solid var(--line);
   }
   .seen {
     margin-top: 28px;
@@ -90,5 +131,33 @@ const capabilities = capabilitiesIn(locale);
     margin-right: 12px;
     font-weight: var(--weight-ui);
     color: var(--ter);
+  }
+
+  @media (max-width: 1023px) {
+    .anchors ol {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: 8px;
+    }
+  }
+  @media (max-width: 760px) {
+    .anchors ol {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 0;
+    }
+    .anchors li:last-child {
+      border-bottom: 1px solid var(--line);
+    }
+    .anchors a {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 16px;
+      padding: 12px 0;
+    }
+    .cover-list {
+      display: block;
+    }
+    .cover-list li:nth-last-child(2):nth-child(odd) {
+      border-bottom: 0;
+    }
   }
 </style>
