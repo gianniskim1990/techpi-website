@@ -67,7 +67,13 @@ const focusOf = narrowCrops;
                     crop={p.slug in focusOf}
                     focus={focusOf[p.slug]}
                     reveal
-                  />
+                  >
+                    {href && (
+                      <span class="badge" aria-hidden="true">
+                        <span>→</span>
+                      </span>
+                    )}
+                  </ProjectMedia>
                 </a>
               )}
               <div class="case-txt" data-reveal="fade" style="--delay:120ms">
@@ -82,7 +88,8 @@ const focusOf = narrowCrops;
                   </dl>
                   {href && (
                     <a class="tlink" href={href} aria-label={`${copy.caseLink}: ${p.name}`}>
-                      {copy.caseLink} →
+                      {copy.caseLink}
+                      <span class="arr" aria-hidden="true">→</span>
                     </a>
                   )}
                 </div>
@@ -151,9 +158,21 @@ const focusOf = narrowCrops;
   .media :global(.pm img) {
     transition: transform 900ms var(--ease-reveal);
   }
+  /* Hover (pointer devices): the capture leans in slowly and the arrow badge appears, whether the pointer is on
+     the capture or on the case-study link. */
+  .media :global(.pm img) {
+    transition-duration: 1200ms;
+  }
   @media (hover: hover) {
-    .media:hover :global(.pm img) {
-      transform: scale(1.015);
+    .case:has(a[href]:hover) .media :global(.pm img) {
+      transform: scale(1.035);
+    }
+    .case:has(a[href]:hover) :global(.badge) {
+      opacity: 1;
+      transform: none;
+    }
+    .case:has(a[href]:hover) :global(.badge > span) {
+      transform: none;
     }
   }
   h3 {

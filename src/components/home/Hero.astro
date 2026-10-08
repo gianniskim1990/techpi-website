@@ -1,4 +1,5 @@
 ---
+import Arrowed from '../Arrowed.astro';
 import type { HomeCopy } from '../../content/home.en';
 import { pathFor } from '../../i18n/routes';
 import type { Locale } from '../../i18n/locales';
@@ -47,7 +48,7 @@ const { copy, locale } = Astro.props;
         }
       </p>
       <p class="act">
-        <a class="btn" href={pathFor('contact', locale)}>{copy.start}</a>
+        <a class="btn" href={pathFor('contact', locale)}><Arrowed text={copy.start} /></a>
         <a class="tlink" href="#work">{copy.work}</a>
       </p>
     </div>

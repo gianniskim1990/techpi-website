@@ -42,7 +42,13 @@ const focusOf = narrowCrops;
           crop={project.slug in focusOf}
           focus={focusOf[project.slug]}
           reveal
-        />
+        >
+          {href && (
+            <span class="badge" aria-hidden="true">
+              <span>→</span>
+            </span>
+          )}
+        </ProjectMedia>
       </a>
       <div class="text">
         <h2>{project.name}</h2>
@@ -50,7 +56,8 @@ const focusOf = narrowCrops;
         <FactRows rows={[{ label: capabilitiesLabel, value: capabilities }]} />
         {href && (
           <a class="tlink" href={href} aria-label={`${linkLabel}: ${project.name}`}>
-            {linkLabel} →
+            {linkLabel}
+            <span class="arr" aria-hidden="true">→</span>
           </a>
         )}
       </div>
@@ -91,9 +98,19 @@ const focusOf = narrowCrops;
   .media :global(.pm img) {
     transition: transform 900ms var(--ease-reveal);
   }
+  .media :global(.pm img) {
+    transition-duration: 1200ms;
+  }
   @media (hover: hover) {
-    .media:hover :global(.pm img) {
-      transform: scale(1.015);
+    .feature:has(a[href]:hover) .media :global(.pm img) {
+      transform: scale(1.035);
+    }
+    .feature:has(a[href]:hover) :global(.badge) {
+      opacity: 1;
+      transform: none;
+    }
+    .feature:has(a[href]:hover) :global(.badge > span) {
+      transform: none;
     }
   }
   .text {

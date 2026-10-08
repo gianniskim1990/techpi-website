@@ -1,0 +1,14 @@
+---
+/**
+ * Renders an action label. A trailing arrow (→, as written in the copy) becomes its own decorative span, so it can
+ * move on hover without the words moving, and screen readers read only the words. Text without an arrow passes
+ * through unchanged.
+ */
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+const match = /^(.*?)\s*→$/.exec(text);
+---
+
+{match ? <>{match[1]}<span class="arr" aria-hidden="true">→</span></> : text}

@@ -1,13 +1,17 @@
 ---
 import type { HomeCopy } from '../../content/home.en';
 import type { Capability } from '../../content/capabilities';
+import { pathFor } from '../../i18n/routes';
+import type { Locale } from '../../i18n/locales';
 
 interface Props {
   copy: HomeCopy['capabilities'];
   items: readonly Capability[];
+  locale: Locale;
 }
 
-const { copy, items } = Astro.props;
+const { copy, items, locale } = Astro.props;
+const capabilitiesPath = pathFor('capabilities', locale);
 ---
 
 {/* Capabilities as editorial statements: a number, a name, one sentence, and what it covers as a quiet run of
@@ -23,7 +27,14 @@ const { copy, items } = Astro.props;
           <span class="num" aria-hidden="true">
             0{i + 1}
           </span>
-          <h3>{c.name}</h3>
+          <h3>
+            <a class="cap-link" href={`${capabilitiesPath}#${c.id}`}>
+              {c.name}
+              <span class="arr" aria-hidden="true">
+                →
+              </span>
+            </a>
+          </h3>
           <p class="text">{c.summary}</p>
           <ul class="terms">
             {c.items.map((term) => (
@@ -99,6 +110,67 @@ const { copy, items } = Astro.props;
   }
   .terms li {
     position: relative;
+  }
+
+  /* Each statement leads to its section on the Capabilities page. The whole row is the target. On hover the
+     hairline above it redraws in TechPi Blue from the left, the name steps forward and its arrow appears. */
+  .list > li {
+    position: relative;
+  }
+  .cap-link {
+    text-decoration: none;
+    display: inline-block;
+    transition: translate 600ms var(--ease-reveal);
+  }
+  .cap-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .cap-link .arr {
+    font-size: 0.6em;
+    vertical-align: 0.25em;
+    margin-left: 0.5em;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition:
+      opacity 300ms var(--ease-state),
+      transform 600ms var(--ease-reveal);
+  }
+  .list > li::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 1px;
+    background: var(--color-techpi-blue);
+    transform: scaleX(0);
+    transform-origin: 100% 50%;
+    transition: transform 700ms var(--ease-reveal);
+    pointer-events: none;
+  }
+  .num {
+    transition: translate 600ms var(--ease-reveal);
+  }
+  @media (hover: hover) {
+    .list > li:hover::after {
+      transform: scaleX(1);
+      transform-origin: 0 50%;
+    }
+    .list > li:hover .cap-link {
+      translate: 12px 0;
+    }
+    .list > li:hover .num {
+      translate: 0 -4px;
+    }
+    .list > li:hover .cap-link .arr {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .cap-link:focus-visible {
+    outline-offset: 6px;
   }
   .terms li::before {
     content: '';

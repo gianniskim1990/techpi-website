@@ -50,6 +50,7 @@ const finalSizes = crop ? `(max-width: 1023px) ${Math.round(100 / focus.w)}vw, $
   data-reveal={reveal ? 'image' : undefined}
 >
   <Image src={image.src} alt={alt} widths={widths} sizes={finalSizes} format="webp" quality={84} loading={loading} decoding="async" />
+  <slot />
 </div>
 
 <style>

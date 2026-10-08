@@ -152,12 +152,16 @@ const indexOf = (id: string) => String(order.indexOf(id) + 1).padStart(2, '0');
       <span class="meta-label">{copy.next}</span>
       <span class="next-name">{next.name}</span>
       <span class="next-cat">{next.category}</span>
-      <span class="tlink">{copy.next} →</span>
+      <span class="tlink">{copy.next}<span class="arr" aria-hidden="true">→</span></span>
     </span>
     {
       next.image && (
         <span class="next-media" aria-hidden="true">
-          <ProjectMedia image={next.image} alt="" sizes="(min-width: 1024px) 36vw, 100vw" widths={[480, 720, 960]} />
+          <ProjectMedia image={next.image} alt="" sizes="(min-width: 1024px) 36vw, 100vw" widths={[480, 720, 960]}>
+            <span class="badge">
+              <span>→</span>
+            </span>
+          </ProjectMedia>
         </span>
       )
     }
@@ -355,8 +359,21 @@ const indexOf = (id: string) => String(order.indexOf(id) + 1).padStart(2, '0');
   }
   @media (hover: hover) {
     .next:hover .next-media :global(img) {
-      transform: scale(1.02);
+      transform: scale(1.035);
     }
+    .next:hover :global(.badge) {
+      opacity: 1;
+      transform: none;
+    }
+    .next:hover :global(.badge > span) {
+      transform: none;
+    }
+    .next:hover .next-name {
+      translate: 10px 0;
+    }
+  }
+  .next-name {
+    transition: translate 600ms var(--ease-reveal);
   }
 
   @media (min-width: 1024px) {

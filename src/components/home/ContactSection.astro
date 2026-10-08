@@ -1,4 +1,5 @@
 ---
+import Arrowed from '../Arrowed.astro';
 import symbolBlue from '../../assets/brand/techpi-symbol-blue.png';
 import BrandSymbol from '../BrandSymbol.astro';
 import type { HomeCopy } from '../../content/home.en';
@@ -48,7 +49,7 @@ const { copy, locale } = Astro.props;
         }
       </h2>
       <p class="act" data-reveal="fade" style="--delay:200ms">
-        <a class="btn" href={pathFor('contact', locale)}>{copy.cta}</a>
+        <a class="btn" href={pathFor('contact', locale)}><Arrowed text={copy.cta} /></a>
       </p>
     </div>
 
@@ -134,6 +135,23 @@ const { copy, locale } = Astro.props;
     padding: 20px 0 28px;
     font-size: var(--text-small);
     color: var(--sec-c);
+  }
+
+  /* Hover on the call to action (pointer devices): the symbol turns a few degrees and the quiet ring brightens, as
+     if the question were answered. The symbol's own image turns, so the scroll scene's rotate is left alone. */
+  .mark :global(img) {
+    transition: transform 1400ms var(--ease-reveal);
+  }
+  @media (hover: hover) {
+    .stage:has(.btn:hover) .mark :global(img) {
+      transform: rotate(16deg) scale(1.03);
+    }
+    .stage:has(.btn:hover) .rest {
+      stroke: var(--color-cyan);
+    }
+  }
+  .rest {
+    transition: stroke 600ms var(--ease-state);
   }
 
   /* ---------- Timed sequence (motion allowed, scroll scenes off) ---------- */

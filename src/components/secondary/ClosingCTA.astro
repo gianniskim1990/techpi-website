@@ -1,4 +1,5 @@
 ---
+import Arrowed from '../Arrowed.astro';
 interface Props {
   heading: string;
   cta: string;
@@ -12,7 +13,7 @@ const { heading, cta, href } = Astro.props;
     identity resolves once, on the homepage. The Ink footer follows. */}
 <section class="closer s-paper rule" aria-label={heading} data-reveal="fade">
   <p class="question">{heading}</p>
-  <p class="act"><a class="btn" href={href}>{cta}</a></p>
+  <p class="act"><a class="btn" href={href}><Arrowed text={cta} /></a></p>
 </section>
 
 <style>

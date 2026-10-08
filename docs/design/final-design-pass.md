@@ -86,7 +86,23 @@ end of every scene is the static layout.
 The `scroll-timeline` CSS used in the first pass was replaced by this driver, so the experience is the same in every
 current browser, not only in Chromium.
 
-## 5. QA record (2026-10-08)
+## 5. Hover (third pass, 2026-10-08)
+
+Pointer devices only (`hover: hover`). Nothing essential depends on hover; touch and keyboard users lose nothing.
+
+| Element | Hover |
+|---|---|
+| Buttons | A circle grows from the centre and fills the pill (Ink on Paper, cyan on Ink); the arrow leans forward |
+| Text links | The hairline underline runs out to the right and redraws from the left; the arrow leans forward |
+| Project captures (homepage, Work, next project) | The capture leans in slowly (1.035) and a small hairline circle with an arrow appears at its top right, turning from ↗ to → |
+| Homepage capabilities | Each statement now links to its section on the Capabilities page. On hover the hairline above redraws in TechPi Blue, the name steps forward and an arrow appears |
+| Contact call to action | The symbol turns a few degrees and the quiet ring lights up in cyan |
+| Next project | The name steps forward with the capture |
+
+Arrows written in the copy ("Start a project →") are rendered as a separate decorative span (`Arrowed.astro`), so
+they can move on their own and screen readers read only the words. No copy changed.
+
+## 6. QA record (2026-10-08)
 
 | Check | Result |
 |---|---|
