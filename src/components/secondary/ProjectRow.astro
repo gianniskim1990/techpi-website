@@ -3,230 +3,150 @@ import { capabilityName } from '../../content/capabilities';
 import type { Project } from '../../content/projects';
 import type { Locale } from '../../i18n/locales';
 import { caseStudyPath } from '../../i18n/routes';
-import ProjectMedia from '../ProjectMedia.astro';
-import { narrowCrops } from '../projectCrops';
-import FactRows from './FactRows.astro';
+import Crop from '../Crop.astro';
+import { compositions } from '../workCompositions';
 
 interface Props {
   project: Project;
   locale: Locale;
-  /** The position in the list, from 1. */
-  index: number;
   capabilitiesLabel: string;
   linkLabel: string;
 }
 
-const { project, locale, index, capabilitiesLabel, linkLabel } = Astro.props;
+const { project, locale, capabilitiesLabel, linkLabel } = Astro.props;
 const capabilities = project.capabilities.map((id) => capabilityName(id, locale)).join(', ');
 // A row links to its case study only when that page exists. Index-only projects stay plain.
 const href = project.caseStudy ? caseStudyPath(project.slug, locale) : undefined;
-const num = String(index).padStart(2, '0');
-const focusOf = narrowCrops;
+const thumb = compositions[project.slug]?.thumb;
 ---
 
-{/* Two forms in one family. A project with real imagery is a large editorial row: the capture flat on Ink, the
-    text beside it. A project without imagery is an index line, typographic only: no placeholder picture. The
-    media is decorative for assistive technology: the heading and the link carry the meaning. */}
-{
-  project.image ? (
-    <article class="row feature rule" data-reveal="fade">
-      <p class="top">
-        <span class="num">{num}</span>
-        <span class="meta-label">{project.category}</span>
-      </p>
-      <a class="media" href={href} tabindex="-1" aria-hidden="true">
-        <ProjectMedia
-          image={project.image}
-          alt=""
-          sizes="(min-width: 1024px) 62vw, 100vw"
-          crop={project.slug in focusOf}
-          focus={focusOf[project.slug]}
-          reveal
-        >
-          {href && (
-            <span class="badge" aria-hidden="true">
-              <span>→</span>
-            </span>
-          )}
-        </ProjectMedia>
-      </a>
-      <div class="text">
-        <h2>{project.name}</h2>
-        <p class="sum">{project.summary}</p>
-        <FactRows rows={[{ label: capabilitiesLabel, value: capabilities }]} />
-        {href && (
-          <a class="tlink" href={href} aria-label={`${linkLabel}: ${project.name}`}>
-            {linkLabel}
-            <span class="arr" aria-hidden="true">→</span>
-          </a>
-        )}
+{/* One line of the Work index, read across like a catalogue: the name, what it is, what was built, and for a
+    project with a case study, a small 3:2 crop of the real capture at the end of the line. No placeholder picture
+    for the others. The crop is decorative for assistive technology: the heading and the link carry the meaning. */}
+<article class:list={['row', { linked: href }]}>
+  <h2>
+    {href ? <a class="name" href={href}>{project.name}</a> : project.name}
+  </h2>
+  <p class="cat">{project.category}</p>
+  <div class="body">
+    <p class="sum">{project.summary}</p>
+    <p class="caps"><span>{capabilitiesLabel}:</span> {capabilities}</p>
+    {href && <p class="more" aria-hidden="true">{linkLabel}</p>}
+  </div>
+  {
+    project.image && (
+      <div class="thumb" aria-hidden="true">
+        <Crop image={project.image} alt="" crop={thumb} vw={[24, 100]} />
       </div>
-    </article>
-  ) : (
-    <article class="row index rule" data-reveal="fade">
-      <span class="num">{num}</span>
-      <h2>{project.name}</h2>
-      <p class="meta-label">{project.category}</p>
-      <p class="sum">{project.summary}</p>
-      <p class="caps">
-        <span class="caps-label">{capabilitiesLabel}</span> {capabilities}
-      </p>
-    </article>
-  )
-}
+    )
+  }
+</article>
 
 <style>
-  /* ---------- Feature row ---------- */
-  .feature {
+  .row {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
-    padding: 18px 0 clamp(72px, 8vw, 128px);
-  }
-  .top {
-    grid-column: 1 / -1;
-    display: flex;
-    justify-content: space-between;
-    gap: 24px;
-    margin-bottom: clamp(28px, 3vw, 48px);
-  }
-  .media {
-    grid-column: 1 / span 8;
-    display: block;
-    align-self: end;
-  }
-  .media :global(.pm img) {
-    transition: transform 900ms var(--ease-reveal);
-  }
-  .media :global(.pm img) {
-    transition-duration: 1200ms;
-  }
-  @media (hover: hover) {
-    .feature:has(a[href]:hover) .media :global(.pm img) {
-      transform: scale(1.035);
-    }
-    .feature:has(a[href]:hover) :global(.badge) {
-      opacity: 1;
-      transform: none;
-    }
-    .feature:has(a[href]:hover) :global(.badge > span) {
-      transform: none;
-    }
-  }
-  .text {
-    grid-column: 9 / span 4;
-    align-self: end;
+    align-items: start;
+    padding: clamp(22px, 2.2vw, 30px) 0 clamp(26px, 2.6vw, 34px);
+    border-top: 1px solid var(--color-rule);
   }
   h2 {
-    font-size: var(--text-display-m);
-    line-height: 1.04;
-    letter-spacing: -0.024em;
+    grid-column: 1 / span 4;
+    font-size: clamp(1.625rem, 2.6vw, 2.375rem);
+    line-height: 1.05;
+    letter-spacing: -0.022em;
+  }
+  .name {
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-state);
+  }
+  /* The whole line is the target of a case study link. */
+  .name::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .name:focus-visible {
+    outline-offset: 6px;
+  }
+  @media (hover: hover) {
+    .linked:hover .name,
+    .linked:hover .more {
+      color: var(--color-techpi-blue);
+    }
+  }
+  .cat {
+    grid-column: 5 / span 2;
+    padding-top: 0.5em;
+    font-size: var(--text-small);
+    color: var(--ter);
+  }
+  .body {
+    grid-column: 7 / span 3;
+    padding-top: 0.3em;
   }
   .sum {
-    margin-top: 18px;
-    font-size: var(--text-lead);
-    line-height: 1.42;
-  }
-  .text :global(.facts) {
-    margin-top: 26px;
-  }
-  .text .tlink {
-    display: inline-block;
-    margin-top: 28px;
-  }
-
-  /* ---------- Index line ---------- */
-  .index {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    column-gap: var(--space-gap);
-    row-gap: 8px;
-    padding: 24px 0 32px;
-    align-items: baseline;
-  }
-  .index:last-child {
-    border-bottom: 1px solid var(--line);
-  }
-  .index .num {
-    grid-column: 1 / span 1;
-  }
-  .index h2 {
-    grid-column: 2 / span 4;
-    font-size: var(--text-heading);
-    line-height: 1.15;
-    letter-spacing: -0.012em;
-  }
-  .index .meta-label {
-    grid-column: 6 / span 3;
-  }
-  .index .sum {
-    grid-column: 9 / span 4;
-    margin-top: 0;
-    font-size: var(--text-small);
-    line-height: 1.5;
     color: var(--sec-c);
   }
-  .index .caps {
-    grid-column: 9 / span 4;
+  .caps {
+    margin-top: 10px;
     font-size: var(--text-small);
-    color: var(--sec-c);
-  }
-  .caps-label {
-    margin-right: 8px;
-    font-weight: var(--weight-ui);
     color: var(--ter);
+  }
+  .more {
+    margin-top: 14px;
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    text-decoration: underline;
+    text-underline-offset: 0.28em;
+    transition: color var(--duration-fast) var(--ease-state);
+  }
+  .thumb {
+    grid-column: 10 / span 3;
+    padding-top: 0.3em;
+    background: transparent;
   }
 
   @media (max-width: 1023px) {
-    .feature {
-      display: block;
-      padding-bottom: 72px;
-    }
-    .top {
-      margin-bottom: 20px;
-    }
-    .media {
-      margin: 0 calc(var(--space-margin) * -1);
-    }
-    .media :global(.pm) {
-      width: 100%;
-    }
-    .text {
-      margin-top: 28px;
-      max-width: 560px;
-    }
-    .index {
+    .row {
       grid-template-columns: repeat(8, minmax(0, 1fr));
     }
-    .index h2 {
-      grid-column: 2 / span 3;
+    h2 {
+      grid-column: 1 / span 5;
     }
-    .index .meta-label {
-      grid-column: 5 / span 4;
+    .cat {
+      grid-column: 6 / span 3;
+      padding-top: 0.6em;
     }
-    .index .sum,
-    .index .caps {
-      grid-column: 5 / span 4;
+    .body {
+      grid-column: 1 / span 5;
+      margin-top: 14px;
+    }
+    .thumb {
+      grid-column: 6 / span 3;
+      margin-top: 14px;
     }
   }
 
   @media (max-width: 760px) {
-    .index {
-      display: block;
-      padding: 20px 0 28px;
+    .row {
+      display: flex;
+      flex-direction: column;
     }
-    .index .num {
-      display: block;
-      margin-bottom: 10px;
+    .cat {
+      order: -1;
+      padding: 0 0 6px;
     }
-    .index .meta-label {
-      margin-top: 8px;
+    .thumb {
+      order: 2;
+      margin-top: 18px;
+      width: 100%;
     }
-    .index .sum {
-      margin-top: 12px;
-    }
-    .index .caps {
-      margin-top: 6px;
+    .body {
+      order: 3;
+      margin-top: 16px;
     }
   }
 </style>

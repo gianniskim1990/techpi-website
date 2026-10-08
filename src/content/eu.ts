@@ -265,7 +265,7 @@ const en: EuCopy = {
     closer: {
       heading: 'Planning an EU-funded project or digital platform?',
       text: 'Tell us what your consortium, organisation or communication team needs. We can help define the right structure, technology and delivery approach.',
-      cta: 'Discuss your project →',
+      cta: 'Discuss your project',
     },
   },
 };
@@ -477,7 +477,7 @@ const el: EuCopy = {
     closer: {
       heading: 'Σχεδιάζετε ένα ευρωπαϊκό έργο ή μια ψηφιακή πλατφόρμα;',
       text: 'Πείτε μας τι χρειάζεται η κοινοπραξία, ο οργανισμός ή η ομάδα επικοινωνίας σας. Μπορούμε να βοηθήσουμε να οριστούν η σωστή δομή, η τεχνολογία και ο τρόπος υλοποίησης.',
-      cta: 'Συζητήστε το έργο σας →',
+      cta: 'Συζητήστε το έργο σας',
     },
   },
 };

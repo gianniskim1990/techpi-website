@@ -228,6 +228,10 @@ function initHeroMap() {
   };
   const tidy = (cx: number, cy: number, r: number) => {
     map.querySelectorAll('.cut').forEach((el) => el.classList.remove('cut'));
+    // The outcome's label never runs off the window: if it would, it moves above the circle, right-aligned.
+    const end = map.querySelector('.end-lbl');
+    map.classList.remove('end-above');
+    if (end && end.getBoundingClientRect().right > document.documentElement.clientWidth - 8) map.classList.add('end-above');
     const capTo = map.querySelector('.cap-to');
     const marker = map.querySelector('.mark-turn');
     if (capTo && (crosses(capTo, cx, cy, r) || (marker && crosses(marker, cx, cy, r)))) {

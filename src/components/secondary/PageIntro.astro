@@ -5,20 +5,22 @@ interface Props {
   lead?: string;
   /** Extra room under the page head, for page-specific geometry that must finish clear of the text (About). */
   roomBelow?: boolean;
+  /** 'word': a one-word heading set very large, with the lead beside it on its baseline (Work). */
+  variant?: 'default' | 'word';
 }
 
-const { heading, lead, roomBelow = false } = Astro.props;
+const { heading, lead, roomBelow = false, variant = 'default' } = Astro.props;
 ---
 
 {/* The page head of every secondary page, in the same family as the homepage hero but calmer: one large h1, then
     a hairline and the lead offset to the right, the way the hero sets its supporting line. No label, no button,
     no image. The default slot is for page-specific geometry only (the About arc). */}
-<section class:list={['intro', 's-paper', { room: roomBelow }]}>
+<section class:list={['intro', 's-paper', `v-${variant}`, { room: roomBelow }]}>
   <slot />
   <h1 data-reveal="mask"><Unbroken text={heading} /></h1>
   {
     lead && (
-      <div class="lead-row rule" data-reveal="fade" style="--delay:140ms">
+      <div class="lead-row">
         <p class="lead">{lead}</p>
         <div class="after"><slot name="after" /></div>
       </div>
@@ -50,8 +52,35 @@ const { heading, lead, roomBelow = false } = Astro.props;
     grid-column: 1 / -1;
     display: grid;
     grid-template-columns: subgrid;
-    margin-top: clamp(48px, 6vw, 88px);
-    padding-top: 22px;
+    margin-top: clamp(40px, 5vw, 72px);
+  }
+
+  /* A one-word page name, set as large as the window allows and sitting on the bottom of the head, with the lead
+     beside it. */
+  .v-word {
+    align-items: end;
+  }
+  .v-word h1 {
+    grid-column: 1 / span 7;
+    grid-row: 1;
+    font-size: clamp(4.5rem, 19vw, 17rem);
+    line-height: 0.8;
+    letter-spacing: -0.05em;
+    margin-left: -0.04em;
+  }
+  .v-word h1:lang(el) {
+    font-size: calc(clamp(4.5rem, 19vw, 17rem) * 0.82);
+    line-height: 0.86;
+  }
+  .v-word .lead-row {
+    grid-row: 1;
+    grid-column: 8 / -1;
+    margin-top: 0;
+    padding-bottom: 0.4em;
+    display: block;
+  }
+  .v-word .lead {
+    max-width: 30ch;
   }
   .lead {
     grid-column: 7 / span 5;
@@ -78,6 +107,14 @@ const { heading, lead, roomBelow = false } = Astro.props;
     .after {
       grid-column: 5 / span 8;
     }
+    .v-word h1 {
+      grid-column: 1 / -1;
+    }
+    .v-word .lead-row {
+      grid-row: 2;
+      grid-column: 6 / -1;
+      margin-top: 32px;
+    }
   }
 
   @media (max-width: 760px) {
@@ -90,8 +127,10 @@ const { heading, lead, roomBelow = false } = Astro.props;
     }
     .lead-row {
       display: block;
-      margin-top: 40px;
-      padding-top: 18px;
+      margin-top: 32px;
+    }
+    .v-word .lead-row {
+      margin-top: 28px;
     }
   }
 </style>

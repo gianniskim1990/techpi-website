@@ -66,6 +66,6 @@ export const pagesEl: PagesCopy = {
   },
   closer: {
     heading: 'Έχετε κάτι που αξίζει να χτιστεί;',
-    cta: 'Ξεκινήστε ένα έργο →',
+    cta: 'Ξεκινήστε ένα έργο',
   },
 };

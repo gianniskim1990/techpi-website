@@ -42,11 +42,8 @@ const copy = pages.about;
   <SectionSplit id="principles" heading={copy.principlesHeading}>
     <ol class="principles">
       {
-        copy.principles.map((p, i) => (
+        copy.principles.map((p) => (
           <li>
-            <span class="num" aria-hidden="true">
-              0{i + 1}
-            </span>
             <h3>{p.heading}</h3>
             {p.text && <p>{p.text}</p>}
           </li>
@@ -85,15 +82,8 @@ const copy = pages.about;
   }
 
   .principles li {
-    display: grid;
-    grid-template-columns: 3.2em minmax(0, 1fr);
-    gap: 8px;
     padding: 26px 0 32px;
     border-top: 1px solid var(--line);
-  }
-  .principles .num {
-    padding-top: 0.55em;
-    color: var(--color-techpi-blue);
   }
   .principles li:last-child {
     border-bottom: 1px solid var(--line);
@@ -104,8 +94,7 @@ const copy = pages.about;
     letter-spacing: -0.018em;
   }
   .principles p {
-    grid-column: 2;
-    margin-top: 6px;
+    margin-top: 8px;
     color: var(--sec-c);
     max-width: 52ch;
   }

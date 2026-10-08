@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectMedia from '../../components/ProjectMedia.astro';
+import Crop from '../../components/Crop.astro';
+import { compositions } from '../../components/workCompositions';
 import FactRows from '../../components/secondary/FactRows.astro';
 import SectionSplit from '../../components/secondary/SectionSplit.astro';
 import { capabilityName } from '../../content/capabilities';
@@ -26,11 +28,9 @@ const paths = Object.fromEntries(locales.map((l) => [l, caseStudyPath(project.sl
 const gallery: readonly ProjectImage[] = study.gallery ?? [];
 const imageSizes = '(min-width: 1440px) 1312px, (min-width: 761px) 92vw, 100vw';
 
-// The story's sections are numbered in reading order. Optional sections that are absent take no number.
 const hasTechnology = Boolean(study.technology && study.technology.length > 0);
 const hasOutcome = Boolean(study.outcome && study.outcome.length > 0);
-const order = ['overview', 'need', 'built', ...(hasTechnology ? ['technology'] : []), ...(hasOutcome ? ['outcome'] : [])];
-const indexOf = (id: string) => String(order.indexOf(id) + 1).padStart(2, '0');
+const comp = compositions[project.slug];
 ---
 
 {/* The reusable case-study template: a product story, told editorially. Every block except the head, cover,
@@ -48,8 +48,8 @@ const indexOf = (id: string) => String(order.indexOf(id) + 1).padStart(2, '0');
     <a class="back" href={pathFor('work', locale)}><span aria-hidden="true">←</span> {copy.back}</a>
     <p class="meta-label cat">{project.category}</p>
     <h1 data-reveal="mask">{project.name}</h1>
-    <p class="lead" data-reveal="fade" style="--delay:120ms">{project.summary}</p>
-    <div class="strip" data-reveal="fade" style="--delay:200ms">
+    <p class="lead">{project.summary}</p>
+    <div class="strip">
       <FactRows
         variant="strip"
         rows={[
@@ -66,30 +66,33 @@ const indexOf = (id: string) => String(order.indexOf(id) + 1).padStart(2, '0');
     </div>
   </section>
 
-  <figure class="band s-ink cover">
-    <ProjectMedia image={study.cover} sizes={imageSizes} loading="eager" class="shot" />
+  {/* The cover: the product at a scale where its interface reads, cropped to a band and run edge to edge. The
+      whole capture follows later, after what was built. */}
+  <figure class="cover s-ink">
+    {
+      comp?.cover ? (
+        <Crop image={study.cover} crop={comp.cover} small={comp.thumb} vw={[100, 100]} loading="eager" />
+      ) : (
+        <ProjectMedia image={study.cover} sizes={imageSizes} loading="eager" class="shot" />
+      )
+    }
     {study.cover.caption && <figcaption>{study.cover.caption}</figcaption>}
   </figure>
 
-  <SectionSplit id="overview" heading={copy.overview} index={indexOf('overview')}>
+  <SectionSplit id="overview" heading={copy.overview} size="s">
     {study.overview.map((p, i) => <p class={i === 0 ? 'lead-text' : 'read'}>{p}</p>)}
   </SectionSplit>
 
-  <SectionSplit id="need" heading={copy.need} index={indexOf('need')}>
+  <SectionSplit id="need" heading={copy.need} size="s">
     {study.need.map((p) => <p class="read">{p}</p>)}
   </SectionSplit>
 
-  <SectionSplit id="built" heading={copy.built} index={indexOf('built')}>
+  <SectionSplit id="built" heading={copy.built} size="s">
     {study.built.intro && <p class="lead-text">{study.built.intro}</p>}
     <ol class="items">
       {
-        study.built.items.map((item, i) => (
-          <li>
-            <span class="num" aria-hidden="true">
-              {String(i + 1).padStart(2, '0')}
-            </span>
-            <span>{item}</span>
-          </li>
+        study.built.items.map((item) => (
+          <li>{item}</li>
         ))
       }
     </ol>
@@ -108,22 +111,24 @@ const indexOf = (id: string) => String(order.indexOf(id) + 1).padStart(2, '0');
     </p>
   </SectionSplit>
 
-  {
-    gallery.length > 0 && (
-      <section class="band s-ink gallery" aria-label={project.name}>
-        {gallery.map((image) => (
-          <figure>
-            <ProjectMedia image={image} sizes={imageSizes} reveal class="shot" />
-            {image.caption && <figcaption>{image.caption}</figcaption>}
-          </figure>
-        ))}
-      </section>
-    )
-  }
+  {/* The whole picture: the full capture, and beside it the project's other real screens at a smaller scale. */}
+  <section class="whole s-ink" aria-label={project.name}>
+    <figure class="whole-main">
+      <ProjectMedia image={study.cover} sizes="(min-width: 1024px) 64vw, 100vw" class="shot" />
+    </figure>
+    {
+      gallery.map((image) => (
+        <figure class="whole-side">
+          <ProjectMedia image={image} sizes="(min-width: 1024px) 30vw, 100vw" class="shot" />
+          {image.caption && <figcaption>{image.caption}</figcaption>}
+        </figure>
+      ))
+    }
+  </section>
 
   {
     hasTechnology && (
-      <SectionSplit id="technology" heading={copy.technology} index={indexOf('technology')}>
+      <SectionSplit id="technology" heading={copy.technology} size="s">
         <ul class="ruled tech">
           {study.technology?.map((item) => (
             <li>{item}</li>
@@ -135,7 +140,7 @@ const indexOf = (id: string) => String(order.indexOf(id) + 1).padStart(2, '0');
 
   {
     hasOutcome && (
-      <SectionSplit id="outcome" heading={copy.outcome} index={indexOf('outcome')}>
+      <SectionSplit id="outcome" heading={copy.outcome} size="s">
         <ul class="ruled outcome">
           {study.outcome?.map((item) => (
             <li>{item}</li>
@@ -145,23 +150,17 @@ const indexOf = (id: string) => String(order.indexOf(id) + 1).padStart(2, '0');
     )
   }
 
-  {/* The curved Ink edge hands over to the next project. Desktop only, decorative. */}
-  <div class="edge" aria-hidden="true"><div></div></div>
   <a class="next s-ink" href={caseStudyPath(next.slug, locale)} aria-label={`${copy.next}: ${next.name}`}>
     <span class="next-txt">
       <span class="meta-label">{copy.next}</span>
       <span class="next-name">{next.name}</span>
       <span class="next-cat">{next.category}</span>
-      <span class="tlink">{copy.next}<span class="arr" aria-hidden="true">→</span></span>
+      <span class="tlink">{copy.next}</span>
     </span>
     {
       next.image && (
         <span class="next-media" aria-hidden="true">
-          <ProjectMedia image={next.image} alt="" sizes="(min-width: 1024px) 36vw, 100vw" widths={[480, 720, 960]}>
-            <span class="badge">
-              <span>→</span>
-            </span>
-          </ProjectMedia>
+          <Crop image={next.image} alt="" crop={compositions[next.slug]?.thumb} vw={[36, 100]} />
         </span>
       )
     }
@@ -211,40 +210,57 @@ const indexOf = (id: string) => String(order.indexOf(id) + 1).padStart(2, '0');
     margin-top: clamp(48px, 6vw, 88px);
   }
 
-  /* ---------- Media bands on Ink. Captures keep their proportions and are never cropped here. ---------- */
-  .band {
+  /* ---------- The cover band and the whole picture, on Ink ---------- */
+  .cover {
     margin: 0;
-    padding: clamp(40px, 5vw, 80px) var(--space-margin);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
   }
-  .band figure {
-    margin: 0;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .cover:has(figcaption) {
+    padding-bottom: 14px;
   }
-  .band :global(.shot) {
-    --maxh: min(82vh, 820px);
-  }
-  .band figcaption {
-    margin-top: 16px;
-    align-self: flex-start;
-    font-size: var(--text-small);
+  .cover figcaption,
+  .whole figcaption {
+    margin-top: 12px;
+    font-size: var(--text-label);
     color: var(--ter);
   }
-  .gallery {
+  .cover figcaption {
+    padding: 0 var(--space-margin);
+  }
+  .cover > :global(.pm) {
+    margin: 0 auto;
+    --maxh: min(80vh, 760px);
+  }
+  .whole {
     margin-top: var(--space-section);
-    gap: clamp(40px, 5vw, 72px);
+    padding: clamp(56px, 6vw, 96px) var(--space-margin);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    row-gap: 40px;
+    align-items: end;
+  }
+  .whole figure {
+    margin: 0;
+  }
+  .whole-main {
+    grid-column: 1 / span 8;
+  }
+  .whole-main :global(.pm) {
+    --maxh: 72vh;
+  }
+  .whole-side {
+    grid-column: 9 / span 4;
+  }
+  .whole-side + .whole-side {
+    grid-column: 9 / span 4;
   }
 
   /* ---------- Story text ---------- */
   .lead-text {
-    max-width: 40ch;
-    font-size: var(--text-lead);
-    line-height: 1.42;
+    max-width: 34ch;
+    font-size: clamp(1.375rem, 2.2vw, 2rem);
+    line-height: 1.3;
+    letter-spacing: -0.012em;
   }
   .read {
     max-width: 62ch;
@@ -261,17 +277,11 @@ const indexOf = (id: string) => String(order.indexOf(id) + 1).padStart(2, '0');
     margin-top: 32px;
   }
   .items li {
-    display: grid;
-    grid-template-columns: 3.2em minmax(0, 1fr);
-    gap: 8px;
     padding: 16px 0;
     border-top: 1px solid var(--line);
   }
   .items li:last-child {
     border-bottom: 1px solid var(--line);
-  }
-  .items .num {
-    padding-top: 0.2em;
   }
   .capline {
     margin-top: 32px;
@@ -297,9 +307,6 @@ const indexOf = (id: string) => String(order.indexOf(id) + 1).padStart(2, '0');
   }
 
   /* ---------- Next project ---------- */
-  .edge {
-    display: none;
-  }
   .next {
     position: relative;
     display: grid;
@@ -347,56 +354,15 @@ const indexOf = (id: string) => String(order.indexOf(id) + 1).padStart(2, '0');
     text-underline-offset: 8px;
   }
   .next-media {
-    grid-column: 8 / span 5;
+    grid-column: 9 / span 4;
     display: block;
-    --maxh: 360px;
-  }
-  .next-media :global(.pm) {
-    margin-left: auto;
-  }
-  .next-media :global(img) {
-    transition: transform 900ms var(--ease-reveal);
-  }
-  @media (hover: hover) {
-    .next:hover .next-media :global(img) {
-      transform: scale(1.035);
-    }
-    .next:hover :global(.badge) {
-      opacity: 1;
-      transform: none;
-    }
-    .next:hover :global(.badge > span) {
-      transform: none;
-    }
-    .next:hover .next-name {
-      translate: 10px 0;
-    }
   }
   .next-name {
-    transition: translate 600ms var(--ease-reveal);
+    transition: color var(--duration-fast) var(--ease-state);
   }
-
-  @media (min-width: 1024px) {
-    .edge {
-      display: block;
-      position: relative;
-      height: 16vw;
-      overflow: hidden;
-      margin-top: var(--space-section);
-      margin-bottom: -1px;
-      background: var(--color-paper);
-    }
-    .edge > div {
-      position: absolute;
-      width: 583.4vw;
-      height: 583.4vw;
-      border-radius: 50%;
-      left: calc(100% - 293vw);
-      top: 0.7vw;
-      background: var(--color-ink);
-    }
-    .edge + .next {
-      margin-top: 0;
+  @media (hover: hover) {
+    .next:hover .next-name {
+      color: var(--color-cyan);
     }
   }
 
@@ -416,10 +382,16 @@ const indexOf = (id: string) => String(order.indexOf(id) + 1).padStart(2, '0');
     }
     .next-media {
       margin-top: 48px;
-      --maxh: 300px;
+      max-width: 420px;
     }
-    .next-media :global(.pm) {
-      margin-left: 0;
+    .whole {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .whole-main {
+      grid-column: 1 / -1;
+    }
+    .whole-side {
+      grid-column: 1 / span 5;
     }
   }
 
@@ -435,17 +407,15 @@ const indexOf = (id: string) => String(order.indexOf(id) + 1).padStart(2, '0');
     h1 {
       margin-top: 14px;
     }
-    .band {
-      padding: 0;
+    .whole {
+      display: block;
+      padding: 0 0 40px;
     }
-    .band :global(.shot) {
+    .whole-side {
+      margin: 24px var(--space-margin) 0;
+    }
+    .whole-main :global(.pm) {
       width: 100%;
-    }
-    .band figcaption {
-      padding: 0 var(--space-margin) 20px;
-    }
-    .gallery {
-      gap: 2px;
     }
     .tech {
       display: block;
@@ -453,11 +423,6 @@ const indexOf = (id: string) => String(order.indexOf(id) + 1).padStart(2, '0');
     .tech li:nth-last-child(2):nth-child(odd) {
       border-bottom: 0;
     }
-    .items li {
-      grid-template-columns: 2.6em minmax(0, 1fr);
-    }
-    .next-media {
-      --maxh: 240px;
-    }
+
   }
 </style>

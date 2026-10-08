@@ -5,14 +5,16 @@ interface Props {
   heading: string;
   /** A small index shown before the heading (01, 02…), where the page is a numbered sequence. */
   index?: string;
+  /** 'm' (default): a display heading. 's': a small heading, where the body text should carry the section. */
+  size?: 'm' | 's';
 }
 
-const { id, heading, index } = Astro.props;
+const { id, heading, index, size = 'm' } = Astro.props;
 ---
 
 {/* A heading column and a content column, from the homepage Capabilities pattern. On desktop the heading holds its
     place while a long body passes. The hairline above draws in when the section arrives. */}
-<section class="split s-paper rule" id={id} aria-labelledby={`${id}-h`} data-reveal="fade">
+<section class:list={['split', 's-paper', 'rule', `size-${size}`]} id={id} aria-labelledby={`${id}-h`}>
   <div class="head">
     {index && <span class="num" aria-hidden="true">{index}</span>}
     <h2 id={`${id}-h`}>{heading}</h2>
@@ -47,6 +49,17 @@ const { id, heading, index } = Astro.props;
   }
   .body {
     grid-column: 5 / span 7;
+  }
+  .size-s h2 {
+    font-size: var(--text-heading);
+    line-height: 1.2;
+    letter-spacing: -0.012em;
+  }
+  .size-s .head {
+    grid-column: 1 / span 3;
+  }
+  .size-s .body {
+    grid-column: 4 / span 8;
   }
 
   @media (max-width: 1023px) {

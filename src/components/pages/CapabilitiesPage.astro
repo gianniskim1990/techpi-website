@@ -25,15 +25,12 @@ const capabilities = capabilitiesIn(locale);
     published case studies that show the capability, so Intelligence has none for now. */}
 <BaseLayout locale={locale} page="capabilities" title={t.pages.capabilities.title} description={copy.lead} bleed>
   <PageIntro heading={copy.heading} lead={copy.lead} />
-  <nav class="anchors" aria-label={copy.indexLabel} data-reveal="fade" style="--delay:220ms">
+  <nav class="anchors" aria-label={copy.indexLabel}>
     <ol>
       {
-        capabilities.map((c, i) => (
+        capabilities.map((c) => (
           <li>
             <a href={`#${c.id}`}>
-              <span class="num" aria-hidden="true">
-                0{i + 1}
-              </span>
               <span class="name">{c.name}</span>
             </a>
           </li>
@@ -42,8 +39,8 @@ const capabilities = capabilitiesIn(locale);
     </ol>
   </nav>
   {
-    capabilities.map((c, i) => (
-      <SectionSplit id={c.id} heading={c.name} index={`0${i + 1}`}>
+    capabilities.map((c) => (
+      <SectionSplit id={c.id} heading={c.name}>
         <p class="summary">{c.summary}</p>
         <p class="covers">{copy.covers}</p>
         <ul class="ruled cover-list">

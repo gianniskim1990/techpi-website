@@ -1,7 +1,7 @@
 ---
 import type { HomeCopy } from '../../content/home.en';
-import ProjectMedia from '../ProjectMedia.astro';
-import { narrowCrops } from '../projectCrops';
+import Crop from '../Crop.astro';
+import { compositions, type Composition } from '../workCompositions';
 import { capabilityName } from '../../content/capabilities';
 import type { Project } from '../../content/projects';
 import { caseStudyPath, pathFor } from '../../i18n/routes';
@@ -14,377 +14,360 @@ interface Props {
 }
 
 const { copy, projects, locale } = Astro.props;
-const total = projects.length;
-const pad = (n: number) => String(n).padStart(2, '0');
 const facts = (p: Project) => p.capabilities.map((id) => capabilityName(id, locale)).join(', ');
-
-// Composition follows the capture, not a template: a very wide capture spans the width under the title, the
-// others alternate sides. Presentation only.
-let side = 0;
-const layoutOf = (p: Project) => {
-  if (!p.image) return 'left';
-  const ratio = p.image.src.width / p.image.src.height;
-  if (ratio > 2) return 'wide';
-  return side++ % 2 === 0 ? 'left' : 'right';
-};
-const focusOf = narrowCrops;
+const fallback: Composition = { layout: 'bleed', main: { caption: { en: '', el: '' } } };
 ---
 
-{/* Selected work. The Ink surface takes over behind the arc of a very large circle (the `.horizon` edge, base.css):
-    the hero's arc has become a surface. Each project is a full-screen editorial composition. On tall desktop screens with motion
-    allowed, each one sticks and the next slides over it in normal document flow: reading order, keyboard order and
-    find-in-page follow the document. Elsewhere they simply stack. Captures are flat and keep their proportions. */}
-<section class="work s-ink horizon" id="work" aria-labelledby="work-h" data-scene>
+{/* Selected work: the Ink chapter. Each project is composed from its own real captures, cropped to the part worth
+    looking at, so the three read as three projects rather than one template: a layered interface (Rocketeer), a
+    capture running off the page with a detail beside it (Arman's), a full-width strip (Logotherapia). No sticky
+    stacking, no hover zoom: the page simply scrolls through them. */}
+<section class="work s-ink" id="work" aria-labelledby="work-h">
   <div class="work-head">
-    <h2 id="work-h" data-reveal="lines"><span class="ln"><span>{copy.heading}</span></span></h2>
+    <h2 id="work-h">{copy.heading}</h2>
     <a class="tlink all" href={pathFor('work', locale)}>{copy.all}</a>
   </div>
-  <div class="stack">
-    {
-      projects.map((p, i) => {
-        const layout = layoutOf(p);
-        const href = p.caseStudy ? caseStudyPath(p.slug, locale) : undefined;
-        return (
-          <article
-            class={`case case-${layout}`}
-            id={`case-${p.slug}`}
-            aria-labelledby={`case-${p.slug}-h`}
-            data-scene="case"
-          >
-            <div class="case-top rule" data-reveal="fade">
-              <span class="num">
-                {pad(i + 1)} / {pad(total)}
-              </span>
-              <span class="meta-label">{p.category}</span>
+  {
+    projects.map((p) => {
+      const c = compositions[p.slug] ?? fallback;
+      const href = p.caseStudy ? caseStudyPath(p.slug, locale) : undefined;
+      const detailImage = c.detail ? p.caseStudy?.gallery?.[c.detail.index] : undefined;
+      const mainCaption = c.main.caption[locale];
+      return (
+        <article class={`case case-${c.layout}`} id={`case-${p.slug}`} aria-labelledby={`case-${p.slug}-h`}>
+          <div class="txt">
+            <div class="id">
+              <p class="meta-label">{p.category}</p>
+              <h3 id={`case-${p.slug}-h`}>{p.name}</h3>
             </div>
-            <div class="case-grid">
-              {p.image && (
-                <a class="media" href={href} tabindex="-1" aria-hidden="true">
-                  <ProjectMedia
-                    image={p.image}
-                    alt=""
-                    sizes={layout === 'wide' ? '(min-width: 1024px) 92vw, 100vw' : '(min-width: 1024px) 60vw, 100vw'}
-                    crop={p.slug in focusOf}
-                    focus={focusOf[p.slug]}
-                    reveal
-                  >
-                    {href && (
-                      <span class="badge" aria-hidden="true">
-                        <span>→</span>
-                      </span>
-                    )}
-                  </ProjectMedia>
+            <div class="info">
+              <p class="sum">{p.summary}</p>
+              <dl class="facts">
+                <dt>{copy.factsLabel}</dt>
+                <dd>{facts(p)}</dd>
+              </dl>
+              {href && (
+                <a class="tlink" href={href} aria-label={`${copy.caseLink}: ${p.name}`}>
+                  {copy.caseLink}
                 </a>
               )}
-              <div class="case-txt" data-reveal="fade" style="--delay:120ms">
-                <h3 id={`case-${p.slug}-h`}>{p.name}</h3>
-                <div class="detail">
-                  <p class="sum">{p.summary}</p>
-                  <dl class="facts">
-                    <div class="rule">
-                      <dt>{copy.factsLabel}</dt>
-                      <dd>{facts(p)}</dd>
-                    </div>
-                  </dl>
-                  {href && (
-                    <a class="tlink" href={href} aria-label={`${copy.caseLink}: ${p.name}`}>
-                      {copy.caseLink}
-                      <span class="arr" aria-hidden="true">→</span>
-                    </a>
-                  )}
-                </div>
-              </div>
             </div>
-          </article>
-        );
-      })
-    }
-  </div>
+          </div>
+          {p.image && (
+            <figure class="main">
+              <a class="frame" href={href} tabindex="-1" aria-hidden="true">
+                <Crop image={p.image} alt="" crop={c.main.crop} small={c.main.small} vw={c.layout === 'band' ? [100, 100] : [70, 100]} />
+              </a>
+              {mainCaption && <figcaption>{mainCaption}</figcaption>}
+            </figure>
+          )}
+          {c.detail && detailImage && (
+            <figure class="detail">
+              <div class="frame">
+                <Crop image={detailImage} alt="" crop={c.detail.crop} vw={[30, 50]} />
+              </div>
+              <figcaption>{c.detail.caption[locale]}</figcaption>
+            </figure>
+          )}
+        </article>
+      );
+    })
+  }
 </section>
 
 <style>
-  /* ---------- Section head ---------- */
   .work {
-    position: relative;
-    padding-bottom: clamp(72px, 9vw, 136px);
+    padding: clamp(96px, 10vw, 152px) var(--space-margin) clamp(104px, 11vw, 168px);
   }
   .work-head {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    column-gap: var(--space-gap);
-    align-items: end;
-    padding: clamp(24px, 3vw, 48px) var(--space-margin) clamp(56px, 7vw, 104px);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
   }
   h2 {
-    grid-column: 1 / span 8;
-    font-size: var(--text-display-xl);
-    line-height: 0.98;
-    letter-spacing: -0.032em;
+    font-size: var(--text-display-m);
+    line-height: 1;
+    letter-spacing: -0.024em;
   }
   .all {
-    grid-column: 11 / span 2;
-    justify-self: end;
-    padding-bottom: 0.5em;
     white-space: nowrap;
   }
 
   /* ---------- One project ---------- */
   .case {
-    position: relative;
-    background: var(--color-ink);
-    padding: 0 var(--space-margin) clamp(56px, 6vw, 96px);
-    display: flex;
-    flex-direction: column;
-  }
-  .case-top {
-    display: flex;
-    justify-content: space-between;
-    gap: 24px;
-    padding: 18px 0 0;
-  }
-  .case-grid {
-    flex: 1;
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
-    row-gap: clamp(28px, 3vw, 44px);
-    align-content: end;
-    margin-top: clamp(32px, 4vw, 56px);
+    margin-top: clamp(88px, 10vw, 160px);
   }
-  .media {
-    display: block;
-    align-self: end;
+  .work-head + .case {
+    margin-top: clamp(56px, 6vw, 96px);
   }
-  .media :global(.pm img) {
-    transition: transform 900ms var(--ease-reveal);
+  .txt {
+    display: contents;
   }
-  /* Hover (pointer devices): the capture leans in slowly and the arrow badge appears, whether the pointer is on
-     the capture or on the case-study link. */
-  .media :global(.pm img) {
-    transition-duration: 1200ms;
-  }
-  @media (hover: hover) {
-    .case:has(a[href]:hover) .media :global(.pm img) {
-      transform: scale(1.035);
-    }
-    .case:has(a[href]:hover) :global(.badge) {
-      opacity: 1;
-      transform: none;
-    }
-    .case:has(a[href]:hover) :global(.badge > span) {
-      transform: none;
-    }
+  .meta-label {
+    color: var(--color-fog);
   }
   h3 {
-    font-size: var(--text-display-m);
-    line-height: 1.02;
-    letter-spacing: -0.024em;
+    margin-top: 10px;
+    font-size: var(--text-display-l);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
   }
   .sum {
     font-size: var(--text-lead);
-    line-height: 1.42;
+    line-height: 1.38;
     max-width: 34ch;
   }
   .facts {
-    margin-top: 28px;
-  }
-  .facts div {
+    margin-top: 18px;
     display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+    gap: 0 8px;
     font-size: var(--text-small);
+    color: var(--color-fog);
   }
-  .facts dt {
-    color: var(--ter);
-    font-weight: var(--weight-ui);
+  .facts dt::after {
+    content: ':';
   }
   .facts dd {
-    text-align: right;
+    color: var(--color-paper);
   }
-  .detail .tlink {
+  .info .tlink {
     display: inline-block;
+    margin-top: 24px;
+  }
+
+  figure {
+    position: relative;
+  }
+  .frame {
+    display: block;
+    background: var(--color-ink-raised);
+  }
+  figcaption {
+    margin-top: 12px;
+    font-size: var(--text-label);
+    color: var(--color-fog);
+  }
+
+  /* ---------- Layered: Rocketeer ----------
+     The dashboard at a scale where its interface reads, and the sign-in screen laid over its lower right corner,
+     cut out of the dashboard by a band of Ink, hanging below it. */
+  .case-layered .id {
+    grid-column: 1 / span 7;
+    grid-row: 1;
+  }
+  .case-layered .info {
+    grid-column: 9 / span 4;
+    grid-row: 1;
+    align-self: end;
+  }
+  .case-layered .main {
+    grid-column: 1 / span 10;
+    grid-row: 2;
+    margin-top: clamp(40px, 4.5vw, 64px);
+  }
+  .case-layered .detail {
+    grid-column: 9 / span 4;
+    grid-row: 2;
+    align-self: end;
+    z-index: 1;
+    width: 78%;
+    justify-self: end;
+    translate: 0 clamp(64px, 9vw, 136px);
+    margin-bottom: clamp(64px, 9vw, 136px);
+  }
+  .case-layered .detail .frame {
+    box-shadow: 0 0 0 clamp(8px, 0.9vw, 14px) var(--color-ink);
+  }
+
+  /* ---------- Bleed: Arman's ----------
+     The capture runs off the right edge of the page; the text holds the left, and a detail of the management area
+     sits low under it, small, as evidence of the system behind the site. */
+  .case-bleed .id {
+    grid-column: 1 / span 4;
+    grid-row: 1;
+  }
+  .case-bleed .id h3 {
+    font-size: var(--text-display-m);
+    line-height: 1.02;
+  }
+  .case-bleed .info {
+    grid-column: 1 / span 4;
+    grid-row: 2;
     margin-top: 28px;
   }
+  .case-bleed .main {
+    grid-column: 6 / -1;
+    grid-row: 1 / span 3;
+    margin-right: calc(-1 * var(--space-margin));
+  }
+  .case-bleed .main figcaption {
+    padding-right: var(--space-margin);
+  }
+  .case-bleed .detail {
+    grid-column: 1 / span 4;
+    grid-row: 3;
+    align-self: end;
+    margin-top: 48px;
+  }
 
-  @media (min-width: 1024px) {
-    /* Wide capture: the name and its detail share a line above, the capture spans the width below. */
-    .case-wide .case-txt {
+  /* ---------- Band: Logotherapia ----------
+     One capture as a strip across the full width of the window, then the text in a single compact row. */
+  .case-band .main {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    margin: 0 calc(-1 * var(--space-margin));
+  }
+  .case-band .main figcaption {
+    padding: 0 var(--space-margin);
+  }
+  .case-band .id {
+    grid-column: 1 / span 5;
+    grid-row: 2;
+    margin-top: clamp(32px, 3.6vw, 52px);
+  }
+  .case-band .id h3 {
+    font-size: var(--text-display-m);
+    line-height: 1.02;
+  }
+  .case-band .info {
+    grid-column: 7 / span 6;
+    grid-row: 2;
+    margin-top: clamp(32px, 3.6vw, 52px);
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    column-gap: var(--space-gap);
+    align-items: start;
+  }
+  .case-band .sum {
+    grid-row: 1 / span 2;
+    font-size: var(--text-body);
+    line-height: 1.5;
+    color: var(--color-paper);
+  }
+  .case-band .facts {
+    margin-top: 0.15em;
+  }
+  .case-band .info .tlink {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: 14px;
+  }
+
+  /* ---------- Tablet ---------- */
+  @media (max-width: 1023px) {
+    .case {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .case-layered .id {
       grid-column: 1 / -1;
-      grid-row: 1;
-      display: grid;
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      column-gap: var(--space-gap);
-      align-items: start;
     }
-    .case-wide h3 {
+    .case-layered .info {
+      grid-column: 1 / span 6;
+      grid-row: 3;
+      margin-top: 40px;
+    }
+    .case-layered .main {
       grid-column: 1 / span 7;
-      font-size: var(--text-display-l);
     }
-    .case-wide .detail {
-      grid-column: 9 / span 4;
+    .case-layered .detail {
+      grid-column: 5 / span 4;
+      width: 82%;
+      translate: 0 48px;
+      margin-bottom: 48px;
     }
-    .case-wide .media {
+    .case-bleed .id {
+      grid-column: 1 / -1;
+    }
+    .case-bleed .main {
       grid-column: 1 / -1;
       grid-row: 2;
-      --maxh: calc(100svh - 400px);
+      margin-top: 36px;
     }
-
-    /* Capture on the left, text low on the right. */
-    .case-left .media {
+    .case-bleed .info {
+      grid-column: 1 / span 5;
+      grid-row: 3;
+      margin-top: 36px;
+    }
+    .case-bleed .detail {
+      grid-column: 6 / span 3;
+      grid-row: 3;
+      align-self: start;
+      margin-top: 36px;
+    }
+    .case-band .id {
+      grid-column: 1 / -1;
+    }
+    .case-band .info {
       grid-column: 1 / span 7;
-      grid-row: 1;
-      --maxh: calc(100svh - 230px);
-    }
-    .case-left .case-txt {
-      grid-column: 9 / span 4;
-      grid-row: 1;
-      align-self: end;
-    }
-
-    /* Text low on the left, capture on the right. */
-    .case-right .case-txt {
-      grid-column: 1 / span 4;
-      grid-row: 1;
-      align-self: end;
-    }
-    .case-right .media {
-      grid-column: 5 / span 8;
-      grid-row: 1;
-      justify-self: end;
-      --maxh: calc(100svh - 230px);
-    }
-    .case-right .media :global(.pm) {
-      margin-left: auto;
-    }
-    .case-left h3,
-    .case-right h3 {
-      margin-bottom: 22px;
+      grid-row: 3;
+      margin-top: 24px;
     }
   }
 
-  /* The handoff: on tall desktop screens, with motion allowed, each project holds the screen and the next one
-     slides over it. Plain sticky positioning. */
-  @media (min-width: 1024px) and (min-height: 700px) and (prefers-reduced-motion: no-preference) {
-    .case {
-      position: sticky;
-      top: 0;
-      height: 100svh;
-      overflow: clip;
-      padding-top: 24px;
-    }
-    .case + .case {
-      box-shadow: 0 -1px 0 var(--line);
-    }
-  }
-
-  /* Scroll scene (html.sc). Depth inside a project: as it slides in, the capture travels further than the text, so
-     the two separate like layers. Depth between projects: the one being covered settles back, a little smaller and
-     darker, while the next slides over it; the last one settles back as Capabilities arrives. Individual
-     `translate` and `scale` properties, so nothing competes with the reveal system's `transform`. */
-  :global(.sc) .work {
-    padding-bottom: 0;
-    margin-bottom: 0;
-  }
-  /* Room for the horizon to sweep across empty Ink before the heading, so the edge never cuts through text. */
-  :global(.sc) .work-head {
-    padding-top: 30vh;
-  }
-  :global(.sc) .work-head h2 {
-    translate: 0 calc((1 - var(--in, 1)) * 14vh);
-  }
-  :global(.sc) .case + .case {
-    box-shadow: none;
-  }
-  :global(.sc) .case {
-    transform-origin: 50% 0;
-    scale: calc(1 - var(--cov, 0) * 0.07);
-    translate: 0 calc(var(--cov, 0) * -3vh);
-  }
-  :global(.sc) .case::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--color-ink);
-    opacity: calc(var(--cov, 0) * 0.72);
-    pointer-events: none;
-  }
-  :global(.sc) .case .media {
-    translate: 0 calc((1 - var(--in, 1)) * 16vh);
-  }
-  :global(.sc) .case .case-txt {
-    translate: 0 calc((1 - var(--in, 1)) * 6vh);
-  }
-
-  /* ---------- Tablet and phone: stacked, capture first at full width ---------- */
-  @media (max-width: 1023px) {
-    .work-head {
-      grid-template-columns: repeat(8, minmax(0, 1fr));
+  /* ---------- Phone: one strong crop per project, edge to edge ---------- */
+  @media (max-width: 760px) {
+    .work {
       padding-top: 88px;
     }
-    h2 {
-      grid-column: 1 / span 6;
-    }
-    .all {
-      grid-column: 7 / span 2;
+    .work-head {
+      flex-direction: column;
+      gap: 16px;
     }
     .case {
-      padding: 0 0 72px;
+      display: flex;
+      flex-direction: column;
+      margin-top: 88px;
     }
-    .case-top {
-      margin: 0 var(--space-margin);
-      padding-bottom: 18px;
+    .work-head + .case {
+      margin-top: 52px;
     }
-    .case-grid {
-      display: block;
-      margin-top: 0;
+    .id {
+      order: 1;
     }
-    .media :global(.pm) {
-      width: 100%;
+    .main {
+      order: 2;
+      margin: 28px calc(-1 * var(--space-margin)) 0 !important;
     }
-    .case-txt {
-      padding: 28px var(--space-margin) 0;
-      display: grid;
-      grid-template-columns: repeat(8, minmax(0, 1fr));
-      column-gap: var(--space-gap);
-    }
-    h3 {
-      grid-column: 1 / span 4;
+    .main figcaption {
+      padding: 0 var(--space-margin);
     }
     .detail {
-      grid-column: 5 / span 4;
+      order: 3;
     }
-  }
-
-  @media (max-width: 760px) {
-    .work-head {
+    .info {
+      order: 4;
+      margin-top: 28px !important;
+    }
+    h3,
+    .case-bleed .id h3,
+    .case-band .id h3 {
+      font-size: clamp(2rem, 9vw, 2.5rem);
+    }
+    .case-layered .detail {
+      align-self: flex-end;
+      width: 48%;
+      translate: none;
+      margin: -22% 0 0;
+    }
+    .case-layered .main figcaption {
+      max-width: 46%;
+    }
+    .case-bleed .detail {
+      display: none;
+    }
+    .case-band .info {
       display: block;
-      padding-top: 80px;
-      padding-bottom: 48px;
     }
-    .all {
-      display: inline-block;
-      margin-top: 22px;
-    }
-    .case {
-      padding-bottom: 64px;
-    }
-    .case-top {
-      font-size: 0.875rem;
-    }
-    .case-top .meta-label {
-      text-align: right;
-    }
-    .case-txt {
-      display: block;
-      padding-top: 24px;
+    .case-band .info .tlink {
+      margin-top: 24px;
     }
     .sum {
-      margin-top: 14px;
-    }
-    .facts {
-      margin-top: 22px;
+      font-size: 1.125rem;
     }
   }
 </style>

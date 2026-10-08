@@ -1,5 +1,4 @@
 ---
-import Arrowed from '../Arrowed.astro';
 import type { HomeCopy } from '../../content/home.en';
 import { pathFor } from '../../i18n/routes';
 import TransformationMap from './TransformationMap.astro';
@@ -50,7 +49,7 @@ const { copy, locale } = Astro.props;
         }
       </p>
       <p class="act">
-        <a class="btn" href={pathFor('contact', locale)}><Arrowed text={copy.start} /></a>
+        <a class="btn" href={pathFor('contact', locale)}>{copy.start}</a>
         <a class="tlink" href="#work">{copy.work}</a>
       </p>
     </div>
@@ -92,12 +91,10 @@ const { copy, locale } = Astro.props;
   }
   .meta {
     grid-column: 1 / span 4;
-    font-size: var(--text-label);
+    font-size: var(--text-small);
     font-weight: var(--weight-ui);
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
     color: var(--ter);
-    padding-top: 0.45em;
+    padding-top: 0.5em;
   }
   .support {
     grid-column: 5 / span 5;

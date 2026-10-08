@@ -15,7 +15,7 @@ const { copy, locale } = Astro.props;
     to the new one. It is a diagram of the sentence, not a logo morph. The names in it are decorative: the heading
     already says them. With motion, the half circle draws from left to right as the section arrives. */}
 <section class="evo s-paper" id="evolution" aria-labelledby="evo-h" data-sequence data-scene>
-  <h2 id="evo-h" data-reveal="mask">{copy.heading}</h2>
+  <h2 id="evo-h">{copy.heading}</h2>
 
   <div class="diagram" aria-hidden="true">
     {/* Pixel units, so the hairline keeps its weight at every size. The circle's lower half lies outside the box.
@@ -28,7 +28,7 @@ const { copy, locale } = Astro.props;
     <span class="end end-to"><i></i>TechPi</span>
   </div>
 
-  <div class="txt" data-reveal="fade">
+  <div class="txt">
     <p class="lead">{copy.lead}</p>
     <p class="more">{copy.text}</p>
     <a class="tlink" href={pathFor('about', locale)}>{copy.link}</a>
@@ -165,12 +165,6 @@ const { copy, locale } = Astro.props;
   }
   :global(.sc) .end-to {
     opacity: clamp(0, (var(--in, 1) - 0.76) / 0.08, 1);
-  }
-  :global(.sc) .diagram {
-    translate: 0 calc((1 - var(--in, 1)) * -12vh);
-  }
-  :global(.sc) .txt {
-    translate: 0 calc((1 - var(--in, 1)) * 8vh);
   }
 
   @media (max-width: 1023px) {

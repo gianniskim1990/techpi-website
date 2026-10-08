@@ -20,15 +20,15 @@ const copy = pages.work;
 ---
 
 <BaseLayout locale={locale} page="work" title={t.pages.work.title} description={copy.lead} bleed>
-  <PageIntro heading={t.pages.work.heading} lead={copy.lead} />
-  {/* All projects, in order. Projects with imagery are large editorial rows; the rest are index lines. No filters. */}
-  <section class="list s-ink" aria-label={t.pages.work.heading}>
+  <PageIntro heading={t.pages.work.heading} lead={copy.lead} variant="word" />
+  {/* The Work page is a catalogue, not a second homepage: every project on one index, read across, on Paper.
+      The homepage composes the three case studies; here they are lines among the others, each with a small crop. */}
+  <section class="list s-paper" aria-label={t.pages.work.heading}>
     {
-      projectsIn(locale).map((p, i) => (
+      projectsIn(locale).map((p) => (
         <ProjectRow
           project={p}
           locale={locale}
-          index={i + 1}
           capabilitiesLabel={pages.capabilities.indexLabel}
           linkLabel={copy.linkLabel}
         />
@@ -40,7 +40,7 @@ const copy = pages.work;
 
 <style>
   .list {
-    margin-top: var(--space-section);
-    padding: clamp(40px, 5vw, 80px) var(--space-margin) clamp(48px, 6vw, 96px);
+    margin: clamp(64px, 7vw, 112px) var(--space-margin) 0;
+    border-bottom: 1px solid var(--color-rule);
   }
 </style>

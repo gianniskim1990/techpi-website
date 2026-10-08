@@ -1,0 +1,65 @@
+---
+import { Image } from 'astro:assets';
+import type { ProjectImage } from '../content/projects';
+
+/**
+ * A real capture, cropped to the part worth looking at. Presentation only: nothing is redrawn, extended or
+ * composited; the frame simply shows a rectangle of the original image at a larger scale.
+ *
+ * `crop` is the kept rectangle as fractions of the image (left, top, width, height). `small` is an optional second
+ * rectangle used on phones, where a different part reads better.
+ */
+type Rect = { x: number; y: number; w: number; h: number };
+interface Props {
+  image: ProjectImage;
+  alt?: string;
+  crop?: Rect;
+  small?: Rect;
+  /** Frame width in vw on desktop and on phones, used to request a sharp enough file for the zoom. */
+  vw?: [number, number];
+  loading?: 'lazy' | 'eager';
+  class?: string;
+}
+
+const full = { x: 0, y: 0, w: 1, h: 1 };
+const { image, alt = image.alt, crop = full, small = crop, vw = [60, 100], loading = 'lazy', class: className } = Astro.props;
+const W = image.src.width;
+const H = image.src.height;
+const ar = (r: Rect) => ((W * r.w) / (H * r.h)).toFixed(4);
+const vars = (r: Rect, p: string) => `--${p}x:${r.x};--${p}y:${r.y};--${p}w:${r.w};--${p}ar:${ar(r)}`;
+// The image is shown 1/w times wider than its frame.
+const zoomed = `(max-width: 760px) ${Math.round(vw[1] / small.w)}vw, ${Math.round(vw[0] / crop.w)}vw`;
+---
+
+<div class:list={['crop', className]} style={`${vars(crop, '')};${vars(small, 's')}`}>
+  <Image src={image.src} alt={alt} widths={[640, 960, 1280, 1920, 2560]} sizes={zoomed} format="webp" quality={84} loading={loading} decoding="async" />
+</div>
+
+<style>
+  .crop {
+    --cx: var(--x);
+    --cy: var(--y);
+    --cw: var(--w);
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: var(--ar);
+  }
+  .crop :global(img) {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    width: calc(100% / var(--cw));
+    max-width: none;
+    height: auto;
+    translate: calc(-100% * var(--cx)) calc(-100% * var(--cy));
+  }
+  @media (max-width: 760px) {
+    .crop {
+      --cx: var(--sx);
+      --cy: var(--sy);
+      --cw: var(--sw);
+      aspect-ratio: var(--sar);
+    }
+  }
+</style>

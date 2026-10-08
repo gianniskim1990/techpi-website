@@ -23,8 +23,6 @@ interface Props {
    * The frame's proportions decide the height.
    */
   focus?: { x: number; y: number; w: number };
-  /** Uncover the image when it enters the viewport (the reveal system in base.css). */
-  reveal?: boolean;
   class?: string;
 }
 
@@ -36,7 +34,6 @@ const {
   loading = 'lazy',
   crop = false,
   focus = { x: 0, y: 0, w: 1 },
-  reveal = false,
   class: className,
 } = Astro.props;
 const ratio = image.src.width / image.src.height;
@@ -47,15 +44,14 @@ const finalSizes = crop ? `(max-width: 1023px) ${Math.round(100 / focus.w)}vw, $
 <div
   class:list={['pm', { 'pm-crop': crop }, className]}
   style={`--ar:${ratio.toFixed(4)};--fx:${focus.x};--fy:${focus.y};--fw:${focus.w}`}
-  data-reveal={reveal ? 'image' : undefined}
 >
   <Image src={image.src} alt={alt} widths={widths} sizes={finalSizes} format="webp" quality={84} loading={loading} decoding="async" />
   <slot />
 </div>
 
 <style>
-  /* The caller may cap the height with --maxh. The box then narrows to keep the image's proportions, so the
-     uncover and any alignment follow the picture itself, never empty space. */
+  /* The caller may cap the height with --maxh. The box then narrows to keep the image's proportions, so any
+     alignment follows the picture itself, never empty space. */
   .pm {
     position: relative;
     overflow: hidden;
@@ -72,7 +68,7 @@ const finalSizes = crop ? `(max-width: 1023px) ${Math.round(100 / focus.w)}vw, $
       width: 100%;
       aspect-ratio: 16 / 10;
     }
-    /* `translate`, not `transform`, so the crop never competes with the reveal's scale. */
+    /* `translate`, not `transform`, the individual property used for crops across the site. */
     .pm-crop :global(img) {
       width: calc(100% / var(--fw));
       max-width: none;

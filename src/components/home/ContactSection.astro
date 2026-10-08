@@ -1,6 +1,5 @@
 ---
-import Arrowed from '../Arrowed.astro';
-import symbolBlue from '../../assets/brand/techpi-symbol-blue.png';
+import symbolWhite from '../../assets/brand/techpi-symbol-white.png';
 import BrandSymbol from '../BrandSymbol.astro';
 import type { HomeCopy } from '../../content/home.en';
 import { pathFor } from '../../i18n/routes';
@@ -14,30 +13,31 @@ interface Props {
 const { copy, locale } = Astro.props;
 ---
 
-{/* ARC → CIRCLE → TECHPI. The resolution of the page. The arc first seen in the hero, which became a surface edge
-    and then a half circle, closes here into a whole circle for the only time on the site, and the circle resolves
-    into the approved 3D TechPi symbol, at full strength, on Ink.
+{/* ARC → CIRCLE → TECHPI. The resolution of the page. The arc first seen in the hero, which opened into a half
+    circle in Evolution, closes here into a whole circle for the only time on the site, and the circle resolves into
+    the approved TechPi symbol, in white on TechPi Blue: the one Blue chapter of the homepage, so the page ends on the
+    brand colour and the Ink footer stays clearly separate.
 
     Resting state (no script, reduced motion, print): the closed circle with the symbol inside it.
-    Scroll scene (html.sc): the Ink arrives behind the horizon, then the stage holds for a short distance while a
-    cyan arc, wider than the figure, closes into a circle and contracts onto the figure, and the symbol turns and
+    Scroll scene (html.sc): the stage holds for a short distance while a
+    white arc, wider than the figure, closes into a circle and contracts onto the figure, and the symbol turns and
     settles into it. Elsewhere with motion: the same states as one timed sequence. All end at the resting state. */}
-<section class="contact s-ink horizon" id="contact" aria-labelledby="contact-h" data-sequence data-scene>
+<section class="contact s-blue" id="contact" aria-labelledby="contact-h" data-sequence data-scene>
   <div class="stage">
     <div class="figure" aria-hidden="true">
       <svg class="ring" focusable="false">
         {/* Pixel units, so the hairline keeps its weight. Turned to start at the left, where the Evolution half
-            circle began, and to close clockwise over the top. Two strokes: the cyan one draws, the quiet one rests. */}
+            circle began, and to close clockwise over the top. Two strokes: the bright one draws, the quiet one rests. */}
         <circle class="rest" cx="50%" cy="50%" r="49.4%" pathLength="1"></circle>
         <circle class="draw" cx="50%" cy="50%" r="49.4%" pathLength="1"></circle>
       </svg>
       <div class="mark">
-        <BrandSymbol symbol={symbolBlue} sizes="(max-width: 760px) 70vw, (max-width: 1023px) 52vw, min(560px, 40vw)" />
+        <BrandSymbol symbol={symbolWhite} sizes="(max-width: 760px) 70vw, (max-width: 1023px) 52vw, min(560px, 40vw)" />
       </div>
     </div>
 
     <div class="txt">
-      <h2 id="contact-h" data-reveal="lines">
+      <h2 id="contact-h">
         {
           copy.heading.map((line, i) => (
             <>
@@ -48,8 +48,8 @@ const { copy, locale } = Astro.props;
           ))
         }
       </h2>
-      <p class="act" data-reveal="fade" style="--delay:200ms">
-        <a class="btn" href={pathFor('contact', locale)}><Arrowed text={copy.cta} /></a>
+      <p class="act">
+        <a class="btn" href={pathFor('contact', locale)}>{copy.cta}</a>
       </p>
     </div>
 
@@ -116,11 +116,11 @@ const { copy, locale } = Astro.props;
     stroke-width: 1.25px;
   }
   .rest {
-    stroke: var(--color-fog);
-    opacity: 0.55;
+    stroke: var(--color-sheet);
+    opacity: 0.4;
   }
   .draw {
-    stroke: var(--color-cyan);
+    stroke: var(--color-sheet);
     opacity: 0;
   }
   .mark {
@@ -135,23 +135,6 @@ const { copy, locale } = Astro.props;
     padding: 20px 0 28px;
     font-size: var(--text-small);
     color: var(--sec-c);
-  }
-
-  /* Hover on the call to action (pointer devices): the symbol turns a few degrees and the quiet ring brightens, as
-     if the question were answered. The symbol's own image turns, so the scroll scene's rotate is left alone. */
-  .mark :global(img) {
-    transition: transform 1400ms var(--ease-reveal);
-  }
-  @media (hover: hover) {
-    .stage:has(.btn:hover) .mark :global(img) {
-      transform: rotate(16deg) scale(1.03);
-    }
-    .stage:has(.btn:hover) .rest {
-      stroke: var(--color-cyan);
-    }
-  }
-  .rest {
-    transition: stroke 600ms var(--ease-state);
   }
 
   /* ---------- Timed sequence (motion allowed, scroll scenes off) ---------- */
@@ -186,9 +169,8 @@ const { copy, locale } = Astro.props;
      --k runs from 0 as the section enters, through 0.4 when the stage takes the screen, to 1 at the end of the
      hold. The arc closes first, wide, and contracts onto the figure; then the symbol turns into place. */
   :global(.sc) .contact {
-    /* 30vh of empty Ink for the horizon to sweep across, then the stage and a 75svh hold. */
-    padding-top: 30vh;
-    height: calc(175svh + 30vh);
+    /* The stage and a short 45svh hold: the one pinned moment of the page. */
+    height: 145svh;
     --k: calc(var(--in, 1) * 0.4 + var(--pin, 1) * 0.6);
     --ring: clamp(0, (var(--k) - 0.12) / 0.5, 1);
     --mark: clamp(0, (var(--k) - 0.46) / 0.42, 1);
@@ -209,7 +191,7 @@ const { copy, locale } = Astro.props;
     opacity: calc(1 - clamp(0, (var(--k) - 0.7) / 0.2, 1));
   }
   :global(.sc) .rest {
-    opacity: calc(clamp(0, (var(--k) - 0.6) / 0.25, 1) * 0.55);
+    opacity: calc(clamp(0, (var(--k) - 0.6) / 0.25, 1) * 0.4);
   }
   :global(.sc) .mark {
     opacity: var(--mark);

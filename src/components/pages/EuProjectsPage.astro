@@ -30,26 +30,24 @@ const pad = (n: number) => String(n).padStart(2, '0');
   <PageIntro heading={c.hero.heading} lead={c.hero.lead}>
     <Fragment slot="after">
       <p class="context">{c.hero.context}</p>
-      <a class="tlink hero-cta" href={contact}>{c.hero.cta}<span class="arr" aria-hidden="true">→</span></a>
+      <a class="tlink hero-cta" href={contact}>{c.hero.cta}</a>
     </Fragment>
   </PageIntro>
 
   {/* 01 More than a project website */}
-  <section class="sec s-paper rule" aria-labelledby="infra-h" data-reveal="fade">
-    <span class="num idx" aria-hidden="true">01</span>
+  <section class="sec s-paper" aria-labelledby="infra-h">
     <h2 id="infra-h" class="h-l"><span>{c.infra.heading}</span></h2>
     <p class="lead-p">{c.infra.text}</p>
     <div class="support">
       <p class="meta-label">{c.infra.supportLabel}</p>
-      <ul class="run">{c.infra.support.map((s) => <li>{s}</li>)}</ul>
+      <ul class="cols">{c.infra.support.map((s) => <li>{s}</li>)}</ul>
       <p class="audience">{c.infra.audience}</p>
     </div>
   </section>
 
   {/* The lifecycle: one Ink band, a hairline that draws through six stages and closes on a circle. */}
   <section class="cycle-band s-ink" aria-labelledby="cycle-h">
-    <p class="meta-label">{c.lifecycle.label}</p>
-    <h2 id="cycle-h" class="h-l" data-reveal="mask">{c.lifecycle.heading}</h2>
+    <h2 id="cycle-h" class="h-l">{c.lifecycle.heading}</h2>
     <ol class="cycle" data-reveal="cycle">
       {
         c.lifecycle.stages.map((s, i) => (
@@ -65,8 +63,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   </section>
 
   {/* 02 EU project websites */}
-  <section class="sec s-paper rule" aria-labelledby="web-h" data-reveal="fade">
-    <span class="num idx" aria-hidden="true">02</span>
+  <section class="sec s-paper" aria-labelledby="web-h">
     <h2 id="web-h" class="h-l">{c.websites.heading}</h2>
     <p class="lead-p">{c.websites.intro}</p>
 
@@ -76,7 +73,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         <p>{c.websites.structureText}</p>
       </div>
       {/* A content model, drawn: the project at the root, its own entities as branches. Conceptual, not a sitemap. */}
-      <div class="model" aria-hidden="true" data-reveal="model">
+      <div class="model" aria-hidden="true">
         <span class="root"><i></i>{c.websites.modelRoot}</span>
         <ul>
           {c.websites.model.map((m, i) => <li style={`--i:${i}`}>{m}</li>)}
@@ -101,9 +98,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
   </section>
 
   {/* 03 Digital platforms */}
-  <section class="sec s-paper rule" aria-labelledby="plat-h" data-reveal="fade">
-    <span class="num idx" aria-hidden="true">03</span>
-    <h2 id="plat-h" class="h-l">{c.platforms.heading}</h2>
+  <section class="sec s-paper beside" aria-labelledby="plat-h">
+    <h2 id="plat-h" class="h-m">{c.platforms.heading}</h2>
     <p class="lead-p">{c.platforms.text}</p>
     <ul class="grid4">
       {
@@ -119,9 +115,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <p class="meta-label">{c.platforms.principlesLabel}</p>
       <ol>
         {
-          c.platforms.principles.map((p, i) => (
+          c.platforms.principles.map((p) => (
             <li>
-              <span class="num">{pad(i + 1)}</span>
               <h3 class="h-s">{p.name}</h3>
               <p>{p.text}</p>
             </li>
@@ -134,7 +129,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   {/* 04 For communication and dissemination partners: the one TechPi Blue band. B2B. */}
   <section class="partners s-blue" aria-labelledby="part-h">
     <p class="meta-label">{c.partners.label}</p>
-    <h2 id="part-h" class="h-l" data-reveal="mask">{c.partners.heading}</h2>
+    <h2 id="part-h" class="h-l">{c.partners.heading}</h2>
     <p class="lead-p">{c.partners.text}</p>
     <div class="who">
       <h3 class="sub">{c.partners.whoLabel}</h3>
@@ -153,12 +148,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
         }
       </dl>
     </div>
-    <p class="partners-cta"><a class="btn" href={contact}>{c.partners.cta}<span class="arr" aria-hidden="true">→</span></a></p>
+    <p class="partners-cta"><a class="btn" href={contact}>{c.partners.cta}</a></p>
   </section>
 
   {/* 05 Programmes: restrained. Named only as the kinds of projects the approach is built for. */}
-  <section class="sec s-paper rule compact" aria-labelledby="prog-h" data-reveal="fade">
-    <span class="num idx" aria-hidden="true">05</span>
+  <section class="sec s-paper compact" aria-labelledby="prog-h">
     <h2 id="prog-h" class="h-m">{c.programmes.heading}</h2>
     <div class="prog">
       <p>{c.programmes.text}</p>
@@ -169,9 +163,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
   </section>
 
   {/* 06 Technical priorities */}
-  <section class="sec s-paper rule" aria-labelledby="prio-h" data-reveal="fade">
-    <span class="num idx" aria-hidden="true">06</span>
-    <h2 id="prio-h" class="h-l">{c.priorities.heading}</h2>
+  <section class="sec s-paper" aria-labelledby="prio-h">
+    <h2 id="prio-h" class="h-m">{c.priorities.heading}</h2>
     <dl class="grid3">
       {
         c.priorities.items.map((p) => (
@@ -185,9 +178,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
   </section>
 
   {/* 07 Process: numbered rows, the sequence drawn as a line down the numbers. */}
-  <section class="sec s-paper rule" aria-labelledby="proc-h" data-reveal="fade">
-    <span class="num idx" aria-hidden="true">07</span>
-    <h2 id="proc-h" class="h-l">{c.process.heading}</h2>
+  <section class="sec s-paper beside" aria-labelledby="proc-h">
+    <h2 id="proc-h" class="h-m">{c.process.heading}</h2>
     <p class="lead-p">{c.process.intro}</p>
     <ol class="steps">
       {
@@ -203,8 +195,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   </section>
 
   {/* 08 Before and after delivery */}
-  <section class="sec s-paper rule pairs-sec" aria-label={`${c.before.heading} / ${c.after.heading}`} data-reveal="fade">
-    <span class="num idx" aria-hidden="true">08</span>
+  <section class="sec s-paper pairs-sec" aria-label={`${c.before.heading} / ${c.after.heading}`}>
     <div class="pair">
       <div>
         <h2 class="h-m">{c.before.heading}</h2>
@@ -268,19 +259,26 @@ const pad = (n: number) => String(n).padStart(2, '0');
   /* ---------- A Paper section: index, heading, lead, then its own body ---------- */
   .sec {
     margin: var(--space-section) var(--space-margin) 0;
-    padding-top: 28px;
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
     align-content: start;
   }
-  .idx {
-    grid-column: 1 / -1;
-    color: var(--color-techpi-blue);
-  }
   .sec > .h-l {
     grid-column: 1 / span 9;
-    margin-top: 22px;
+  }
+  .sec > .h-m {
+    grid-column: 1 / span 7;
+  }
+  /* Heading and lead side by side, top-aligned: used where the heading is short, so the section starts dense. */
+  .sec.beside > .h-m {
+    grid-column: 1 / span 6;
+    grid-row: 1;
+  }
+  .sec.beside > .lead-p {
+    grid-column: 8 / span 5;
+    grid-row: 1;
+    margin-top: 0.4em;
   }
   .sec > .lead-p {
     grid-column: 5 / span 6;
@@ -292,28 +290,17 @@ const pad = (n: number) => String(n).padStart(2, '0');
     grid-column: 5 / span 8;
     margin-top: clamp(40px, 4.5vw, 64px);
   }
-  .run {
+  /* What a project site may need to support: a plain list set in columns, read down. */
+  .cols {
     margin-top: 16px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 40px;
-    overflow: hidden;
-    font-size: var(--text-heading);
-    line-height: 1.25;
+    columns: 3;
+    column-gap: var(--space-gap);
+    font-size: var(--text-lead);
+    line-height: 1.45;
     letter-spacing: -0.012em;
   }
-  .run li {
-    position: relative;
-  }
-  .run li::before {
-    content: '';
-    position: absolute;
-    left: -25px;
-    top: 0.5em;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    border: 1px solid var(--color-slate);
+  .cols li {
+    break-inside: avoid;
   }
   .audience {
     margin-top: 32px;
@@ -398,12 +385,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
     color: var(--sec-c);
     padding-right: 8px;
   }
-  @media (hover: hover) {
-    .cycle li:hover .node {
-      background: var(--color-cyan);
-      border-color: var(--color-cyan);
-    }
-  }
   /* One-shot: the line draws from the first stage to the last; each node fills as the line reaches it. */
   :global(.mo) .cycle::before {
     transition: transform 1600ms var(--ease-reveal);
@@ -449,10 +430,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    font-size: var(--text-label);
+    font-size: var(--text-small);
     font-weight: var(--weight-ui);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
   }
   .root i {
     width: 19px;
@@ -512,23 +491,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
     border-radius: 50%;
     background: var(--color-ink);
   }
-  :global(.mo) .model ul::before {
-    transition: transform 900ms var(--ease-reveal) 150ms;
-  }
-  :global(.mo) .model:not(:global(.in)) ul::before {
-    transform: scaleY(0);
-  }
-  :global(.mo) .model li {
-    transition:
-      opacity 600ms var(--ease-reveal),
-      transform 600ms var(--ease-reveal);
-    transition-delay: calc(300ms + var(--i) * 90ms);
-  }
-  :global(.mo) .model:not(:global(.in)) li {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-
   .groups {
     grid-column: 1 / -1;
     margin-top: clamp(64px, 7vw, 112px);
@@ -582,11 +544,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
     padding-top: 18px;
     border-top: 1px solid var(--color-ink);
   }
-  .principles .num {
-    color: var(--color-techpi-blue);
-  }
   .principles h3 {
-    margin-top: 18px;
+    margin-top: 2px;
   }
   .principles p {
     margin-top: 10px;
@@ -617,10 +576,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
     opacity: 0.9;
   }
   .sub {
-    font-size: var(--text-label);
+    font-size: var(--text-small);
     font-weight: var(--weight-ui);
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
     opacity: 0.85;
   }
   .who {
@@ -658,11 +615,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
   /* ---------- 05 Programmes ---------- */
   .compact > .h-m {
     grid-column: 1 / span 4;
-    margin-top: 22px;
   }
   .prog {
     grid-column: 5 / span 8;
-    margin-top: 22px;
+    padding-top: 0.5em;
   }
   .prog > p:first-child {
     color: var(--sec-c);
@@ -775,6 +731,18 @@ const pad = (n: number) => String(n).padStart(2, '0');
     .prog {
       grid-column: 2 / -1;
     }
+    .sec > .h-m,
+    .sec.beside > .h-m {
+      grid-column: 1 / -1;
+    }
+    .sec.beside > .lead-p {
+      grid-column: 2 / -1;
+      grid-row: 2;
+      margin-top: clamp(28px, 3vw, 44px);
+    }
+    .cols {
+      columns: 2;
+    }
     .compact > .h-m {
       grid-column: 1 / -1;
     }
@@ -884,14 +852,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
     .principles li + li {
       margin-top: 28px;
     }
-    .run {
-      font-size: 1.1875rem;
-      gap: 6px 30px;
-    }
-    .run li::before {
-      left: -19px;
-      width: 7px;
-      height: 7px;
+    .cols {
+      columns: 2;
+      font-size: 1.0625rem;
     }
     .cycle {
       padding-left: 34px;

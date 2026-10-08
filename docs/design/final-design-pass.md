@@ -178,3 +178,52 @@ made in review: programmes moved from a large wrapping run to a ruled list; the 
 "EU-funded" at the hyphen; the three platform principles stay in one row on tablet. The homepage teaser was
 re-checked in both languages. Static audit: the only differences from the baseline are the new meta descriptions on
 the two EU pages; `noindex` unchanged.
+
+## 9. Final art-direction pass (2026-10-08)
+
+Goal: remove what made the site read as generated, and leave a smaller number of stronger, authored ideas.
+
+**What read as generated.** Template chrome applied everywhere: tracked uppercase eyebrows over every block, a
+trailing "→" on every link and button, 01–08 numbering on content that is not a sequence, a hairline above every
+section, and the same fade-up on every block. Every section followed one formula (giant headline, hairline, offset
+paragraph, whitespace). The arc motif had turned into decoration: three curved Ink entrances, a ring, a badge circle,
+a circle-fill button. Three sticky or pinned sequences. Three projects shown as one image-left / image-right
+template.
+
+**Removed.** Uppercase labels (all labels are sentence case now); trailing arrows (`Arrowed.astro` deleted; ↗ for
+external links and ← for "back" stay, because they carry meaning); numbering where there is no sequence (homepage
+capabilities, EU section indices, principles, case-study sections and feature lists); the curved horizon entrances;
+the hover badge, the circle-fill button, the redrawing underline and the symbol spin on hover; the fade, mask-line
+and image-uncover reveals (only a secondary page's h1 still uncovers on load); the sticky project stack and the
+Intelligence pin; scroll drift on Evolution; the EU content-model reveal.
+
+**The visual language that remains.**
+1. *Precision against one fluid line.* Technical notation (small sentence-case annotations, hollow and filled points,
+   hairline spines) set against the single hero arc. The arc appears only where it means something: the hero, the
+   Evolution half circle, the closing circle around the symbol. Every other section is free of it.
+2. *Real interface as material.* Project captures are cropped to the part worth reading (`Crop.astro`,
+   `workCompositions.ts`) and composed at contrasting scales; nothing is redrawn.
+3. *Loud and quiet.* Very large type is reserved for a few moments (hero, Work page name, Intelligence, contact);
+   everything else is set a size or two down, with dense index typography in between.
+4. *Colour as meaning.* Paper for reading, Ink for work and intelligence, TechPi Blue for the invitation to work
+   together (homepage contact, every secondary page's closing band, the EU partners band).
+
+**Homepage chapters.** Hero (Paper, the transformation map) → statement (quiet: smaller sentence, two steps drawn
+as a hollow point joined to a blue point) → Selected work (Ink; three compositions: layered Rocketeer interface,
+Arman's capture bleeding off the page with a management detail, Logotherapia as a full-width strip) → capabilities
+(Paper; a dense index, read across) with EU-funded projects as its last, heavier row → Intelligence (Ink; noise
+settles as the field rises, no pin) → Evolution (Paper; the half circle) → contact (TechPi Blue, white symbol; the
+one pinned moment, shortened to 45svh). Contact moved from Ink to Blue so the page ends on the brand colour and the
+Ink footer reads as a separate band.
+
+**Secondary pages.** Work is a catalogue: a one-word name set very large, then every project on one index with 3:2
+crops for the case studies. Case studies open with a cropped cover band, use small section heads so the text carries
+the story, and close with the whole capture beside the project's other real screens. EU Projects lost its section
+numbers; short heads sit beside their leads; the lifecycle band is the page's one drawn motion. Capabilities and
+About lost their numbering. Closing calls are a compact TechPi Blue band.
+
+**QA.** Homepage, Work, case studies and EU Projects in English and Greek at 1440, 1280, 1024, 768, 390 and 360: no
+horizontal overflow, no console errors, one h1 per page, mobile menu opens and closes with the current page marked.
+The hero map's end label now moves above its circle when it would run off a narrow window. `npm run check` and
+`npm run build` clean; static audit unchanged apart from the EU meta descriptions; wrangler route matrix identical
+in status and redirects.

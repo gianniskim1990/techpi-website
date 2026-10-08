@@ -14,25 +14,19 @@ const { copy, items, locale } = Astro.props;
 const capabilitiesPath = pathFor('capabilities', locale);
 ---
 
-{/* Capabilities as editorial statements: a number, a name, one sentence, and what it covers as a quiet run of
-    terms. No cards, no icons. On desktop the section heading holds its place while the four statements pass. */}
+{/* Capabilities as an index: the densest moment of the page, after the Ink chapter of work. One row per
+    capability, read across: the name, what it is, what it covers. Hairlines here are table rules, because this is a
+    table. No numbers (it is not a sequence), no icons, no cards. Each row leads to its section on the Capabilities
+    page; on hover the name takes TechPi Blue. */}
 <section class="caps s-paper" id="capabilities" aria-labelledby="caps-h">
-  <div class="head">
-    <h2 id="caps-h" data-reveal="mask">{copy.heading}</h2>
-  </div>
-  <ol class="list">
+  <h2 id="caps-h">{copy.heading}</h2>
+  <ul class="index">
     {
-      items.map((c, i) => (
-        <li class="rule" data-reveal="fade">
-          <span class="num" aria-hidden="true">
-            0{i + 1}
-          </span>
+      items.map((c) => (
+        <li>
           <h3>
             <a class="cap-link" href={`${capabilitiesPath}#${c.id}`}>
               {c.name}
-              <span class="arr" aria-hidden="true">
-                →
-              </span>
             </a>
           </h3>
           <p class="text">{c.summary}</p>
@@ -44,173 +38,98 @@ const capabilitiesPath = pathFor('capabilities', locale);
         </li>
       ))
     }
-  </ol>
+  </ul>
 </section>
 
 <style>
   .caps {
-    padding: var(--space-section) var(--space-margin);
+    padding: clamp(96px, 10vw, 152px) var(--space-margin) clamp(40px, 4vw, 56px);
+  }
+  h2 {
+    font-size: var(--text-display-m);
+    line-height: 1;
+    letter-spacing: -0.024em;
+  }
+  .index {
+    margin-top: clamp(40px, 4.5vw, 64px);
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .index > li {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
-    align-items: start;
-  }
-  .head {
-    grid-column: 1 / span 4;
-    position: sticky;
-    top: 112px;
-  }
-  h2 {
-    font-size: var(--text-display-l);
-    line-height: 1.02;
-    letter-spacing: -0.028em;
-  }
-  .list {
-    grid-column: 5 / span 8;
-  }
-  .list > li {
-    display: grid;
-    grid-template-columns: repeat(8, minmax(0, 1fr));
-    column-gap: var(--space-gap);
-    padding: 30px 0 clamp(48px, 5vw, 72px);
-  }
-  .list > li:last-child {
-    padding-bottom: 0;
-  }
-  .num {
-    grid-column: 1 / span 1;
-    padding-top: 0.9em;
-    color: var(--color-techpi-blue);
+    align-items: baseline;
+    padding: clamp(22px, 2.2vw, 30px) 0 clamp(26px, 2.6vw, 36px);
+    border-top: 1px solid var(--color-rule);
   }
   h3 {
-    grid-column: 2 / -1;
-    font-size: var(--text-display-m);
-    line-height: 1.04;
-    letter-spacing: -0.024em;
-  }
-  .text {
-    grid-column: 2 / span 6;
-    margin-top: 20px;
-    color: var(--sec-c);
-    font-size: var(--text-lead);
-    line-height: 1.42;
-    max-width: 40ch;
-  }
-  /* Separators sit in the gap before each term. A term that starts a new line pushes its separator past the
-     left edge, where the list clips it, so no line ever begins with a separator. */
-  .terms {
-    grid-column: 2 / -1;
-    margin-top: 22px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 29px;
-    overflow: hidden;
-    font-size: var(--text-small);
-    color: var(--ter);
-  }
-  .terms li {
-    position: relative;
-  }
-
-  /* Each statement leads to its section on the Capabilities page. The whole row is the target. On hover the
-     hairline above it redraws in TechPi Blue from the left, the name steps forward and its arrow appears. */
-  .list > li {
-    position: relative;
+    grid-column: 1 / span 4;
+    font-size: clamp(1.625rem, 2.6vw, 2.375rem);
+    line-height: 1.05;
+    letter-spacing: -0.022em;
   }
   .cap-link {
     text-decoration: none;
-    display: inline-block;
-    transition: translate 600ms var(--ease-reveal);
+    transition: color var(--duration-fast) var(--ease-state);
   }
+  /* The whole row is the target. */
   .cap-link::after {
     content: '';
     position: absolute;
     inset: 0;
   }
-  .cap-link .arr {
-    font-size: 0.6em;
-    vertical-align: 0.25em;
-    margin-left: 0.5em;
-    opacity: 0;
-    transform: translateX(-10px);
-    transition:
-      opacity 300ms var(--ease-state),
-      transform 600ms var(--ease-reveal);
-  }
-  .list > li::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 1px;
-    background: var(--color-techpi-blue);
-    transform: scaleX(0);
-    transform-origin: 100% 50%;
-    transition: transform 700ms var(--ease-reveal);
-    pointer-events: none;
-  }
-  .num {
-    transition: translate 600ms var(--ease-reveal);
-  }
-  @media (hover: hover) {
-    .list > li:hover::after {
-      transform: scaleX(1);
-      transform-origin: 0 50%;
-    }
-    .list > li:hover .cap-link {
-      translate: 12px 0;
-    }
-    .list > li:hover .num {
-      translate: 0 -4px;
-    }
-    .list > li:hover .cap-link .arr {
-      opacity: 1;
-      transform: none;
-    }
-  }
   .cap-link:focus-visible {
     outline-offset: 6px;
   }
-  .terms li::before {
-    content: '';
-    position: absolute;
-    left: -15px;
-    top: 0.3em;
-    width: 1px;
-    height: 0.95em;
-    background: var(--line);
+  @media (hover: hover) {
+    .index > li:hover .cap-link {
+      color: var(--color-techpi-blue);
+    }
+  }
+  .text {
+    grid-column: 5 / span 4;
+    color: var(--sec-c);
+    max-width: 38ch;
+  }
+  .terms {
+    grid-column: 10 / span 3;
+    font-size: var(--text-small);
+    line-height: 1.55;
+    color: var(--ter);
   }
 
   @media (max-width: 1023px) {
-    .caps {
-      display: block;
+    .index > li {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
     }
-    .head {
-      position: static;
+    h3 {
+      grid-column: 1 / span 3;
     }
-    .list {
-      margin-top: 56px;
+    .text {
+      grid-column: 4 / span 3;
+    }
+    .terms {
+      grid-column: 7 / span 2;
     }
   }
 
   @media (max-width: 760px) {
-    .list {
-      margin-top: 44px;
-    }
-    .list > li {
+    .index > li {
       display: block;
-      padding: 22px 0 44px;
-    }
-    .num {
-      display: block;
-      padding: 0 0 14px;
+      padding: 22px 0 26px;
     }
     .text {
-      margin-top: 12px;
+      margin-top: 10px;
     }
     .terms {
-      margin-top: 16px;
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 6px;
+    }
+    .terms li:not(:last-child)::after {
+      content: ',';
     }
   }
 </style>

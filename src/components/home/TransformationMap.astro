@@ -110,29 +110,19 @@ const nodes = [
     opacity: 0.38;
   }
 
-  /* ---------- Labels: the site's metadata label ---------- */
+  /* ---------- Labels: technical notation, set small in sentence case, like annotations on a drawing ---------- */
   .cap,
   .lbl {
     position: absolute;
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     font-weight: var(--weight-ui);
-    letter-spacing: 0.08em;
+    letter-spacing: 0;
     line-height: 1;
-    text-transform: uppercase;
     white-space: nowrap;
     color: var(--color-slate);
   }
   .cap {
     top: 0;
-  }
-  .cap::before {
-    content: '';
-    display: inline-block;
-    width: 16px;
-    height: 1px;
-    margin-right: 10px;
-    vertical-align: 0.32em;
-    background: currentColor;
   }
   .cap-from {
     left: 0;
@@ -297,6 +287,11 @@ const nodes = [
     right: auto;
     left: 20px;
     bottom: 12px;
+  }
+  .tmap:global(.on-arc.end-above) .pt-end .end-lbl {
+    left: auto;
+    right: -11px;
+    bottom: 20px;
   }
   /* Set by the motion module where a label would collide with another or cross the arc. */
   .tmap :global(.cut) {

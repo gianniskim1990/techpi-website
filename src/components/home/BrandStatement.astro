@@ -8,20 +8,16 @@ interface Props {
 const { copy } = Astro.props;
 ---
 
-{/* The brand statement: the second beat after the hero. One large sentence, then the order of work in two steps.
-    The steps sit to the right of an empty column, so the sentence keeps the left edge to itself. */}
-<section class="statement s-paper" aria-labelledby="statement-h" data-scene>
-  <h2 id="statement-h" data-reveal="mask">{copy.heading}</h2>
-  <ol class="pair">
+{/* The brand statement: the quiet beat after the loud hero. The sentence is set a size down and keeps the left;
+    beside it, the order of work is drawn in the hero map's own notation: a hollow point (the problem) joined by a
+    hairline to a filled TechPi Blue point (the technology). Two steps, one direction. */}
+<section class="statement s-paper" aria-labelledby="statement-h">
+  <h2 id="statement-h">{copy.heading}</h2>
+  <ol class="steps">
     {
       copy.steps.map((s, i) => (
-        <li class="rule" data-reveal="fade" style={`--delay:${i * 110}ms`}>
-          <p class="step">
-            <span class="num" aria-hidden="true">
-              0{i + 1}
-            </span>
-            <span>{s.step}</span>
-          </p>
+        <li class={i === 0 ? 'from' : 'to'}>
+          <p class="step">{s.step}</p>
           <h3>{s.title}</h3>
           <p class="text">{s.text}</p>
         </li>
@@ -32,69 +28,91 @@ const { copy } = Astro.props;
 
 <style>
   .statement {
-    padding: var(--space-section) var(--space-margin) calc(var(--space-section) * 1.1);
+    padding: clamp(88px, 10vw, 152px) var(--space-margin) clamp(96px, 11vw, 168px);
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
-    row-gap: clamp(64px, 8.5vw, 128px);
+    align-items: start;
   }
   h2 {
-    grid-column: 1 / span 10;
-    font-size: var(--text-display-l);
-    line-height: 1.02;
-    letter-spacing: -0.028em;
-  }
-  h2:lang(el) {
+    grid-column: 1 / span 7;
+    font-size: var(--text-display-m);
     line-height: 1.08;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
   }
-  .pair {
-    grid-column: 5 / span 8;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-gap);
+
+  /* The steps: a hairline spine with a point at each step. */
+  .steps {
+    grid-column: 9 / span 4;
+    position: relative;
+    padding-top: 0.35em;
   }
-  .pair li {
-    padding-top: 20px;
+  .steps li {
+    position: relative;
+    padding-left: 30px;
+  }
+  .steps li + li {
+    margin-top: 44px;
+  }
+  .steps li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.42em;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    box-sizing: border-box;
+  }
+  .from::before {
+    border: 1px solid var(--color-slate);
+    background: var(--color-paper);
+  }
+  .to::before {
+    background: var(--color-techpi-blue);
+  }
+  /* The spine runs from the first point to the second. */
+  .from::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: calc(0.42em + 13px);
+    bottom: -40px;
+    width: 1px;
+    background: var(--color-ink);
+    opacity: 0.35;
   }
   .step {
-    display: flex;
-    gap: 14px;
-    align-items: baseline;
-    font-size: var(--text-label);
-    font-weight: var(--weight-ui);
-    letter-spacing: 0.04em;
+    font-size: var(--text-small);
     color: var(--ter);
   }
-  .step .num {
+  .to .step {
     color: var(--color-techpi-blue);
   }
   h3 {
-    margin-top: 40px;
+    margin-top: 6px;
     font-size: var(--text-heading);
     line-height: 1.15;
     letter-spacing: -0.012em;
   }
   .text {
-    margin-top: 14px;
+    margin-top: 10px;
     color: var(--sec-c);
-    max-width: 38ch;
-  }
-
-  /* Scroll scene (html.sc): the sentence arrives on the page's own tempo; the two steps trail behind it, so the
-     section reads as one movement rather than two blocks. */
-  :global(.sc) h2 {
-    translate: 0 calc((1 - var(--in, 1)) * 10vh);
-  }
-  :global(.sc) .pair {
-    translate: 0 calc((1 - var(--in, 1)) * 22vh);
+    font-size: var(--text-small);
+    line-height: 1.5;
+    max-width: 36ch;
   }
 
   @media (max-width: 1023px) {
-    h2 {
-      grid-column: 1 / -1;
+    .statement {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
     }
-    .pair {
-      grid-column: 3 / -1;
+    h2 {
+      grid-column: 1 / span 5;
+    }
+    .steps {
+      grid-column: 6 / span 3;
     }
   }
 
@@ -102,16 +120,8 @@ const { copy } = Astro.props;
     .statement {
       display: block;
     }
-    h2 {
-      line-height: 1.08;
-    }
-    .pair {
-      margin-top: 64px;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 40px;
-    }
-    h3 {
-      margin-top: 22px;
+    .steps {
+      margin-top: 48px;
     }
   }
 </style>

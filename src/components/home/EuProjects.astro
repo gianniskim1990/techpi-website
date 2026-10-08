@@ -12,131 +12,100 @@ const { locale } = Astro.props;
 const copy = euCopy[locale];
 ---
 
-{/* EU-funded projects, as a market TechPi serves: a service statement, not a portfolio. One large sentence, the
-    supporting line, and what can be built as a single typographic run, not a grid of cards. One quiet way on. No EU
-    flag, no stars, no blue and yellow: the identity stays TechPi's. */}
-<section class="eu s-paper" id="eu-projects" aria-labelledby="eu-h" data-scene>
-  <div class="top rule" data-reveal="fade">
-    <p class="meta-label">{copy.home.label}</p>
+{/* EU-funded projects: one specialist market, set as the last entry of the capabilities index rather than a
+    chapter of its own. A heavier TechPi Blue rule marks it out; the row is a little larger than the four above it.
+    Concise on purpose: the full offer lives on /eu-projects. No flag, no stars, no blue and yellow. */}
+<section class="eu s-paper" id="eu-projects" aria-labelledby="eu-h">
+  <div class="row">
+    <div class="id">
+      <p class="label">{copy.home.label}</p>
+      <h2 id="eu-h"><Unbroken text={copy.home.heading} /></h2>
+    </div>
+    <div class="body">
+      <p class="text">{copy.home.text}</p>
+      <a class="tlink" href={pathFor('euProjects', locale)}>{copy.home.cta}</a>
+    </div>
+    <ul class="items">
+      {copy.home.items.map((item) => <li>{item}</li>)}
+    </ul>
   </div>
-  <h2 id="eu-h" data-reveal="mask"><Unbroken text={copy.home.heading} /></h2>
-  <p class="text" data-reveal="fade" style="--delay:120ms">{copy.home.text}</p>
-  <ul class="run" data-reveal="fade" style="--delay:200ms">
-    {copy.home.items.map((item) => <li>{item}</li>)}
-  </ul>
-  {/* Last in reading order; on desktop it sits at the right end of the top line. */}
-  <p class="more" data-reveal="fade">
-    <a class="tlink" href={pathFor('euProjects', locale)}>
-      {copy.home.cta}<span class="arr" aria-hidden="true">→</span>
-    </a>
-  </p>
 </section>
 
 <style>
   .eu {
-    padding: var(--space-block) var(--space-margin) var(--space-section);
+    padding: 0 var(--space-margin) clamp(104px, 11vw, 168px);
+  }
+  .row {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
+    align-items: start;
+    padding-top: clamp(28px, 3vw, 40px);
+    border-top: 2px solid var(--color-techpi-blue);
   }
-  .top {
-    grid-column: 1 / -1;
-    grid-row: 1;
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 24px;
-    padding-top: 20px;
+  .id {
+    grid-column: 1 / span 6;
   }
-  .more {
-    grid-column: 1 / -1;
-    grid-row: 1;
-    justify-self: end;
-    align-self: start;
-    padding-top: 17px;
+  .label {
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    color: var(--color-techpi-blue);
   }
   h2 {
-    grid-column: 1 / span 9;
-    margin-top: clamp(48px, 6vw, 96px);
-    font-size: var(--text-display-l);
-    line-height: 1.02;
-    letter-spacing: -0.028em;
+    margin-top: 14px;
+    font-size: var(--text-display-m);
+    line-height: 1.04;
+    letter-spacing: -0.024em;
   }
-  h2:lang(el) {
-    line-height: 1.08;
+  .body {
+    grid-column: 7 / span 3;
+    padding-top: 0.2em;
   }
   .text {
-    grid-column: 5 / span 6;
-    margin-top: clamp(32px, 3.4vw, 48px);
-    font-size: var(--text-lead);
-    line-height: 1.42;
     color: var(--sec-c);
   }
-
-  /* What can be built, as one run of text in the content column: each item a phrase, with a small hairline circle
-     between items (the site's shape, at the size of punctuation). The circle sits in the gap before an item; an
-     item that starts a line pushes its circle past the left edge, where the list clips it. */
-  .run {
-    grid-column: 5 / span 8;
-    margin-top: clamp(40px, 4.5vw, 64px);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 46px;
-    overflow: hidden;
-    font-size: var(--text-heading);
-    line-height: 1.25;
-    letter-spacing: -0.012em;
+  .tlink {
+    display: inline-block;
+    margin-top: 22px;
   }
-  .run li {
-    position: relative;
-  }
-  .run li::before {
-    content: '';
-    position: absolute;
-    left: -28px;
-    top: 0.48em;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    border: 1px solid var(--color-slate);
-  }
-
-  /* Scroll scene: the sentence arrives on the page's tempo; the run trails a little. */
-  :global(.sc) h2 {
-    translate: 0 calc((1 - var(--in, 1)) * 8vh);
-  }
-  :global(.sc) .run {
-    translate: 0 calc((1 - var(--in, 1)) * 18vh);
+  .items {
+    grid-column: 10 / span 3;
+    padding-top: 0.2em;
+    font-size: var(--text-small);
+    line-height: 1.55;
+    color: var(--ter);
   }
 
   @media (max-width: 1023px) {
-    .eu {
+    .row {
       grid-template-columns: repeat(8, minmax(0, 1fr));
+      row-gap: 28px;
     }
-    h2 {
+    .id {
       grid-column: 1 / -1;
     }
-    .text,
-    .run {
-      grid-column: 2 / -1;
+    .body {
+      grid-column: 1 / span 5;
+    }
+    .items {
+      grid-column: 6 / span 3;
     }
   }
+
   @media (max-width: 760px) {
-    .eu {
-      display: block;
+    .row {
+      display: flex;
+      flex-direction: column;
+      row-gap: 0;
     }
-    .more {
-      margin-top: 40px;
-      padding-top: 0;
+    .body {
+      margin-top: 18px;
     }
-    .run {
-      font-size: 1.1875rem;
-      gap: 6px 32px;
+    .items {
+      margin-top: 18px;
     }
-    .run li::before {
-      left: -20px;
-      width: 7px;
-      height: 7px;
+    .body .tlink {
+      margin-top: 20px;
     }
   }
 </style>
