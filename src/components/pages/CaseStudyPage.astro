@@ -10,7 +10,9 @@ import { pagesCopy } from '../../content/copy';
 import type { Locale } from '../../i18n/locales';
 import { locales } from '../../i18n/locales';
 import { nextCaseStudy, type Project, type ProjectImage } from '../../content/projects';
-import { caseStudyPath, pathFor } from '../../i18n/routes';
+import { caseStudyPath, homePathFor, pathFor } from '../../i18n/routes';
+import { getDictionary } from '../../i18n';
+import { caseStudyMeta } from '../../content/seo';
 
 interface Props {
   project: Project;
@@ -31,6 +33,14 @@ const imageSizes = '(min-width: 1440px) 1312px, (min-width: 761px) 92vw, 100vw';
 const hasTechnology = Boolean(study.technology && study.technology.length > 0);
 const hasOutcome = Boolean(study.outcome && study.outcome.length > 0);
 const comp = compositions[project.slug];
+const t = getDictionary(locale);
+const meta = caseStudyMeta(project);
+// Home, Work, this case study: the real hierarchy of the URL and of the page's own "Work" link. Visible labels only.
+const trail = [
+  { name: t.pages.home.heading, path: homePathFor(locale) },
+  { name: t.nav.work, path: pathFor('work', locale) },
+  { name: project.name, path: paths[locale] },
+];
 ---
 
 {/* The reusable case-study template: a product story, told editorially. Every block except the head, cover,
@@ -40,8 +50,9 @@ const comp = compositions[project.slug];
   locale={locale}
   page="work"
   paths={paths}
-  title={`${project.name} | TechPi`}
-  description={project.summary}
+  title={meta.title}
+  description={meta.description}
+  trail={trail}
   bleed
 >
   <section class="head s-paper">

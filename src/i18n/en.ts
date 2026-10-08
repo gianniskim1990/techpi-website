@@ -29,14 +29,14 @@ export const en = {
     en: { short: 'EN', name: 'English' },
     el: { short: 'ΕΛ', name: 'Ελληνικά' },
   },
-  /** Browser titles and the placeholder heading of each route shell. */
+  /** The short name of each page (accessible names, breadcrumbs). Titles and descriptions: src/content/seo.ts. */
   pages: {
-    home: { title: 'TechPi | Digital Products & Technology', heading: 'Home' },
-    work: { title: 'Work | TechPi', heading: 'Work' },
-    capabilities: { title: 'Capabilities | TechPi', heading: 'Capabilities' },
-    euProjects: { title: 'EU Projects | TechPi', heading: 'EU Projects' },
-    about: { title: 'About | TechPi', heading: 'About' },
-    contact: { title: 'Contact | TechPi', heading: 'Contact' },
+    home: { heading: 'Home' },
+    work: { heading: 'Work' },
+    capabilities: { heading: 'Capabilities' },
+    euProjects: { heading: 'EU Projects' },
+    about: { heading: 'About' },
+    contact: { heading: 'Contact' },
   },
   notFound: {
     title: 'Page not found | TechPi',

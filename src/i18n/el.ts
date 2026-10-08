@@ -31,12 +31,12 @@ export const el: Dictionary = {
     el: { short: 'ΕΛ', name: 'Ελληνικά' },
   },
   pages: {
-    home: { title: 'TechPi | Ψηφιακά προϊόντα & τεχνολογία', heading: 'Αρχική' },
-    work: { title: 'Έργα | TechPi', heading: 'Έργα' },
-    capabilities: { title: 'Δυνατότητες | TechPi', heading: 'Δυνατότητες' },
-    euProjects: { title: 'Ευρωπαϊκά έργα | TechPi', heading: 'Ευρωπαϊκά έργα' },
-    about: { title: 'Εταιρεία | TechPi', heading: 'Εταιρεία' },
-    contact: { title: 'Επικοινωνία | TechPi', heading: 'Επικοινωνία' },
+    home: { heading: 'Αρχική' },
+    work: { heading: 'Έργα' },
+    capabilities: { heading: 'Δυνατότητες' },
+    euProjects: { heading: 'Ευρωπαϊκά έργα' },
+    about: { heading: 'Εταιρεία' },
+    contact: { heading: 'Επικοινωνία' },
   },
   notFound: {
     title: 'Η σελίδα δεν βρέθηκε | TechPi',

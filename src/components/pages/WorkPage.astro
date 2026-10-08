@@ -5,6 +5,7 @@ import PageIntro from '../../components/secondary/PageIntro.astro';
 import ProjectRow from '../../components/secondary/ProjectRow.astro';
 import { pagesCopy } from '../../content/copy';
 import { projectsIn } from '../../content/projects';
+import { pageMeta } from '../../content/seo';
 import { getDictionary } from '../../i18n';
 import type { Locale } from '../../i18n/locales';
 import { pathFor } from '../../i18n/routes';
@@ -17,9 +18,10 @@ const { locale } = Astro.props;
 const t = getDictionary(locale);
 const pages = pagesCopy[locale];
 const copy = pages.work;
+const meta = pageMeta[locale].work;
 ---
 
-<BaseLayout locale={locale} page="work" title={t.pages.work.title} description={copy.lead} bleed>
+<BaseLayout locale={locale} page="work" title={meta.title} description={meta.description} pageType="CollectionPage" bleed>
   <PageIntro heading={t.pages.work.heading} lead={copy.lead} variant="word" />
   {/* The Work page is a catalogue, not a second homepage: every project on one index, read across, on Paper.
       The homepage composes the three case studies; here they are lines among the others, each with a small crop. */}

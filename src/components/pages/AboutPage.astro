@@ -4,7 +4,7 @@ import ClosingCTA from '../../components/secondary/ClosingCTA.astro';
 import PageIntro from '../../components/secondary/PageIntro.astro';
 import SectionSplit from '../../components/secondary/SectionSplit.astro';
 import { pagesCopy } from '../../content/copy';
-import { getDictionary } from '../../i18n';
+import { pageMeta } from '../../content/seo';
 import type { Locale } from '../../i18n/locales';
 import { pathFor } from '../../i18n/routes';
 
@@ -13,16 +13,16 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const t = getDictionary(locale);
 const pages = pagesCopy[locale];
 const copy = pages.about;
+const meta = pageMeta[locale].about;
 ---
 
 {/* Concise and forward-looking. Evolution statement, what stayed and what changed, and four principles.
     No founder story, timeline, team, years, client counts, countries or statistics: none is confirmed.
     The hairline arc that sat in the page head was removed in the final design pass: the arc now belongs to the
     homepage sequence only, where it resolves into the symbol. */}
-<BaseLayout locale={locale} page="about" title={t.pages.about.title} description={copy.lead} bleed>
+<BaseLayout locale={locale} page="about" title={meta.title} description={meta.description} pageType="AboutPage" bleed>
   <PageIntro heading={copy.heading} lead={copy.lead} />
 
   <SectionSplit id="evolution" heading={copy.changeHeading}>

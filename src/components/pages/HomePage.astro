@@ -11,21 +11,19 @@ import SelectedWork from '../home/SelectedWork.astro';
 import { capabilitiesIn } from '../../content/capabilities';
 import { homeCopy } from '../../content/copy';
 import { featuredIn } from '../../content/projects';
-import { getDictionary } from '../../i18n';
+import { pageMeta } from '../../content/seo';
 import type { Locale } from '../../i18n/locales';
 
 interface Props {
   locale: Locale;
-  /** Written copy only. The English homepage has none yet. */
-  description?: string;
 }
 
-const { locale, description } = Astro.props;
-const t = getDictionary(locale);
+const { locale } = Astro.props;
+const meta = pageMeta[locale].home;
 const copy = homeCopy[locale];
 ---
 
-<BaseLayout locale={locale} page="home" title={t.pages.home.title} description={description} bleed>
+<BaseLayout locale={locale} page="home" title={meta.title} description={meta.description} bleed>
   <Hero copy={copy.hero} locale={locale} />
   <BrandStatement copy={copy.statement} />
   <SelectedWork copy={copy.work} projects={featuredIn(locale)} locale={locale} />

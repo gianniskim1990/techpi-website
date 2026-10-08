@@ -6,7 +6,8 @@ import SectionSplit from '../../components/secondary/SectionSplit.astro';
 import { capabilitiesIn } from '../../content/capabilities';
 import { caseStudiesWith } from '../../content/projects';
 import { pagesCopy } from '../../content/copy';
-import { getDictionary } from '../../i18n';
+import { pageMeta } from '../../content/seo';
+import { service } from '../../seo/schema';
 import type { Locale } from '../../i18n/locales';
 import { caseStudyPath, pathFor } from '../../i18n/routes';
 
@@ -15,15 +16,18 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const t = getDictionary(locale);
 const pages = pagesCopy[locale];
 const copy = pages.capabilities;
 const capabilities = capabilitiesIn(locale);
+const meta = pageMeta[locale].capabilities;
+// One Service node per capability, with the name and summary shown on the page.
+const url = new URL(pathFor('capabilities', locale), Astro.site).href;
+const services = capabilities.map((c) => service(url, { id: c.id, name: c.name, description: c.summary, locale }));
 ---
 
 {/* The homepage capability index, opened up. No "How they combine" table (deferred). "Seen in" lists only
     published case studies that show the capability, so Intelligence has none for now. */}
-<BaseLayout locale={locale} page="capabilities" title={t.pages.capabilities.title} description={copy.lead} bleed>
+<BaseLayout locale={locale} page="capabilities" title={meta.title} description={meta.description} schema={services} bleed>
   <PageIntro heading={copy.heading} lead={copy.lead} />
   <nav class="anchors" aria-label={copy.indexLabel}>
     <ol>
