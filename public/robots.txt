@@ -1,0 +1,7 @@
+# TechPi. Crawling is allowed so search engines can read each page's robots meta tag.
+# Until launch every page says noindex, nofollow: allowing the crawl is what makes that work.
+# Rules for AI and training crawlers are an open owner decision (docs/production/seo.md).
+User-agent: *
+Allow: /
+
+Sitemap: https://techpi.eu/sitemap.xml
