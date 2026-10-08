@@ -15,11 +15,11 @@ const { heading, text, cta, href } = Astro.props;
     together (the homepage contact chapter, the EU partners band). Compact, a size below the homepage question. No
     circle and no symbol: the identity resolves once, on the homepage. The Ink footer follows. */}
 <section class="closer s-blue" aria-label={heading}>
-  <div class="q">
+  <div class="q" data-reveal="fade">
     <p class="question"><Unbroken text={heading} /></p>
     {text && <p class="support">{text}</p>}
   </div>
-  <p class="act"><a class="btn" href={href}>{cta}</a></p>
+  <p class="act"><a class="btn" href={href}>{cta}<span class="arr" aria-hidden="true">→</span></a></p>
 </section>
 
 <style>

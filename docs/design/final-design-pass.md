@@ -227,3 +227,20 @@ horizontal overflow, no console errors, one h1 per page, mobile menu opens and c
 The hero map's end label now moves above its circle when it would run off a narrow window. `npm run check` and
 `npm run build` clean; static audit unchanged apart from the EU meta descriptions; wrangler route matrix identical
 in status and redirects.
+
+## 10. Scroll and hover restored (2026-10-08, at the owner's request)
+
+The owner asked for the scroll and hover effects of the earlier passes back, on top of the art-directed layouts.
+Native scroll throughout; everything follows the scroll position and settles at rest; reduced motion shows the
+resting state.
+
+- **Scroll:** the curved horizon entrance on Selected work, Intelligence, the contact band, the EU lifecycle band and
+  the case-study "whole picture" band; the Selected work heading set far larger than the page and sliding across as
+  the section passes; each project capture uncovered from the left and settling from a slight zoom, with a laid-over
+  screen travelling faster than the one beneath it; the statement's spine drawing from problem to technology; the
+  Intelligence hold restored; the contact hold back to 60svh; heading masks and block fades on every page; the EU
+  blue rule drawing in; the case-study cover uncovered on load.
+- **Hover:** a cyan circle with the case-study label follows the pointer over a project capture, which leans in;
+  capability and Work index rows fill with an Ink band from the left and turn to Paper; the text-link underline
+  redraws; buttons fill with a growing circle and their arrow leans forward (arrows only on buttons); the hero map's
+  connect sequence; next-project crop leans in.

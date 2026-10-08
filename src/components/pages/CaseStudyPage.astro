@@ -112,7 +112,7 @@ const comp = compositions[project.slug];
   </SectionSplit>
 
   {/* The whole picture: the full capture, and beside it the project's other real screens at a smaller scale. */}
-  <section class="whole s-ink" aria-label={project.name}>
+  <section class="whole s-ink horizon" aria-label={project.name} data-scene>
     <figure class="whole-main">
       <ProjectMedia image={study.cover} sizes="(min-width: 1024px) 64vw, 100vw" class="shot" />
     </figure>
@@ -360,9 +360,28 @@ const comp = compositions[project.slug];
   .next-name {
     transition: color var(--duration-fast) var(--ease-state);
   }
+  .next-media :global(img) {
+    transition: scale 1100ms var(--ease-reveal);
+  }
   @media (hover: hover) {
     .next:hover .next-name {
       color: var(--color-cyan);
+    }
+    .next:hover .next-media :global(img) {
+      scale: 1.06;
+    }
+  }
+  /* The cover is uncovered from the left on first paint, after the heading. */
+  :global(.mo) .cover > :global(.crop),
+  :global(.mo) .cover > :global(.pm) {
+    animation: cover-in 1300ms var(--ease-reveal) 350ms both;
+  }
+  @keyframes cover-in {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
     }
   }
 

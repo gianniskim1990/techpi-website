@@ -49,7 +49,7 @@ const { copy, locale } = Astro.props;
         }
       </p>
       <p class="act">
-        <a class="btn" href={pathFor('contact', locale)}>{copy.start}</a>
+        <a class="btn" href={pathFor('contact', locale)}>{copy.start}<span class="arr" aria-hidden="true">→</span></a>
         <a class="tlink" href="#work">{copy.work}</a>
       </p>
     </div>

@@ -16,10 +16,10 @@ const copy = euCopy[locale];
     chapter of its own. A heavier TechPi Blue rule marks it out; the row is a little larger than the four above it.
     Concise on purpose: the full offer lives on /eu-projects. No flag, no stars, no blue and yellow. */}
 <section class="eu s-paper" id="eu-projects" aria-labelledby="eu-h">
-  <div class="row">
+  <div class="row" data-reveal="fade">
     <div class="id">
       <p class="label">{copy.home.label}</p>
-      <h2 id="eu-h"><Unbroken text={copy.home.heading} /></h2>
+      <h2 id="eu-h" data-reveal="mask"><Unbroken text={copy.home.heading} /></h2>
     </div>
     <div class="body">
       <p class="text">{copy.home.text}</p>
@@ -42,6 +42,25 @@ const copy = euCopy[locale];
     align-items: start;
     padding-top: clamp(28px, 3vw, 40px);
     border-top: 2px solid var(--color-techpi-blue);
+    border-top-color: transparent;
+  }
+  /* The blue rule draws in from the left when the row arrives. */
+  .row::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -2px;
+    height: 2px;
+    background: var(--color-techpi-blue);
+    transform-origin: 0 50%;
+    transition: transform 1100ms var(--ease-reveal) 150ms;
+  }
+  :global(.mo) .row:not(:global(.in))::after {
+    transform: scaleX(0);
+  }
+  .row {
+    position: relative;
   }
   .id {
     grid-column: 1 / span 6;

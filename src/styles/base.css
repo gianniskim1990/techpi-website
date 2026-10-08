@@ -143,28 +143,70 @@ main:focus {
   --focus: var(--color-sheet);
 }
 
-/* Text link: medium weight and a hairline underline. On hover the line takes the surface's link colour and
-   doubles in weight: a plain, immediate answer, no flourish. */
+/* Text link: medium weight, a hairline underline drawn as a background, so it can move. On hover the line runs
+   out to the right and draws itself back in from the left, the way the site's hairlines arrive. */
 .tlink {
   font-weight: var(--weight-ui);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.28em;
-  transition:
-    color var(--duration-fast) var(--ease-state),
-    text-decoration-color var(--duration-fast) var(--ease-state);
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 1px;
+  padding-bottom: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: color var(--duration-fast) var(--ease-state);
 }
 .tlink:hover {
   color: var(--link);
-  text-decoration-thickness: 2px;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .tlink:hover {
+    animation: line-redraw 760ms var(--ease-reveal);
+  }
+}
+@keyframes line-redraw {
+  0% {
+    background-size: 100% 1px;
+    background-position: 100% 100%;
+  }
+  45% {
+    background-size: 0% 1px;
+    background-position: 100% 100%;
+  }
+  46% {
+    background-size: 0% 1px;
+    background-position: 0 100%;
+  }
+  100% {
+    background-size: 100% 1px;
+    background-position: 0 100%;
+  }
 }
 .s-blue .tlink:hover {
-  color: var(--color-sheet);
+  background-size: 100% 2px;
 }
 
-/* The one button style. Pill, TechPi Blue on Paper, Paper on Ink, Sheet on Blue. On hover it simply takes the
-   surface's other colour. */
+/* The arrow inside a button: the only arrow on the site. It leans forward on hover. */
+.arr {
+  display: inline-block;
+  margin-left: 0.32em;
+  transition: transform 420ms var(--ease-reveal);
+}
+@media (hover: hover) {
+  a:hover > .arr,
+  a:hover .tlink > .arr,
+  .btn:hover .arr {
+    transform: translateX(5px);
+  }
+}
+
+/* The one button style. Pill, TechPi Blue on Paper, Paper on Ink, Sheet on Blue.
+   On hover a circle grows from the centre and fills the pill: the site's one shape, at the scale of a control. */
 .btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -173,17 +215,34 @@ main:focus {
   border-radius: 999px;
   background: var(--color-techpi-blue);
   color: var(--color-sheet);
+  --fill: var(--color-ink);
+  --fill-text: var(--color-paper);
   font-size: 1rem;
   font-weight: var(--weight-ui);
   text-decoration: none;
   white-space: nowrap;
-  transition:
-    background-color 220ms var(--ease-state),
-    color 220ms var(--ease-state);
+  transition: color 300ms var(--ease-state);
 }
-.btn:hover {
-  background: var(--color-ink);
-  color: var(--color-paper);
+.btn::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 50%;
+  width: 115%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--fill);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 560ms var(--ease-reveal);
+}
+@media (hover: hover) {
+  .btn:hover {
+    color: var(--fill-text);
+  }
+  .btn:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 .btn:focus-visible {
   border-radius: 999px;
@@ -191,18 +250,15 @@ main:focus {
 .s-ink .btn {
   background: var(--color-paper);
   color: var(--color-ink);
-}
-.s-ink .btn:hover {
-  background: var(--color-cyan);
-  color: var(--color-ink);
+  /* Cyan is interaction on Ink. */
+  --fill: var(--color-cyan);
+  --fill-text: var(--color-ink);
 }
 .s-blue .btn {
   background: var(--color-sheet);
   color: var(--color-techpi-blue);
-}
-.s-blue .btn:hover {
-  background: var(--color-ink);
-  color: var(--color-sheet);
+  --fill: var(--color-ink);
+  --fill-text: var(--color-sheet);
 }
 
 /* While a modal dialog (the mobile menu) is open, the page behind it does not scroll. */
@@ -277,16 +333,30 @@ html:has(dialog[open]) {
 /* ------------------------------------------------------------------------------------------------------------
  * Reveal system.
  *
- * Content is visible by default and almost everything stays still. One reveal remains: a secondary page's h1 is
- * uncovered from below on first paint (data-reveal="mask"). Pages may define their own one-off reveals (the EU
- * lifecycle line). The hidden starting state applies only under `html.mo`, which an inline script sets when
- * scripting runs and the reader has not asked for reduced motion; if the motion module never confirms itself the
- * script removes `mo` again, so a failed script cannot hide anything.
+ * Content is visible by default. The hidden starting states below apply only under `html.mo`, which an inline
+ * script sets when scripting runs and the reader has not asked for reduced motion. If the motion module never
+ * confirms itself (`mo-ready`), the inline script removes `mo` again, so a failed script cannot hide anything.
+ * The motion module adds `.in` once, when an element first enters the viewport. Nothing replays.
+ *
+ *   data-reveal="fade"   a block: a short rise and fade
+ *   data-reveal="lines"  a statement authored as .ln > span lines: each line rises out of its own mask
+ *   data-reveal="mask"   a statement as one block: uncovered from below by a clip
+ *   data-reveal="image"  project imagery: a circular uncover from the top right (the direction of the arc)
+ *   .rule                the hairline draws in from the left when its element (or an ancestor) reveals
  * ------------------------------------------------------------------------------------------------------------ */
 
 .mo [data-reveal] {
   transition-timing-function: var(--ease-reveal);
   transition-duration: var(--duration-reveal);
+  transition-delay: var(--delay, 0ms);
+}
+
+.mo [data-reveal='fade'] {
+  transition-property: opacity, transform;
+}
+.mo [data-reveal='fade']:not(.in) {
+  opacity: 0;
+  transform: translateY(18px);
 }
 
 .mo [data-reveal='mask'] {
@@ -298,11 +368,87 @@ html:has(dialog[open]) {
   transform: translateY(0.3em);
 }
 
+/* Lines. The mask leaves room above and below for Greek accents and descenders. */
+.mo [data-reveal='lines'] .ln {
+  display: block;
+  overflow: clip;
+  padding: 0.12em 0 0.16em;
+  margin: -0.12em 0 -0.16em;
+}
+.mo [data-reveal='lines'] .ln > span {
+  display: block;
+  transition: transform var(--duration-reveal) var(--ease-reveal);
+  transition-delay: calc(var(--delay, 0ms) + var(--i, 0) * var(--stagger));
+}
+.mo [data-reveal='lines']:not(.in) .ln > span {
+  transform: translateY(110%);
+}
+
+.mo [data-reveal='image'] {
+  transition-property: clip-path, opacity;
+  transition-duration: var(--duration-slow);
+  clip-path: circle(150% at 100% 0%);
+}
+.mo [data-reveal='image'] img {
+  transition: transform var(--duration-slow) var(--ease-reveal);
+  transition-delay: var(--delay, 0ms);
+}
+.mo [data-reveal='image']:not(.in) {
+  clip-path: circle(0% at 100% 0%);
+}
+.mo [data-reveal='image']:not(.in) img {
+  transform: scale(1.06);
+}
+
+.mo .rule::before,
+.mo [data-reveal] .rule::before {
+  transition: transform var(--duration-slow) var(--ease-reveal);
+  transition-delay: var(--delay, 0ms);
+}
+.mo .rule[data-reveal]:not(.in)::before,
+.mo [data-reveal]:not(.in) .rule::before {
+  transform: scaleX(0);
+}
+
+/* Below 1024px the image uncover becomes a plain fade: calmer, and cheaper on phones. */
+@media (max-width: 1023px) {
+  .mo [data-reveal='image'] {
+    clip-path: none;
+    transition-property: opacity;
+  }
+  .mo [data-reveal='image']:not(.in) {
+    clip-path: none;
+    opacity: 0;
+  }
+  .mo [data-reveal='image']:not(.in) img {
+    transform: none;
+  }
+}
+
 @media print {
   .mo [data-reveal]:not(.in),
   .mo [data-reveal]:not(.in) * {
     opacity: 1 !important;
     transform: none !important;
     clip-path: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------------------------------------------------
+ * The horizon: how an Ink section takes over from Paper on the homepage.
+ *
+ * The section's own top edge is the arc of a circle far wider than the screen, peaking to the right, where the hero
+ * arc lives. At rest (desktop) the edge is a shallow curve. With scroll scenes (`html.sc`, src/scripts/motion.ts),
+ * the edge starts low and strongly curved as the section enters, then rises more slowly than the page and
+ * flattens: the arc becomes a surface. Below 1024px surfaces change at a straight edge.
+ * ------------------------------------------------------------------------------------------------------------ */
+@media (min-width: 1024px) {
+  .horizon {
+    clip-path: circle(400vw at 68vw 400vw);
+  }
+  .sc .horizon {
+    --e: clamp(0, var(--in, 1) / 0.85, 1);
+    --r: calc(120vw + var(--e) * 280vw);
+    clip-path: circle(var(--r) at 68vw calc(var(--r) + (1 - var(--e)) * 36vh));
   }
 }

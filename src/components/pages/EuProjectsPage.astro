@@ -36,9 +36,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   {/* 01 More than a project website */}
   <section class="sec s-paper" aria-labelledby="infra-h">
-    <h2 id="infra-h" class="h-l"><span>{c.infra.heading}</span></h2>
-    <p class="lead-p">{c.infra.text}</p>
-    <div class="support">
+    <h2 id="infra-h" class="h-l" data-reveal="mask"><span>{c.infra.heading}</span></h2>
+    <p class="lead-p" data-reveal="fade">{c.infra.text}</p>
+    <div class="support" data-reveal="fade">
       <p class="meta-label">{c.infra.supportLabel}</p>
       <ul class="cols">{c.infra.support.map((s) => <li>{s}</li>)}</ul>
       <p class="audience">{c.infra.audience}</p>
@@ -46,8 +46,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
   </section>
 
   {/* The lifecycle: one Ink band, a hairline that draws through six stages and closes on a circle. */}
-  <section class="cycle-band s-ink" aria-labelledby="cycle-h">
-    <h2 id="cycle-h" class="h-l">{c.lifecycle.heading}</h2>
+  <section class="cycle-band s-ink horizon" aria-labelledby="cycle-h" data-scene>
+    <h2 id="cycle-h" class="h-l" data-reveal="mask">{c.lifecycle.heading}</h2>
     <ol class="cycle" data-reveal="cycle">
       {
         c.lifecycle.stages.map((s, i) => (
@@ -64,10 +64,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   {/* 02 EU project websites */}
   <section class="sec s-paper" aria-labelledby="web-h">
-    <h2 id="web-h" class="h-l">{c.websites.heading}</h2>
-    <p class="lead-p">{c.websites.intro}</p>
+    <h2 id="web-h" class="h-l" data-reveal="mask">{c.websites.heading}</h2>
+    <p class="lead-p" data-reveal="fade">{c.websites.intro}</p>
 
-    <div class="structure">
+    <div class="structure" data-reveal="fade">
       <div class="structure-txt">
         <h3 class="h-m">{c.websites.structureHeading}</h3>
         <p>{c.websites.structureText}</p>
@@ -81,7 +81,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       </div>
     </div>
 
-    <div class="groups">
+    <div class="groups" data-reveal="fade">
       {
         c.websites.groups.map((g) => (
           <div class="group">
@@ -99,9 +99,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   {/* 03 Digital platforms */}
   <section class="sec s-paper beside" aria-labelledby="plat-h">
-    <h2 id="plat-h" class="h-m">{c.platforms.heading}</h2>
-    <p class="lead-p">{c.platforms.text}</p>
-    <ul class="grid4">
+    <h2 id="plat-h" class="h-m" data-reveal="mask">{c.platforms.heading}</h2>
+    <p class="lead-p" data-reveal="fade">{c.platforms.text}</p>
+    <ul class="grid4" data-reveal="fade">
       {
         c.platforms.items.map((p) => (
           <li>
@@ -111,7 +111,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         ))
       }
     </ul>
-    <div class="principles">
+    <div class="principles" data-reveal="fade">
       <p class="meta-label">{c.platforms.principlesLabel}</p>
       <ol>
         {
@@ -129,13 +129,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
   {/* 04 For communication and dissemination partners: the one TechPi Blue band. B2B. */}
   <section class="partners s-blue" aria-labelledby="part-h">
     <p class="meta-label">{c.partners.label}</p>
-    <h2 id="part-h" class="h-l">{c.partners.heading}</h2>
-    <p class="lead-p">{c.partners.text}</p>
-    <div class="who">
+    <h2 id="part-h" class="h-l" data-reveal="mask">{c.partners.heading}</h2>
+    <p class="lead-p" data-reveal="fade">{c.partners.text}</p>
+    <div class="who" data-reveal="fade">
       <h3 class="sub">{c.partners.whoLabel}</h3>
       <ul class="ruled">{c.partners.who.map((w) => <li>{w}</li>)}</ul>
     </div>
-    <div class="offer">
+    <div class="offer" data-reveal="fade">
       <h3 class="sub">{c.partners.offerLabel}</h3>
       <dl>
         {
@@ -148,13 +148,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
         }
       </dl>
     </div>
-    <p class="partners-cta"><a class="btn" href={contact}>{c.partners.cta}</a></p>
+    <p class="partners-cta"><a class="btn" href={contact}>{c.partners.cta}<span class="arr" aria-hidden="true">→</span></a></p>
   </section>
 
   {/* 05 Programmes: restrained. Named only as the kinds of projects the approach is built for. */}
   <section class="sec s-paper compact" aria-labelledby="prog-h">
-    <h2 id="prog-h" class="h-m">{c.programmes.heading}</h2>
-    <div class="prog">
+    <h2 id="prog-h" class="h-m" data-reveal="mask">{c.programmes.heading}</h2>
+    <div class="prog" data-reveal="fade">
       <p>{c.programmes.text}</p>
       <ul class="ruled prog-list">{c.programmes.list.map((p) => <li>{p}</li>)}</ul>
       <p class="also">{c.programmes.also}</p>
@@ -164,8 +164,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   {/* 06 Technical priorities */}
   <section class="sec s-paper" aria-labelledby="prio-h">
-    <h2 id="prio-h" class="h-m">{c.priorities.heading}</h2>
-    <dl class="grid3">
+    <h2 id="prio-h" class="h-m" data-reveal="mask">{c.priorities.heading}</h2>
+    <dl class="grid3" data-reveal="fade">
       {
         c.priorities.items.map((p) => (
           <div>
@@ -179,9 +179,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   {/* 07 Process: numbered rows, the sequence drawn as a line down the numbers. */}
   <section class="sec s-paper beside" aria-labelledby="proc-h">
-    <h2 id="proc-h" class="h-m">{c.process.heading}</h2>
-    <p class="lead-p">{c.process.intro}</p>
-    <ol class="steps">
+    <h2 id="proc-h" class="h-m" data-reveal="mask">{c.process.heading}</h2>
+    <p class="lead-p" data-reveal="fade">{c.process.intro}</p>
+    <ol class="steps" data-reveal="fade">
       {
         c.process.steps.map((s, i) => (
           <li>
@@ -196,7 +196,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   {/* 08 Before and after delivery */}
   <section class="sec s-paper pairs-sec" aria-label={`${c.before.heading} / ${c.after.heading}`}>
-    <div class="pair">
+    <div class="pair" data-reveal="fade">
       <div>
         <h2 class="h-m">{c.before.heading}</h2>
         <p class="pair-text">{c.before.text}</p>

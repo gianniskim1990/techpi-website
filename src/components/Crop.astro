@@ -26,7 +26,7 @@ const { image, alt = image.alt, crop = full, small = crop, vw = [60, 100], loadi
 const W = image.src.width;
 const H = image.src.height;
 const ar = (r: Rect) => ((W * r.w) / (H * r.h)).toFixed(4);
-const vars = (r: Rect, p: string) => `--${p}x:${r.x};--${p}y:${r.y};--${p}w:${r.w};--${p}ar:${ar(r)}`;
+const vars = (r: Rect, p: string) => `--${p}x:${r.x};--${p}y:${r.y};--${p}w:${r.w};--${p}h:${r.h};--${p}ar:${ar(r)}`;
 // The image is shown 1/w times wider than its frame.
 const zoomed = `(max-width: 760px) ${Math.round(vw[1] / small.w)}vw, ${Math.round(vw[0] / crop.w)}vw`;
 ---
@@ -40,6 +40,7 @@ const zoomed = `(max-width: 760px) ${Math.round(vw[1] / small.w)}vw, ${Math.roun
     --cx: var(--x);
     --cy: var(--y);
     --cw: var(--w);
+    --ch: var(--h);
     position: relative;
     overflow: hidden;
     aspect-ratio: var(--ar);
@@ -53,12 +54,15 @@ const zoomed = `(max-width: 760px) ${Math.round(vw[1] / small.w)}vw, ${Math.roun
     max-width: none;
     height: auto;
     translate: calc(-100% * var(--cx)) calc(-100% * var(--cy));
+    /* Any zoom (hover, scroll) scales around the centre of the visible part, not of the whole capture. */
+    transform-origin: calc((var(--cx) + var(--cw) / 2) * 100%) calc((var(--cy) + var(--ch) / 2) * 100%);
   }
   @media (max-width: 760px) {
     .crop {
       --cx: var(--sx);
       --cy: var(--sy);
       --cw: var(--sw);
+      --ch: var(--sh);
       aspect-ratio: var(--sar);
     }
   }

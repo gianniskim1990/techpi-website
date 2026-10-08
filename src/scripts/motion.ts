@@ -267,8 +267,48 @@ function initHeroMap() {
   window.addEventListener('resize', request);
 }
 
+/**
+ * The case-study cursor of Selected work: over a capture that links to a case study, a small circle with the link's
+ * label follows the pointer. Pointer devices with motion allowed only; the capture stays an ordinary link, and the
+ * text link beside it remains the accessible way in. Reads only pointer coordinates, never layout.
+ */
+function initCursor() {
+  const section = document.querySelector<HTMLElement>('.work');
+  const cursor = section?.querySelector<HTMLElement>('.cursor');
+  if (!section || !cursor) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches || !motionAllowed()) return;
+  let x = 0;
+  let y = 0;
+  let queued = false;
+  const move = (e: PointerEvent) => {
+    x = e.clientX;
+    y = e.clientY;
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      cursor.style.setProperty('--px', `${x}px`);
+      cursor.style.setProperty('--py', `${y}px`);
+    });
+  };
+  section.querySelectorAll<HTMLElement>('.frame[href]').forEach((frame) => {
+    frame.addEventListener('pointerenter', (e) => {
+      move(e);
+      section.classList.add('cursor-on');
+    });
+    frame.addEventListener('pointermove', (e) => {
+      move(e);
+      section.classList.add('cursor-on');
+    });
+    frame.addEventListener('pointerleave', () => section.classList.remove('cursor-on'));
+  });
+  // Scrolling under a still pointer: hide rather than leave the circle stranded.
+  window.addEventListener('scroll', () => section.classList.remove('cursor-on'), { passive: true });
+}
+
 initHeroMap();
 initReveals();
+initCursor();
 initHeader();
 initScenes();
 root.classList.add('mo-ready');

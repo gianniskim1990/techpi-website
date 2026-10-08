@@ -11,12 +11,12 @@ const { copy } = Astro.props;
 {/* The brand statement: the quiet beat after the loud hero. The sentence is set a size down and keeps the left;
     beside it, the order of work is drawn in the hero map's own notation: a hollow point (the problem) joined by a
     hairline to a filled TechPi Blue point (the technology). Two steps, one direction. */}
-<section class="statement s-paper" aria-labelledby="statement-h">
-  <h2 id="statement-h">{copy.heading}</h2>
+<section class="statement s-paper" aria-labelledby="statement-h" data-scene>
+  <h2 id="statement-h" data-reveal="mask">{copy.heading}</h2>
   <ol class="steps">
     {
       copy.steps.map((s, i) => (
-        <li class={i === 0 ? 'from' : 'to'}>
+        <li class={i === 0 ? 'from' : 'to'} data-reveal="fade" style={`--delay:${200 + i * 160}ms`}>
           <p class="step">{s.step}</p>
           <h3>{s.title}</h3>
           <p class="text">{s.text}</p>
@@ -102,6 +102,20 @@ const { copy } = Astro.props;
     font-size: var(--text-small);
     line-height: 1.5;
     max-width: 36ch;
+  }
+
+  /* Scroll scene (html.sc): the spine draws from the problem down to the technology as the section rises, and the
+     blue point lights when the line arrives. The sentence trails a little behind the page. */
+  :global(.sc) .from::after {
+    transform-origin: 50% 0;
+    transform: scaleY(clamp(0, (var(--in, 1) - 0.35) / 0.35, 1));
+  }
+  :global(.sc) .to::before {
+    scale: calc(0.4 + 0.6 * clamp(0, (var(--in, 1) - 0.66) / 0.08, 1));
+    opacity: clamp(0.25, (var(--in, 1) - 0.62) / 0.1, 1);
+  }
+  :global(.sc) h2 {
+    translate: 0 calc((1 - var(--in, 1)) * 10vh);
   }
 
   @media (max-width: 1023px) {

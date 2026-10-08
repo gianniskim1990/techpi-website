@@ -17,13 +17,13 @@ const capabilitiesPath = pathFor('capabilities', locale);
 {/* Capabilities as an index: the densest moment of the page, after the Ink chapter of work. One row per
     capability, read across: the name, what it is, what it covers. Hairlines here are table rules, because this is a
     table. No numbers (it is not a sequence), no icons, no cards. Each row leads to its section on the Capabilities
-    page; on hover the name takes TechPi Blue. */}
+    page; on hover an Ink band wipes in behind the row. */}
 <section class="caps s-paper" id="capabilities" aria-labelledby="caps-h">
-  <h2 id="caps-h">{copy.heading}</h2>
+  <h2 id="caps-h" data-reveal="mask">{copy.heading}</h2>
   <ul class="index">
     {
-      items.map((c) => (
-        <li>
+      items.map((c, i) => (
+        <li data-reveal="fade" style={`--delay:${i * 90}ms`}>
           <h3>
             <a class="cap-link" href={`${capabilitiesPath}#${c.id}`}>
               {c.name}
@@ -82,9 +82,46 @@ const capabilitiesPath = pathFor('capabilities', locale);
   .cap-link:focus-visible {
     outline-offset: 6px;
   }
+  /* Hover (pointer devices): an Ink band wipes in behind the row from the left, edge to edge, and the row turns
+     to Paper; the name steps forward. The index becomes a lit line of a table. */
+  .index > li::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: -1px;
+    bottom: 0;
+    left: calc(-1 * var(--space-margin));
+    right: calc(-1 * var(--space-margin));
+    background: var(--color-ink);
+    transform: scaleX(0);
+    transform-origin: 100% 50%;
+    transition: transform 620ms var(--ease-reveal);
+  }
+  .index {
+    position: relative;
+    isolation: isolate;
+  }
+  h3,
+  .text,
+  .terms {
+    transition:
+      color 300ms var(--ease-state),
+      translate 620ms var(--ease-reveal);
+  }
   @media (hover: hover) {
-    .index > li:hover .cap-link {
-      color: var(--color-techpi-blue);
+    .index > li:hover::before {
+      transform: scaleX(1);
+      transform-origin: 0 50%;
+    }
+    .index > li:hover h3 {
+      color: var(--color-paper);
+      translate: 14px 0;
+    }
+    .index > li:hover .text {
+      color: var(--color-paper);
+    }
+    .index > li:hover .terms {
+      color: var(--color-cyan);
     }
   }
   .text {

@@ -18,15 +18,22 @@ const facts = (p: Project) => p.capabilities.map((id) => capabilityName(id, loca
 const fallback: Composition = { layout: 'bleed', main: { caption: { en: '', el: '' } } };
 ---
 
-{/* Selected work: the Ink chapter. Each project is composed from its own real captures, cropped to the part worth
-    looking at, so the three read as three projects rather than one template: a layered interface (Rocketeer), a
-    capture running off the page with a detail beside it (Arman's), a full-width strip (Logotherapia). No sticky
-    stacking, no hover zoom: the page simply scrolls through them. */}
-<section class="work s-ink" id="work" aria-labelledby="work-h">
-  <div class="work-head">
-    <h2 id="work-h">{copy.heading}</h2>
+{/* Selected work: the Ink chapter, arriving behind the curved horizon. Each project is composed from its own real
+    captures, cropped to the part worth looking at, so the three read as three projects rather than one template: a
+    layered interface (Rocketeer), a capture running off the page with a detail beside it (Arman's), a full-width
+    strip (Logotherapia).
+
+    Scroll (html.sc, follows the scroll position, never intercepts it): the heading, set far larger than the page,
+    slides across as the section passes; each capture is uncovered from the left and settles from a slight zoom; a
+    laid-over screen travels faster than the one beneath it.
+    Hover (pointer devices): a circle with the case-study label follows the pointer over a capture, and the capture
+    leans in. */}
+<section class="work s-ink horizon" id="work" aria-labelledby="work-h">
+  <div class="work-head" data-scene>
+    <h2 id="work-h"><span>{copy.heading}</span></h2>
     <a class="tlink all" href={pathFor('work', locale)}>{copy.all}</a>
   </div>
+  <span class="cursor" aria-hidden="true"><span>{copy.caseLink}</span></span>
   {
     projects.map((p) => {
       const c = compositions[p.slug] ?? fallback;
@@ -34,13 +41,13 @@ const fallback: Composition = { layout: 'bleed', main: { caption: { en: '', el: 
       const detailImage = c.detail ? p.caseStudy?.gallery?.[c.detail.index] : undefined;
       const mainCaption = c.main.caption[locale];
       return (
-        <article class={`case case-${c.layout}`} id={`case-${p.slug}`} aria-labelledby={`case-${p.slug}-h`}>
+        <article class={`case case-${c.layout}`} id={`case-${p.slug}`} aria-labelledby={`case-${p.slug}-h`} data-scene="case">
           <div class="txt">
-            <div class="id">
+            <div class="id" data-reveal="fade">
               <p class="meta-label">{p.category}</p>
               <h3 id={`case-${p.slug}-h`}>{p.name}</h3>
             </div>
-            <div class="info">
+            <div class="info" data-reveal="fade" style="--delay:140ms">
               <p class="sum">{p.summary}</p>
               <dl class="facts">
                 <dt>{copy.factsLabel}</dt>
@@ -77,21 +84,78 @@ const fallback: Composition = { layout: 'bleed', main: { caption: { en: '', el: 
 
 <style>
   .work {
+    position: relative;
+    overflow: clip;
     padding: clamp(96px, 10vw, 152px) var(--space-margin) clamp(104px, 11vw, 168px);
   }
+  /* The heading: one oversized line that runs off the right edge of the page. */
   .work-head {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 24px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(20px, 2vw, 32px);
   }
   h2 {
-    font-size: var(--text-display-m);
-    line-height: 1;
-    letter-spacing: -0.024em;
+    font-size: clamp(4.5rem, 15vw, 15rem);
+    line-height: 0.86;
+    letter-spacing: -0.045em;
+    white-space: nowrap;
+    margin-left: -0.05em;
+  }
+  h2:lang(el) {
+    font-size: clamp(3.75rem, 10.6vw, 10.6rem);
+    line-height: 0.92;
+  }
+  h2 > span {
+    display: inline-block;
   }
   .all {
+    align-self: flex-end;
     white-space: nowrap;
+  }
+
+  /* ---------- The case-study cursor (pointer devices, motion allowed) ---------- */
+  .cursor {
+    position: fixed;
+    z-index: 20;
+    left: 0;
+    top: 0;
+    width: 112px;
+    height: 112px;
+    margin: -56px 0 0 -56px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    background: var(--color-cyan);
+    color: var(--color-ink);
+    font-size: 0.8125rem;
+    font-weight: var(--weight-ui);
+    line-height: 1.2;
+    text-align: center;
+    pointer-events: none;
+    translate: var(--px, -200px) var(--py, -200px);
+    scale: 0;
+    transition: scale 420ms var(--ease-reveal);
+  }
+  .work:global(.cursor-on) .cursor {
+    scale: 1;
+  }
+  @media (hover: none), (prefers-reduced-motion: reduce) {
+    .cursor {
+      display: none;
+    }
+  }
+  .work:global(.cursor-on) .frame[href] {
+    cursor: none;
+  }
+  .frame :global(img) {
+    transition: scale 1100ms var(--ease-reveal);
+  }
+  @media (hover: hover) {
+    .frame[href]:hover :global(img) {
+      scale: 1.045;
+    }
   }
 
   /* ---------- One project ---------- */
@@ -258,6 +322,33 @@ const fallback: Composition = { layout: 'bleed', main: { caption: { en: '', el: 
     margin-top: 14px;
   }
 
+  /* ---------- Scroll scenes (html.sc) ---------- */
+  :global(.sc) .work {
+    /* Room for the horizon to sweep across empty Ink before the heading. */
+    padding-top: 30vh;
+  }
+  :global(.sc) h2 > span {
+    translate: calc((1 - var(--in, 1)) * 30vw - var(--out, 0) * 24vw) 0;
+  }
+  /* Each capture is uncovered from the left as its project rises, and settles from a slight zoom. */
+  :global(.sc) .case {
+    --u: clamp(0, (var(--in, 1) - 0.12) / 0.5, 1);
+  }
+  :global(.sc) .main .frame {
+    clip-path: inset(0 calc((1 - var(--u)) * 100%) 0 0);
+  }
+  :global(.sc) .main .frame :global(.crop) {
+    scale: calc(1.08 - 0.08 * var(--u));
+    transform-origin: 0 50%;
+  }
+  /* The laid-over screen travels faster than the one beneath it. */
+  :global(.sc) .case-layered .detail {
+    translate: 0 calc(clamp(64px, 9vw, 136px) + (1 - var(--in, 1)) * 28vh);
+  }
+  :global(.sc) .case-bleed .detail {
+    translate: 0 calc((1 - var(--in, 1)) * 18vh);
+  }
+
   /* ---------- Tablet ---------- */
   @media (max-width: 1023px) {
     .case {
@@ -313,6 +404,15 @@ const fallback: Composition = { layout: 'bleed', main: { caption: { en: '', el: 
   @media (max-width: 760px) {
     .work {
       padding-top: 88px;
+    }
+    h2,
+    h2:lang(el) {
+      white-space: normal;
+      font-size: 17vw;
+      line-height: 0.9;
+    }
+    h2:lang(el) {
+      font-size: 14.5vw;
     }
     .work-head {
       flex-direction: column;

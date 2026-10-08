@@ -20,7 +20,7 @@ const { heading, lead, roomBelow = false, variant = 'default' } = Astro.props;
   <h1 data-reveal="mask"><Unbroken text={heading} /></h1>
   {
     lead && (
-      <div class="lead-row">
+      <div class="lead-row" data-reveal="fade" style="--delay:160ms">
         <p class="lead">{lead}</p>
         <div class="after"><slot name="after" /></div>
       </div>
@@ -67,6 +67,8 @@ const { heading, lead, roomBelow = false, variant = 'default' } = Astro.props;
     line-height: 0.8;
     letter-spacing: -0.05em;
     margin-left: -0.04em;
+    /* Room for descenders (the ρ and γ of Έργα): the head clips its overflow. */
+    padding-bottom: 0.2em;
   }
   .v-word h1:lang(el) {
     font-size: calc(clamp(4.5rem, 19vw, 17rem) * 0.82);
