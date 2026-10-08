@@ -3,41 +3,75 @@ interface Props {
   /** Anchor id of the section. The heading id is derived from it. */
   id: string;
   heading: string;
+  /** A small index shown before the heading (01, 02…), where the page is a numbered sequence. */
+  index?: string;
 }
 
-const { id, heading } = Astro.props;
+const { id, heading, index } = Astro.props;
 ---
 
-{/* A heading column and a content column, from the homepage Capabilities pattern. The heading is not sticky. */}
-<section class="split s-paper" id={id} aria-labelledby={`${id}-h`}>
-  <div class="head"><h2 id={`${id}-h`}>{heading}</h2></div>
+{/* A heading column and a content column, from the homepage Capabilities pattern. On desktop the heading holds its
+    place while a long body passes. The hairline above draws in when the section arrives. */}
+<section class="split s-paper rule" id={id} aria-labelledby={`${id}-h`} data-reveal="fade">
+  <div class="head">
+    {index && <span class="num" aria-hidden="true">{index}</span>}
+    <h2 id={`${id}-h`}>{heading}</h2>
+  </div>
   <div class="body"><slot /></div>
 </section>
 
 <style>
   .split {
     margin: var(--space-section) var(--space-margin) 0;
-    padding-top: 34px;
-    border-top: 1px solid var(--line);
+    padding-top: 30px;
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
+    align-items: start;
   }
   .head {
     grid-column: 1 / span 4;
+    position: sticky;
+    top: 104px;
+    padding-right: var(--space-gap);
+  }
+  .num {
+    display: block;
+    margin-bottom: 18px;
+    color: var(--color-techpi-blue);
   }
   h2 {
     font-size: var(--text-display-m);
     line-height: 1.04;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.024em;
   }
   .body {
-    grid-column: 5 / span 8;
+    grid-column: 5 / span 7;
+  }
+
+  @media (max-width: 1023px) {
+    .split {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .head {
+      grid-column: 1 / span 3;
+    }
+    .body {
+      grid-column: 4 / span 5;
+    }
   }
 
   @media (max-width: 760px) {
     .split {
       display: block;
+      padding-top: 24px;
+    }
+    .head {
+      position: static;
+      padding-right: 0;
+    }
+    .num {
+      margin-bottom: 12px;
     }
     .body {
       margin-top: 24px;

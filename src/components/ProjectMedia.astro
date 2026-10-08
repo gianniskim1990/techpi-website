@@ -1,0 +1,86 @@
+---
+import { Image } from 'astro:assets';
+import type { ProjectImage } from '../content/projects';
+
+/**
+ * A project capture, shown flat: no device frame added, no shadow, no border. The image keeps its proportions.
+ *
+ * Presentation only, never content: on narrow screens a very wide capture (the Rocketeer dashboard, 2.7:1) would
+ * shrink to a strip, so `crop` frames it at 4:3 (16:10 on tablet) and keeps the part named by `focus`, at a size
+ * where the interface reads. Nothing is redrawn or extended.
+ */
+interface Props {
+  image: ProjectImage;
+  /** Empty when the image is decorative beside a heading that already names the project. */
+  alt?: string;
+  sizes: string;
+  widths?: number[];
+  loading?: 'lazy' | 'eager';
+  /** Below 1024px, crop a very wide capture to a readable frame. */
+  crop?: boolean;
+  /**
+   * The part of the capture kept by the crop, as fractions of the image: left edge, top edge and width.
+   * The frame's proportions decide the height.
+   */
+  focus?: { x: number; y: number; w: number };
+  /** Uncover the image when it enters the viewport (the reveal system in base.css). */
+  reveal?: boolean;
+  class?: string;
+}
+
+const {
+  image,
+  alt = image.alt,
+  sizes,
+  widths = [640, 960, 1280, 1920, 2560],
+  loading = 'lazy',
+  crop = false,
+  focus = { x: 0, y: 0, w: 1 },
+  reveal = false,
+  class: className,
+} = Astro.props;
+const ratio = image.src.width / image.src.height;
+// A cropped capture is shown larger than the frame on narrow screens, so ask for a file that stays sharp there.
+const finalSizes = crop ? `(max-width: 1023px) ${Math.round(100 / focus.w)}vw, ${sizes}` : sizes;
+---
+
+<div
+  class:list={['pm', { 'pm-crop': crop }, className]}
+  style={`--ar:${ratio.toFixed(4)};--fx:${focus.x};--fy:${focus.y};--fw:${focus.w}`}
+  data-reveal={reveal ? 'image' : undefined}
+>
+  <Image src={image.src} alt={alt} widths={widths} sizes={finalSizes} format="webp" quality={84} loading={loading} decoding="async" />
+</div>
+
+<style>
+  /* The caller may cap the height with --maxh. The box then narrows to keep the image's proportions, so the
+     uncover and any alignment follow the picture itself, never empty space. */
+  .pm {
+    position: relative;
+    overflow: hidden;
+    width: min(100%, calc(var(--maxh, 100000px) * var(--ar)));
+  }
+  .pm :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: var(--ar);
+  }
+  @media (max-width: 1023px) {
+    .pm-crop {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+    }
+    /* `translate`, not `transform`, so the crop never competes with the reveal's scale. */
+    .pm-crop :global(img) {
+      width: calc(100% / var(--fw));
+      max-width: none;
+      translate: calc(-100% * var(--fx)) calc(-100% * var(--fy));
+    }
+  }
+  @media (max-width: 760px) {
+    .pm-crop {
+      aspect-ratio: 4 / 3;
+    }
+  }
+</style>

@@ -25,6 +25,7 @@ const copy = pages.contact;
   <PageIntro heading={copy.heading} lead={copy.lead} />
   <SectionSplit id="direct" heading={copy.direct}>
     <FactRows
+      variant="large"
       rows={[
         { label: copy.email, value: contactFacts.email, href: `mailto:${contactFacts.email}` },
         { label: copy.phone, value: contactFacts.phoneDisplay, href: `tel:${contactFacts.phoneDial}` },
@@ -37,6 +38,6 @@ const copy = pages.contact;
 
 <style>
   .end {
-    height: var(--space-section);
+    height: calc(var(--space-section) * 1.2);
   }
 </style>

@@ -9,6 +9,13 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Anchors land clear of the header when it returns on scroll up. */
+  scroll-padding-top: 24px;
+}
+
+::selection {
+  background: var(--color-techpi-blue);
+  color: var(--color-sheet);
 }
 
 body {
@@ -142,9 +149,13 @@ main:focus {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 6px;
+  transition:
+    color var(--duration-fast) var(--ease-state),
+    text-underline-offset var(--duration-fast) var(--ease-state);
 }
 .tlink:hover {
   color: var(--link);
+  text-underline-offset: 8px;
 }
 .s-blue .tlink:hover {
   text-decoration-thickness: 2px;
@@ -172,6 +183,13 @@ main:focus {
 .btn:focus-visible {
   border-radius: 999px;
 }
+.s-ink .btn {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+.s-ink .btn:hover {
+  background: #fff;
+}
 .s-blue .btn {
   background: var(--color-sheet);
   color: var(--color-techpi-blue);
@@ -192,4 +210,163 @@ html:has(dialog[open]) {
 }
 .ruled > li:last-child {
   border-bottom: 1px solid var(--line);
+}
+
+/* ------------------------------------------------------------------------------------------------------------
+ * Editorial primitives shared by every page.
+ * ------------------------------------------------------------------------------------------------------------ */
+
+/* The 12-column grid (8 below 1024, a single column on phones). Sections opt in. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--space-gap);
+}
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  .grid {
+    display: block;
+  }
+}
+
+/* Metadata label: the project sector, a counter. Uppercase is used here and almost nowhere else. */
+.meta-label {
+  font-size: var(--text-label);
+  font-weight: var(--weight-ui);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ter, var(--color-slate));
+}
+
+/* Index numerals (01, 02…): tabular, so columns of numbers line up. */
+.num {
+  white-space: nowrap;
+  font-size: var(--text-label);
+  font-weight: var(--weight-ui);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--ter, var(--color-slate));
+}
+
+/* A hairline that can draw itself in from the left (see the reveal system below). */
+.rule {
+  position: relative;
+}
+.rule::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: var(--line, var(--color-rule));
+  transform-origin: 0 50%;
+}
+
+/* ------------------------------------------------------------------------------------------------------------
+ * Reveal system.
+ *
+ * Content is visible by default. The hidden starting states below apply only under `html.mo`, which an inline
+ * script sets when scripting runs and the reader has not asked for reduced motion. If the motion module never
+ * confirms itself (`mo-ready`), the inline script removes `mo` again, so a failed script cannot hide anything.
+ * The motion module adds `.in` once, when an element first enters the viewport. Nothing replays.
+ *
+ *   data-reveal="fade"   a block: a short rise and fade
+ *   data-reveal="lines"  a statement authored as .ln > span lines: each line rises out of its own mask
+ *   data-reveal="mask"   a statement as one block: uncovered from below by a clip
+ *   data-reveal="image"  project imagery: a circular uncover from the top right (the direction of the arc)
+ *   .rule                the hairline draws in from the left when its element (or an ancestor) reveals
+ * ------------------------------------------------------------------------------------------------------------ */
+
+.mo [data-reveal] {
+  transition-timing-function: var(--ease-reveal);
+  transition-duration: var(--duration-reveal);
+  transition-delay: var(--delay, 0ms);
+}
+
+.mo [data-reveal='fade'] {
+  transition-property: opacity, transform;
+}
+.mo [data-reveal='fade']:not(.in) {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.mo [data-reveal='mask'] {
+  transition-property: clip-path, transform;
+  clip-path: inset(-0.3em -0.3em -0.4em -0.3em);
+}
+.mo [data-reveal='mask']:not(.in) {
+  clip-path: inset(-0.3em -0.3em 100% -0.3em);
+  transform: translateY(0.3em);
+}
+
+/* Lines. The mask leaves room above and below for Greek accents and descenders. */
+.mo [data-reveal='lines'] .ln {
+  display: block;
+  overflow: clip;
+  padding: 0.12em 0 0.16em;
+  margin: -0.12em 0 -0.16em;
+}
+.mo [data-reveal='lines'] .ln > span {
+  display: block;
+  transition: transform var(--duration-reveal) var(--ease-reveal);
+  transition-delay: calc(var(--delay, 0ms) + var(--i, 0) * var(--stagger));
+}
+.mo [data-reveal='lines']:not(.in) .ln > span {
+  transform: translateY(110%);
+}
+
+.mo [data-reveal='image'] {
+  transition-property: clip-path, opacity;
+  transition-duration: var(--duration-slow);
+  clip-path: circle(150% at 100% 0%);
+}
+.mo [data-reveal='image'] img {
+  transition: transform var(--duration-slow) var(--ease-reveal);
+  transition-delay: var(--delay, 0ms);
+}
+.mo [data-reveal='image']:not(.in) {
+  clip-path: circle(0% at 100% 0%);
+}
+.mo [data-reveal='image']:not(.in) img {
+  transform: scale(1.06);
+}
+
+.mo .rule::before,
+.mo [data-reveal] .rule::before {
+  transition: transform var(--duration-slow) var(--ease-reveal);
+  transition-delay: var(--delay, 0ms);
+}
+.mo .rule[data-reveal]:not(.in)::before,
+.mo [data-reveal]:not(.in) .rule::before {
+  transform: scaleX(0);
+}
+
+/* Below 1024px the image uncover becomes a plain fade: calmer, and cheaper on phones. */
+@media (max-width: 1023px) {
+  .mo [data-reveal='image'] {
+    clip-path: none;
+    transition-property: opacity;
+  }
+  .mo [data-reveal='image']:not(.in) {
+    clip-path: none;
+    opacity: 0;
+  }
+  .mo [data-reveal='image']:not(.in) img {
+    transform: none;
+  }
+}
+
+@media print {
+  .mo [data-reveal]:not(.in),
+  .mo [data-reveal]:not(.in) * {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
 }

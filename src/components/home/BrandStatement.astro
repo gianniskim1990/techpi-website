@@ -8,13 +8,20 @@ interface Props {
 const { copy } = Astro.props;
 ---
 
+{/* The brand statement: the second beat after the hero. One large sentence, then the order of work in two steps.
+    The steps sit to the right of an empty column, so the sentence keeps the left edge to itself. */}
 <section class="statement s-paper" aria-labelledby="statement-h">
-  <h2 id="statement-h">{copy.heading}</h2>
+  <h2 id="statement-h" data-reveal="mask">{copy.heading}</h2>
   <ol class="pair">
     {
-      copy.steps.map((s) => (
-        <li>
-          <p class="step">{s.step}</p>
+      copy.steps.map((s, i) => (
+        <li class="rule" data-reveal="fade" style={`--delay:${i * 110}ms`}>
+          <p class="step">
+            <span class="num" aria-hidden="true">
+              0{i + 1}
+            </span>
+            <span>{s.step}</span>
+          </p>
           <h3>{s.title}</h3>
           <p class="text">{s.text}</p>
         </li>
@@ -25,42 +32,61 @@ const { copy } = Astro.props;
 
 <style>
   .statement {
-    padding: var(--space-section) var(--space-margin);
+    padding: var(--space-section) var(--space-margin) calc(var(--space-section) * 1.1);
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
-    row-gap: clamp(56px, 8vw, 112px);
+    row-gap: clamp(64px, 8.5vw, 128px);
   }
   h2 {
     grid-column: 1 / span 10;
     font-size: var(--text-display-l);
     line-height: 1.02;
+    letter-spacing: -0.028em;
+  }
+  h2:lang(el) {
+    line-height: 1.08;
   }
   .pair {
-    grid-column: 6 / span 7;
+    grid-column: 5 / span 8;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-gap);
   }
   .pair li {
-    border-top: 1px solid var(--line);
-    padding-top: 18px;
+    padding-top: 20px;
   }
   .step {
-    font-size: 0.875rem;
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+    font-size: var(--text-label);
     font-weight: var(--weight-ui);
+    letter-spacing: 0.04em;
     color: var(--ter);
   }
+  .step .num {
+    color: var(--color-techpi-blue);
+  }
   h3 {
-    margin-top: 28px;
-    font-size: clamp(1.375rem, 2vw, 1.75rem);
+    margin-top: 40px;
+    font-size: var(--text-heading);
     line-height: 1.15;
     letter-spacing: -0.012em;
   }
   .text {
-    margin-top: 12px;
+    margin-top: 14px;
     color: var(--sec-c);
     max-width: 38ch;
+  }
+
+  @media (max-width: 1023px) {
+    h2 {
+      grid-column: 1 / -1;
+    }
+    .pair {
+      grid-column: 3 / -1;
+    }
   }
 
   @media (max-width: 760px) {
@@ -71,12 +97,12 @@ const { copy } = Astro.props;
       line-height: 1.08;
     }
     .pair {
-      margin-top: 56px;
+      margin-top: 64px;
       grid-template-columns: minmax(0, 1fr);
-      gap: 36px;
+      gap: 40px;
     }
     h3 {
-      margin-top: 18px;
+      margin-top: 22px;
     }
   }
 </style>

@@ -24,9 +24,6 @@ const items = navPages;
      Up to 900px wide the links move into a full-screen native <dialog> opened by the Menu button. Without
      JavaScript the button never appears and the Menu link to the footer navigation stays, so the links are
      always reachable. */}
-<script is:inline>
-  document.documentElement.classList.add('js');
-</script>
 <header class="site-header">
   <a class="site-name" href={homePathFor(locale)} aria-label={`TechPi, ${t.pages.home.heading}`}>{t.site.name}</a>
   <nav class="site-nav" aria-label={t.nav.label}>
@@ -59,8 +56,8 @@ const items = navPages;
   <nav aria-label={t.nav.label}>
     <ul class="menu-items">
       {
-        items.map((key) => (
-          <li>
+        items.map((key, i) => (
+          <li style={`--n:${i}`}>
             <a href={pathFor(key, locale)} aria-current={page === key ? 'page' : undefined}>
               {t.nav[key]}
             </a>
@@ -95,15 +92,51 @@ const items = navPages;
 <style>
   .site-header {
     position: absolute;
-    z-index: 10;
+    z-index: 50;
     top: 0;
     left: 0;
     right: 0;
     display: flex;
     align-items: center;
     gap: 44px;
-    padding: 20px var(--space-margin);
+    padding: 18px var(--space-margin);
     font-size: var(--text-small);
+    color: var(--color-ink);
+    --focus: var(--color-techpi-blue);
+  }
+  /* With scripting the header is fixed. It is transparent over the top of the page, leaves when the reader
+     scrolls down and returns as a compact Paper bar when they scroll up (src/scripts/motion.ts). */
+  :global(.hdr) .site-header {
+    position: fixed;
+    transition:
+      transform var(--duration-base) var(--ease-state),
+      background-color var(--duration-base) var(--ease-state),
+      padding var(--duration-base) var(--ease-state);
+  }
+  :global(.hdr) .site-header::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--color-rule);
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-state);
+  }
+  :global(.hdr) .site-header.is-away {
+    background: var(--color-paper);
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  :global(.hdr) .site-header.is-away::after {
+    opacity: 1;
+  }
+  :global(.hdr) .site-header.is-hidden {
+    transform: translateY(-100%);
+  }
+  :global(.hdr) .site-header.is-hidden:focus-within {
+    transform: none;
   }
   .site-name {
     font-size: 1rem;
@@ -121,14 +154,27 @@ const items = navPages;
     font-weight: var(--weight-ui);
   }
   .site-nav a {
+    position: relative;
     display: inline-block;
     padding: 12px 0;
     text-decoration: none;
   }
-  .site-nav a:hover,
-  .site-nav a[aria-current='page'] {
-    text-decoration: underline;
-    text-underline-offset: 6px;
+  /* A hairline that grows under the hovered item, and rests under the current page. */
+  .site-nav a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 6px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 240ms var(--ease-reveal);
+  }
+  .site-nav a:hover::after,
+  .site-nav a[aria-current='page']::after {
+    transform: scaleX(1);
   }
   .util {
     display: flex;
@@ -140,7 +186,7 @@ const items = navPages;
     gap: 32px;
   }
   .site-nav ul:lang(el) {
-    gap: 22px;
+    gap: 24px;
   }
   .util:lang(el) {
     gap: 16px;
@@ -165,6 +211,10 @@ const items = navPages;
       padding: 10px var(--space-margin);
       gap: 16px;
     }
+    :global(.hdr) .site-header.is-away {
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
     .site-nav {
       display: none;
     }
@@ -184,7 +234,7 @@ const items = navPages;
     }
   }
 
-  /* The full-screen menu. Paper surface, no animation. */
+  /* The full-screen menu. Paper surface. Large, calm type in sentence case. */
   .menu-dialog {
     position: fixed;
     inset: 0;
@@ -197,6 +247,10 @@ const items = navPages;
     border: 0;
     overflow-y: auto;
   }
+  .menu-dialog[open] {
+    display: flex;
+    flex-direction: column;
+  }
   .menu-top {
     display: flex;
     align-items: center;
@@ -206,29 +260,57 @@ const items = navPages;
     display: inline-block;
   }
   .menu-items {
-    margin-top: 56px;
+    margin-top: 48px;
+    counter-reset: menu;
   }
   .menu-items li {
     border-top: 1px solid var(--line);
+    counter-increment: menu;
   }
   .menu-items li:last-child {
     border-bottom: 1px solid var(--line);
   }
   .menu-items a {
-    display: block;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
     padding: 18px 0;
     font-size: var(--text-display-m);
     line-height: 1.1;
     letter-spacing: -0.02em;
     text-decoration: none;
   }
+  .menu-items a::before {
+    content: '0' counter(menu);
+    content: '0' counter(menu) / '';
+    min-width: 2.2em;
+    font-size: var(--text-label);
+    font-weight: var(--weight-ui);
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-slate);
+  }
   .menu-items a[aria-current='page'] {
     text-decoration: underline;
+    text-decoration-thickness: 1px;
     text-underline-offset: 8px;
   }
   .menu-lang {
-    margin-top: 32px;
+    margin-top: auto;
+    padding-top: 32px;
     /* Optically aligns the first language link with the left text edge. */
     margin-left: -6px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .menu-dialog[open] .menu-items li {
+      animation: menu-in 520ms var(--ease-reveal) both;
+      animation-delay: calc(var(--n, 0) * 50ms);
+    }
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
   }
 </style>

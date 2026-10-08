@@ -21,37 +21,43 @@ const items = navPages;
      Address, legal entity and the Privacy and Cookies links are added when the facts and the routes exist
      (docs/production/launch-blockers.md). No link points at a page that does not exist. */}
 <footer class="site-footer s-ink" id="footer" tabindex="-1">
-  <div class="brand">
-    <span class="name">{t.site.name}</span>
-    {t.footer.note && <p>{t.footer.note}</p>}
+  <div class="top">
+    <div class="brand">
+      <span class="name">{t.site.name}</span>
+      {t.footer.note && <p>{t.footer.note}</p>}
+    </div>
+    <nav aria-label={t.footer.label}>
+      <ul>
+        {
+          items.map((key) => (
+            <li>
+              <a href={pathFor(key, locale)}>{t.nav[key]}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="lang">
+      <LanguageSwitch locale={locale} page={page} hrefs={languageHrefs} />
+    </div>
   </div>
-  <nav aria-label={t.footer.label}>
-    <ul>
-      {
-        items.map((key) => (
-          <li>
-            <a href={pathFor(key, locale)}>{t.nav[key]}</a>
-          </li>
-        ))
-      }
-    </ul>
-  </nav>
-  <div class="lang">
-    <LanguageSwitch locale={locale} page={page} hrefs={languageHrefs} />
-  </div>
+  <p class="base">{t.site.descriptor}</p>
 </footer>
 
 <style>
   .site-footer {
-    padding: 56px var(--space-margin) 40px;
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    column-gap: var(--space-gap);
-    row-gap: 40px;
+    padding: 0 var(--space-margin);
     font-size: var(--text-small);
   }
   .site-footer:focus {
     outline: none;
+  }
+  .top {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    row-gap: 40px;
+    padding: 72px 0 80px;
   }
   .brand {
     grid-column: 1 / span 4;
@@ -63,22 +69,36 @@ const items = navPages;
     font-weight: var(--weight-name);
     letter-spacing: 0.09em;
     font-size: 1rem;
-    margin-bottom: 6px;
+    margin-bottom: 10px;
   }
   nav {
-    grid-column: 5 / span 4;
+    grid-column: 7 / span 3;
   }
   nav a {
+    position: relative;
     display: inline-block;
     padding: 6px 0;
     text-decoration: none;
   }
-  nav a:hover {
-    text-decoration: underline;
-    text-underline-offset: 6px;
+  nav a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 4px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 240ms var(--ease-reveal);
+  }
+  nav a:hover::after {
+    transform: scaleX(1);
   }
   .lang {
-    grid-column: 9 / span 4;
+    grid-column: 10 / span 3;
+    justify-self: end;
+    margin-top: -12px;
   }
   /* The language switch is shared with the header. On Ink its colours are lifted to stay readable. */
   .lang :global(.language-switch a) {
@@ -87,14 +107,27 @@ const items = navPages;
   .lang :global(.language-switch a[aria-current='true']) {
     color: var(--color-paper);
   }
+  .base {
+    padding: 22px 0 30px;
+    border-top: 1px solid var(--line);
+    color: var(--sec-c);
+    font-size: var(--text-label);
+    font-weight: var(--weight-ui);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
 
   @media (max-width: 760px) {
-    .site-footer {
+    .top {
       display: block;
-      padding-top: 44px;
+      padding: 48px 0 40px;
     }
-    .site-footer > * + * {
+    .top > * + * {
       margin-top: 28px;
+    }
+    .lang {
+      margin-top: 20px;
+      margin-left: -6px;
     }
   }
 </style>

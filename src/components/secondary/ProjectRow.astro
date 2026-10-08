@@ -1,146 +1,109 @@
 ---
-import { Image } from 'astro:assets';
 import { capabilityName } from '../../content/capabilities';
 import type { Project } from '../../content/projects';
 import type { Locale } from '../../i18n/locales';
 import { caseStudyPath } from '../../i18n/routes';
+import ProjectMedia from '../ProjectMedia.astro';
+import { narrowCrops } from '../projectCrops';
 import FactRows from './FactRows.astro';
 
 interface Props {
   project: Project;
   locale: Locale;
-  /** 1, 2 or 3: picks one of the three neutral tints for the media field. */
-  tone: number;
+  /** The position in the list, from 1. */
+  index: number;
   capabilitiesLabel: string;
   linkLabel: string;
 }
 
-const { project, locale, tone, capabilitiesLabel, linkLabel } = Astro.props;
+const { project, locale, index, capabilitiesLabel, linkLabel } = Astro.props;
 const capabilities = project.capabilities.map((id) => capabilityName(id, locale)).join(', ');
 // A row links to its case study only when that page exists. Index-only projects stay plain.
 const href = project.caseStudy ? caseStudyPath(project.slug, locale) : undefined;
-const placeholderWord = project.name.split(' ')[0];
+const num = String(index).padStart(2, '0');
+const focusOf = narrowCrops;
 ---
 
-{/* One large editorial row on Ink. Real project imagery where it exists, flat on a neutral field and never
-    cropped. Without an image, a neutral placeholder. The media is decorative for assistive technology: the row's
-    heading and link carry the meaning. */}
-<article class="row">
-  {
-    href ? (
-      <a class={`media tone-${tone}`} href={href} tabindex="-1" aria-hidden="true">
-        {project.image && (
-          <Image
-            src={project.image.src}
-            alt=""
-            widths={[640, 960, 1280]}
-            sizes="(min-width: 1024px) 60vw, 100vw"
-            format="webp"
-            quality={82}
-          />
-        )}
+{/* Two forms in one family. A project with real imagery is a large editorial row: the capture flat on Ink, the
+    text beside it. A project without imagery is an index line, typographic only: no placeholder picture. The
+    media is decorative for assistive technology: the heading and the link carry the meaning. */}
+{
+  project.image ? (
+    <article class="row feature rule" data-reveal="fade">
+      <p class="top">
+        <span class="num">{num}</span>
+        <span class="meta-label">{project.category}</span>
+      </p>
+      <a class="media" href={href} tabindex="-1" aria-hidden="true">
+        <ProjectMedia
+          image={project.image}
+          alt=""
+          sizes="(min-width: 1024px) 62vw, 100vw"
+          crop={project.slug in focusOf}
+          focus={focusOf[project.slug]}
+          reveal
+        />
       </a>
-    ) : (
-      <div class={`media tone-${tone}`} aria-hidden="true">
-        {project.image ? (
-          <Image
-            src={project.image.src}
-            alt=""
-            widths={[640, 960, 1280]}
-            sizes="(min-width: 1024px) 60vw, 100vw"
-            format="webp"
-            quality={82}
-          />
-        ) : (
-          <span class="word">{placeholderWord}</span>
+      <div class="text">
+        <h2>{project.name}</h2>
+        <p class="sum">{project.summary}</p>
+        <FactRows rows={[{ label: capabilitiesLabel, value: capabilities }]} />
+        {href && (
+          <a class="tlink" href={href} aria-label={`${linkLabel}: ${project.name}`}>
+            {linkLabel} →
+          </a>
         )}
       </div>
-    )
-  }
-  <div class="text">
-    <p class="cat">{project.category}</p>
-    <h2>{project.name}</h2>
-    <p class="sum">{project.summary}</p>
-    <FactRows rows={[{ label: capabilitiesLabel, value: capabilities }]} />
-    {
-      href && (
-        <a class="tlink" href={href} aria-label={`${linkLabel}: ${project.name}`}>
-          {linkLabel} →
-        </a>
-      )
-    }
-  </div>
-</article>
+    </article>
+  ) : (
+    <article class="row index rule" data-reveal="fade">
+      <span class="num">{num}</span>
+      <h2>{project.name}</h2>
+      <p class="meta-label">{project.category}</p>
+      <p class="sum">{project.summary}</p>
+      <p class="caps">
+        <span class="caps-label">{capabilitiesLabel}</span> {capabilities}
+      </p>
+    </article>
+  )
+}
 
 <style>
-  .row {
+  /* ---------- Feature row ---------- */
+  .feature {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
-    padding: 72px 0;
-    border-top: 1px solid var(--line);
+    padding: 18px 0 clamp(72px, 8vw, 128px);
   }
-  .row:first-child {
-    border-top: 0;
-    padding-top: 32px;
+  .top {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: clamp(28px, 3vw, 48px);
   }
   .media {
     grid-column: 1 / span 8;
-    position: relative;
-    overflow: hidden;
-    aspect-ratio: 16 / 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4%;
+    display: block;
+    align-self: end;
   }
-  .media :global(img) {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
+  .media :global(.pm img) {
+    transition: transform 900ms var(--ease-reveal);
   }
-  .tone-1 {
-    background: #131b36;
-  }
-  .tone-2 {
-    background: #1e1f23;
-  }
-  .tone-3 {
-    background: #14232b;
-  }
-  .word {
-    position: absolute;
-    left: -0.04em;
-    bottom: -0.2em;
-    font-size: clamp(6rem, 18vw, 17rem);
-    line-height: 1;
-    font-weight: var(--weight-name);
-    letter-spacing: -0.04em;
-    white-space: nowrap;
-    color: rgba(240, 238, 233, 0.055);
+  @media (hover: hover) {
+    .media:hover :global(.pm img) {
+      transform: scale(1.015);
+    }
   }
   .text {
     grid-column: 9 / span 4;
-    padding-left: clamp(0px, 2vw, 32px);
-    padding-bottom: 10vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-  .cat {
-    font-size: 0.8125rem;
-    font-weight: var(--weight-ui);
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: var(--ter);
+    align-self: end;
   }
   h2 {
-    margin-top: 14px;
     font-size: var(--text-display-m);
     line-height: 1.04;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.024em;
   }
   .sum {
     margin-top: 18px;
@@ -151,31 +114,102 @@ const placeholderWord = project.name.split(' ')[0];
     margin-top: 26px;
   }
   .text .tlink {
+    display: inline-block;
     margin-top: 28px;
-    align-self: flex-start;
+  }
+
+  /* ---------- Index line ---------- */
+  .index {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    row-gap: 8px;
+    padding: 24px 0 32px;
+    align-items: baseline;
+  }
+  .index:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .index .num {
+    grid-column: 1 / span 1;
+  }
+  .index h2 {
+    grid-column: 2 / span 4;
+    font-size: var(--text-heading);
+    line-height: 1.15;
+    letter-spacing: -0.012em;
+  }
+  .index .meta-label {
+    grid-column: 6 / span 3;
+  }
+  .index .sum {
+    grid-column: 9 / span 4;
+    margin-top: 0;
+    font-size: var(--text-small);
+    line-height: 1.5;
+    color: var(--sec-c);
+  }
+  .index .caps {
+    grid-column: 9 / span 4;
+    font-size: var(--text-small);
+    color: var(--sec-c);
+  }
+  .caps-label {
+    margin-right: 8px;
+    font-weight: var(--weight-ui);
+    color: var(--ter);
   }
 
   @media (max-width: 1023px) {
-    .row {
+    .feature {
       display: block;
-      padding: 0 0 64px;
-      border-top: 0;
+      padding-bottom: 72px;
     }
-    .row:first-child {
-      padding-top: 0;
+    .top {
+      margin-bottom: 20px;
     }
     .media {
-      aspect-ratio: 16 / 10;
+      margin: 0 calc(var(--space-margin) * -1);
+    }
+    .media :global(.pm) {
+      width: 100%;
     }
     .text {
-      padding: 22px var(--space-margin) 0;
+      margin-top: 28px;
+      max-width: 560px;
+    }
+    .index {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .index h2 {
+      grid-column: 2 / span 3;
+    }
+    .index .meta-label {
+      grid-column: 5 / span 4;
+    }
+    .index .sum,
+    .index .caps {
+      grid-column: 5 / span 4;
     }
   }
 
   @media (max-width: 760px) {
-    .media {
-      aspect-ratio: 4 / 3;
-      padding: 5%;
+    .index {
+      display: block;
+      padding: 20px 0 28px;
+    }
+    .index .num {
+      display: block;
+      margin-bottom: 10px;
+    }
+    .index .meta-label {
+      margin-top: 8px;
+    }
+    .index .sum {
+      margin-top: 12px;
+    }
+    .index .caps {
+      margin-top: 6px;
     }
   }
 </style>

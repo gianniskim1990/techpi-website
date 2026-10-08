@@ -21,15 +21,19 @@ const copy = pages.work;
 
 <BaseLayout locale={locale} page="work" title={t.pages.work.title} description={copy.lead} bleed>
   <PageIntro heading={t.pages.work.heading} lead={copy.lead} />
-  {/* All projects as large rows. No count thresholds or filters: scaling is design guidance only for now. */}
+  {/* All projects, in order. Projects with imagery are large editorial rows; the rest are index lines. No filters. */}
   <section class="list s-ink" aria-label={t.pages.work.heading}>
-    {projectsIn(locale).map((p, i) => <ProjectRow
-        project={p}
-        locale={locale}
-        tone={(i % 3) + 1}
-        capabilitiesLabel={pages.capabilities.indexLabel}
-        linkLabel={copy.linkLabel}
-      />)}
+    {
+      projectsIn(locale).map((p, i) => (
+        <ProjectRow
+          project={p}
+          locale={locale}
+          index={i + 1}
+          capabilitiesLabel={pages.capabilities.indexLabel}
+          linkLabel={copy.linkLabel}
+        />
+      ))
+    }
   </section>
   <ClosingCTA heading={pages.closer.heading} cta={pages.closer.cta} href={pathFor('contact', locale)} />
 </BaseLayout>
@@ -37,14 +41,6 @@ const copy = pages.work;
 <style>
   .list {
     margin-top: var(--space-section);
-    padding: 40px var(--space-margin) 64px;
-  }
-
-  @media (max-width: 1023px) {
-    .list {
-      padding-left: 0;
-      padding-right: 0;
-      padding-top: 0;
-    }
+    padding: clamp(40px, 5vw, 80px) var(--space-margin) clamp(48px, 6vw, 96px);
   }
 </style>

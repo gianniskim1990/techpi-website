@@ -9,40 +9,65 @@ interface Props {
 const { heading, lead, roomBelow = false } = Astro.props;
 ---
 
-{/* The page head of every secondary page: one h1 and one lead, offset to the right on desktop. No label, no
-    button, no image. The default slot is for page-specific geometry only (the About arc). */}
+{/* The page head of every secondary page, in the same family as the homepage hero but calmer: one large h1, then
+    a hairline and the lead offset to the right, the way the hero sets its supporting line. No label, no button,
+    no image. The default slot is for page-specific geometry only (the About arc). */}
 <section class:list={['intro', 's-paper', { room: roomBelow }]}>
   <slot />
-  <h1>{heading}</h1>
-  {lead && <p class="lead">{lead}</p>}
+  <h1 data-reveal="mask">{heading}</h1>
+  {
+    lead && (
+      <div class="lead-row rule" data-reveal="fade" style="--delay:140ms">
+        <p class="lead">{lead}</p>
+      </div>
+    )
+  }
 </section>
 
 <style>
   .intro {
     position: relative;
-    overflow: hidden;
-    padding: 200px var(--space-margin) 0;
+    overflow: clip;
+    padding: clamp(152px, 15vw, 216px) var(--space-margin) 0;
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
   }
   h1 {
-    grid-column: 1 / span 9;
-    font-size: var(--text-display-l);
-    line-height: 1.02;
+    position: relative;
+    grid-column: 1 / span 10;
+    font-size: clamp(2.5rem, 6.6vw, 6rem);
+    line-height: 1;
+    letter-spacing: -0.032em;
+  }
+  h1:lang(el) {
+    font-size: calc(clamp(2.5rem, 6.6vw, 6rem) * var(--greek-display));
+    line-height: 1.06;
+  }
+  .lead-row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    margin-top: clamp(48px, 6vw, 88px);
+    padding-top: 22px;
   }
   .lead {
     grid-column: 7 / span 5;
-    margin-top: 40px;
     font-size: var(--text-lead);
     line-height: 1.42;
     color: var(--sec-c);
-    /* Avoids a single word alone on the last line (seen on the mobile Contact lead). Ignored where unsupported. */
+    /* Avoids a single word alone on the last line. Ignored where unsupported. */
     text-wrap: pretty;
   }
 
   .room {
     padding-bottom: 72px;
+  }
+
+  @media (max-width: 1023px) {
+    .lead {
+      grid-column: 5 / span 8;
+    }
   }
 
   @media (max-width: 760px) {
@@ -53,8 +78,10 @@ const { heading, lead, roomBelow = false } = Astro.props;
       display: block;
       padding-top: 128px;
     }
-    .lead {
-      margin-top: 24px;
+    .lead-row {
+      display: block;
+      margin-top: 40px;
+      padding-top: 18px;
     }
   }
 </style>

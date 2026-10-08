@@ -10,17 +10,25 @@ interface Props {
 const { copy, items } = Astro.props;
 ---
 
-{/* Editorial index: a heading column and a ruled list. No cards. The heading may become sticky in 3E. */}
+{/* Capabilities as editorial statements: a number, a name, one sentence, and what it covers as a quiet run of
+    terms. No cards, no icons. On desktop the section heading holds its place while the four statements pass. */}
 <section class="caps s-paper" id="capabilities" aria-labelledby="caps-h">
-  <div class="head"><h2 id="caps-h">{copy.heading}</h2></div>
+  <div class="head">
+    <h2 id="caps-h" data-reveal="mask">{copy.heading}</h2>
+  </div>
   <ol class="list">
     {
-      items.map((c) => (
-        <li>
+      items.map((c, i) => (
+        <li class="rule" data-reveal="fade">
+          <span class="num" aria-hidden="true">
+            0{i + 1}
+          </span>
           <h3>{c.name}</h3>
           <p class="text">{c.summary}</p>
           <ul class="terms">
-            {c.items.map((term) => <li>{term}</li>)}
+            {c.items.map((term) => (
+              <li>{term}</li>
+            ))}
           </ul>
         </li>
       ))
@@ -34,13 +42,17 @@ const { copy, items } = Astro.props;
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
+    align-items: start;
   }
   .head {
     grid-column: 1 / span 4;
+    position: sticky;
+    top: 112px;
   }
   h2 {
     font-size: var(--text-display-l);
     line-height: 1.02;
+    letter-spacing: -0.028em;
   }
   .list {
     grid-column: 5 / span 8;
@@ -49,43 +61,78 @@ const { copy, items } = Astro.props;
     display: grid;
     grid-template-columns: repeat(8, minmax(0, 1fr));
     column-gap: var(--space-gap);
-    row-gap: 18px;
-    padding: 34px 0 44px;
-    border-top: 1px solid var(--line);
+    padding: 30px 0 clamp(48px, 5vw, 72px);
+  }
+  .list > li:last-child {
+    padding-bottom: 0;
+  }
+  .num {
+    grid-column: 1 / span 1;
+    padding-top: 0.9em;
+    color: var(--color-techpi-blue);
   }
   h3 {
-    grid-column: 1 / -1;
+    grid-column: 2 / -1;
     font-size: var(--text-display-m);
     line-height: 1.04;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.024em;
   }
   .text {
-    grid-column: 1 / span 5;
+    grid-column: 2 / span 6;
+    margin-top: 20px;
     color: var(--sec-c);
     font-size: var(--text-lead);
     line-height: 1.42;
-    max-width: 36ch;
+    max-width: 40ch;
   }
+  /* Separators sit in the gap before each term. A term that starts a new line pushes its separator past the
+     left edge, where the list clips it, so no line ever begins with a separator. */
   .terms {
-    grid-column: 6 / span 3;
+    grid-column: 2 / -1;
+    margin-top: 22px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 29px;
+    overflow: hidden;
     font-size: var(--text-small);
     color: var(--ter);
-    display: grid;
-    gap: 4px;
-    align-content: start;
-    padding-top: 4px;
+  }
+  .terms li {
+    position: relative;
+  }
+  .terms li::before {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 0.3em;
+    width: 1px;
+    height: 0.95em;
+    background: var(--line);
   }
 
-  @media (max-width: 760px) {
+  @media (max-width: 1023px) {
     .caps {
       display: block;
     }
+    .head {
+      position: static;
+    }
+    .list {
+      margin-top: 56px;
+    }
+  }
+
+  @media (max-width: 760px) {
     .list {
       margin-top: 44px;
     }
     .list > li {
       display: block;
-      padding: 24px 0 30px;
+      padding: 22px 0 44px;
+    }
+    .num {
+      display: block;
+      padding: 0 0 14px;
     }
     .text {
       margin-top: 12px;
