@@ -32,4 +32,23 @@ export default defineConfig({
       prefixDefaultLocale: false,
     },
   },
+
+  // No Markdown is rendered. Off, because Shiki's inline styles cannot meet the Content Security Policy below.
+  markdown: {
+    syntaxHighlight: false,
+  },
+
+  // Content Security Policy (docs/production/security.md). Astro writes a <meta> policy into every page with a hash
+  // for each inline script and <style> block it emits, so the hashes always match the build. Inline `style`
+  // attributes (build-time layout values such as --i, --x, left, width) are allowed through style-src-attr alone, so
+  // no inline <style> element or script runs without a hash. frame-ancestors cannot be set in a
+  // <meta> policy, so it is sent as a header (public/_headers), with the rest of the security headers.
+  security: {
+    csp: {
+      directives: ["default-src 'self'", "object-src 'none'", "base-uri 'self'", "form-action 'self'"],
+      styleDirective: {
+        resources: ["'self'", { resource: "'unsafe-inline'", kind: 'attribute' }],
+      },
+    },
+  },
 });
