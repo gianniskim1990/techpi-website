@@ -32,18 +32,27 @@ Internal information does not go into public page copy. This repository is curre
 | Contact form | Not wanted yet | No form, no fields, no backend, no third-party form service, no CAPTCHA. When approved, the planned fields are: name, organisation, email, what you need to solve, optional timeframe. No budget field. It needs a recipient, a mail provider and a spam strategy first |
 | Analytics and trackers | Not approved | None is implemented: no analytics, tag manager, advertising pixel or session recording. No cookie banner exists, and none is added for hypothetical trackers. Privacy and cookie requirements are assessed once the final tracking stack is known |
 | Privacy Policy, Cookies Policy, Terms | Not created | They need the legal entity details and the tracking decision. The footer links to no page that does not exist |
-| EU Projects content | Not approved | See section 4 |
+| EU project case studies | Not approved | The service page is approved; specific projects are not. See section 4 |
 | Organisation structured data | Later milestone | Needs the legal and business identity fields. The site has no Organization schema, and nothing unconfirmed is to be added to any schema |
 
 ## 4. EU Projects
 
-`/eu-projects` and `/el/eu-projects` stay as intentional, unpublished route shells. No EU-project fact is confirmed for publication, so nothing is shown: no project cards, no funding claims, no placeholder content.
+Updated 2026-10-08: EU-funded projects are approved as a **target market and service offering**.
 
-- **The link is not in the navigation.** The header, the mobile menu and the footer list four pages (Work, Capabilities, About, Contact) from one list, `navPages` in `src/i18n/routes.ts`. An unfinished page must not be promoted as if it were complete.
-- **The routes still work** and return 200. Their redirects and dictionary entries are unchanged. They are linked only from each other, through the language switch.
-- **They stay `noindex` even after indexing is switched on** for the rest of the site (the `noindex` flag on the shell page). Verified in a throwaway indexable build.
-- **To restore the navigation item** when real content is approved: add `'euProjects'` back to `navPages`, between `'capabilities'` and `'about'`; replace the shell with a designed page; remove the `noindex` flag from that page; add it to the sitemap. Header, mobile menu and footer follow automatically.
-- The EU Projects page cannot be completed until approved factual content exists: programme, TechPi's role, the funding acknowledgement and the project's own details.
+- `/eu-projects` and `/el/eu-projects` are real service pages (`EuProjectsPage.astro`, copy in `src/content/eu.ts`):
+  what TechPi builds for EU-funded projects and consortia, who it is for, and how it is built. The homepage has a
+  matching section between Capabilities and Intelligence.
+- **It is not a portfolio.** No specific EU project, programme participation, partner, result, certification or
+  compliance is claimed. Programmes (Horizon Europe, Interreg, Erasmus+, LIFE, Digital Europe) are named only as
+  examples: "Suitable for projects funded through programmes such as…".
+- **SOWISE+ is not mentioned** anywhere (section 2).
+- **Navigation restored:** EU Projects / Ευρωπαϊκά έργα is back in the header, the mobile menu and the footer
+  (`navPages` in `src/i18n/routes.ts`), between Capabilities and About.
+- **Indexing:** the pages follow the site-wide `noindex` like every other page. The extra page-level `noindex` of the
+  former route shell is removed, so they become indexable together with the rest of the site at launch. Add them to
+  the sitemap at the SEO milestone.
+- Showing specific EU projects as case studies still needs approved factual content: the programme, TechPi's role,
+  the funding acknowledgement and the project's own details.
 
 ## 5. Launch blockers
 
@@ -61,7 +70,7 @@ Each of these must be resolved, or consciously accepted, before indexing is enab
 | 8 | Native-speaker Greek editorial read | A reviewer | All Greek pages |
 | 9 | Presentation of TechPi-owned products | A decision | Work page and homepage |
 | 10 | Permission for Logotherapia imagery | Permission before any image with identifiable children is used | The Logotherapia case study |
-| 11 | EU Projects content | Approved factual content | EU Projects pages, navigation |
+| 11 | EU project case studies (optional) | Approved factual content per project | Would extend the EU Projects page; the service page itself is not blocked |
 | 12 | Final `robots.txt` and the training-crawler decision | Re-verify crawler names and policies at launch | Search and answer-engine visibility |
 | 13 | Confirmed contact method beyond email and phone, if wanted | A decision | Whether a form is needed |
 | 14 | `PUBLIC_ALLOW_INDEXING` unset in Cloudflare | Confirm in the Cloudflare dashboard that the variable is not set for production or previews. Since Phase 3G.2 it is the only indexing switch: the TemporaryFonts guard, which also failed indexable builds, went with the remote fonts. Set it only for production, only at launch | Every page's `noindex` |

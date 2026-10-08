@@ -38,9 +38,6 @@ export const el: Dictionary = {
     about: { title: 'Εταιρεία | TechPi', heading: 'Εταιρεία' },
     contact: { title: 'Επικοινωνία | TechPi', heading: 'Επικοινωνία' },
   },
-  shell: {
-    note: 'Η σελίδα βρίσκεται υπό προετοιμασία.',
-  },
   notFound: {
     title: 'Η σελίδα δεν βρέθηκε | TechPi',
     heading: 'Η σελίδα δεν βρέθηκε',

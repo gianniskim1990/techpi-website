@@ -1,0 +1,177 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ClosingCTA from '../../components/secondary/ClosingCTA.astro';
+import PageIntro from '../../components/secondary/PageIntro.astro';
+import SectionSplit from '../../components/secondary/SectionSplit.astro';
+import { euCopy } from '../../content/eu';
+import { pagesCopy } from '../../content/copy';
+import { getDictionary } from '../../i18n';
+import type { Locale } from '../../i18n/locales';
+import { pathFor } from '../../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getDictionary(locale);
+const copy = euCopy[locale];
+const pages = pagesCopy[locale];
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+{/* EU Projects: what TechPi builds for EU-funded projects and consortia. A service page, not a portfolio: no
+    specific EU project, programme participation, partner, result, certification or compliance is claimed.
+    Programmes are named only as examples. In the same family as the other secondary pages: page head, numbered
+    sections with a heading column, ruled lists, the quiet closing line. No EU flag, stars or blue and yellow. */}
+<BaseLayout locale={locale} page="euProjects" title={t.pages.euProjects.title} description={copy.page.description} bleed>
+  <PageIntro heading={copy.page.heading} lead={copy.page.lead} />
+
+  <section class="statement s-paper" aria-label={copy.page.statement}>
+    <p data-reveal="mask">{copy.page.statement}</p>
+  </section>
+
+  <SectionSplit id="build" heading={copy.page.buildHeading} index="01">
+    <ol class="services">
+      {
+        copy.services.map((s, i) => (
+          <li>
+            <span class="num" aria-hidden="true">
+              {pad(i + 1)}
+            </span>
+            <h3>{s.name}</h3>
+            <p>{s.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </SectionSplit>
+
+  <SectionSplit id="for" heading={copy.page.whoHeading} index="02">
+    <ul class="ruled pairs">
+      {copy.audiences.map((a) => <li>{a}</li>)}
+    </ul>
+    <p class="programmes">{copy.page.programmes}</p>
+  </SectionSplit>
+
+  <SectionSplit id="approach" heading={copy.page.approachHeading} index="03">
+    <dl class="approach">
+      {
+        copy.approach.map((a) => (
+          <div>
+            <dt>{a.name}</dt>
+            <dd>{a.text}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </SectionSplit>
+
+  <ClosingCTA heading={copy.page.closer} cta={pages.closer.cta} href={pathFor('contact', locale)} />
+</BaseLayout>
+
+<style>
+  /* The answer to the lead, set large: the one sentence the page exists to say. */
+  .statement {
+    margin: clamp(56px, 7vw, 112px) var(--space-margin) 0;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+  }
+  .statement p {
+    grid-column: 1 / span 9;
+    font-size: var(--text-display-m);
+    font-weight: var(--weight-display);
+    line-height: 1.06;
+    letter-spacing: -0.024em;
+    text-wrap: balance;
+  }
+
+  /* What we build: numbered ruled rows, the name and one sentence side by side. */
+  .services li {
+    display: grid;
+    grid-template-columns: 3.2em minmax(0, 5fr) minmax(0, 6fr);
+    column-gap: var(--space-gap);
+    padding: 20px 0 22px;
+    border-top: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .services li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .services h3 {
+    font-size: var(--text-heading);
+    line-height: 1.18;
+    letter-spacing: -0.012em;
+  }
+  .services p {
+    color: var(--sec-c);
+  }
+
+  /* Who it is for: a ruled list in two columns. */
+  .pairs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    font-size: var(--text-lead);
+    line-height: 1.35;
+  }
+  .pairs li:nth-last-child(2):nth-child(odd) {
+    border-bottom: 1px solid var(--line);
+  }
+  .programmes {
+    margin-top: 32px;
+    max-width: 56ch;
+    color: var(--sec-c);
+  }
+
+  /* How we build it: eight principles in two columns, a name and one line each. */
+  .approach {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+  }
+  .approach div {
+    padding: 18px 0 22px;
+    border-top: 1px solid var(--line);
+  }
+  .approach div:nth-last-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+  .approach dt {
+    font-weight: var(--weight-ui);
+  }
+  .approach dd {
+    margin-top: 6px;
+    color: var(--sec-c);
+    max-width: 40ch;
+  }
+
+  @media (max-width: 1023px) {
+    .statement p {
+      grid-column: 1 / -1;
+    }
+    .services li {
+      grid-template-columns: 2.6em minmax(0, 1fr);
+      row-gap: 8px;
+    }
+    .services p {
+      grid-column: 2;
+    }
+  }
+  @media (max-width: 760px) {
+    .statement {
+      display: block;
+    }
+    .pairs,
+    .approach {
+      display: block;
+    }
+    .pairs li:nth-last-child(2):nth-child(odd) {
+      border-bottom: 0;
+    }
+    .approach div:nth-last-child(2) {
+      border-bottom: 0;
+    }
+  }
+</style>

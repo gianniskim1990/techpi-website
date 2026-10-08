@@ -127,7 +127,23 @@ The upper half of the hero is a hairline map (`TransformationMap.astro`) built i
 - Accessible as one image with a sentence label (EN and EL in `home.*.ts`); its parts are hidden from assistive
   technology.
 
-## 7. QA record (2026-10-08)
+## 7. EU-funded projects (2026-10-08)
+
+A service offering, not a portfolio (copy in `src/content/eu.ts`, rules in `launch-blockers.md`, section 4).
+
+- **Homepage**, between Capabilities and Intelligence (`home/EuProjects.astro`): a top hairline with a small label
+  and "Explore EU Projects", one large sentence, the supporting line, and what can be built as a single typographic
+  run with small hairline circles between items. No cards, no EU flag, stars or blue and yellow.
+- **EU Projects page** (`pages/EuProjectsPage.astro`): page head, the answer to the lead set large ("TechPi designs
+  and builds those systems."), then three numbered sections in the secondary-page pattern: what we build (seven
+  services, each with one sentence), who it is for (six audiences, with programmes named only as examples), how we
+  build it (eight principles, with no certification or compliance claimed), and the closing question.
+- **Navigation:** EU Projects restored to header, mobile menu and footer, in both languages; checked against the hero
+  arc at every desktop width in Greek, the longest labels.
+- Hyphenated words in large headings ("EU-funded") never break at the hyphen (`Unbroken.astro`; Commissioner has no
+  non-breaking hyphen glyph).
+
+## 8. QA record (2026-10-08)
 
 | Check | Result |
 |---|---|
