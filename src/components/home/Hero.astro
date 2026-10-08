@@ -2,6 +2,7 @@
 import Arrowed from '../Arrowed.astro';
 import type { HomeCopy } from '../../content/home.en';
 import { pathFor } from '../../i18n/routes';
+import TransformationMap from './TransformationMap.astro';
 import type { Locale } from '../../i18n/locales';
 
 interface Props {
@@ -25,6 +26,7 @@ const { copy, locale } = Astro.props;
           above the top edge of the window and runs down to the right edge when it draws. */}
       <circle cx="50%" cy="50%" r="49.95%" pathLength="1"></circle>
     </svg>
+    <TransformationMap copy={copy.map} />
     <h1 id="hero-h" class="statement">
       {
         copy.statement.map((line, i) => (

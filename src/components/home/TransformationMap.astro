@@ -1,0 +1,300 @@
+---
+import type { HomeCopy } from '../../content/home.en';
+
+interface Props {
+  copy: HomeCopy['hero']['map'];
+}
+
+const { copy } = Astro.props;
+
+/*
+ * The transformation map: the upper half of the hero, read left to right.
+ * Three separate threads (websites, ordering, visibility) start apart, broken and uneven: fragmented, manual.
+ * They converge into one continuous line that runs through automation, AI and systems and ends in a small circle in
+ * TechPi Blue: the connected product. The circle is the site's one shape, seen here at its smallest, before the
+ * arc that runs down the page closes into the symbol at Contact.
+ *
+ * Geometry: one coordinate system in percent of the box. The lines are SVG stretched to the box with non-scaling
+ * hairlines; nodes and labels are HTML placed with the same percentages, so text never scales.
+ */
+const BUS = 62; // the connected line, in % of the height
+const JOIN = 40; // where the threads meet it, in % of the width
+const frags = [
+  { key: 'websites', x: 1, y: 38, dash: [2.6, 12], from: 15 },
+  { key: 'ordering', x: 5, y: BUS, dash: [6.6, 13.5], from: 17 },
+  { key: 'visibility', x: 0, y: 88, dash: [1.6, 10.5], from: 14 },
+] as const;
+const nodes = [
+  { key: 'automation', x: 53, side: 'below', tier: 1 },
+  { key: 'ai', x: 67, side: 'above', tier: 1 },
+  { key: 'systems', x: 80, side: 'below', tier: 2 },
+] as const;
+const END = 97.5;
+---
+
+<div class="map" role="img" aria-label={copy.label}>
+  <div class="inner" aria-hidden="true">
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
+      {
+        frags.map((f) => (
+          <>
+            <line class="frag" x1={f.dash[0]} x2={f.dash[1]} y1={f.y} y2={f.y} />
+            <path
+              class="join"
+              d={
+                f.y === BUS
+                  ? `M${f.from} ${f.y} L${JOIN} ${BUS}`
+                  : `M${f.from} ${f.y} C${f.from + 11} ${f.y} ${JOIN - 12} ${BUS} ${JOIN} ${BUS}`
+              }
+            />
+          </>
+        ))
+      }
+      <line class="bus" x1={JOIN} x2={END} y1={BUS} y2={BUS} />
+    </svg>
+
+    <span class="cap cap-from">{copy.from}</span>
+    <span class="cap cap-to" style={`left:${JOIN}%`}>{copy.to}</span>
+
+    {
+      frags.map((f) => (
+        <span class="pt pt-frag" style={`left:${f.x}%;top:${f.y}%`}>
+          <i />
+          <span class="lbl above">{copy[f.key]}</span>
+        </span>
+      ))
+    }
+    <span class="pt pt-join" style={`left:${JOIN}%;top:${BUS}%`}><i /></span>
+    {
+      nodes.map((n) => (
+        <span class={`pt pt-node tier-${n.tier}`} style={`left:${n.x}%;top:${BUS}%`}>
+          <i />
+          <span class={`lbl ${n.side}`}>{copy[n.key]}</span>
+        </span>
+      ))
+    }
+    <span class="pt pt-end" style={`left:${END}%;top:${BUS}%`}>
+      <i />
+      <span class="lbl above end-lbl">{copy.products}</span>
+    </span>
+  </div>
+</div>
+
+<style>
+  /* The map takes the free space above the headline: its auto margins centre it there, and the padding keeps a
+     minimum distance from the headline on short windows. */
+  .map {
+    position: relative;
+    width: min(860px, calc(100% - 470px));
+    height: clamp(140px, 22vh, 210px);
+    box-sizing: content-box;
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-bottom: clamp(36px, 7vh, 80px);
+  }
+  .inner {
+    position: absolute;
+    inset: 0 0 clamp(36px, 7vh, 80px) 0;
+  }
+  svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  svg * {
+    fill: none;
+    vector-effect: non-scaling-stroke;
+  }
+  /* Fragmented: short, broken, uneven. */
+  .frag {
+    stroke: var(--color-slate);
+    stroke-width: 1px;
+    stroke-dasharray: 2 5;
+    opacity: 0.8;
+  }
+  /* Connected: continuous hairlines. */
+  .join {
+    stroke: var(--color-ink);
+    stroke-width: 1px;
+    opacity: 0.55;
+  }
+  .bus {
+    stroke: var(--color-ink);
+    stroke-width: 1.25px;
+  }
+
+  /* Labels: the site's metadata label, smaller. Uppercase is dropped for nothing: these are short terms. */
+  .cap,
+  .lbl {
+    position: absolute;
+    font-size: 0.6875rem;
+    font-weight: var(--weight-ui);
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--color-slate);
+  }
+  .cap {
+    top: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .cap::before {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 1px;
+    margin-right: 8px;
+    vertical-align: 0.3em;
+    background: currentColor;
+  }
+  .cap-to {
+    color: var(--color-ink);
+  }
+
+  .pt {
+    position: absolute;
+    width: 0;
+    height: 0;
+  }
+  .pt i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .pt-frag i {
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--color-slate);
+    background: var(--color-paper);
+  }
+  .pt-join i {
+    width: 5px;
+    height: 5px;
+    background: var(--color-ink);
+  }
+  .pt-node i {
+    width: 5px;
+    height: 5px;
+    background: var(--color-ink);
+  }
+  /* The connected product: a small circle in TechPi Blue, the one accent of the map. */
+  .pt-end i {
+    width: 19px;
+    height: 19px;
+    border: 1.25px solid var(--color-techpi-blue);
+    background: var(--color-paper);
+  }
+  .pt-end i::after {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    background: var(--color-techpi-blue);
+  }
+  .lbl.above {
+    left: -4px;
+    bottom: 12px;
+  }
+  .pt-frag .lbl.above {
+    left: -3px;
+  }
+  .pt-node .lbl.above {
+    left: 0;
+    transform: translateX(-50%);
+  }
+  .lbl.below {
+    left: 0;
+    top: 14px;
+    transform: translateX(-50%);
+  }
+  /* The outcome sits above its circle, right-aligned, in Ink: the one label that is a result, not an input. */
+  .end-lbl {
+    left: auto !important;
+    right: -9px;
+    bottom: 18px !important;
+    transform: none !important;
+    color: var(--color-ink);
+  }
+
+  /* ---------- Narrower windows: fewer labels, never a crowded line ---------- */
+  @media (max-width: 1279px) {
+    .map {
+      width: min(720px, calc(100% - 420px));
+    }
+  }
+  @media (max-width: 1199px) {
+    .tier-2 {
+      display: none;
+    }
+  }
+  /* The small arc takes over below 900px, so the map can use the width. */
+  @media (max-width: 900px) {
+    .map {
+      width: min(560px, 82%);
+      height: 150px;
+      padding-bottom: 48px;
+    }
+    .inner {
+      bottom: 48px;
+    }
+  }
+  @media (max-width: 760px) {
+    .map {
+      width: 100%;
+      height: 84px;
+      padding-bottom: 36px;
+    }
+    .inner {
+      bottom: 36px;
+    }
+    /* Phones: the threads, the line and the outcome only. The captions would meet the arc. */
+    .cap {
+      display: none;
+    }
+    .end-lbl {
+      bottom: auto !important;
+      top: 20px;
+    }
+    .pt-frag .lbl,
+    .pt-node .lbl {
+      display: none;
+    }
+    .tier-1 + .tier-1 {
+      display: none;
+    }
+  }
+
+  /* ---------- Motion ---------- */
+  /* On load, after the headline: the map draws in from left to right, the direction of the transformation, and
+     the end circle settles last. CSS only, once. */
+  :global(.mo) .inner {
+    animation: map-wipe 1200ms var(--ease-reveal) 650ms both;
+  }
+  :global(.mo) .pt-end i {
+    animation: end-in 700ms var(--ease-reveal) 1450ms both;
+  }
+  @keyframes map-wipe {
+    from {
+      clip-path: inset(-24px 100% -24px -12px);
+    }
+    to {
+      clip-path: inset(-24px -24px -24px -12px);
+    }
+  }
+  @keyframes end-in {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.4);
+    }
+  }
+  /* Scroll scene: the map sits behind the headline in depth, so it leaves more slowly. */
+  :global(.sc) .map {
+    translate: 0 calc(var(--out, 0) * 10vh);
+    opacity: calc(1 - var(--out, 0) * 1.4);
+  }
+</style>

@@ -102,7 +102,23 @@ Pointer devices only (`hover: hover`). Nothing essential depends on hover; touch
 Arrows written in the copy ("Start a project →") are rendered as a separate decorative span (`Arrowed.astro`), so
 they can move on their own and screen readers read only the words. No copy changed.
 
-## 6. QA record (2026-10-08)
+## 6. Hero transformation map (2026-10-08)
+
+The free space above the headline holds a hairline map (`TransformationMap.astro`), read left to right: three
+separate, broken threads (websites, ordering, visibility: fragmented, manual work) converge into one continuous line
+through automation, AI and systems, ending in a small circle in TechPi Blue labelled "Digital products". The circle is
+the site's shape at its smallest, before the arc closes into the symbol at Contact.
+
+- Clearly secondary: 11px labels, hairlines, one blue accent. Its auto margins centre it in the space above the
+  headline, and its width is limited so it never meets the hero arc.
+- Accessible as one image with a sentence label (EN and EL in `home.*.ts`); the parts are hidden from assistive
+  technology.
+- Motion: on load it draws in from left to right after the headline, and the end circle settles last. CSS only,
+  once. In the scroll scene it sits behind the headline in depth.
+- Responsive: full map from 1200px; "Systems" drops out below 1200px; phones keep only the threads, the line and
+  the outcome.
+
+## 7. QA record (2026-10-08)
 
 | Check | Result |
 |---|---|
