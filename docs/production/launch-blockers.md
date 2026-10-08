@@ -1,6 +1,6 @@
 # Launch blockers and confirmed facts
 
-Status: current as of 2026-10-08 (Phase 4, SEO, social metadata and structured data). This is the single place that records what is confirmed for public display, what is deliberately deferred, and what still blocks launch. Other documents point here instead of repeating it.
+Status: current as of 2026-10-08 (Phase 5, security and technical hardening). This is the single place that records what is confirmed for public display, what is deliberately deferred, and what still blocks launch. Other documents point here instead of repeating it.
 
 The site stays `noindex` until every blocker below that applies is resolved and indexing is switched on deliberately.
 
@@ -84,8 +84,15 @@ Each of these must be resolved, or consciously accepted, before indexing is enab
 | 12 | The training-crawler decision | The owner's decision; then re-verify crawler names and policies and add narrow per-agent rules, if any. The base `robots.txt` (allow all, sitemap line) exists since Phase 4 and needs no change if nothing is blocked | Search and answer-engine visibility |
 | 13 | Confirmed contact method beyond email and phone, if wanted | A decision | Whether a form is needed |
 | 14 | `PUBLIC_ALLOW_INDEXING` unset in Cloudflare | Confirm in the Cloudflare dashboard that the variable is not set for production or previews. Since Phase 3G.2 it is the only indexing switch: the TemporaryFonts guard, which also failed indexable builds, went with the remote fonts. Set it only for production, only at launch | Every page's `noindex` |
+| 15 | HTTPS and HSTS on `techpi.eu` | After the domain is connected: Always Use HTTPS, minimum TLS 1.2, then HSTS without `includeSubDomains` or `preload` at first (`security.md`, section 9). Not checked in the dashboard yet | Transport security of the production domain |
 
 Resolved in Phase 3F: confirmed email, phone and town (section 1).
+
+Resolved in Phase 5 (`security.md`):
+- **Dependency advisories.** 4 high → 1 high. `sharp` (GHSA-wq5f-xc86-pv6w) fixed with an npm override of miniflare's pinned copy. `http-cache-semantics` (GHSA-ch52-4w7c-c8xp) has no upstream fix; npm's suggested 4.3.0 does not change the affected code, so it was not taken; the code path (build-time remote-image caching) is not reachable in this site.
+- **Security headers and Content Security Policy.** A hashed per-page CSP (Astro), plus `frame-ancestors`, `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy` and COOP in `public/_headers`, verified on the Preview URL. Known gap: Cloudflare does not apply `_headers` to 404 responses.
+- **workers.dev indexing safeguard.** `X-Robots-Tag: noindex` on `*.workers.dev` hosts only, never on `techpi.eu`. `PUBLIC_ALLOW_INDEXING` remains the only route to indexing (blocker 14 unchanged: the dashboard was not inspected).
+- **Not inspected in Phase 5:** Cloudflare dashboard settings (variables, zone TLS and HTTPS settings). Blocker 15 added.
 
 Resolved in Phase 4 (`seo.md`):
 - **Open Graph, social images and the structured-data logo** (blocker 6). Open Graph and Twitter card tags on all 18 content pages. Two 1200 x 630 images, English and Greek, from the approved 3D symbol and the self-hosted font (`scripts/brand/derive-social.mjs`). The Organization logo is `/techpi-logo.png`, 512 x 512, the blue 3D symbol.
@@ -103,4 +110,4 @@ Resolved in Phase 3G.2 (`identity-font-readiness.md`):
 
 - **Repository visibility.** The GitHub repository is public, and `docs/` contains internal planning, including references to a project that must not appear on the website. Consider making the repository private. This is outside what was changed in this phase.
 - **Node version on this machine.** Resolved 2026-10-07: Node 24.18.0 is installed and active through `nvm-windows`, matching `.node-version`, `engines` and Cloudflare's build image. `npm ci` leaves the lockfile unchanged.
-- **Dependency advisories.** `npm audit` now reports 4 high-severity advisories (Astro's `http-cache-semantics`, and `sharp` through Wrangler). They are build-time or dev-only and do not ship in the static site. Handled in the dedicated pre-launch security milestone, not in identity or fonts (deliberately untouched in 3G.2).
+- **Dependency advisories.** Handled in Phase 5 (above, and `security.md`). One advisory remains, not reachable here and with no upstream fix: re-run `npm audit` before launch.

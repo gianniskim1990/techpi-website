@@ -7,7 +7,7 @@
  * - Every page carries Astro's CSP <meta>, early enough to cover the body, with no 'unsafe-inline' or 'unsafe-eval'
  *   for scripts and styles. Inline style attributes (style-src-attr) are the only relaxation, and that is checked.
  * - Every inline script and <style> block in the page matches a hash in that page's policy.
- * - _headers carries the agreed headers on /*, the noindex rule only on the *.workers.dev host pattern, no global
+ * - _headers carries the agreed headers on /* (note: Cloudflare does not apply them to 404 responses), the noindex rule only on the *.workers.dev host pattern, no global
  *   X-Robots-Tag, and no HSTS (that is a launch decision for the custom domain).
  * - Nothing that must not ship is in the output: source maps, env files, Markdown, the brand masters.
  */
