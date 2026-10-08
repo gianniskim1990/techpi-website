@@ -1,6 +1,6 @@
 # Launch blockers and confirmed facts
 
-Status: current as of 2026-10-07 (Phase 3G.2, identity and self-hosted fonts). This is the single place that records what is confirmed for public display, what is deliberately deferred, and what still blocks launch. Other documents point here instead of repeating it.
+Status: current as of 2026-10-08 (Phase 4, SEO, social metadata and structured data). This is the single place that records what is confirmed for public display, what is deliberately deferred, and what still blocks launch. Other documents point here instead of repeating it.
 
 The site stays `noindex` until every blocker below that applies is resolved and indexing is switched on deliberately.
 
@@ -14,7 +14,7 @@ The site stays `noindex` until every blocker below that applies is resolved and 
 
 - Email is a `mailto:info@techpi.eu` link. Phone is a `tel:+306975946984` link. The visible phone number keeps its spaces.
 - The location is the **town only**. No street address is confirmed, so none is shown, and none must be inferred.
-- The values live in `src/content/site.ts` (email, phone) and `src/content/pages.en.ts` / `pages.el.ts` (labels and location). They appear on the Contact pages only. They are deliberately **not** in the footer, the homepage, page titles, descriptions or structured data.
+- The values live in `src/content/site.ts` (email, phone) and `src/content/pages.en.ts` / `pages.el.ts` (labels and location). They appear on the Contact pages only. They are deliberately **not** in the footer, the homepage, page titles or descriptions. Since Phase 4 they are also in the Organization structured data (email, phone, and the town as locality and country only), as the Phase 4 brief specified (`seo.md`, section 5).
 - The Contact lead is kept: "Tell us about the problem you need to solve." / "Πείτε μας ποιο πρόβλημα θέλετε να λύσετε."
 
 Not confirmed, therefore not shown anywhere: WhatsApp, social profiles, office hours, street address, map, booking link, legal entity name, company registration, VAT. Add one only when it is explicitly approved.
@@ -59,8 +59,8 @@ Updated 2026-10-08: EU-funded projects are approved as a **target market and ser
 - **Navigation restored:** EU Projects / Ευρωπαϊκά έργα is back in the header, the mobile menu and the footer
   (`navPages` in `src/i18n/routes.ts`), between Capabilities and About.
 - **Indexing:** the pages follow the site-wide `noindex` like every other page. The extra page-level `noindex` of the
-  former route shell is removed, so they become indexable together with the rest of the site at launch. Add them to
-  the sitemap at the SEO milestone.
+  former route shell is removed, so they become indexable together with the rest of the site at launch. They are in
+  the sitemap since Phase 4 (`seo.md`).
 - Showing specific EU projects as case studies still needs approved factual content: the programme, TechPi's role,
   the funding acknowledgement and the project's own details.
 
@@ -75,17 +75,23 @@ Each of these must be resolved, or consciously accepted, before indexing is enab
 | 3 | Tracking and analytics decision | Choice of product, or a decision to use none | Privacy, cookies, whether a consent banner is needed |
 | 4 | ~~Self-hosted Commissioner~~ | **Resolved in Phase 3G.2** (below) | |
 | 5 | ~~Final identity and favicon~~ | **Resolved in Phase 3G.2** (below). The flat vector master is no longer a blocker | |
-| 6 | Open Graph metadata, social images and the structured-data logo | Final images in both languages, made from the approved 3D identity | Social previews, Organization schema |
-| 7 | English homepage meta description | An approved line | Search snippet |
+| 6 | ~~Open Graph metadata, social images and the structured-data logo~~ | **Resolved in Phase 4** (below) | |
+| 7 | ~~English homepage meta description~~ | **Resolved in Phase 4** (below). Like every description, open to the launch copy review | |
 | 8 | Native-speaker Greek editorial read | A reviewer | All Greek pages |
 | 9 | Presentation of TechPi-owned products | A decision | Work page and homepage |
 | 10 | Permission for Logotherapia imagery | Permission before any image with identifiable children is used | The Logotherapia case study |
 | 11 | EU project case studies (optional) | Approved factual content per project | Would extend the EU Projects page; the service page itself is not blocked |
-| 12 | Final `robots.txt` and the training-crawler decision | Re-verify crawler names and policies at launch | Search and answer-engine visibility |
+| 12 | The training-crawler decision | The owner's decision; then re-verify crawler names and policies and add narrow per-agent rules, if any. The base `robots.txt` (allow all, sitemap line) exists since Phase 4 and needs no change if nothing is blocked | Search and answer-engine visibility |
 | 13 | Confirmed contact method beyond email and phone, if wanted | A decision | Whether a form is needed |
 | 14 | `PUBLIC_ALLOW_INDEXING` unset in Cloudflare | Confirm in the Cloudflare dashboard that the variable is not set for production or previews. Since Phase 3G.2 it is the only indexing switch: the TemporaryFonts guard, which also failed indexable builds, went with the remote fonts. Set it only for production, only at launch | Every page's `noindex` |
 
 Resolved in Phase 3F: confirmed email, phone and town (section 1).
+
+Resolved in Phase 4 (`seo.md`):
+- **Open Graph, social images and the structured-data logo** (blocker 6). Open Graph and Twitter card tags on all 18 content pages. Two 1200 x 630 images, English and Greek, from the approved 3D symbol and the self-hosted font (`scripts/brand/derive-social.mjs`). The Organization logo is `/techpi-logo.png`, 512 x 512, the blue 3D symbol.
+- **English homepage meta description** (blocker 7). Every page now has a written title and description in `src/content/seo.ts`.
+- Also added: JSON-LD (Organization, WebSite, WebPage, Service on Capabilities and EU Projects, breadcrumbs on case studies), `/sitemap.xml` (18 URLs), `/robots.txt`, and an SEO validator (`scripts/seo/validate.mjs`). The site stays `noindex`: blocker 14 is unchanged.
+- **Not a blocker, recorded:** case studies use their language's default sharing image. A designed card per case study is optional later design work.
 
 Resolved in Phase 3G.2 (`identity-font-readiness.md`):
 - **Self-hosted Commissioner** (blocker 4). Two official WOFF2 files, version 1.001, OFL 1.1, from Google Fonts. The temporary Google Fonts loader is removed, and the site makes no third-party font request.
