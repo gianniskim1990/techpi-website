@@ -38,7 +38,9 @@ const lines = Array.from({ length: COUNT }, (_, i) => {
 
 {/* Ink. The strongest typographic moment of the page. The second line is set quieter on purpose: it is the noise.
     Wording is capability-oriented: it does not claim any of this has been delivered. */}
-<section class="intel s-ink" id="intelligence" aria-labelledby="intel-h" data-sequence>
+<section class="intel s-ink horizon" id="intelligence" aria-labelledby="intel-h" data-sequence data-scene>
+  <div class="hold" data-scene="hold">
+  <div class="stage">
   <h2 id="intel-h" data-reveal="lines">
     {
       copy.heading.map((line, i) => (
@@ -62,13 +64,15 @@ const lines = Array.from({ length: COUNT }, (_, i) => {
             y1={l.y1}
             y2={l.y2}
             vector-effect="non-scaling-stroke"
-            style={`--rest:${l.rest};--k:${COUNT - 1 - l.i}`}
+            style={`--rest:${l.rest};--k:${COUNT - 1 - l.i};--st:${(0.04 + ((COUNT - 1 - l.i) / (COUNT - 1)) * 0.5).toFixed(3)}`}
           />
         ))
       }
     </g>
   </svg>
   <span class="clear" style={`left:${(CLEAR * 100).toFixed(2)}%`}></span>
+  </div>
+  </div>
   </div>
 
   <div class="body">
@@ -90,7 +94,6 @@ const lines = Array.from({ length: COUNT }, (_, i) => {
   .intel {
     position: relative;
     padding: calc(var(--space-section) * 1.15) var(--space-margin) var(--space-section);
-    view-timeline-name: --intel;
   }
   h2 {
     font-size: clamp(2.375rem, 6.5vw, 6.25rem);
@@ -138,51 +141,53 @@ const lines = Array.from({ length: COUNT }, (_, i) => {
   }
 
   /* With motion: the row starts noisy and settles, from the right, into the clean line. Timed by the section's
-     arrival (src/scripts/motion.ts adds `.in`); scroll-driven where the browser supports it. */
-  :global(.mo) .noise line {
+     arrival (src/scripts/motion.ts adds `.in`). Used where scroll scenes are off (tablet, short windows). */
+  :global(.mo:not(.sc)) .noise line {
     transition: transform 900ms var(--ease-reveal);
     transition-delay: calc(var(--k) * 12ms);
   }
-  :global(.mo) .intel:not(.in) .noise line {
+  :global(.mo:not(.sc)) .intel:not(.in) .noise line {
     transform: scaleY(1);
   }
-  :global(.mo) .clear {
+  :global(.mo:not(.sc)) .clear {
     transition: transform 1100ms var(--ease-reveal) 500ms;
   }
-  :global(.mo) .intel:not(.in) .clear {
+  :global(.mo:not(.sc)) .intel:not(.in) .clear {
     transform: scaleX(0);
   }
-  @supports (animation-timeline: view()) {
-    @media (min-width: 1024px) {
-      :global(.mo) .intel .noise line {
-        transition: none;
-        animation: settle linear both;
-        animation-timeline: --intel;
-        animation-range: entry 45% cover 50%;
-      }
-      :global(.mo) .intel .clear {
-        transition: none;
-        animation: clear-draw linear both;
-        animation-timeline: --intel;
-        animation-range: entry 70% cover 55%;
-      }
-    }
+  /* Scroll scene (html.sc): the statement holds the screen for a short, fixed distance while the noise settles,
+     from the right, into the clean line, and the second sentence (the noise) recedes. Then the page moves on.
+     Every value follows the scroll position, and the end of the hold is exactly the resting state. */
+  /* Room for the horizon to sweep across empty Ink before the statement arrives. */
+  :global(.sc) .intel {
+    padding-top: 30vh;
   }
-  @keyframes settle {
-    from {
-      transform: scaleY(1);
-    }
-    to {
-      transform: scaleY(var(--rest));
-    }
+  :global(.sc) .hold {
+    height: 185svh;
   }
-  @keyframes clear-draw {
-    from {
-      transform: scaleX(0);
-    }
-    to {
-      transform: scaleX(1);
-    }
+  :global(.sc) .stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  :global(.sc) .field {
+    margin-bottom: 0;
+  }
+  :global(.sc) .noise line {
+    --t: clamp(0, (var(--pin, 1) - var(--st)) / 0.3, 1);
+    transform: scaleY(calc(1 - (1 - var(--rest)) * var(--t)));
+  }
+  :global(.sc) .clear {
+    transform: scaleX(clamp(0, (var(--pin, 1) - 0.42) / 0.4, 1));
+  }
+  :global(.sc) .ln-2 > span {
+    opacity: calc(1 - clamp(0, (var(--pin, 1) - 0.25) / 0.55, 1) * 0.55);
+  }
+  :global(.sc) h2 {
+    translate: 0 calc((1 - var(--in, 1)) * 12vh);
   }
 
   /* ---------- Body ---------- */

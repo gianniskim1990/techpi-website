@@ -30,14 +30,11 @@ const layoutOf = (p: Project) => {
 const focusOf = narrowCrops;
 ---
 
-{/* The Ink surface arrives behind the edge of the same very large circle as the hero arc: the arc has become a
-    surface. Desktop only, decorative. Where scroll-driven animation exists, the edge rises with the scroll. */}
-<div class="edge" aria-hidden="true"><div></div></div>
-
-{/* Selected work. Each project is a full-screen editorial composition. On tall desktop screens with motion
+{/* Selected work. The Ink surface takes over behind the arc of a very large circle (the `.horizon` edge, base.css):
+    the hero's arc has become a surface. Each project is a full-screen editorial composition. On tall desktop screens with motion
     allowed, each one sticks and the next slides over it in normal document flow: reading order, keyboard order and
     find-in-page follow the document. Elsewhere they simply stack. Captures are flat and keep their proportions. */}
-<section class="work s-ink" id="work" aria-labelledby="work-h">
+<section class="work s-ink horizon" id="work" aria-labelledby="work-h" data-scene>
   <div class="work-head">
     <h2 id="work-h" data-reveal="lines"><span class="ln"><span>{copy.heading}</span></span></h2>
     <a class="tlink all" href={pathFor('work', locale)}>{copy.all}</a>
@@ -48,7 +45,12 @@ const focusOf = narrowCrops;
         const layout = layoutOf(p);
         const href = p.caseStudy ? caseStudyPath(p.slug, locale) : undefined;
         return (
-          <article class={`case case-${layout}`} id={`case-${p.slug}`} aria-labelledby={`case-${p.slug}-h`}>
+          <article
+            class={`case case-${layout}`}
+            id={`case-${p.slug}`}
+            aria-labelledby={`case-${p.slug}-h`}
+            data-scene="case"
+          >
             <div class="case-top rule" data-reveal="fade">
               <span class="num">
                 {pad(i + 1)} / {pad(total)}
@@ -94,43 +96,6 @@ const focusOf = narrowCrops;
 </section>
 
 <style>
-  /* ---------- The edge ---------- */
-  .edge {
-    display: none;
-  }
-  @media (min-width: 1024px) {
-    .edge {
-      display: block;
-      position: relative;
-      height: 16vw;
-      overflow: hidden;
-      background: var(--color-paper);
-      margin-bottom: -1px; /* closes a sub-pixel seam */
-    }
-    /* Sized in vw so the curve keeps its proportion at every desktop width. */
-    .edge > div {
-      position: absolute;
-      width: 583.4vw;
-      height: 583.4vw;
-      border-radius: 50%;
-      left: calc(100% - 293vw);
-      top: 0.7vw;
-      background: var(--color-ink);
-    }
-    @supports (animation-timeline: view()) {
-      :global(.mo) .edge > div {
-        animation: edge-rise linear both;
-        animation-timeline: view();
-        animation-range: entry 0% exit 0%;
-      }
-    }
-  }
-  @keyframes edge-rise {
-    from {
-      transform: translateY(9vw);
-    }
-  }
-
   /* ---------- Section head ---------- */
   .work {
     position: relative;
@@ -282,7 +247,7 @@ const focusOf = narrowCrops;
 
   /* The handoff: on tall desktop screens, with motion allowed, each project holds the screen and the next one
      slides over it. Plain sticky positioning. */
-  @media (min-width: 1024px) and (min-height: 740px) and (prefers-reduced-motion: no-preference) {
+  @media (min-width: 1024px) and (min-height: 700px) and (prefers-reduced-motion: no-preference) {
     .case {
       position: sticky;
       top: 0;
@@ -293,6 +258,44 @@ const focusOf = narrowCrops;
     .case + .case {
       box-shadow: 0 -1px 0 var(--line);
     }
+  }
+
+  /* Scroll scene (html.sc). Depth inside a project: as it slides in, the capture travels further than the text, so
+     the two separate like layers. Depth between projects: the one being covered settles back, a little smaller and
+     darker, while the next slides over it; the last one settles back as Capabilities arrives. Individual
+     `translate` and `scale` properties, so nothing competes with the reveal system's `transform`. */
+  :global(.sc) .work {
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+  /* Room for the horizon to sweep across empty Ink before the heading, so the edge never cuts through text. */
+  :global(.sc) .work-head {
+    padding-top: 30vh;
+  }
+  :global(.sc) .work-head h2 {
+    translate: 0 calc((1 - var(--in, 1)) * 14vh);
+  }
+  :global(.sc) .case + .case {
+    box-shadow: none;
+  }
+  :global(.sc) .case {
+    transform-origin: 50% 0;
+    scale: calc(1 - var(--cov, 0) * 0.07);
+    translate: 0 calc(var(--cov, 0) * -3vh);
+  }
+  :global(.sc) .case::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--color-ink);
+    opacity: calc(var(--cov, 0) * 0.72);
+    pointer-events: none;
+  }
+  :global(.sc) .case .media {
+    translate: 0 calc((1 - var(--in, 1)) * 16vh);
+  }
+  :global(.sc) .case .case-txt {
+    translate: 0 calc((1 - var(--in, 1)) * 6vh);
   }
 
   /* ---------- Tablet and phone: stacked, capture first at full width ---------- */

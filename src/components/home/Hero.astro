@@ -17,7 +17,7 @@ const { copy, locale } = Astro.props;
 
     The h1 is the first paint. Its lines rise out of their masks with a CSS-only animation that never waits for a
     script, and only when motion is allowed. The arc draws itself once. Both rest exactly where the static page is. */}
-<section class="hero s-paper" aria-labelledby="hero-h">
+<section class="hero s-paper" aria-labelledby="hero-h" data-scene>
   <div class="stage">
     <svg class="arc" aria-hidden="true" focusable="false">
       {/* A circle in pixel units, so the hairline keeps its exact weight. Turned so the stroke starts just
@@ -272,19 +272,17 @@ const { copy, locale } = Astro.props;
     }
   }
 
-  /* Enhancement only: where scroll-driven animation exists, the arc settles a little as the hero leaves. */
-  @supports (animation-timeline: scroll()) {
-    @media (min-width: 1024px) {
-      :global(.mo) .arc {
-        animation: arc-drift linear both;
-        animation-timeline: scroll(root);
-        animation-range: 0 100vh;
-      }
-    }
+  /* Scroll scene (html.sc): as the hero leaves, its layers part at different depths. The statement lines lift
+     faster than the page, each a little less than the one above; the arc, furthest back, holds and drifts down.
+     Uses the individual `translate` property, so it never competes with the load animation's `transform`. */
+  :global(.sc) .statement .ln {
+    translate: 0 calc(var(--out, 0) * (-18vh + var(--i, 0) * 6vh));
   }
-  @keyframes arc-drift {
-    to {
-      transform: translate(-28px, 56px);
-    }
+  :global(.sc) .foot {
+    translate: 0 calc(var(--out, 0) * -6vh);
+    opacity: calc(1 - var(--out, 0) * 1.8);
+  }
+  :global(.sc) .arc {
+    translate: calc(var(--out, 0) * -6vw) calc(var(--out, 0) * 30vh);
   }
 </style>

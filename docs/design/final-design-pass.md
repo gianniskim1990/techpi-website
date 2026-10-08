@@ -57,7 +57,36 @@ CSS first, with one small first-party module (`src/scripts/motion.ts`, no depend
   sequence. Both end at the static resting state.
 - Reduced motion, no scripting and print all show the resting state. No pinning below 1024px wide or 740px high.
 
-## 4. QA record (2026-10-08)
+## 4. Scroll scenes (second pass, 2026-10-08)
+
+Reference: the pacing of https://ecbf.vc/ (docs/research/ecbf-reference.md), reinterpreted, not copied. What was
+taken is the craft: tall sections with a sticky stage that scrubs one transformation, geometry at different depths,
+and sections that overlap instead of stacking. Nothing of its layout, colour, type, assets or timings.
+
+Scenes run only on desktop-sized windows (1024px wide, 700px high or more) with motion allowed (`html.sc`). The
+first-party module writes each scene's scroll position as custom properties (`--in`, `--out`, `--pin`, `--cov`) and
+CSS turns them into geometry with the individual `translate`, `scale` and `rotate` properties, so scene motion never
+competes with the one-shot reveals. Values follow the scroll position directly: no smoothing, easing, snapping or
+interception. Scrolling stays native.
+
+| Moment | What happens |
+|---|---|
+| Hero leaves | Its layers part at different depths: the statement lines lift faster than the page, each less than the one above; the arc, furthest back, drifts down |
+| Statement | The sentence arrives on the page's tempo; the two steps trail behind it |
+| Into Selected work, Intelligence, Contact | **The horizon.** The Ink section's own top edge is the arc of a circle far wider than the screen. It enters low and strongly curved, rises more slowly than the page and flattens: the arc becomes a surface. Empty Ink comes first, so the edge never cuts through text |
+| Selected work | Inside a project, the capture travels further than the text. Between projects, the one being covered settles back, smaller and darker, while the next slides over it. The last one settles back as Capabilities arrives |
+| Intelligence | The one hold in the middle of the page (85svh): the statement stays while the noise settles, from the right, into the clean line, and the second sentence recedes |
+| Evolution | The half circle draws from the old name to the new one as the section rises; the diagram sits deeper than the heading |
+| Contact | A short hold (75svh): a cyan arc, wider than the figure, closes into a circle and contracts onto it; the symbol turns and settles into place; the quiet ring remains |
+
+Pinning: two short holds on the whole page (Intelligence, Contact) plus the project handoff. Tablet, phones,
+short windows, reduced motion and no scripting keep the simpler behaviour of the first pass. The resting state at the
+end of every scene is the static layout.
+
+The `scroll-timeline` CSS used in the first pass was replaced by this driver, so the experience is the same in every
+current browser, not only in Chromium.
+
+## 5. QA record (2026-10-08)
 
 | Check | Result |
 |---|---|
@@ -65,6 +94,7 @@ CSS first, with one small first-party module (`src/scripts/motion.ts`, no depend
 | `npm run build` | 20 pages |
 | Static audit against the `main` build | 1039 / 1039 (heads, noindex, single h1, links and anchors, images, alt and dimensions, no third parties, no SOWISE+, language switch, favicons, two self-hosted fonts). A negative test fails as it should |
 | Wrangler route and redirect matrix against the `main` build | 70 / 70 identical |
-| Visual review | 18 pages × 1440, 1280, 1024, 768, 390, 360, EN and EL; homepage scroll states with motion; reduced motion; scripting disabled |
+| Visual review | 18 pages × 1440, 1280, 1024, 768, 390, 360, EN and EL; reduced motion; scripting disabled |
+| Scroll scenes | Frame sequences of the whole homepage at 1440 × 900 (EN), 1280 × 800 (EL) and 1024 × 768 (EN) |
 | Horizontal overflow, console errors | None on any reviewed page and width |
 | Mobile dialog | Opens, traps focus, closes on Escape, returns focus to the Menu button |

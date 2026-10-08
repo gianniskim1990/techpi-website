@@ -9,9 +9,14 @@
  *   3. Keep the header usable: it leaves when the reader scrolls down and returns, as a compact bar, when they
  *      scroll up. The scroll listener only compares numbers and toggles classes. It reads no layout.
  *
- * Scroll-linked geometry (the hero arc, the edge into Selected work, the Intelligence field, the Evolution arc and
- * the closing circle) is CSS: a scroll-driven timeline where the browser supports one, and otherwise a timed
- * sequence started by the same `.in` class. Nothing here intercepts, smooths or snaps scrolling.
+ *   4. Drive the scroll scenes (desktop-sized windows, motion allowed: `html.sc`). Each [data-scene] element gets
+ *      its scroll position as custom properties, and CSS turns them into geometry:
+ *        --in    0 when the element's top is at the bottom of the window, 1 when it reaches the top
+ *        --out   0 when the element's top is at the top of the window, 1 when its bottom is
+ *        --pin   0 to 1 while a tall element holds its sticky stage (its height beyond one window)
+ *        --cov   (project panels) how far the next panel or section has slid over this one
+ *      The values follow the scroll position directly: nothing is eased, smoothed, snapped or delayed, and the
+ *      scroll itself is never intercepted. Elsewhere the same states rest, or play once as a timed sequence.
  */
 
 const root = document.documentElement;
@@ -65,7 +70,7 @@ function initReveals() {
   // If the reader turns on reduced motion while the page is open, everything settles at once.
   window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (e) => {
     if (e.matches) {
-      root.classList.remove('mo');
+      root.classList.remove('mo', 'sc');
       targets.forEach(reveal);
     }
   });
@@ -102,6 +107,65 @@ function initHeader() {
   update();
 }
 
+function initScenes() {
+  const scenes = Array.from(document.querySelectorAll<HTMLElement>('[data-scene]'));
+  if (!scenes.length) return;
+  const query = window.matchMedia('(min-width: 1024px) and (min-height: 700px)');
+  const clamp = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+  const written = new WeakMap<HTMLElement, Record<string, string>>();
+  const write = (el: HTMLElement, name: string, v: number) => {
+    const val = v.toFixed(4);
+    const prev = written.get(el) ?? {};
+    if (prev[name] === val) return;
+    prev[name] = val;
+    written.set(el, prev);
+    el.style.setProperty(`--${name}`, val);
+  };
+  // What slides over a project panel: the next panel, or for the last one the section after the work.
+  const coverOf = (el: HTMLElement) =>
+    (el.nextElementSibling as HTMLElement | null) ?? (el.closest('section')?.nextElementSibling as HTMLElement | null);
+
+  const measure = (all: boolean) => {
+    const vh = window.innerHeight;
+    for (const el of scenes) {
+      const r = el.getBoundingClientRect();
+      // Far from the window: nothing there is visible, so it is left as it is until it comes near.
+      if (!all && (r.bottom < -vh || r.top > vh * 2)) continue;
+      write(el, 'in', clamp((vh - r.top) / vh));
+      write(el, 'out', clamp(-r.top / r.height));
+      write(el, 'pin', r.height > vh ? clamp(-r.top / (r.height - vh)) : 0);
+      if (el.dataset.scene === 'case') {
+        const next = coverOf(el);
+        write(el, 'cov', next ? clamp((vh - next.getBoundingClientRect().top) / vh) : 0);
+      }
+    }
+  };
+
+  let active = false;
+  let ticking = false;
+  const request = () => {
+    if (ticking || !active) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      if (active) measure(false);
+    });
+  };
+  const setActive = () => {
+    active = query.matches && root.classList.contains('mo');
+    root.classList.toggle('sc', active);
+    if (active) measure(true);
+  };
+  window.addEventListener('scroll', request, { passive: true });
+  window.addEventListener('resize', () => {
+    setActive();
+    request();
+  });
+  query.addEventListener('change', setActive);
+  setActive();
+}
+
 initReveals();
 initHeader();
+initScenes();
 root.classList.add('mo-ready');

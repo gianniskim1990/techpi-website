@@ -10,7 +10,7 @@ const { copy } = Astro.props;
 
 {/* The brand statement: the second beat after the hero. One large sentence, then the order of work in two steps.
     The steps sit to the right of an empty column, so the sentence keeps the left edge to itself. */}
-<section class="statement s-paper" aria-labelledby="statement-h">
+<section class="statement s-paper" aria-labelledby="statement-h" data-scene>
   <h2 id="statement-h" data-reveal="mask">{copy.heading}</h2>
   <ol class="pair">
     {
@@ -78,6 +78,15 @@ const { copy } = Astro.props;
     margin-top: 14px;
     color: var(--sec-c);
     max-width: 38ch;
+  }
+
+  /* Scroll scene (html.sc): the sentence arrives on the page's own tempo; the two steps trail behind it, so the
+     section reads as one movement rather than two blocks. */
+  :global(.sc) h2 {
+    translate: 0 calc((1 - var(--in, 1)) * 10vh);
+  }
+  :global(.sc) .pair {
+    translate: 0 calc((1 - var(--in, 1)) * 22vh);
   }
 
   @media (max-width: 1023px) {

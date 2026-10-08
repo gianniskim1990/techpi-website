@@ -14,7 +14,7 @@ const { copy, locale } = Astro.props;
 {/* Evolution. The geometry is halfway: the hero's arc has opened into a half circle that runs from the old name
     to the new one. It is a diagram of the sentence, not a logo morph. The names in it are decorative: the heading
     already says them. With motion, the half circle draws from left to right as the section arrives. */}
-<section class="evo s-paper" id="evolution" aria-labelledby="evo-h" data-sequence>
+<section class="evo s-paper" id="evolution" aria-labelledby="evo-h" data-sequence data-scene>
   <h2 id="evo-h" data-reveal="mask">{copy.heading}</h2>
 
   <div class="diagram" aria-hidden="true">
@@ -42,7 +42,6 @@ const { copy, locale } = Astro.props;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-gap);
     row-gap: clamp(48px, 6vw, 88px);
-    view-timeline-name: --evo;
   }
   h2 {
     grid-column: 1 / span 6;
@@ -143,52 +142,35 @@ const { copy, locale } = Astro.props;
   }
 
   /* ---------- Motion ---------- */
-  :global(.mo) .half {
+  :global(.mo:not(.sc)) .half {
     stroke-dasharray: 1;
     stroke-dashoffset: 0;
     /* The first half of the stroke is the hidden lower half: drawing starts at 0.5. */
     transition: stroke-dashoffset 1200ms var(--ease-reveal) 150ms;
   }
-  :global(.mo) .evo:not(.in) .half {
+  :global(.mo:not(.sc)) .evo:not(.in) .half {
     stroke-dashoffset: 0.5;
   }
-  :global(.mo) .end-to {
+  :global(.mo:not(.sc)) .end-to {
     transition: opacity 500ms var(--ease-reveal) 1000ms;
   }
-  :global(.mo) .evo:not(.in) .end-to {
+  :global(.mo:not(.sc)) .evo:not(.in) .end-to {
     opacity: 0;
   }
-  @supports (animation-timeline: view()) {
-    @media (min-width: 1024px) {
-      :global(.mo) .evo .half {
-        transition: none;
-        animation: half-draw linear both;
-        animation-timeline: --evo;
-        animation-range: entry 40% cover 50%;
-      }
-      :global(.mo) .evo .end-to {
-        transition: none;
-        animation: to-in linear both;
-        animation-timeline: --evo;
-        animation-range: cover 44% cover 52%;
-      }
-    }
+  /* Scroll scene (html.sc): the half circle draws from the old name to the new one as the section rises, and the
+     TechPi end lights up when the line arrives. The diagram sits deeper than the heading, so it rises more slowly. */
+  :global(.sc) .half {
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(0.5 - 0.5 * clamp(0, (var(--in, 1) - 0.3) / 0.5, 1));
   }
-  @keyframes half-draw {
-    from {
-      stroke-dashoffset: 0.5;
-    }
-    to {
-      stroke-dashoffset: 0;
-    }
+  :global(.sc) .end-to {
+    opacity: clamp(0, (var(--in, 1) - 0.76) / 0.08, 1);
   }
-  @keyframes to-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+  :global(.sc) .diagram {
+    translate: 0 calc((1 - var(--in, 1)) * -12vh);
+  }
+  :global(.sc) .txt {
+    translate: 0 calc((1 - var(--in, 1)) * 8vh);
   }
 
   @media (max-width: 1023px) {

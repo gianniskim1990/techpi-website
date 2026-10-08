@@ -370,3 +370,22 @@ html:has(dialog[open]) {
     clip-path: none !important;
   }
 }
+
+/* ------------------------------------------------------------------------------------------------------------
+ * The horizon: how an Ink section takes over from Paper on the homepage.
+ *
+ * The section's own top edge is the arc of a circle far wider than the screen, peaking to the right, where the hero
+ * arc lives. At rest (desktop) the edge is a shallow curve. With scroll scenes (`html.sc`, src/scripts/motion.ts),
+ * the edge starts low and strongly curved as the section enters, then rises more slowly than the page and
+ * flattens: the arc becomes a surface. Below 1024px surfaces change at a straight edge.
+ * ------------------------------------------------------------------------------------------------------------ */
+@media (min-width: 1024px) {
+  .horizon {
+    clip-path: circle(400vw at 68vw 400vw);
+  }
+  .sc .horizon {
+    --e: clamp(0, var(--in, 1) / 0.85, 1);
+    --r: calc(120vw + var(--e) * 280vw);
+    clip-path: circle(var(--r) at 68vw calc(var(--r) + (1 - var(--e)) * 36vh));
+  }
+}

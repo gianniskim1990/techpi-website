@@ -17,43 +17,47 @@ const { copy, locale } = Astro.props;
     and then a half circle, closes here into a whole circle for the only time on the site, and the circle resolves
     into the approved 3D TechPi symbol, at full strength, on Ink.
 
-    Resting state (no script, reduced motion, print): the closed circle with the symbol inside it. With motion, the
-    circle draws itself closed and the symbol settles into it as the section arrives: scroll-driven on desktop
-    where supported, otherwise a single timed sequence. Both end exactly at the resting state. */}
-<section class="contact s-ink" id="contact" aria-labelledby="contact-h" data-sequence>
-  <div class="figure" aria-hidden="true">
-    <svg class="ring" focusable="false">
-      {/* Pixel units, so the hairline keeps its weight. Turned to start at the left, where the Evolution half circle
-          began, and to close clockwise over the top. */}
-      <circle cx="50%" cy="50%" r="49.4%" pathLength="1"></circle>
-    </svg>
-    <div class="mark">
-      <BrandSymbol symbol={symbolBlue} sizes="(max-width: 760px) 70vw, (max-width: 1023px) 52vw, min(560px, 40vw)" />
+    Resting state (no script, reduced motion, print): the closed circle with the symbol inside it.
+    Scroll scene (html.sc): the Ink arrives behind the horizon, then the stage holds for a short distance while a
+    cyan arc, wider than the figure, closes into a circle and contracts onto the figure, and the symbol turns and
+    settles into it. Elsewhere with motion: the same states as one timed sequence. All end at the resting state. */}
+<section class="contact s-ink horizon" id="contact" aria-labelledby="contact-h" data-sequence data-scene>
+  <div class="stage">
+    <div class="figure" aria-hidden="true">
+      <svg class="ring" focusable="false">
+        {/* Pixel units, so the hairline keeps its weight. Turned to start at the left, where the Evolution half
+            circle began, and to close clockwise over the top. Two strokes: the cyan one draws, the quiet one rests. */}
+        <circle class="rest" cx="50%" cy="50%" r="49.4%" pathLength="1"></circle>
+        <circle class="draw" cx="50%" cy="50%" r="49.4%" pathLength="1"></circle>
+      </svg>
+      <div class="mark">
+        <BrandSymbol symbol={symbolBlue} sizes="(max-width: 760px) 70vw, (max-width: 1023px) 52vw, min(560px, 40vw)" />
+      </div>
     </div>
-  </div>
 
-  <div class="txt">
-    <h2 id="contact-h" data-reveal="lines">
-      {
-        copy.heading.map((line, i) => (
-          <>
-            <span class="ln" style={`--i:${i}`}>
-              <span>{line}</span>
-            </span>{' '}
-          </>
-        ))
-      }
-    </h2>
-    <p class="act" data-reveal="fade" style="--delay:200ms">
-      <a class="btn" href={pathFor('contact', locale)}>{copy.cta}</a>
-    </p>
-  </div>
+    <div class="txt">
+      <h2 id="contact-h" data-reveal="lines">
+        {
+          copy.heading.map((line, i) => (
+            <>
+              <span class="ln" style={`--i:${i}`}>
+                <span>{line}</span>
+              </span>{' '}
+            </>
+          ))
+        }
+      </h2>
+      <p class="act" data-reveal="fade" style="--delay:200ms">
+        <a class="btn" href={pathFor('contact', locale)}>{copy.cta}</a>
+      </p>
+    </div>
 
-  <p class="foot rule"><span>{copy.region}</span></p>
+    <p class="foot rule"><span>{copy.region}</span></p>
+  </div>
 </section>
 
 <style>
-  .contact {
+  .stage {
     position: relative;
     min-height: max(100svh, 760px);
     padding: var(--space-section) var(--space-margin) 0;
@@ -63,7 +67,6 @@ const { copy, locale } = Astro.props;
     column-gap: var(--space-gap);
     align-items: center;
     overflow: clip;
-    view-timeline-name: --contact;
   }
 
   .txt {
@@ -109,9 +112,15 @@ const { copy, locale } = Astro.props;
     transform-origin: center;
     transform: rotate(180deg);
     fill: none;
-    stroke: var(--color-fog);
     stroke-width: 1.25px;
+  }
+  .rest {
+    stroke: var(--color-fog);
     opacity: 0.55;
+  }
+  .draw {
+    stroke: var(--color-cyan);
+    opacity: 0;
   }
   .mark {
     position: absolute;
@@ -127,77 +136,72 @@ const { copy, locale } = Astro.props;
     color: var(--sec-c);
   }
 
-  /* ---------- Motion ---------- */
-  :global(.mo) .ring circle {
+  /* ---------- Timed sequence (motion allowed, scroll scenes off) ---------- */
+  :global(.mo:not(.sc)) .draw {
     stroke-dasharray: 1;
     stroke-dashoffset: 0;
     transition:
       stroke-dashoffset 1200ms var(--ease-reveal) 100ms,
-      stroke 600ms var(--ease-state) 1200ms,
       opacity 600ms var(--ease-state) 1200ms;
   }
-  :global(.mo) .contact:not(.in) .ring circle {
+  :global(.mo:not(.sc)) .contact:not(.in) .draw {
     stroke-dashoffset: 1;
     opacity: 1;
-    stroke: var(--color-cyan);
   }
-  :global(.mo) .mark {
+  :global(.mo:not(.sc)) .rest {
+    transition: opacity 600ms var(--ease-state) 1100ms;
+  }
+  :global(.mo:not(.sc)) .contact:not(.in) .rest {
+    opacity: 0;
+  }
+  :global(.mo:not(.sc)) .mark {
     transition:
       opacity 1100ms var(--ease-reveal) 700ms,
       transform 1200ms var(--ease-reveal) 700ms;
   }
-  :global(.mo) .contact:not(.in) .mark {
+  :global(.mo:not(.sc)) .contact:not(.in) .mark {
     opacity: 0;
     transform: scale(0.9) rotate(-14deg);
   }
 
-  @supports (animation-timeline: view()) {
-    @media (min-width: 1024px) {
-      :global(.mo) .contact .ring circle {
-        transition: none;
-        animation: ring-close linear both;
-        animation-timeline: --contact;
-        animation-range: entry 15% cover 45%;
-      }
-      :global(.mo) .contact .mark {
-        transition: none;
-        animation: mark-resolve linear both;
-        animation-timeline: --contact;
-        animation-range: entry 70% cover 52%;
-      }
-    }
+  /* ---------- Scroll scene (html.sc) ----------
+     --k runs from 0 as the section enters, through 0.4 when the stage takes the screen, to 1 at the end of the
+     hold. The arc closes first, wide, and contracts onto the figure; then the symbol turns into place. */
+  :global(.sc) .contact {
+    /* 30vh of empty Ink for the horizon to sweep across, then the stage and a 75svh hold. */
+    padding-top: 30vh;
+    height: calc(175svh + 30vh);
+    --k: calc(var(--in, 1) * 0.4 + var(--pin, 1) * 0.6);
+    --ring: clamp(0, (var(--k) - 0.12) / 0.5, 1);
+    --mark: clamp(0, (var(--k) - 0.46) / 0.42, 1);
   }
-  @keyframes ring-close {
-    0% {
-      stroke-dashoffset: 1;
-      stroke: var(--color-cyan);
-      opacity: 1;
-    }
-    75% {
-      stroke-dashoffset: 0;
-      stroke: var(--color-cyan);
-      opacity: 1;
-    }
-    100% {
-      stroke-dashoffset: 0;
-      stroke: var(--color-fog);
-      opacity: 0.55;
-    }
+  :global(.sc) .stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 0;
+    padding-top: calc(var(--header-h) + 24px);
   }
-  @keyframes mark-resolve {
-    from {
-      opacity: 0;
-      transform: scale(0.9) rotate(-14deg);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
+  :global(.sc) .ring {
+    scale: calc(1.25 - 0.25 * var(--ring));
+  }
+  :global(.sc) .draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(1 - var(--ring));
+    opacity: calc(1 - clamp(0, (var(--k) - 0.7) / 0.2, 1));
+  }
+  :global(.sc) .rest {
+    opacity: calc(clamp(0, (var(--k) - 0.6) / 0.25, 1) * 0.55);
+  }
+  :global(.sc) .mark {
+    opacity: var(--mark);
+    scale: calc(0.82 + 0.18 * var(--mark));
+    rotate: calc((1 - var(--mark)) * -28deg);
   }
 
   /* ---------- Tablet and phone: the figure first, then the question ---------- */
   @media (max-width: 1023px) {
-    .contact {
+    .stage {
       display: flex;
       flex-direction: column;
       align-items: stretch;
@@ -217,7 +221,7 @@ const { copy, locale } = Astro.props;
     }
   }
   @media (max-width: 760px) {
-    .contact {
+    .stage {
       padding-top: 88px;
     }
     .figure {
