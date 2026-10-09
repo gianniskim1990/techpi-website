@@ -23,7 +23,7 @@ export const el: Dictionary = {
   footer: {
     // The accessible name of the footer navigation (not visible).
     label: 'Δευτερεύουσα πλοήγηση',
-    note: 'TechPi, πρώην pigiota314.',
+    note: 'TechPi — η εξέλιξη της pigiota314.',
   },
   language: {
     label: 'Γλώσσα',
