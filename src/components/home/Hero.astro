@@ -17,7 +17,9 @@ const { copy, locale } = Astro.props;
     half circle (Evolution) and closes into the TechPi symbol (Contact).
 
     The h1 is the first paint. Its lines rise out of their masks with a CSS-only animation that never waits for a
-    script, and only when motion is allowed. The arc draws itself once. Both rest exactly where the static page is. */}
+    script, and only when motion is allowed. The arc draws itself once. Both rest exactly where the static page is.
+    When the intro plays they play under its blurred backdrop (src/components/home/Intro.astro) and are at rest
+    when it clears. */}
 <section class="hero s-paper" aria-labelledby="hero-h" data-scene>
   <div class="stage">
     <svg class="arc" aria-hidden="true" focusable="false">

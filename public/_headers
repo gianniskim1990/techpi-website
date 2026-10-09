@@ -18,3 +18,11 @@
 
 https://:worker.:account.workers.dev/*
   X-Robots-Tag: noindex
+
+# Build output under /_astro/ is content-hashed by Astro: a changed file gets a new name, so these never go stale and
+# browsers may keep them without asking again. Without this, Cloudflare serves them with max-age=0 and every homepage
+# entry (the intro now plays on each one) re-asks for the symbol, the mask and the footage before it can use them.
+# HTML is not covered and keeps revalidating, so a deploy is seen at once.
+
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

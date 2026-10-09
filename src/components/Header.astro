@@ -21,6 +21,9 @@ const items = navPages;
 {/* Typographic name only, by decision (Phase 3G.2): the 3D symbol and the glossy wordmark are too heavy for this
      restrained header, and the identity appears once, in the homepage Contact section. The header sits over the top of the
      page and scrolls away with it (no sticky or pinned behaviour yet).
+     One exception, approved 2026-10-09: on each entry to the homepage the white 3D symbol flies into the header area
+     during the intro and dissolves into this typographic name (src/components/home/Intro.astro). It never stays: the
+     symbol is not a header element, and the resting header is exactly this one.
      Up to 900px wide the links move into a full-screen native <dialog> opened by the Menu button. Without
      JavaScript the button never appears and the Menu link to the footer navigation stays, so the links are
      always reachable. */}

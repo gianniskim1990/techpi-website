@@ -1,0 +1,285 @@
+---
+import { introSymbol, introSymbolSizes, introSymbolWidths } from './intro-symbol';
+import maskUrl from '../../assets/intro/techpi-symbol-mask.webp?url';
+import footageWebm from '../../assets/intro/intro-footage.webm?url';
+import footageMp4 from '../../assets/intro/intro-footage.mp4?url';
+import BrandSymbol from '../BrandSymbol.astro';
+import type { HomeCopy } from '../../content/home.en';
+
+interface Props {
+  copy: HomeCopy['intro'];
+}
+
+const { copy } = Astro.props;
+// Two display lines, broken before the ampersand in both languages ("Digital Products / & Technology"). The text
+// content still reads as the one approved line.
+const [head, tail] = copy.line.split(' & ');
+const lines = tail ? [head, `& ${tail}`] : [copy.line];
+---
+
+{/* INTRO. The brand moment that opens every entry to the homepage (docs/design/motion-system.md, section 14). Over the real page,
+    blurred and tinted Ink, a hairline circle draws and the TechPi symbol appears filled with moving light: original
+    footage of threads converging into one connected line, shown only through the symbol's own silhouette. The line
+    "Digital Products & Technology" rises in front of it. The footage gives way to the white 3D symbol, which flies to
+    the header and resolves into the typographic name.
+
+    Static markup, inert by default: `hidden` keeps it out of every page that has not been made eligible, including
+    pages without scripting or without this stylesheet. The video has no source here: src/scripts/intro.ts attaches it,
+    and switches the mask on, only when the intro plays and only after the symbol itself has loaded, so no other visit
+    or page downloads them and the symbol (the visible fallback, and the largest image) is never slowed by them.
+
+    Decorative: hidden from assistive technology, nothing in it is focusable, and the hero h1 stays the page heading. */}
+<div class="intro" hidden aria-hidden="true" data-intro style={`--intro-mask: url(${maskUrl})`}>
+  <div class="ring-box">
+    {/* In pixel units, as the hero arc: the hairline keeps its exact 1 px weight and the dash draws it whole. */}
+    <svg class="ring" focusable="false">
+      <circle cx="50%" cy="50%" r="49.8%" pathLength="1"></circle>
+    </svg>
+    <div class="mark" data-intro-mark>
+      <div class="glyph" data-intro-glyph>
+        <video
+          class="footage"
+          muted
+          playsinline
+          disablepictureinpicture
+          preload="none"
+          tabindex="-1"
+          data-intro-footage
+          data-webm={footageWebm}
+          data-mp4={footageMp4}></video>
+        {/* The approved 3D symbol, twice: as soft light over the footage, so the ribbons keep their depth, and solid on
+            top, as the fallback and as the symbol that flies. The browser fetches the file once. */}
+        <div class="relief"><BrandSymbol symbol={introSymbol} sizes={introSymbolSizes} widths={introSymbolWidths} /></div>
+        <div class="solid" data-intro-solid><BrandSymbol symbol={introSymbol} sizes={introSymbolSizes} widths={introSymbolWidths} /></div>
+      </div>
+    </div>
+  </div>
+  <p class="type">
+    {
+      lines.map((line, i) => (
+        <>
+          <span class="ln" style={`--i:${i}`}>
+            <span>{line}</span>
+          </span>{' '}
+        </>
+      ))
+    }
+  </p>
+</div>
+
+<style>
+  /* The ring's diameter sets the composition: the symbol is 74% of it, centred in the window; the type is placed
+     from the same measure so it always crosses the symbol at the same point. */
+  .intro {
+    --d: min(78vw, 64svh, 580px);
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    color: var(--color-sheet);
+    /* The real page, blurred, under an Ink tint with a faint TechPi Blue light behind the symbol. */
+    background:
+      radial-gradient(circle at 50% 50%, rgb(8 65 200 / 0.26), rgb(8 65 200 / 0) 46%),
+      rgb(8 14 30 / 0.84);
+    /* Strong enough that the page reads as light and mass, not as words competing with the intro's own line. */
+    -webkit-backdrop-filter: blur(28px) saturate(1.1);
+    backdrop-filter: blur(28px) saturate(1.1);
+  }
+  /* Without backdrop blur the tint simply deepens, so the symbol and the type keep their contrast. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .intro {
+      background:
+        radial-gradient(circle at 50% 50%, rgb(8 65 200 / 0.26), rgb(8 65 200 / 0) 46%),
+        rgb(8 14 30 / 0.95);
+    }
+  }
+  :global(html.intro) .intro[hidden] {
+    display: block;
+  }
+
+  .ring-box {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--d);
+    height: var(--d);
+    translate: -50% -50%;
+  }
+  .ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .ring circle {
+    fill: none;
+    stroke: var(--color-sheet);
+    stroke-opacity: 0.32;
+    stroke-width: 1px;
+    stroke-dasharray: 1;
+    transform-box: fill-box;
+    transform-origin: center;
+    /* Starts at the top and draws clockwise, as the hero arc reads. */
+    transform: rotate(-90deg);
+  }
+  .mark {
+    position: absolute;
+    left: 13%;
+    top: 13%;
+    width: 74%;
+    height: 74%;
+    transform-origin: 50% 50%;
+  }
+  .glyph,
+  .footage,
+  .relief,
+  .solid {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  /* The footage exists only inside the symbol: masked by the artwork's own alpha (scripts/brand/derive-intro-media.mjs). */
+  .footage {
+    display: block;
+    object-fit: cover;
+    opacity: 0;
+  }
+  /* The mask is requested only once the script starts the footage. Until the mask has loaded, the video is fully masked
+     out (an unavailable mask image counts as transparent), so a rectangle of video can never show. */
+  .glyph[data-footage] .footage {
+    -webkit-mask-image: var(--intro-mask);
+    mask-image: var(--intro-mask);
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+  .relief {
+    mix-blend-mode: soft-light;
+    opacity: 0;
+  }
+  /* While the footage plays, the solid symbol steps back; src/scripts/intro.ts brings it back at 1.7 s. */
+  .glyph.has-footage .footage {
+    opacity: 1;
+    transition: opacity 180ms var(--ease-state);
+  }
+  .glyph.has-footage .relief {
+    opacity: 0.55;
+    transition: opacity 180ms var(--ease-state);
+  }
+  .glyph.has-footage .solid {
+    opacity: 0;
+    transition: opacity 180ms var(--ease-state);
+  }
+
+  /* The line, in front of the symbol: display type, two lines, left-aligned like the hero, starting just outside the
+     symbol's left edge and crossing its lower half. */
+  .type {
+    position: absolute;
+    left: max(var(--space-margin), calc(50% - var(--d) * 0.46));
+    top: calc(50% + var(--d) * 0.07);
+    margin: 0;
+    font-size: clamp(2.75rem, 5vw, 4.75rem);
+    font-weight: var(--weight-display);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+    /* A quiet Ink shadow, not a glow: where a pulse of light passes behind a letter, the letter keeps its contrast. */
+    text-shadow: 0 0 0.3em rgb(8 14 30 / 0.55);
+  }
+  .type .ln {
+    display: block;
+    overflow: clip;
+    padding: 0.08em 0 0.16em;
+    margin: -0.08em 0 -0.16em;
+  }
+  .type .ln > span {
+    display: block;
+  }
+
+  /* ---------- The choreography up to the flight (CSS, from first paint) ----------
+     Times are from the moment the overlay first renders. src/scripts/intro.ts reads this timeline and places the
+     footage, the flight and the handoff on it. */
+  :global(html.intro) .ring circle {
+    animation:
+      intro-draw 700ms var(--ease-reveal) both,
+      intro-out 300ms var(--ease-state) 1900ms forwards;
+  }
+  :global(html.intro) .glyph {
+    animation: intro-settle 600ms var(--ease-reveal) 300ms both;
+  }
+  /* The lines rise out of their masks, then sink back into them: the type is always at full colour, never half-faded. */
+  :global(html.intro) .type .ln > span {
+    animation:
+      intro-rise 800ms var(--ease-reveal) calc(600ms + var(--i, 0) * 120ms) both,
+      intro-sink 340ms var(--ease-state) calc(1820ms + var(--i, 0) * 60ms) forwards;
+  }
+  @keyframes intro-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes intro-settle {
+    from {
+      opacity: 0;
+      transform: scale(0.94);
+    }
+  }
+  @keyframes intro-rise {
+    from {
+      transform: translateY(110%);
+    }
+  }
+  @keyframes intro-sink {
+    to {
+      transform: translateY(110%);
+    }
+  }
+  @keyframes intro-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .intro {
+      --d: min(84vw, 50svh, 380px);
+      -webkit-backdrop-filter: blur(18px) saturate(1.1);
+      backdrop-filter: blur(18px) saturate(1.1);
+    }
+    .type {
+      left: max(var(--space-margin), calc(50% - var(--d) * 0.44));
+      font-size: clamp(1.875rem, 8.2vw, 2.75rem);
+    }
+  }
+</style>
+
+<style is:global>
+  /* The header during the intro (homepage only: this stylesheet ships with the homepage). It sits above the overlay.
+     The name and the navigation wait, invisible but in place, in the accessibility tree and reachable: the first key,
+     press or focus ends the intro before anything else happens. src/scripts/intro.ts brings them in. */
+  html.intro .site-header {
+    z-index: 70;
+  }
+  html.intro .site-header > .site-name,
+  html.intro .site-header > .site-nav,
+  html.intro .site-header > .util {
+    opacity: 0;
+  }
+  /* The name's temporary twin: Sheet on the dark backdrop, revealed out of a mask. Created by src/scripts/intro.ts. */
+  html.intro .site-header > .intro-name {
+    position: absolute;
+    /* Clipped to the line of text itself, so the letters waiting below it are hidden. */
+    padding: 0;
+    overflow: clip;
+    color: var(--color-sheet);
+    pointer-events: none;
+  }
+  html.intro .site-header > .intro-name > span {
+    display: block;
+  }
+</style>

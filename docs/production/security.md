@@ -12,7 +12,7 @@ What the site is, as built and deployed:
 | Build | Astro 7 static output (`output: 'static'`), 20 HTML pages | All HTML is generated once, at build time, from files in this repository |
 | Hosting | Cloudflare Workers Static Assets (`wrangler.jsonc`): no Worker script, `404-page` not-found handling, `auto-trailing-slash` | Nothing executes on the server per request. Only GET and HEAD are served (other methods: 405) |
 | Server-side features | None: no SSR, database, login, API, contact form, upload, search, comments or cookies | No server-side injection, authentication or session surface |
-| Client JavaScript | One first-party module (motion and the mobile menu, 5.8 KB), one inline head bootstrap, Astro's inlined menu module | No third-party script. No `eval`. Nothing reads URL parameters or user input into the DOM |
+| Client JavaScript | One first-party module (motion and the mobile menu, 5.8 KB), one inline head bootstrap, Astro's inlined menu module; on the homepage also the intro's head check and its same-origin module (5.2 KB), which attaches local video files when the intro plays | No third-party script. No `eval`. Nothing reads URL parameters or user input into the DOM |
 | Other inline content | JSON-LD (`application/ld+json`), not executed | Built from repository data; `<` is escaped (`src/seo/schema.ts`) |
 | Assets | Self-hosted Commissioner (2 WOFF2), local images, PNG icons and sharing images | No third-party font, CDN or tracker |
 | Outbound links | `mailto:`, `tel:`, three client websites | Plain links |
@@ -98,6 +98,7 @@ below). Verified on real responses (section 8).
 | `Permissions-Policy` | `accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), browsing-topics=()` | Features the site never uses. Only features Chromium recognises, so no console warnings |
 | `Cross-Origin-Opener-Policy` | `same-origin` | Isolates the window from any page that opens it. The site opens no windows |
 | `X-Robots-Tag` | `noindex`, **only on `https://:worker.:account.workers.dev/*`** | Section 6 |
+| `Cache-Control` | `public, max-age=31536000, immutable`, **only on `/_astro/*`** (2026-10-09) | Build output there is content-hashed: a changed file gets a new name. Cloudflare otherwise serves it with `max-age=0`, so every homepage entry (the intro plays on each) would re-ask for the symbol, mask and footage. HTML is not covered and keeps revalidating |
 
 **404 responses get none of these on Cloudflare.** On the deployed preview, a 404 (served from `404.html` by
 `not_found_handling: "404-page"`) carries only Cloudflare's own headers (on workers.dev, its `X-Robots-Tag: noindex`).
@@ -145,8 +146,12 @@ script-src 'self' 'sha256-…' …;  style-src 'self' 'sha256-…' …;  style-s
 **2. The header policy** (section 3) adds `frame-ancestors 'none'`, which a meta policy cannot carry.
 
 **Known limitation: the head bootstrap precedes the meta policy.** A meta CSP governs only what the parser meets after
-it, and Astro places it at the end of `<head>`. Before it are only static build-time head tags and the four-line motion
-bootstrap (`BaseLayout.astro`). Nothing in the page body and no script or style Astro injects is outside the policy.
+it, and Astro places it at the end of `<head>`. Before it are only static build-time head tags, the short motion
+bootstrap and, on the homepage only, the intro check (both in `BaseLayout.astro`, static text written at
+build time, reading nothing from the URL except whether it has a `#fragment`). Nothing in the page body and no script
+or style Astro injects is outside the policy. The intro's own module (`src/scripts/intro.ts`) is a same-origin file
+loaded after the policy (`script-src 'self'`). Its footage, poster and mask are local files under `/_astro/`, allowed by
+`default-src 'self'` (media and images); no host is added to any policy.
 Moving the whole policy into a header would need the per-page hashes copied into `_headers` after every build (a
 post-build script and a single shared hash list), which is more fragile than the gap it closes. Revisit if Astro adds
 header output for static sites.
@@ -262,3 +267,10 @@ redirect (harmless on `.dev`, which browsers only ever reach over HTTPS).
 | Output against `main` | 20 page bodies byte-identical, CSS and JS identical; each page gains only the CSP meta (about 1.1 KB) |
 | Performance (desktop and throttled phone, 4 pages) | No measurable change: CLS 0, LCP and long tasks within run-to-run noise, scroll p50 16.7 ms. Each response carries about 0.6 KB more headers (compressed by HTTP/2 and HTTP/3) |
 | Dependencies | No package added. One `overrides` entry. One fewer `sharp` copy installed |
+
+## 11. Browser storage (2026-10-09)
+
+None. The homepage intro plays on every entry (owner's decision), so the first version's `localStorage` value
+(`techpi-intro-seen`) was removed with it; no `sessionStorage`, cookie or other storage replaces it. The only state the
+intro keeps is the page's own scroll offset in its session-history entry (`history.state`), so that a reload or Back
+that restores a scrolled-down page is not covered: never sent anywhere, gone with the tab's history.

@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>TechPi intro footage generator</title>
+<!--
+  Generates the original abstract footage that plays inside the symbol in the homepage intro
+  (src/components/home/Intro.astro, docs/design/motion-system.md section 14).
+
+  Not part of the site and not part of the build. Open this file in desktop Chrome (file:// is fine), press
+  "Render", and save the two files it offers into src/assets/intro/. Rendering is deterministic: the drawing uses a
+  seeded random generator and a fixed frame clock, so the same file produces the same frames. The encoder is Chrome's
+  own MediaRecorder (VP9 WebM, H.264 MP4), so the byte output can differ slightly between Chrome versions.
+  `node scripts/brand/derive-intro-media.mjs` then writes the symbol mask from the approved artwork.
+
+  What it shows: the homepage's own idea, "fragmented to connected", as moving light. Hairline threads drift in from
+  scattered points, bend into one connected line, and cyan pulses travel through its nodes, seen through a slow camera
+  move. TechPi colours only: Ink, TechPi Blue, Cyan, Sheet. The lower part of the frame stays darker, because the
+  intro's type crosses it.
+-->
+<style>
+  body { margin: 24px; font: 15px/1.4 system-ui, sans-serif; background: #080e1e; color: #faf9f6; }
+  canvas { display: block; width: 320px; height: 320px; margin: 16px 0; outline: 1px solid #2a3348; }
+  a { color: #1fddfc; margin-right: 16px; }
+</style>
+</head>
+<body>
+<button id="go" type="button">Render</button>
+<canvas id="c" width="640" height="640"></canvas>
+<p id="out"></p>
+<script>
+  const SIZE = 640;
+  const FPS = 24;
+  const SECONDS = 2;
+  const FRAMES = FPS * SECONDS;
+  const INK = '#080e1e', BLUE = '#0841c8', CYAN = '#1fddfc', SHEET = '#faf9f6';
+
+  // Seeded generator (mulberry32): the same composition on every render.
+  let seed = 0x7ec4b1;
+  const rnd = () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const ease = (t) => t * t * (3 - 2 * t);
+
+  // ---------- The scene, built once ----------
+  // 1. Threads: from scattered points on the left they bend into one connected line through the centre, which
+  //    branches out again on the right into a few outputs (the homepage's transformation map, in motion).
+  // 2. Orbits: hairline arcs of the one circle the site is built on, turning slowly; they fill the symbol's ring.
+  // 3. A sparse far field of points. Cyan light travels the threads, the line and the orbits.
+  const layers = [
+    { depth: 0.55, alpha: 0.16, width: 1, count: 16, drift: 18 },
+    { depth: 0.8, alpha: 0.27, width: 1.2, count: 12, drift: 34 },
+    { depth: 1.0, alpha: 0.44, width: 1.6, count: 8, drift: 56 },
+  ];
+  const busY = 0.5;
+  const threads = [];
+  for (const L of layers) {
+    for (let i = 0; i < L.count; i++) {
+      const y0 = 0.02 + rnd() * 0.96;
+      threads.push({ L, side: 'in', x0: -0.08 + rnd() * 0.12, y0, join: 0.36 + rnd() * 0.08, phase: rnd() * Math.PI * 2, blue: rnd() < 0.25 });
+    }
+  }
+  // Outputs on the right: fewer, deliberate, evenly fanned.
+  [0.16, 0.3, 0.7, 0.84].forEach((y1, i) => threads.push({ L: layers[1 + (i % 2)], side: 'out', x0: 0.64 + i * 0.02, y0: y1, join: 0.64 + i * 0.02, phase: rnd() * 7, blue: i === 1 }));
+  const orbits = [0.22, 0.3, 0.37, 0.44, 0.49].map((r, i) => ({ r, a0: rnd() * Math.PI * 2, len: Math.PI * (0.55 + rnd() * 0.9), spin: (i % 2 ? -1 : 1) * (0.05 + rnd() * 0.05), alpha: 0.14 + rnd() * 0.14, blue: i === 2 }));
+  const nodes = [0.44, 0.52, 0.6].map((x) => ({ x, r: 3.2 }));
+  const pulses = [
+    ...threads.filter((t) => t.L.depth >= 0.8 && t.side === 'in').slice(0, 9).map((t, i) => ({ kind: 'thread', t, start: i / 9, speed: 0.5 + rnd() * 0.2 })),
+    ...threads.filter((t) => t.side === 'out').map((t, i) => ({ kind: 'thread', t, start: 0.25 + i * 0.2, speed: 0.6 })),
+    ...orbits.slice(1, 4).map((o, i) => ({ kind: 'orbit', o, start: i / 3, speed: 0.35 })),
+  ];
+  const field = [];
+  for (let gx = 0; gx < 15; gx++) for (let gy = 0; gy < 15; gy++) if (rnd() < 0.5) field.push({ x: gx / 14, y: gy / 14, a: 0.05 + rnd() * 0.09 });
+
+  // Position along a thread, u in [0, 1].
+  function point(th, u, time) {
+    const sway = Math.sin(th.phase + time * 1.4) * 0.012;
+    if (th.side === 'out') {
+      // From the line out to its output: along the line, then a smooth bend up or down.
+      const startX = 0.6, k = ease(u);
+      return [lerp(startX, 1.12, u), lerp(busY, th.y0, k) + sway * k];
+    }
+    if (u < 0.6) { const k = ease(u / 0.6); return [lerp(th.x0, th.join, u / 0.6), lerp(th.y0, busY, k) + sway * (1 - k)]; }
+    return [lerp(th.join, 0.62, (u - 0.6) / 0.4), busY];
+  }
+  function orbitPoint(o, u, time) { const ang = o.a0 + o.spin * time * Math.PI + u * o.len; return [0.5 + Math.cos(ang) * o.r, 0.5 + Math.sin(ang) * o.r]; }
+
+  function frame(ctx, f) {
+    const time = f / FPS;
+    const p = f / (FRAMES - 1);
+    const S = SIZE;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = INK; ctx.fillRect(0, 0, S, S);
+    let g = ctx.createRadialGradient(S * 0.66, S * 0.34, 0, S * 0.66, S * 0.34, S * 0.8);
+    g.addColorStop(0, 'rgba(8,65,200,0.5)'); g.addColorStop(0.6, 'rgba(8,65,200,0.14)'); g.addColorStop(1, 'rgba(8,65,200,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, S, S);
+
+    // Camera: a slow dolly in and a slight turn; layers move by depth.
+    ctx.save();
+    ctx.translate(S / 2, S / 2);
+    ctx.rotate((-4 + 7 * ease(p)) * Math.PI / 180);
+    const z = 1.02 + 0.1 * ease(p);
+    ctx.scale(z, z);
+    ctx.translate(-S / 2, -S / 2);
+
+    for (const d of field) { ctx.fillStyle = `rgba(250,249,246,${d.a})`; ctx.fillRect((d.x - 0.03 * p) * S, d.y * S, 1.3, 1.3); }
+
+    for (const o of orbits) {
+      ctx.beginPath();
+      for (let i = 0; i <= 90; i++) { const [x, y] = orbitPoint(o, i / 90, time); i ? ctx.lineTo(x * S, y * S) : ctx.moveTo(x * S, y * S); }
+      ctx.strokeStyle = o.blue ? 'rgba(8,65,200,0.55)' : `rgba(250,249,246,${o.alpha})`; ctx.lineWidth = 1; ctx.stroke();
+      const [nx, ny] = orbitPoint(o, 0.5, time);
+      ctx.strokeStyle = 'rgba(250,249,246,0.45)'; ctx.beginPath(); ctx.arc(nx * S, ny * S, 2.4, 0, Math.PI * 2); ctx.stroke();
+    }
+    for (const th of threads) {
+      const L = th.L;
+      ctx.save(); ctx.translate(-L.drift * p, 0);
+      ctx.beginPath();
+      for (let i = 0; i <= 64; i++) { const [x, y] = point(th, i / 64, time); i ? ctx.lineTo(x * S, y * S) : ctx.moveTo(x * S, y * S); }
+      ctx.strokeStyle = th.blue ? `rgba(8,65,200,${Math.min(1, L.alpha * 3)})` : `rgba(250,249,246,${L.alpha})`;
+      ctx.lineWidth = L.width; ctx.stroke();
+      ctx.restore();
+    }
+    ctx.strokeStyle = 'rgba(250,249,246,0.45)'; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(S * 0.36 - 56 * p, S * busY); ctx.lineTo(S * 0.64 - 56 * p, S * busY); ctx.stroke();
+    for (const n of nodes) {
+      const x = n.x * S - 56 * p, y = busY * S;
+      ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(x, y, n.r + 2, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = 'rgba(250,249,246,0.75)'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(x, y, n.r, 0, Math.PI * 2); ctx.stroke();
+    }
+
+    // Light: continuous streaks with a fading tail, added on top.
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.lineCap = 'round';
+    for (const pu of pulses) {
+      const head = (pu.start + time * pu.speed) % 1.3;
+      if (head > 1.05) continue;
+      const tail = 0.16, steps = 18;
+      for (let k = 0; k < steps; k++) {
+        const u1 = head - (k / steps) * tail, u2 = head - ((k + 1) / steps) * tail;
+        if (u2 < 0 || u1 > 1) continue;
+        let a1, a2, depth = 1, dx = 0;
+        if (pu.kind === 'orbit') { a1 = orbitPoint(pu.o, u1, time); a2 = orbitPoint(pu.o, u2, time); }
+        else { depth = pu.t.L.depth; dx = pu.t.L.drift * p; a1 = point(pu.t, u1, time); a2 = point(pu.t, u2, time); }
+        // Light is quieter in the lower part of the frame, where the intro's type crosses the symbol.
+        const low = Math.min(1, Math.max(0, (a1[1] - 0.52) / 0.12));
+        ctx.strokeStyle = `rgba(31,221,252,${(1 - k / steps) * 0.9 * depth * (1 - 0.6 * low)})`;
+        ctx.lineWidth = 3 - (k / steps) * 1.9;
+        ctx.beginPath(); ctx.moveTo(a1[0] * S - dx, a1[1] * S); ctx.lineTo(a2[0] * S - dx, a2[1] * S); ctx.stroke();
+      }
+    }
+    for (const n of nodes) {
+      const lit = Math.max(0, Math.sin((time * 1.5 - n.x * 2) * Math.PI));
+      if (lit < 0.55) continue;
+      const x = n.x * S - 56 * p, y = busY * S;
+      g = ctx.createRadialGradient(x, y, 0, x, y, 16); g.addColorStop(0, `rgba(31,221,252,${(lit - 0.55) * 1.3})`); g.addColorStop(1, 'rgba(31,221,252,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 16, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+    ctx.globalCompositeOperation = 'source-over';
+
+    // The lower band, where the intro's type crosses the symbol: darker, so the type keeps its contrast.
+    g = ctx.createLinearGradient(0, S * 0.55, 0, S);
+    g.addColorStop(0, 'rgba(8,14,30,0)'); g.addColorStop(0.3, 'rgba(8,14,30,0.62)'); g.addColorStop(1, 'rgba(8,14,30,0.86)');
+    ctx.fillStyle = g; ctx.fillRect(0, S * 0.55, S, S * 0.45);
+  }
+
+  // ---------- Recording ----------
+  async function record(type, bits) {
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    const stream = canvas.captureStream(0);
+    const track = stream.getVideoTracks()[0];
+    const rec = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: bits });
+    const chunks = [];
+    rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+    const done = new Promise((r) => (rec.onstop = r));
+    frame(ctx, 0);
+    rec.start();
+    const t0 = performance.now();
+    for (let f = 0; f < FRAMES; f++) {
+      frame(ctx, f);
+      track.requestFrame();
+      // Real-time pacing, so the recorder's timestamps are exactly 1/24 s apart.
+      const due = t0 + ((f + 1) * 1000) / FPS;
+      await new Promise((r) => setTimeout(r, Math.max(0, due - performance.now())));
+    }
+    rec.stop();
+    await done;
+    return new Blob(chunks, { type: type.split(';')[0] });
+  }
+  window.renderAll = async () => ({
+    webm: await record('video/webm;codecs=vp9', 900_000),
+    mp4: await record('video/mp4;codecs=avc1.42E01F', 1_100_000),
+  });
+
+  document.getElementById('go').addEventListener('click', async () => {
+    const out = document.getElementById('out');
+    out.textContent = 'Rendering, about 5 seconds...';
+    const r = await window.renderAll();
+    out.textContent = '';
+    for (const [name, blob] of [['intro-footage.webm', r.webm], ['intro-footage.mp4', r.mp4]]) {
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.textContent = `${name} (${Math.round(blob.size / 1024)} KB)`; out.append(a);
+    }
+  });
+  frame(document.getElementById('c').getContext('2d'), 0);
+</script>
+</body>
+</html>

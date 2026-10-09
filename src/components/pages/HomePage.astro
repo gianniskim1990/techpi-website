@@ -6,6 +6,7 @@ import ContactSection from '../home/ContactSection.astro';
 import Evolution from '../home/Evolution.astro';
 import EuProjects from '../home/EuProjects.astro';
 import Hero from '../home/Hero.astro';
+import Intro from '../home/Intro.astro';
 import Intelligence from '../home/Intelligence.astro';
 import SelectedWork from '../home/SelectedWork.astro';
 import { capabilitiesIn } from '../../content/capabilities';
@@ -23,7 +24,8 @@ const meta = pageMeta[locale].home;
 const copy = homeCopy[locale];
 ---
 
-<BaseLayout locale={locale} page="home" title={meta.title} description={meta.description} bleed>
+<BaseLayout locale={locale} page="home" title={meta.title} description={meta.description} bleed intro>
+  <Intro copy={copy.intro} />
   <Hero copy={copy.hero} locale={locale} />
   <BrandStatement copy={copy.statement} />
   <SelectedWork copy={copy.work} projects={featuredIn(locale)} locale={locale} />
@@ -33,3 +35,7 @@ const copy = homeCopy[locale];
   <Evolution copy={copy.evolution} locale={locale} />
   <ContactSection copy={copy.contact} locale={locale} />
 </BaseLayout>
+
+<script>
+  import '../../scripts/intro';
+</script>

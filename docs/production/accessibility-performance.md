@@ -254,3 +254,130 @@ node scripts/security/validate.mjs
 
 The axe, keyboard, responsive, motion, JS-off and performance harnesses are not kept in the repository; they were
 throwaway Playwright scripts and the tables above are their output.
+
+## 11. Addendum: the homepage intro (2026-10-09)
+
+Branch `feat/homepage-intro-flight`. Design and lifecycle: `docs/design/motion-system.md`, section 14. Storage (none):
+`security.md`, section 11.
+
+**Owner's decision, 2026-10-09: the intro plays on every entry to the homepage** (direct load, reload, link, language
+switch, back/forward), not only on a first visit. Its cost is therefore recurring: see "Every entry" below. The
+measurements in the first table were taken while it still played once per browser; column C is what every entry now
+costs on a cold cache, and column D is now what a homepage visit costs only when the intro does not play (reduced
+motion, Save-Data, a `#fragment`, a restored scroll position).
+
+### Every entry: the recurring cost
+
+Same browser profile, a first (cold-cache) load and then a new navigation to the same homepage (median of 5):
+
+| | Headline readable | FCP | Bytes transferred | Intro media transferred |
+|---|---|---|---|---|
+| `/` 1440, cold | 3.27 s | 412 ms | 267 KB | symbol 38 KB, footage 120 KB, mask 24 KB |
+| `/` 1440, repeat entry | 3.04 s | 160 ms | 1 KB | none: all from the browser cache |
+| `/el/` 390, CPU 4×, cold | 3.89 s | 996 ms | 262 KB | symbol 23 KB, footage 120 KB, mask 24 KB |
+| `/el/` 390, CPU 4×, repeat entry | 3.17 s | 276 ms | 1 KB | none |
+
+- Against `main` (headline readable at 1.83 s desktop and 1.36 s on the throttled phone), **every homepage entry now
+  costs about 1.2 to 1.8 s** before the headline can be read. That is the approved 3-second intro, now on each entry.
+- **Repeat entries download nothing new.** `/_astro/*` (content-hashed build output) is now served
+  `Cache-Control: public, max-age=31536000, immutable` (`public/_headers`). Before that, Cloudflare's default
+  `max-age=0, must-revalidate` made every entry re-ask for the symbol, the mask and the footage (about 6 KB of 304
+  answers and one round trip each), which on a slow phone could push the footage past its 1.0 s window.
+- No other page is affected, and the intro still loads nothing on any visit where it does not play. Same tools as section 1, against `main` at `768c0a0` and the first version of the intro (PR
+#13 at `14e4ff1`), built and served the same way. A = `main`; B = the first intro (solid blue overlay); C = the refined
+intro on a first visit (blurred backdrop, footage inside the symbol, type in front); D = the refined intro's returning
+visit.
+
+### What the intro costs, honestly
+
+Chrome's LCP does not show what an intro costs: it ignores what covers the page, and on phones it reports the intro's
+symbol as the LCP element. So the table also gives **when the hero headline is readable**: the first moment, polled every
+frame, at which every line of the h1 is at rest and nothing of the intro covers it.
+
+| Median of 5 (3 for `/el/`) | A main | B first intro | C refined, first visit | D refined, returning |
+|---|---|---|---|---|
+| Headline readable, `/` 1440 | 1.83 s | 4.12 s | **3.18 s** | 1.60 s |
+| Headline readable, `/el/` 1440 | 1.70 s | 4.27 s | **3.31 s** | 1.66 s |
+| Headline readable, `/` 390, CPU 4× | 1.36 s | 4.04 s | **3.56 s** | 1.31 s |
+| Chrome LCP, `/` phone 4× + slow network | 2100 ms (h1) | 2264 ms (symbol) | 2352 ms (symbol; 2004 to 3476) | 2100 ms (h1) |
+| Chrome LCP, `/el/` phone 4× + slow network | 2300 ms | 2448 ms | 2408 ms | 2380 ms |
+| FCP, `/` phone 4× + slow network | 1720 ms | 1708 ms | 1900 ms | 1760 ms |
+| CLS | ≤ 0.0004 | 0 | ≤ 0.0004 | ≤ 0.0004 |
+| TBT, `/` phone 4× | 1071 ms | 1047 ms | 1088 ms | 1100 ms |
+| Lighthouse mobile, `/` and `/el/` | perf 98-100, a11y 100 | perf 72-100, **a11y 97** in 4 of 6 runs | perf 95-100, **a11y 100** in every run | (not run: Lighthouse clears storage) |
+
+- **The refined intro gives the headline back about 0.5 to 1 s sooner than the first one**, because the hero's entrance
+  now plays under the blurred backdrop instead of waiting for it. Against `main` a cold-cache entry still costs about 1.3 s
+  on desktop and 2.2 s on a throttled phone. Returning visits are unchanged within run-to-run noise.
+- **Cold-cache LCP on a throttled phone was 2.81 s before optimisation**, above the 2.5 s line: the mask, poster and
+  video competed with the symbol on a slow connection. Fixed by preloading the symbol from the head script (only when
+  the intro will play), starting the footage only after the symbol has loaded, and dropping the poster, which was never
+  visible. In a dedicated A/B run afterwards: 1.97 to 2.06 s against B's 2.08 s. FCP stays 100 to 200 ms later than B.
+- **The Lighthouse accessibility failure of the first intro is gone**: B's name faded in through low contrast; C's name
+  rises out of a mask at full colour and hands over to Ink in one frame (see Contrast below).
+- **Bytes, cold cache** (Lighthouse transfer): 455 KB against B's 298 KB and A's 269 KB. Video 120 KB (VP9 WebM; MP4
+  108 KB for Safari), mask 24 KB, the symbol 23 to 57 KB by screen (B: 16 to 26 KB), intro module 5.2 KB. No extra byte on
+  any visit where the intro does not play, or on any other page.
+
+### Frame pacing and the backdrop blur
+
+Two very different results, depending on whether the browser composites on a GPU:
+
+| 3 runs, rAF intervals during the intro | B first intro | C refined |
+|---|---|---|
+| 1440, software compositing (SwiftShader, the test harness default) | 503 frames, 0 over 50 ms | **148 frames, 65 over 50 ms, worst 167 ms** |
+| 1440, GPU (NVIDIA GTX 1650, D3D11), CPU 4× | 494 frames | 476 frames, 0 over 33 ms in the flight and handoff |
+| 390, CPU 4×, software compositing | 500 frames | 437 frames, 0 over 50 ms |
+| 390, CPU 4×, GPU | | 493 frames, 0 over 33 ms in the flight and handoff |
+
+- On a GPU, the 28 px full-window blur is cheap and the intro is as smooth as the first version; the flight and the
+  handoff run on the compositor. Without GPU compositing (software rendering, some locked-down or very old machines,
+  virtual machines), a full-window blur at desktop size is expensive and the intro stutters, though it still ends on
+  time (the timeline is on the compositor clock). Phones use an 18 px blur over a smaller window and stay smooth even in
+  software.
+- In a freshly started browser, one or two frames of 67 to 183 ms occur between 0.35 and 0.8 s, when the video element
+  loads and its decoder starts (B: 33 to 67 ms at its fade). The flight and handoff stay smooth.
+- The intro ends 3.02 to 3.05 s after its first frame at 1×, 4× and 6× CPU.
+
+**If the software-compositing case matters** (not applied): lower the desktop blur to about 12 px, or drop
+`backdrop-filter` when the browser reports no GPU (no reliable signal exists; a frame-time probe in the first 300 ms
+could switch to the plain Ink tint).
+
+### Contrast
+
+Measured from rendered pixels, not from colour values, stepping the paused timeline:
+
+- **Header name**, 10 ms steps from 2.3 to 3.0 s: lowest 5.34:1 (1440, 768, 390, 320, both languages). Before the fix
+  the step was placed from an estimate and the name reached 4.25:1 just before it; it is now placed from measurement.
+- **The flying symbol never covers a letter while visible**: its dissolve ends one frame before its path touches the name, computed from the measured flight (checked at 1440, 768, 390, 320).
+- **Navigation and language links** through the handoff: lowest 4.65:1. The inactive language (Slate) first measured
+  2.33:1 and now arrives once the background is light enough for it.
+- **The intro's line of type** against the moving footage and blurred page, every glyph pixel against the brightest
+  rendered pixel beside it, over all 19 footage frames: median 10 to 13:1; minimum 4.52 to 6.22:1 by size and language,
+  except where the 1 px decorative circle touches a letter's edge (a hairline counted as "background"; with the circle
+  hidden every case is at least 4.5:1).
+
+### Tests
+
+| Area | Result |
+|---|---|
+| Every entry (Playwright, 80 checks), EN/EL at 1440, 390, 360: plays on a direct load, on three reloads in a row, on a language switch both ways, from the Work page through the home link, on Back and on Forward-then-Back; does not replay when the tab is hidden and shown or frozen and resumed; does not play over a page reloaded while scrolled down (the scroll is restored); an old `techpi-intro-seen` value and blocked storage change nothing; never with reduced motion, Save-Data, `#work`, on the Work page or a 404; JavaScript off shows the normal page. Each run: lands within 2 px, masked footage, ends at 3.0 to 3.05 s, clean, no CSP violation | 80/80 |
+| Back/forward cache (Chrome with its cache enabled; Playwright disables it by default): Back to the homepage twice per size at 1440, 390, 360, the same document restored each time: the intro restarts from its first frame with masked footage, one video player, and ends clean; Back to a homepage left scrolled down: no intro, position kept | 7/7 |
+| Intro matrix (Playwright, 62 checks; reload, language switch, back/forward and blocked storage now expect the intro to play): plays and lands on the name at 1440, 1280, 768, 390, 360 in EN and EL (3.01 to 3.03 s, symbol within 1 px of the name's centre), never plays where it must not (reload, language switch, reduced motion, Save-Data, `#work`, JS off, scroll restoration, back/forward, blocked storage, other pages and 404s), skips instantly (Escape before and during the flight, any key, click, tap, wheel, Tab), survives failures (symbol fails, intro module missing: page back after 2.5 s, module throws, slow fonts, resize, orientation), footage plays inside the symbol on a first visit, no video, mask or poster request on returning, reduced-motion, Save-Data or other-page visits, video failure, autoplay refusal and a 2 s late video all fall back to the static symbol on time, nothing left behind (classes, overlay, name twin, video sources, animations) | 62/62 |
+| Visual regression: homepage at rest after a full first-visit intro, 5 sizes × EN/EL, against B and against A | identical (10/10 each; one capture flake against A, clean on rerun) |
+| Visual regression: returning visit (motion) and reduced motion, 18 pages × 1440/390, against A | identical (lazy-image capture flakes clean on rerun) |
+| Type fit: 320 to 1440 and landscape phone, EN/EL | no clipping, no horizontal scroll, at least 16 px margin |
+| Redirects (35) and routes (23) against A | identical |
+| `astro check`, build, asset (28), security (334), SEO (1138), `derive-intro-media.mjs` | pass; 20 pages, 18 sitemap URLs, all noindex, no tracking, no dependency, header or config change |
+| Phase 6 regression suites on this build: axe (20 pages × 3 sizes, reduced motion and motion), forward and backward Tab, focus under the header, mobile dialog, JavaScript off, responsive (6 sizes × 20 pages) | axe 0 violations; keyboard 0 issues, 0/307 covered; dialog all pass; JS-off and responsive findings the same known, design-intentional items as `main` |
+| axe while the intro is on screen | no intro element flagged; at 0.8 s the hero's own entrance (meta and support lines mid-fade) is flagged exactly as on `main` at 0.8 s |
+
+### Not covered
+
+- **Safari and Firefox.** WebKit and Firefox are not installed here and were not downloaded. Most at risk in Safari:
+  `-webkit-mask-image` on `<video>` (supported, but untested here), `backdrop-filter` performance, autoplay rules (Low
+  Power Mode refuses autoplay; the static symbol is the designed fallback), and MP4 selection. Test on iOS and macOS
+  Safari before launch.
+- **Real phones and GPUs other than the one above.** The GPU frame figures come from one desktop GPU.
+- **Screen readers.** The overlay, video and name twin are `aria-hidden`; no screen reader was run.
+- **Field data.** None.

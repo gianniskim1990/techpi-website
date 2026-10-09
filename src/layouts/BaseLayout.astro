@@ -11,6 +11,8 @@ import { defaultLocale, locales, type Locale } from '../i18n/locales';
 import { alternatesFor, pathFor, type PageKey } from '../i18n/routes';
 import { ogLocale, socialImage } from '../content/seo';
 import { breadcrumb, organization, serialise, webPage, website, type WebPageType } from '../seo/schema';
+import { getImage } from 'astro:assets';
+import { introSymbol, introSymbolSizes, introSymbolWidths } from '../components/home/intro-symbol';
 
 interface Props {
   locale: Locale;
@@ -29,6 +31,8 @@ interface Props {
   bleed?: boolean;
   /** Keeps this page out of search indexes even in a build that enables indexing. For unpublished route shells. */
   noindex?: boolean;
+  /** The homepage only: may play the intro (src/components/home/Intro.astro), decided in the head bootstrap. */
+  intro?: boolean;
   /** The schema.org type of the page's WebPage node. */
   pageType?: WebPageType;
   /** A breadcrumb trail (paths, not URLs), only where it matches the real hierarchy of the site. */
@@ -46,6 +50,7 @@ const {
   paths,
   bleed = false,
   noindex = false,
+  intro = false,
   pageType = 'WebPage',
   trail,
   schema = [],
@@ -99,6 +104,12 @@ const jsonLd = canonical
 // (docs/production/identity-font-readiness.md): it brings that file in before or just after first paint, while
 // preloading both files delays first paint and the file that matters. The other file loads normally.
 const primaryFont = locale === 'el' ? commissionerGreek : commissionerLatin;
+
+// The intro's symbol, preloaded by the head script below only when the intro will play. The same image call as
+// BrandSymbol makes, so the URLs are the ones the intro's <img> asks for.
+const introPreload = intro
+  ? (await getImage({ src: introSymbol, widths: introSymbolWidths, sizes: introSymbolSizes, format: 'webp', quality: 88 })).srcSet.attribute
+  : '';
 ---
 
 <!doctype html>
@@ -133,6 +144,40 @@ const primaryFont = locale === 'el' ? commissionerGreek : commissionerLatin;
         }
       })(document, window);
     </script>
+    {/* Homepage only: the intro (src/components/home/Intro.astro). `intro` shows the overlay. Decided here, before first
+        paint, so the page is never seen bare first. It plays on every entry to the homepage (owner's decision,
+        2026-10-09): a direct load, a reload, a link, back/forward. Not with reduced motion (`mo` absent), Save-Data, a
+        #fragment, or for a prerendered page; and not when this history entry was left scrolled down (src/scripts/
+        intro.ts records that in the entry's own history state on pagehide), so a reload or Back that restores a
+        scrolled position is not covered. No storage and no cookie. When it will play, the symbol image (the intro's
+        largest image) is preloaded at once instead of waiting for layout; at default priority, because high priority
+        measurably delayed first paint. If src/scripts/intro.ts has not taken over (`intro-live`) within 2.5 s, the
+        class goes and the homepage shows as normal. Other pages never carry this script. */}
+    {
+      intro && (
+        <script is:inline define:vars={{ srcset: introPreload, sizes: introSymbolSizes }}>
+          (function (d, w) {
+            var c = d.documentElement.classList;
+            if (!c.contains('mo')) return;
+            try {
+              var s = navigator.connection;
+              var h = history.state;
+              if (d.prerendering || location.hash || (s && s.saveData) || (h && h.techpiScrollY > 2)) return;
+              c.add('intro');
+              var l = d.createElement('link');
+              l.rel = 'preload';
+              l.as = 'image';
+              l.setAttribute('imagesrcset', srcset);
+              l.setAttribute('imagesizes', sizes);
+              d.head.appendChild(l);
+              w.setTimeout(function () {
+                if (!c.contains('intro-live')) c.remove('intro');
+              }, 2500);
+            } catch (e) {}
+          })(document, window);
+        </script>
+      )
+    }
     {/* Sharing metadata and JSON-LD last, after the font preload and the motion flags that affect first paint. */}
     {
       canonical && (
