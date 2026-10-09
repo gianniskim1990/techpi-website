@@ -5,7 +5,22 @@
 export const pagesEn = {
   work: {
     linkLabel: 'View case study',
-    lead: 'Products, platforms and systems, each built around a real business need.',
+    lead: 'Client projects, adaptable business solutions and products we build ourselves.',
+    groups: {
+      client: {
+        heading: 'Client Projects',
+        description: 'Digital work delivered for clients, with selected projects explored in detail.',
+      },
+      solution: {
+        heading: 'Business Solutions',
+        description: 'Adaptable applications designed around the needs of different businesses.',
+      },
+      product: {
+        heading: 'Our Products',
+        description: 'Digital products we develop for our own use and further growth.',
+      },
+    },
+    solutionLink: 'Discuss a similar solution',
   },
   capabilities: {
     heading: 'What we build.',
@@ -16,7 +31,7 @@ export const pagesEn = {
   },
   about: {
     heading: 'TechPi is the evolution of pigiota314.',
-    lead: 'The name changed as the work evolved.',
+    lead: 'From websites and digital experiences to custom platforms, digital products and intelligent systems.',
     changeHeading: 'What stayed, what changed',
     // From the approved brand brief, section 8 (kept and changed). Not rewritten.
     stayed: {
