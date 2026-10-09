@@ -13,7 +13,7 @@ Four principles:
 
 1. **One circle.** All large movement is the same oversized circle from the Pi symbol shifting position. This gives the site one physical logic.
 2. **Uncover, do not fly.** Things appear by being revealed from behind an edge. Nothing travels far. (One approved
-   exception: the first-visit homepage intro, section 14.)
+   exception: the homepage intro, section 14.)
 3. **The reader drives.** Structural motion follows scroll position. Nothing loops or plays by itself.
 4. **Calm.** Slow starts are avoided, endings are soft, nothing bounces or overshoots.
 
@@ -26,7 +26,7 @@ The motion budget for the homepage:
 | Moments where the whole circle is visible | 1 (contact section only) |
 | Text line reveals | One per section statement |
 | Image reveals | Case-study imagery only |
-| Autoplaying or looping motion | 0 (except the one-time first-visit intro, section 14; it never loops) |
+| Autoplaying or looping motion | 0 (except the homepage intro, section 14, on each entry to the homepage; it never loops) |
 
 ## 2. Scroll behaviours
 
@@ -191,14 +191,20 @@ Implementation: `src/components/home/Intro.astro` (markup, the CSS half of the c
 (eligibility). Media: `src/assets/intro/`, made by `scripts/brand/intro-footage.html` and
 `scripts/brand/derive-intro-media.mjs`.
 
-**When it plays.** On the homepage only (`/` and `/el/`), once per browser, on the first visit to either language.
-Never on another page or a 404. Not with reduced motion, Save-Data, a `#fragment` in the URL, on a reload, on
-back/forward or a prerender, and not when scripting is off. Decided by a homepage-only inline script in the head, before
-first paint: a returning visitor never sees the overlay.
+**When it plays.** On every entry to the homepage (`/` and `/el/`). Owner's decision, 2026-10-09, replacing the
+first version's once-per-browser rule: a direct load, every reload, a link from another page, a switch between the
+English and Greek homepages, and back/forward, including a page restored from the back/forward cache (the module
+restarts the intro on `pageshow`). Not when a tab merely comes back into view. Never on another page or a 404.
 
-**Storage.** `localStorage` key `techpi-intro-seen` = `1`, written as the intro starts, shared by both languages. It
-is a one-time visual preference: no identifier, never sent anywhere, no cookie. If storage cannot be read or written
-(blocked, private modes that throw), the intro does not play: it cannot promise to play only once, so it does not play.
+Not with reduced motion, Save-Data, a `#fragment` in the URL, for a prerendered page, or when scripting is off. Not
+when a reload or Back would restore a scrolled-down page: the module records each homepage history entry's scroll
+position in that entry's own `history.state` (as scrolling settles and on `pagehide`), and the head script reads it
+before first paint; a page restored from the cache is checked directly. Decided by a homepage-only inline script in
+the head, before first paint, so the page is never seen bare first.
+
+**No storage.** Nothing is kept in `localStorage`, `sessionStorage` or cookies. A `techpi-intro-seen` value left by
+the first version is ignored, and blocked storage changes nothing. The only state is the scroll offset above, in the
+browser's own session history for that page.
 
 **Backdrop.** The real homepage stays visible under the intro, blurred (`backdrop-filter: blur(28px)`, 18 px on phones)
 under an Ink tint (84%) with a faint TechPi Blue light behind the symbol. Not a solid colour, not a frosted card. Where
@@ -267,7 +273,9 @@ the back/forward cache never resumes it.
 
 **What loads, and when.** Nothing extra on any visit that does not play the intro: the video has no source and no
 poster in the markup (the script attaches them), the symbol images are lazy, and the mask is the CSS image of a hidden
-element. A first visit adds the mask, the poster, one video file, the symbol and the intro module (sizes and timings in
+element. A homepage entry that plays the intro uses the mask, one video file, the symbol and the intro module; the
+first time they are downloaded, after that they come from the browser cache (`/_astro/*` is served `immutable`, see
+`docs/production/security.md`, section 3), so a repeat entry transfers about 1 KB (sizes and timings in
 `docs/production/accessibility-performance.md`, section 11).
 
 **Accessibility.** The overlay, the video and the twin of the name are `aria-hidden`, and nothing in them is focusable.

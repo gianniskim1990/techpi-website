@@ -54,7 +54,7 @@ From the supplied analysis, restated as principles:
 1. **Pin, then release.** A section holds while its content resolves, then lets go. The user always controls progress with native scroll.
 2. **Scrub for structure, trigger for text.** Large structural changes follow the scroll position. Text reveals play once at their own tempo when they enter.
 3. **Clip, do not fly.** Elements appear by being uncovered, with small translation. Nothing travels across the screen.
-   *Exception (2026-10-09, approved by the owner):* the first-visit TechPi homepage intro is the single approved
+   *Exception (2026-10-09, approved by the owner):* the TechPi homepage intro is the single approved
    long-distance logo flight. The symbol travels from the centre of the intro to the header name and
    resolves into the typographic "TECHPI". The rule stands everywhere else on the site; the exception covers the intro
    only (`docs/design/motion-system.md`, section 14). The reference was used for the mechanics of an opening logo moment
