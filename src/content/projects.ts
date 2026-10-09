@@ -55,9 +55,14 @@ export interface CaseStudy {
   gallery?: readonly ProjectImage[];
 }
 
+export const workGroups = ['client', 'solution', 'product'] as const;
+export type WorkGroup = (typeof workGroups)[number];
+
 export interface Project {
   /** Stable, Latin, lower case. Locked in docs/production/routes.md. */
   slug: string;
+  /** Work-page grouping: client commissions, adaptable business solutions, or our own products. */
+  workGroup: WorkGroup;
   name: string;
   category: string;
   summary: string;
@@ -77,6 +82,7 @@ const src = 'https://pigiota314.gr/case-studies/';
 export const projects: readonly Project[] = [
   {
     slug: 'rocketeer',
+    workGroup: 'client',
     name: 'Rocketeer',
     category: 'Delivery operations platform',
     summary: 'A custom web application that organises delivery requests, drivers and assignments in one place.',
@@ -143,6 +149,7 @@ export const projects: readonly Project[] = [
   },
   {
     slug: 'armans',
+    workGroup: 'client',
     name: 'Arman’s Ethnic Street Food',
     category: 'Direct ordering platform',
     summary: 'A platform that lets the restaurant take orders directly from its customers.',
@@ -207,6 +214,7 @@ export const projects: readonly Project[] = [
   },
   {
     slug: 'logotherapia-xanthi',
+    workGroup: 'client',
     name: 'Logotherapia Xanthi',
     category: 'Therapy centre website',
     summary:
@@ -252,6 +260,7 @@ export const projects: readonly Project[] = [
   },
   {
     slug: 'level-up-education-app',
+    workGroup: 'product',
     name: 'Level Up Education App',
     category: 'Education management application',
     summary:
@@ -262,6 +271,7 @@ export const projects: readonly Project[] = [
   },
   {
     slug: 'saloon',
+    workGroup: 'solution',
     name: 'Saloon',
     category: 'Booking platform',
     summary:
@@ -272,6 +282,7 @@ export const projects: readonly Project[] = [
   },
   {
     slug: 'physio',
+    workGroup: 'solution',
     name: 'Physio',
     category: 'Appointment management platform',
     summary: 'A platform for physiotherapists and physiotherapy clinics to organise appointments and sessions.',
@@ -281,6 +292,7 @@ export const projects: readonly Project[] = [
   },
   {
     slug: 'project4you',
+    workGroup: 'solution',
     name: 'Project4You',
     category: 'CMS platform',
     summary: 'A CMS web application for creating digital invitations and websites, built on builder-style logic.',
