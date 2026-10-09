@@ -76,7 +76,7 @@ export const homeEn = {
   },
   evolution: {
     heading: 'TechPi is the evolution of pigiota314.',
-    lead: 'The name changed as the work evolved.',
+    lead: 'Our identity evolved alongside the work we do.',
     text: 'Pi stays. Tech says where we are going: digital products, platforms and intelligent systems.',
     link: 'About TechPi',
   },
