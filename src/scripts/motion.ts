@@ -7,7 +7,8 @@
  *   2. Start one-shot reveals: one IntersectionObserver adds `.in` to every [data-reveal] and [data-sequence]
  *      element the first time it enters the viewport. Nothing replays.
  *   3. Keep the header usable: it leaves when the reader scrolls down and returns, as a compact bar, when they
- *      scroll up. The scroll listener only compares numbers and toggles classes. It reads no layout.
+ *      scroll up. The scroll listener only compares numbers and toggles classes. It reads no layout, except that
+ *      it will not bring the header back over a control that has keyboard focus (WCAG 2.4.11, focus not obscured).
  *
  *   4. Drive the scroll scenes (desktop-sized windows, motion allowed: `html.sc`). Each [data-scene] element gets
  *      its scroll position as custom properties, and CSS turns them into geometry:
@@ -114,6 +115,14 @@ function initHeader() {
   const header = document.querySelector<HTMLElement>('.site-header');
   if (!header) return;
   root.classList.add('hdr');
+  // True when something outside the header holds focus and sits under the header's bar. The header must not cover it.
+  const coversFocus = () => {
+    const a = document.activeElement;
+    // The skip link is meant to sit over the top of the page, so it is not a case for the header to step aside.
+    if (!a || a === document.body || header.contains(a) || a.classList.contains('skip-link')) return false;
+    const r = a.getBoundingClientRect();
+    return r.bottom > 0 && r.top < header.offsetHeight;
+  };
   let last = window.scrollY;
   let ticking = false;
   const update = () => {
@@ -123,7 +132,7 @@ function initHeader() {
     header.classList.toggle('is-away', away);
     // Hide only after the first screen's top area, and only on a real downward move.
     if (y > last + 4 && y > 160) header.classList.add('is-hidden');
-    else if (y < last - 4 || !away) header.classList.remove('is-hidden');
+    else if ((y < last - 4 || !away) && !coversFocus()) header.classList.remove('is-hidden');
     last = y;
   };
   window.addEventListener(
@@ -138,6 +147,11 @@ function initHeader() {
   );
   // A keyboard user tabbing into the header always sees it.
   header.addEventListener('focusin', () => header.classList.remove('is-hidden'));
+  // Focus moving to a control the returned header would cover: the header steps aside until the reader scrolls on.
+  document.addEventListener('focusin', (e) => {
+    const t = e.target as Element | null;
+    if (t && !header.contains(t) && coversFocus()) header.classList.add('is-hidden');
+  });
   update();
 }
 
@@ -161,18 +175,26 @@ function initScenes() {
 
   const measure = (all: boolean) => {
     const vh = window.innerHeight;
+    // Read every position first, then write every property. Writing a custom property and then reading a rect makes
+    // the browser redo style and layout before it can answer, once per scene, on every scroll frame. Reads first
+    // cost one pass in total. Each rect is still read before its own element's properties change, as before.
+    const next: { el: HTMLElement; values: [string, number][] }[] = [];
     for (const el of scenes) {
       const r = el.getBoundingClientRect();
       // Far from the window: nothing there is visible, so it is left as it is until it comes near.
       if (!all && (r.bottom < -vh || r.top > vh * 2)) continue;
-      write(el, 'in', clamp((vh - r.top) / vh));
-      write(el, 'out', clamp(-r.top / r.height));
-      write(el, 'pin', r.height > vh ? clamp(-r.top / (r.height - vh)) : 0);
+      const values: [string, number][] = [
+        ['in', clamp((vh - r.top) / vh)],
+        ['out', clamp(-r.top / r.height)],
+        ['pin', r.height > vh ? clamp(-r.top / (r.height - vh)) : 0],
+      ];
       if (el.dataset.scene === 'case') {
-        const next = coverOf(el);
-        write(el, 'cov', next ? clamp((vh - next.getBoundingClientRect().top) / vh) : 0);
+        const cover = coverOf(el);
+        values.push(['cov', cover ? clamp((vh - cover.getBoundingClientRect().top) / vh) : 0]);
       }
+      next.push({ el, values });
     }
+    for (const { el, values } of next) for (const [name, v] of values) write(el, name, v);
   };
 
   let active = false;
