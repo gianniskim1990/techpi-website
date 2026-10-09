@@ -29,6 +29,8 @@ interface Props {
   bleed?: boolean;
   /** Keeps this page out of search indexes even in a build that enables indexing. For unpublished route shells. */
   noindex?: boolean;
+  /** The homepage only: may play the first-visit intro (src/components/home/Intro.astro), decided in the head bootstrap. */
+  intro?: boolean;
   /** The schema.org type of the page's WebPage node. */
   pageType?: WebPageType;
   /** A breadcrumb trail (paths, not URLs), only where it matches the real hierarchy of the site. */
@@ -46,6 +48,7 @@ const {
   paths,
   bleed = false,
   noindex = false,
+  intro = false,
   pageType = 'WebPage',
   trail,
   schema = [],
@@ -133,6 +136,33 @@ const primaryFont = locale === 'el' ? commissionerGreek : commissionerLatin;
         }
       })(document, window);
     </script>
+    {/* Homepage only: the first-visit intro (src/components/home/Intro.astro). `intro` shows the overlay and `intro-hold`
+        keeps the hero entrance waiting for it. Decided here, before first paint, so a returning visitor never sees the
+        overlay and a first visitor never sees the hero first. Only with motion allowed (`mo`), no Save-Data, no
+        #fragment, on a fresh navigation (not a reload, back/forward or prerender), and once per browser:
+        `techpi-intro-seen` in localStorage is written as it starts. If storage cannot be read and written, it does not
+        play. If src/scripts/intro.ts has not taken over (`intro-live`) within 2.5 s, both classes go and the homepage
+        shows as normal. Other pages never carry this script. */}
+    {
+      intro && (
+        <script is:inline>
+          (function (d, w) {
+            var c = d.documentElement.classList;
+            if (!c.contains('mo')) return;
+            try {
+              var n = w.performance && performance.getEntriesByType ? performance.getEntriesByType('navigation')[0] : null;
+              var s = navigator.connection;
+              if (location.hash || (s && s.saveData) || (n && n.type !== 'navigate') || localStorage.getItem('techpi-intro-seen')) return;
+              localStorage.setItem('techpi-intro-seen', '1');
+              c.add('intro', 'intro-hold');
+              w.setTimeout(function () {
+                if (!c.contains('intro-live')) c.remove('intro', 'intro-hold');
+              }, 2500);
+            } catch (e) {}
+          })(document, window);
+        </script>
+      )
+    }
     {/* Sharing metadata and JSON-LD last, after the font preload and the motion flags that affect first paint. */}
     {
       canonical && (

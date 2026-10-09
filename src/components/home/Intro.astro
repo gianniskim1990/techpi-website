@@ -1,0 +1,179 @@
+---
+import symbolWhite from '../../assets/brand/techpi-symbol-white.png';
+import BrandSymbol from '../BrandSymbol.astro';
+import type { HomeCopy } from '../../content/home.en';
+
+interface Props {
+  copy: HomeCopy['intro'];
+}
+
+const { copy } = Astro.props;
+---
+
+{/* INTRO. The first-visit brand moment of the homepage (docs/design/motion-system.md, section 14): on TechPi Blue a
+    hairline circle draws, the white symbol settles inside it, one line names what TechPi does, and the symbol flies to
+    the header, where it gives way to the typographic name. The symbol resolves into the name.
+
+    Static markup, inert by default: `hidden` keeps it out of every page that has not been made eligible, including
+    pages without scripting or without this stylesheet. The head bootstrap in BaseLayout adds `html.intro` on a first
+    visit only, before first paint, and src/scripts/intro.ts plays the flight and removes everything again.
+
+    Decorative: hidden from assistive technology, nothing in it is focusable, and the hero h1 stays the page heading.
+    The symbol is lazy, so a hidden overlay never downloads it: only an eligible first visit renders it. */}
+<div class="intro" hidden aria-hidden="true" data-intro>
+  <div class="ring-box">
+    <svg class="ring" viewBox="0 0 100 100" focusable="false">
+      <circle cx="50" cy="50" r="49.5" pathLength="1"></circle>
+    </svg>
+    <div class="mark" data-intro-mark>
+      <div class="glyph">
+        <BrandSymbol symbol={symbolWhite} sizes="(max-width: 760px) min(39.6vw, 187px), min(35.2vw, 231px)" widths={[240, 360, 480]} />
+      </div>
+    </div>
+  </div>
+  <p class="line"><span><span>{copy.line}</span></span></p>
+</div>
+
+<style>
+  /* The ring's diameter sets the whole composition: the symbol is 55% of it, the line sits a fixed step below. */
+  .intro {
+    --d: min(64vw, 46svh, 420px);
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: var(--color-techpi-blue);
+    color: var(--color-sheet);
+  }
+  :global(html.intro) .intro[hidden] {
+    display: block;
+  }
+
+  /* The circle and the symbol share one centre: the centre of the window. */
+  .ring-box {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--d);
+    height: var(--d);
+    translate: -50% -50%;
+  }
+  .ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .ring circle {
+    fill: none;
+    stroke: var(--color-sheet);
+    stroke-opacity: 0.42;
+    stroke-width: 1px;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1;
+    transform-origin: 50px 50px;
+    /* Starts at the top and draws clockwise, as the hero arc reads. */
+    transform: rotate(-90deg);
+  }
+  .mark {
+    position: absolute;
+    left: 22.5%;
+    top: 22.5%;
+    width: 55%;
+    height: 55%;
+    transform-origin: 50% 50%;
+  }
+  .glyph {
+    width: 100%;
+    height: 100%;
+  }
+
+  .line {
+    position: absolute;
+    left: var(--space-margin);
+    right: var(--space-margin);
+    top: calc(50% + var(--d) / 2 + clamp(22px, 3.4svh, 36px));
+    text-align: center;
+    font-size: clamp(0.9375rem, 0.86rem + 0.35vw, 1.125rem);
+    font-weight: var(--weight-ui);
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+  }
+  /* A masked line, as the hero statement: the words rise out of a clip edge. */
+  .line > span {
+    display: inline-block;
+    overflow: clip;
+    padding: 0.08em 0 0.16em;
+    vertical-align: top;
+  }
+  .line > span > span {
+    display: inline-block;
+  }
+
+  /* ---------- The choreography up to the flight (CSS, from first paint) ----------
+     Times are from the moment the overlay first renders. src/scripts/intro.ts reads this timeline and starts the
+     flight at 2.0 s on it, so the two halves stay in step even when the script arrives late. */
+  :global(html.intro) .ring circle {
+    animation:
+      intro-draw 700ms var(--ease-reveal) both,
+      intro-out 300ms var(--ease-state) 1900ms forwards;
+  }
+  :global(html.intro) .glyph {
+    animation: intro-settle 600ms var(--ease-reveal) 300ms both;
+  }
+  :global(html.intro) .line > span > span {
+    animation: intro-rise 800ms var(--ease-reveal) 600ms both;
+  }
+  :global(html.intro) .line {
+    animation: intro-out 300ms var(--ease-state) 1900ms forwards;
+  }
+  @keyframes intro-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes intro-settle {
+    from {
+      opacity: 0;
+      transform: scale(0.94);
+    }
+  }
+  @keyframes intro-rise {
+    from {
+      transform: translateY(110%);
+    }
+  }
+  @keyframes intro-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .intro {
+      --d: min(72vw, 40svh, 340px);
+    }
+  }
+</style>
+
+<style is:global>
+  /* The header during the intro (homepage only: this stylesheet ships with the homepage). It sits above the overlay,
+     so the real name can appear on the blue. The name and the navigation wait, invisible but still in place, still
+     in the accessibility tree and still reachable: the first key, press or focus ends the intro before anything
+     else happens. src/scripts/intro.ts fades them in; when it ends, these rules no longer match. */
+  html.intro .site-header {
+    z-index: 70;
+  }
+  html.intro .site-header > .site-name {
+    opacity: 0;
+    color: var(--color-sheet);
+  }
+  html.intro .site-header > .site-nav,
+  html.intro .site-header > .util {
+    opacity: 0;
+  }
+</style>
