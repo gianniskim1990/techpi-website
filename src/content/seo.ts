@@ -29,7 +29,7 @@ export const pageMeta: Record<Locale, Record<PageKey, PageMeta>> = {
     work: {
       title: 'Work — Digital Products & Platforms | TechPi',
       description:
-        'Selected work by TechPi: a delivery operations platform, a direct ordering platform and a therapy centre website, each built around a real business need.',
+        'Explore TechPi client projects, adaptable business solutions and original products: digital platforms, websites and applications for real business needs.',
     },
     capabilities: {
       title: 'Capabilities — Products, Web & AI | TechPi',
@@ -44,7 +44,7 @@ export const pageMeta: Record<Locale, Record<PageKey, PageMeta>> = {
     about: {
       title: 'About — Technology Built Around Business Needs | TechPi',
       description:
-        'TechPi designs and builds digital products, platforms and intelligent systems around real business needs. Formerly pigiota314.',
+        'TechPi, the evolution of pigiota314, designs and builds digital products, platforms and intelligent systems around real business needs.',
     },
     contact: {
       title: 'Contact — Start a Project | TechPi',
@@ -61,7 +61,7 @@ export const pageMeta: Record<Locale, Record<PageKey, PageMeta>> = {
     work: {
       title: 'Έργα — Ψηφιακά προϊόντα & πλατφόρμες | TechPi',
       description:
-        'Επιλεγμένα έργα της TechPi: πλατφόρμα διαχείρισης διανομών, πλατφόρμα απευθείας παραγγελιών και ιστότοπος κέντρου θεραπείας, το καθένα για μια πραγματική ανάγκη.',
+        'Δείτε έργα πελατών της TechPi, ευέλικτες λύσεις για επιχειρήσεις και δικά μας ψηφιακά προϊόντα: πλατφόρμες, ιστοσελίδες και εφαρμογές.',
     },
     capabilities: {
       title: 'Δυνατότητες — Εφαρμογές, ιστότοποι & AI | TechPi',
@@ -76,7 +76,7 @@ export const pageMeta: Record<Locale, Record<PageKey, PageMeta>> = {
     about: {
       title: 'Η εταιρεία — Τεχνολογία για πραγματικές ανάγκες | TechPi',
       description:
-        'Η TechPi σχεδιάζει και αναπτύσσει ψηφιακά προϊόντα, πλατφόρμες και ευφυή συστήματα γύρω από πραγματικές επιχειρηματικές ανάγκες. Πρώην pigiota314.',
+        'Η TechPi είναι η εξέλιξη της pigiota314. Σχεδιάζει και αναπτύσσει ψηφιακά προϊόντα, πλατφόρμες και ευφυή συστήματα για επιχειρήσεις.',
     },
     contact: {
       title: 'Επικοινωνία — Ξεκινήστε ένα έργο | TechPi',
