@@ -1,6 +1,8 @@
 /**
- * The first-visit homepage intro: the symbol, filled with moving light, flies to the header and resolves into the
- * typographic name (docs/design/motion-system.md, section 14).
+ * The homepage intro: the symbol, filled with moving light, flies to the header and resolves into the typographic name
+ * (docs/design/motion-system.md, section 14). It plays on every entry to the homepage (owner's decision, 2026-10-09):
+ * a direct load, a reload, a link from another page or the other language, and back/forward, including a page
+ * restored from the back/forward cache. Not when the tab only comes back into view.
  *
  * A homepage-only head script in BaseLayout decides eligibility before first paint and adds `html.intro`. The first
  * part of the choreography is CSS in Intro.astro and runs from first paint: the blurred backdrop, the circle, the
@@ -19,6 +21,9 @@
  * motion ends it at once, through finishIntro(). Nothing is prevented or trapped: the input still does what it does.
  * Fail-safes: the head script ends the intro if this module has not started it within 2.5 s; this module ends it
  * 3.6 s after the overlay's first frame (or 4.5 s after its own start, if that frame is never found), and on any error.
+ *
+ * Restarting: start() can run again on the same page (a back/forward cache restore). Each run has its own state, only
+ * one runs at a time, and finishIntro() returns the page to exactly its resting state, so the next run starts clean.
  */
 
 export {};
@@ -118,7 +123,23 @@ function makeTwin(name: HTMLElement) {
   return { twin, inner };
 }
 
+/** The running intro's finishIntro(), or null when none is running. */
+let running: (() => void) | null = null;
+
+/** The same conditions as the head script, checked again for a page restored from the back/forward cache. */
+function eligible() {
+  const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  return (
+    root.classList.contains('mo') &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
+    !connection?.saveData &&
+    !location.hash &&
+    window.scrollY <= 2
+  );
+}
+
 function start() {
+  if (running) return;
   const overlay = document.querySelector<HTMLElement>('div[data-intro]');
   const mark = overlay?.querySelector<HTMLElement>('[data-intro-mark]');
   const glyph = overlay?.querySelector<HTMLElement>('[data-intro-glyph]');
@@ -151,6 +172,7 @@ function start() {
   const finishIntro = () => {
     if (done) return;
     done = true;
+    running = null;
     listening.abort();
     timers.forEach((t) => clearTimeout(t));
     root.classList.remove('intro', 'intro-live');
@@ -163,6 +185,7 @@ function start() {
     }
     twin?.remove();
     glyph?.classList.remove('has-footage');
+    glyph?.removeAttribute('data-footage');
     releaseVideo();
     // The overlay stays in the document, hidden: a pointer press that skipped it keeps a target, so the release
     // cannot turn into a click on the page underneath.
@@ -170,6 +193,7 @@ function start() {
   const later = (fn: () => void, ms: number) => timers.push(window.setTimeout(fn, Math.max(0, ms)));
 
   if (!overlay || !mark || !glyph || !solid || !header || !name) return finishIntro();
+  running = finishIntro;
   root.classList.add('intro-live');
   later(finishIntro, LIMIT_FROM_START);
 
@@ -212,7 +236,7 @@ function start() {
     later(releaseVideo, b + SOLID_AT + 300 - now());
   };
 
-  // ---- The footage: attached only on an eligible first visit, and only once the symbol itself has loaded (or failed),
+  // ---- The footage: attached only when the intro plays, and only once the symbol itself has loaded (or failed),
   // so on a slow connection the symbol, the visible fallback and the largest image, is never slowed by it. It is shown
   // only if it is playing by 1.0 s; otherwise, or if autoplay is refused or the file fails, the static 3D
   // symbol simply stays. Nothing waits for it.
@@ -359,15 +383,48 @@ function start() {
   }
 }
 
-if (root.classList.contains('intro')) {
+const safeStart = () => {
   try {
     start();
   } catch {
+    running = null;
     root.classList.remove('intro', 'intro-live');
   }
-}
+};
 
-// Restored from the back/forward cache: the intro never resumes.
+if (root.classList.contains('intro')) safeStart();
+
+// Remember this history entry's scroll position in its own history state, once scrolling settles and again as the page
+// is left. When the entry is loaded again (reload, back/forward), the head script reads it before first paint and does
+// not play over a page the browser is about to restore to a scrolled position. (A state written only during pagehide
+// is not kept across a reload, so it is written as the reader scrolls, at most every 150 ms.) Session history only:
+// nothing is written to storage or cookies.
+const rememberScroll = () => {
+  try {
+    const y = Math.round(window.scrollY);
+    const state = history.state && typeof history.state === 'object' ? history.state : {};
+    if (state.techpiScrollY !== y) history.replaceState({ ...state, techpiScrollY: y }, '');
+  } catch {
+    /* history not writable: the run-time scroll check still applies */
+  }
+};
+let settle = 0;
+window.addEventListener(
+  'scroll',
+  () => {
+    clearTimeout(settle);
+    settle = window.setTimeout(rememberScroll, 150);
+  },
+  { passive: true },
+);
+window.addEventListener('pagehide', rememberScroll);
+
+// Back or forward to the homepage restored from the back/forward cache: a new entry, so the intro plays again, from the
+// start. The page it restores is at rest, because the previous run ended on pagehide.
 window.addEventListener('pageshow', (e) => {
-  if (e.persisted) root.classList.remove('intro', 'intro-live');
+  if (!e.persisted) return;
+  root.classList.remove('intro', 'intro-live');
+  if (!eligible()) return;
+  root.classList.add('intro');
+  safeStart();
 });

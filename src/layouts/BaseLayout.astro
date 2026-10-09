@@ -31,7 +31,7 @@ interface Props {
   bleed?: boolean;
   /** Keeps this page out of search indexes even in a build that enables indexing. For unpublished route shells. */
   noindex?: boolean;
-  /** The homepage only: may play the first-visit intro (src/components/home/Intro.astro), decided in the head bootstrap. */
+  /** The homepage only: may play the intro (src/components/home/Intro.astro), decided in the head bootstrap. */
   intro?: boolean;
   /** The schema.org type of the page's WebPage node. */
   pageType?: WebPageType;
@@ -144,14 +144,15 @@ const introPreload = intro
         }
       })(document, window);
     </script>
-    {/* Homepage only: the first-visit intro (src/components/home/Intro.astro). `intro` shows the overlay. Decided here,
-        before first paint, so a returning visitor never sees the overlay and a first visitor never sees the page bare.
-        Only with motion allowed (`mo`), no Save-Data, no #fragment, on a fresh navigation (not a reload, back/forward
-        or prerender), and once per browser: `techpi-intro-seen` in localStorage is written as it starts. If storage
-        cannot be read and written, it does not play. When it will play, the symbol image (the intro's largest image) is
-        preloaded at once instead of waiting for layout; at default priority, because high priority measurably delayed
-        first paint. On every other visit nothing is fetched. If src/scripts/intro.ts has not taken over (`intro-live`)
-        within 2.5 s, the class goes and the homepage shows as normal. Other pages never carry this script. */}
+    {/* Homepage only: the intro (src/components/home/Intro.astro). `intro` shows the overlay. Decided here, before first
+        paint, so the page is never seen bare first. It plays on every entry to the homepage (owner's decision,
+        2026-10-09): a direct load, a reload, a link, back/forward. Not with reduced motion (`mo` absent), Save-Data, a
+        #fragment, or for a prerendered page; and not when this history entry was left scrolled down (src/scripts/
+        intro.ts records that in the entry's own history state on pagehide), so a reload or Back that restores a
+        scrolled position is not covered. No storage and no cookie. When it will play, the symbol image (the intro's
+        largest image) is preloaded at once instead of waiting for layout; at default priority, because high priority
+        measurably delayed first paint. If src/scripts/intro.ts has not taken over (`intro-live`) within 2.5 s, the
+        class goes and the homepage shows as normal. Other pages never carry this script. */}
     {
       intro && (
         <script is:inline define:vars={{ srcset: introPreload, sizes: introSymbolSizes }}>
@@ -159,10 +160,9 @@ const introPreload = intro
             var c = d.documentElement.classList;
             if (!c.contains('mo')) return;
             try {
-              var n = w.performance && performance.getEntriesByType ? performance.getEntriesByType('navigation')[0] : null;
               var s = navigator.connection;
-              if (location.hash || (s && s.saveData) || (n && n.type !== 'navigate') || localStorage.getItem('techpi-intro-seen')) return;
-              localStorage.setItem('techpi-intro-seen', '1');
+              var h = history.state;
+              if (d.prerendering || location.hash || (s && s.saveData) || (h && h.techpiScrollY > 2)) return;
               c.add('intro');
               var l = d.createElement('link');
               l.rel = 'preload';

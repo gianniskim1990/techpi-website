@@ -17,7 +17,7 @@ const [head, tail] = copy.line.split(' & ');
 const lines = tail ? [head, `& ${tail}`] : [copy.line];
 ---
 
-{/* INTRO. The first-visit brand moment of the homepage (docs/design/motion-system.md, section 14). Over the real page,
+{/* INTRO. The brand moment that opens every entry to the homepage (docs/design/motion-system.md, section 14). Over the real page,
     blurred and tinted Ink, a hairline circle draws and the TechPi symbol appears filled with moving light: original
     footage of threads converging into one connected line, shown only through the symbol's own silhouette. The line
     "Digital Products & Technology" rises in front of it. The footage gives way to the white 3D symbol, which flies to
@@ -25,8 +25,8 @@ const lines = tail ? [head, `& ${tail}`] : [copy.line];
 
     Static markup, inert by default: `hidden` keeps it out of every page that has not been made eligible, including
     pages without scripting or without this stylesheet. The video has no source here: src/scripts/intro.ts attaches it,
-    and switches the mask on, only on an eligible first visit and only after the symbol itself has loaded, so no other
-    visit downloads them and the symbol (the visible fallback, and the largest image) is never slowed by them.
+    and switches the mask on, only when the intro plays and only after the symbol itself has loaded, so no other visit
+    or page downloads them and the symbol (the visible fallback, and the largest image) is never slowed by them.
 
     Decorative: hidden from assistive technology, nothing in it is focusable, and the hero h1 stays the page heading. */}
 <div class="intro" hidden aria-hidden="true" data-intro style={`--intro-mask: url(${maskUrl})`}>
