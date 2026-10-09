@@ -7,6 +7,9 @@ import type { HomeCopy } from './home.en';
  * No fact appears here that is not in the English.
  */
 export const homeEl: HomeCopy = {
+  intro: {
+    line: 'Ψηφιακά προϊόντα & τεχνολογία',
+  },
   hero: {
     meta: 'Ψηφιακά προϊόντα & τεχνολογία',
     statement: ['Σχεδιάζουμε και', 'αναπτύσσουμε', 'ψηφιακά προϊόντα.'],

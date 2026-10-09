@@ -12,6 +12,11 @@
  * legal entity details are not confirmed, so they are not shown.
  */
 export const homeEn = {
+  // The one line under the symbol in the first-visit intro (src/components/home/Intro.astro). Decorative: the overlay
+  // is hidden from assistive technology, and the same words are the hero meta line.
+  intro: {
+    line: 'Digital Products & Technology',
+  },
   hero: {
     meta: 'Digital Products & Technology',
     statement: ['We design and build', 'digital products.'],
