@@ -324,6 +324,7 @@ Measured from rendered pixels, not from colour values, stepping the paused timel
 
 - **Header name**, 10 ms steps from 2.3 to 3.0 s: lowest 5.34:1 (1440, 768, 390, 320, both languages). Before the fix
   the step was placed from an estimate and the name reached 4.25:1 just before it; it is now placed from measurement.
+- **The flying symbol never covers a letter while visible**: its dissolve ends one frame before its path touches the name, computed from the measured flight (checked at 1440, 768, 390, 320).
 - **Navigation and language links** through the handoff: lowest 4.65:1. The inactive language (Slate) first measured
   2.33:1 and now arrives once the background is light enough for it.
 - **The intro's line of type** against the moving footage and blurred page, every glyph pixel against the brightest

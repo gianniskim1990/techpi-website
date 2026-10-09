@@ -11,7 +11,7 @@
  *   1.7 s  the footage gives way to the white 3D symbol
  *   2.0 s  the symbol flies to the measured centre of the header name, shrinking to the name's cap height
  *   2.3 s  the name rises out of a mask, in Sheet, on the dark backdrop
- *   2.42 s the symbol dissolves into the name, gone as it arrives at 2.6 s
+ *   ~2.5 s the symbol dissolves into the name, gone one frame before it would touch the letters (measured)
  *   2.6 s  the backdrop fades; in one frame of it the name and the navigation turn to their normal Ink
  *   3.0 s  finishIntro(): every temporary element, class, animation, listener and video source is gone
  *
@@ -31,7 +31,12 @@ const SOLID_AT = 1700;
 const FLIGHT_AT = 2000;
 const FLIGHT_MS = 600;
 const NAME_AT = 2300;
-const DISSOLVE_AT = 2420;
+/** The symbol dissolves over 80 ms, ending one frame before its flight path first touches the name's letters (measured,
+ * so it holds on every window size), and never later than 2.585 s. So it is whole through the fast end of the flight
+ * and never sits over a letter while it is visible. */
+const DISSOLVE_MS = 80;
+const DISSOLVE_END_LATEST = 2585;
+const FLIGHT_EASE = [0.55, 0, 0.75, 0] as const;
 const OUT_AT = 2600;
 const OUT_MS = 400;
 const END_AT = 3000;
@@ -84,6 +89,16 @@ function measureName(name: HTMLElement) {
     }
   }
   return { cx, cy, capHeight };
+}
+
+/** A CSS cubic-bezier timing function: time fraction in, progress out. */
+function bezier([x1, y1, x2, y2]: readonly number[]) {
+  const at = (a: number, b: number, t: number) => 3 * (1 - t) * (1 - t) * t * a + 3 * (1 - t) * t * t * b + t * t * t;
+  return (x: number) => {
+    let lo = 0, hi = 1;
+    for (let i = 0; i < 30; i++) { const m = (lo + hi) / 2; if (at(x1, x2, m) < x) lo = m; else hi = m; }
+    return at(y1, y2, (lo + hi) / 2);
+  };
 }
 
 /** A decorative copy of the header name, in Sheet, exactly over the real one: it carries the name on the dark backdrop. */
@@ -260,7 +275,20 @@ function start() {
     const dx = to.cx - (from.left + from.width / 2);
     const dy = to.cy - (from.top + from.height / 2);
     const scale = (to.capHeight * LAND) / from.width;
-    return [{ transform: 'translate(0, 0) scale(1)' }, { transform: `translate(${dx}px, ${dy}px) scale(${scale})` }];
+    // When does the flying symbol first touch the name's letters? Follow the same path and easing the flight uses.
+    const box = document.createRange();
+    box.selectNodeContents(name!);
+    const n = box.getBoundingClientRect();
+    const ease = bezier(FLIGHT_EASE);
+    let touch = FLIGHT_MS;
+    for (let k = 0; k <= 120; k++) {
+      const p = ease(k / 120);
+      const half = (from.width * (1 + (scale - 1) * p)) / 2;
+      const cx = from.left + from.width / 2 + dx * p, cy = from.top + from.height / 2 + dy * p;
+      if (cx + half > n.left && cx - half < n.right && cy + half > n.top && cy - half < n.bottom) { touch = (k / 120) * FLIGHT_MS; break; }
+    }
+    const dissolveAt = Math.min(FLIGHT_AT + touch - 16, DISSOLVE_END_LATEST) - DISSOLVE_MS;
+    return { frames: [{ transform: 'translate(0, 0) scale(1)' }, { transform: `translate(${dx}px, ${dy}px) scale(${scale})` }], dissolveAt };
   }
 
   // Every animation is placed on the document timeline now, at its time from the overlay's first frame. Transform and
@@ -273,8 +301,11 @@ function start() {
       const b = Math.max(t, now() - FLIGHT_AT + 100);
       base = b;
       if (footage) returnToSolid(b);
-      const flight = play(mark!, flightTo(), FLIGHT_AT, FLIGHT_MS, 'cubic-bezier(0.55, 0, 0.75, 0)');
-      play(mark!, [{ opacity: 1 }, { opacity: 0 }], DISSOLVE_AT, OUT_AT - DISSOLVE_AT, 'cubic-bezier(0.55, 0, 1, 0.45)');
+      const path = flightTo();
+      const flight = play(mark!, path.frames, FLIGHT_AT, FLIGHT_MS, `cubic-bezier(${FLIGHT_EASE.join(', ')})`);
+      // Late and steep: the symbol is whole through the fast end of the flight and gone exactly as it reaches the name,
+      // so it never sits over a letter while it is visible.
+      const dissolve = play(mark!, [{ opacity: 1 }, { opacity: 0 }], path.dissolveAt, DISSOLVE_MS, 'cubic-bezier(0.6, 0, 1, 1)');
 
       // The name: its Sheet twin rises out of a mask at full colour, then hands over to the real name in one frame.
       const made = makeTwin(name!);
@@ -313,7 +344,10 @@ function start() {
         Promise.race([document.fonts?.ready, new Promise((r) => setTimeout(r, 60))])
           .catch(() => undefined)
           .then(() => {
-            if (!done && now() - b < FLIGHT_AT) (flight.effect as KeyframeEffect).setKeyframes(flightTo());
+            if (done || now() - b >= FLIGHT_AT) return;
+            const again = flightTo();
+            (flight.effect as KeyframeEffect).setKeyframes(again.frames);
+            dissolve.effect?.updateTiming({ delay: again.dissolveAt });
           });
       }, at(FLIGHT_AT - 120));
       later(finishIntro, at(END_AT));

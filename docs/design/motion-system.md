@@ -232,7 +232,7 @@ keeps the ribbons' depth. The mask moves with the symbol, so it holds at any sca
 | 1.82 s | The type sinks back into its masks; the circle fades | CSS |
 | 2.0 s | The symbol flies to the header name, 600 ms, `cubic-bezier(0.55, 0, 0.75, 0)` | WAAPI, one transform |
 | 2.3 s | The name rises out of a mask, in Sheet, on the dark backdrop | WAAPI on a decorative twin of the name |
-| 2.42 s | The symbol dissolves, gone as it reaches the name at 2.6 s | WAAPI, opacity |
+| about 2.5 s | The symbol dissolves over 80 ms, whole through the fast end of the flight and gone one frame before its path first touches the letters (computed from the measured path and the flight's own curve, so it holds at every window size) | WAAPI, opacity |
 | 2.6 s | The backdrop fades, 400 ms | WAAPI, opacity |
 | 2.768 s | In one frame: the backdrop steps across the luminance band where neither Sheet nor Ink reaches 4.5:1, the twin leaves, the real Ink name and the navigation arrive (the navigation uncovered from the left) | WAAPI, all on the compositor |
 | 2.95 s | The language switch arrives (its inactive language is Slate, which needs the lighter background) | WAAPI |
