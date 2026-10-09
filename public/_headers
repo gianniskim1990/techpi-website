@@ -1,0 +1,20 @@
+# Response headers for Cloudflare Workers Static Assets. Reasons and tests: docs/production/security.md.
+# Redirects (_redirects) are applied first, so a redirect response does not carry these.
+# The script and style policy is not here: Astro writes it into each page as a <meta> CSP with build-time hashes.
+# This header policy adds what a <meta> policy cannot do (frame-ancestors) and repeats the structural directives.
+# X-Frame-Options covers browsers without frame-ancestors. Permissions-Policy turns off features the site never uses.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Content-Security-Policy: frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'
+  X-Frame-Options: DENY
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), browsing-topics=()
+  Cross-Origin-Opener-Policy: same-origin
+
+# The workers.dev hosts (production techpi-website.<account>.workers.dev and the branch and version previews) must
+# never be indexed, including after launch, when techpi.eu is indexable. A host placeholder cannot match a dot, so
+# this rule only matches a three-label *.workers.dev host: never techpi.eu or www.techpi.eu.
+
+https://:worker.:account.workers.dev/*
+  X-Robots-Tag: noindex
