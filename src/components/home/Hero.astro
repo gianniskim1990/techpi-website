@@ -18,7 +18,8 @@ const { copy, locale } = Astro.props;
 
     The h1 is the first paint. Its lines rise out of their masks with a CSS-only animation that never waits for a
     script, and only when motion is allowed. The arc draws itself once. Both rest exactly where the static page is.
-    On a first visit with the intro they wait under the overlay and play as it clears (src/components/home/Intro.astro). */}
+    On a first visit they play under the intro's blurred backdrop (src/components/home/Intro.astro) and are at rest
+    when it clears. */}
 <section class="hero s-paper" aria-labelledby="hero-h" data-scene>
   <div class="stage">
     <svg class="arc" aria-hidden="true" focusable="false">
@@ -281,15 +282,6 @@ const { copy, locale } = Astro.props;
     from {
       stroke-dashoffset: 1;
     }
-  }
-
-  /* First visit with the intro (html.intro-hold, src/scripts/intro.ts): every entrance above waits at its first frame
-     under the overlay and starts, whole, as the overlay clears. Paused, never removed: when the class goes, by the
-     intro's end, a skip or any fail-safe, the same animations run as on every other visit. */
-  :global(html.intro-hold) .stage :global(*),
-  :global(html.intro-hold) .stage :global(*::before),
-  :global(html.intro-hold) .stage :global(*::after) {
-    animation-play-state: paused !important;
   }
 
   /* Scroll scene (html.sc): as the hero leaves, its layers part at different depths. The statement lines lift
