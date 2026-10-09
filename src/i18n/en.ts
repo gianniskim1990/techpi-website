@@ -22,7 +22,7 @@ export const en = {
   },
   footer: {
     label: 'Footer',
-    note: 'TechPi, formerly pigiota314.',
+    note: 'TechPi — the evolution of pigiota314.',
   },
   language: {
     label: 'Language',
