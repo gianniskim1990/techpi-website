@@ -4,7 +4,7 @@ import ClosingCTA from '../../components/secondary/ClosingCTA.astro';
 import PageIntro from '../../components/secondary/PageIntro.astro';
 import ProjectRow from '../../components/secondary/ProjectRow.astro';
 import { pagesCopy } from '../../content/copy';
-import { projectsIn } from '../../content/projects';
+import { projectsIn, workGroups } from '../../content/projects';
 import { pageMeta } from '../../content/seo';
 import { getDictionary } from '../../i18n';
 import type { Locale } from '../../i18n/locales';
@@ -19,30 +19,89 @@ const t = getDictionary(locale);
 const pages = pagesCopy[locale];
 const copy = pages.work;
 const meta = pageMeta[locale].work;
+const projectList = projectsIn(locale);
+const grouped = workGroups.map((id) => ({
+  id,
+  ...copy.groups[id],
+  projects: projectList.filter((project) => project.workGroup === id),
+}));
 ---
 
 <BaseLayout locale={locale} page="work" title={meta.title} description={meta.description} pageType="CollectionPage" bleed>
   <PageIntro heading={t.pages.work.heading} lead={copy.lead} variant="word" />
-  {/* The Work page is a catalogue, not a second homepage: every project on one index, read across, on Paper.
-      The homepage composes the three case studies; here they are lines among the others, each with a small crop. */}
-  <section class="list s-paper" aria-label={t.pages.work.heading}>
+  {/* Work stays a single catalogue, now with truthful distinctions between commissions, adaptable
+      solutions, and TechPi's own products. Only projects with published case studies link to one. */}
+  <div class="groups s-paper">
     {
-      projectsIn(locale).map((p) => (
-        <ProjectRow
-          project={p}
-          locale={locale}
-          capabilitiesLabel={pages.capabilities.indexLabel}
-          linkLabel={copy.linkLabel}
-        />
+      grouped.map((group) => (
+        <section class="group" aria-labelledby={`work-${group.id}`}>
+          <div class="group-head" data-reveal="fade">
+            <h2 id={`work-${group.id}`}>{group.heading}</h2>
+            <p>{group.description}</p>
+          </div>
+          <div class="list">
+            {group.projects.map((project) => (
+              <ProjectRow
+                project={project}
+                locale={locale}
+                capabilitiesLabel={pages.capabilities.indexLabel}
+                linkLabel={copy.linkLabel}
+                solutionLinkLabel={copy.solutionLink}
+              />
+            ))}
+          </div>
+        </section>
       ))
     }
-  </section>
+  </div>
   <ClosingCTA heading={pages.closer.heading} cta={pages.closer.cta} href={pathFor('contact', locale)} />
 </BaseLayout>
 
 <style>
-  .list {
+  .groups {
     margin: clamp(64px, 7vw, 112px) var(--space-margin) 0;
+  }
+  .group + .group {
+    margin-top: clamp(80px, 9vw, 144px);
+  }
+  .group-head {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    align-items: start;
+    padding-bottom: clamp(24px, 3vw, 44px);
+  }
+  .group-head h2 {
+    grid-column: 1 / span 7;
+    font-size: var(--text-display-m);
+    line-height: 1.06;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+  }
+  .group-head p {
+    grid-column: 8 / span 5;
+    max-width: 45ch;
+    color: var(--sec-c);
+    font-size: var(--text-lead);
+    line-height: 1.42;
+  }
+  .list {
     border-bottom: 1px solid var(--color-rule);
+  }
+  @media (max-width: 1023px) {
+    .group-head h2 {
+      grid-column: 1 / span 8;
+    }
+    .group-head p {
+      grid-column: 9 / span 4;
+    }
+  }
+  @media (max-width: 760px) {
+    .group-head {
+      display: block;
+    }
+    .group-head p {
+      margin-top: 20px;
+    }
   }
 </style>
