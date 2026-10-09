@@ -254,3 +254,75 @@ node scripts/security/validate.mjs
 
 The axe, keyboard, responsive, motion, JS-off and performance harnesses are not kept in the repository; they were
 throwaway Playwright scripts and the tables above are their output.
+
+## 11. Addendum: the first-visit homepage intro (2026-10-09)
+
+Branch `feat/homepage-intro-flight`. Design and lifecycle: `docs/design/motion-system.md`, section 14. Storage:
+`security.md`, section 11. Same tools as section 1 (Chromium only), against `main` at `768c0a0` built and served the
+same way. A = `main`; B = first eligible visit (the intro plays); C = returning visit (the intro already seen).
+
+### What the intro costs, honestly
+
+The intro deliberately holds the homepage for about 3 s on a first visit. Chrome's LCP does not show that cost: on
+desktop it counts the hero headline as painted at first paint, under the overlay (LCP ignores occlusion), and on
+phones it reports the intro's symbol image as the LCP element. Lighthouse Speed Index does not capture it either. So
+the table also gives **when the headline is actually visible**: the first compositor frame (CDP screencast) in which
+the hero h1 shows 90% of its final ink.
+
+| Median of 5 (3 for /el/ visible) | A main | B first visit | C returning |
+|---|---|---|---|
+| Headline visible, `/` 1440, no throttling | 864 ms | **3415 ms** (+2.55 s) | 878 ms |
+| Headline visible, `/` 390, CPU 4× | 996 ms | **3725 ms** (+2.73 s) | 1039 ms |
+| Headline visible, `/el/` 390, CPU 4× (noisy) | 2141 ms | 4141 ms | 1395 ms |
+| Chrome LCP, `/` phone 4× + slow network | 2004 ms (h1) | 2248 ms (symbol image) | 2124 ms (h1) |
+| Chrome LCP, `/el/` phone 4× + slow network | 2284 ms | 2372 ms (symbol image) | 2320 ms |
+| Chrome LCP, `/` desktop 4× | 680 ms | 664 ms | 680 ms |
+| CLS (all runs) | 0 to 0.0004 | 0 | 0 to 0.0006 |
+| TBT, `/` phone 4× | 972 ms | 1008 ms | 1040 ms |
+| Lighthouse mobile, `/` and `/el/` (3 runs) | perf 99-100, a11y 100 | perf 100, **a11y 96-97** | (not run: Lighthouse clears storage) |
+
+- **Returning visits (C)** are unchanged within run-to-run noise (headline 878 vs 864 ms, 1039 vs 996 ms; LCP and TBT
+  inside the spread of A).
+- **The Lighthouse accessibility score on a first visit** drops to 96-97 because axe runs while the intro is still on
+  screen and catches the header name mid-fade-in (1.15 to 1.36:1 for one frame). Before and after that moment there is
+  no violation; the settled name is 7.67:1 on the blue and 16.6:1 on Paper. A transient state of an animation, not a
+  content failure, but the score a first-visit Lighthouse run shows is lower.
+- **Bytes.** Homepage HTML +5.1 KB (+1.95 KB gzip: the hashed inline module is 1.5 KB gzip). Homepage CSS +2.6 KB.
+  The symbol, first visits only: 16 KB (240 px, desktop) or 26 KB (360 px, phones at 2×). The other 18 pages: one extra
+  hash in their CSP meta (Astro lists the site's inline scripts on every page), nothing else. Fonts: the same two
+  requests. No new dependency.
+- **Frames.** During the flight and handoff (1.95 to 3.05 s), 0 frames over 33 ms at 1440 (1× and 4× CPU) and 2 at 390
+  with 4× CPU (worst 67 ms, main thread). The flight and every fade run on the compositor, scheduled on the document
+  timeline when the module starts, so even at 4× and 6× CPU the intro ends 3.01 to 3.03 s after its first frame.
+
+**Recommendation if the cost is judged too high** (not applied; the 3.2 s budget is approved): the smallest change that
+keeps the concept is to start the hero entrance at 2.3 s, when the name appears, instead of 2.6 s. The headline would
+show about 0.3 s sooner and the timeline would not change. Shortening the hold before the flight (1.9 s) is the next
+lever. Neither changes LCP as Chrome reports it.
+
+### Tests
+
+| Area | Result |
+|---|---|
+| Intro matrix (Playwright, 53 checks): plays on a fresh first visit at 1440, 1280, 768, 390, 360 in EN and EL, ends at 3.00 to 3.04 s, the symbol lands on the centre of the name (under 1 px), ends clean (no class, overlay, animation or listener left; header z-index, name colour and opacity back; hero fully visible; no overflow; no CSP violation; no error) | 53/53 |
+| Never plays: reload, EN to EL, EL to EN, reduced motion, Save-Data, `#work`, JavaScript off, reload of a scrolled page with cleared storage, back/forward, blocked storage, all 16 other pages and both 404s (no markup, no storage write) | all pass |
+| Skip: Escape at once and during the flight, any key, click (nothing underneath activated), tap (touch), wheel (the page scrolls natively), Tab (focus lands on the skip link, visible), interaction after skip, before the symbol has loaded | all instant and clean |
+| Failure: symbol request fails (ends on time), intro module missing (head fail-safe: page back after exactly 2.5 s), module throws (page back at once), fonts 2.5 s late (ends on time, lands on the name), width resize before and during the flight (skips), height-only resize (keeps playing), orientation change (skips) | all pass |
+| After the intro: mobile menu (open, Escape, focus return), header hide on scroll down and return on scroll up, Tab to the skip link and the name with a visible ring | all pass |
+| Visual regression against `main`: homepage after a full first-visit intro, 5 sizes × EN/EL | 10/10 identical |
+| Visual regression: returning visit, 18 pages × 1440/390 (motion), and reduced motion (static) | 36/36 identical; static 36/36 apart from one lazy-image timing flake, clean on rerun |
+| axe 4.14, 20 pages × 3 sizes, reduced motion and motion | 0 violations (as before) |
+| Phase 6 keyboard suites: forward Tab, backward Tab, focus under the header | unchanged: 0 issues, 0/307 covered |
+| Mobile dialog (EN, EL; 360, 390, 768) | all pass |
+| JS off, responsive (6 sizes × 20 pages), resting motion states | identical findings to `main` (the known design-intentional items, section 3.3) |
+| `astro check`, build, asset, security (336), SEO (1138) validators | pass; 20 pages, 18 sitemap URLs, all noindex |
+
+### Not covered
+
+- **Firefox and Safari.** Not available to automate here. Most at risk: `measureText` metrics for the landing point,
+  the WAAPI `startTime` alignment with a CSS animation, lazy loading inside a hidden overlay (Safari has loaded lazy
+  images in `display: none` containers in some versions). Test on real Safari (iOS and macOS) and Firefox before launch.
+- **Screen readers.** The overlay is `aria-hidden` and the h1 never leaves the tree, but no screen reader was run.
+- **Field data.** None. The first-visit cost above is a lab measurement.
+- **The look of the motion** was reviewed from captured frames, not at full frame rate on real devices; the owner
+  should watch it on a phone and a desktop on the Preview.

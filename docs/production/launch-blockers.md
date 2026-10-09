@@ -71,7 +71,7 @@ Each of these must be resolved, or consciously accepted, before indexing is enab
 | # | Blocker | Needs | Affects |
 |---|---|---|---|
 | 1 | Legal entity details | Legal name, registered address, registration and VAT numbers | Footer legal line, Privacy and Cookies pages, Organization schema |
-| 2 | Privacy and Cookies pages | Item 1, and the tracking decision | Footer links, consent handling |
+| 2 | Privacy and Cookies pages | Item 1, and the tracking decision. Since 2026-10-09 the homepage intro stores one functional value in `localStorage` (`techpi-intro-seen`, no identifier, never sent; `security.md` section 11): decide whether the pages mention it | Footer links, consent handling |
 | 3 | Tracking and analytics decision | Choice of product, or a decision to use none | Privacy, cookies, whether a consent banner is needed |
 | 4 | ~~Self-hosted Commissioner~~ | **Resolved in Phase 3G.2** (below) | |
 | 5 | ~~Final identity and favicon~~ | **Resolved in Phase 3G.2** (below). The flat vector master is no longer a blocker | |
