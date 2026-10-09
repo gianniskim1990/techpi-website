@@ -12,7 +12,7 @@ What the site is, as built and deployed:
 | Build | Astro 7 static output (`output: 'static'`), 20 HTML pages | All HTML is generated once, at build time, from files in this repository |
 | Hosting | Cloudflare Workers Static Assets (`wrangler.jsonc`): no Worker script, `404-page` not-found handling, `auto-trailing-slash` | Nothing executes on the server per request. Only GET and HEAD are served (other methods: 405) |
 | Server-side features | None: no SSR, database, login, API, contact form, upload, search, comments or cookies | No server-side injection, authentication or session surface |
-| Client JavaScript | One first-party module (motion and the mobile menu, 5.8 KB), one inline head bootstrap, Astro's inlined menu module; on the homepage also the intro's head check and its hashed inline module (3.3 KB, 1.5 KB gzip) | No third-party script. No `eval`. Nothing reads URL parameters or user input into the DOM |
+| Client JavaScript | One first-party module (motion and the mobile menu, 5.8 KB), one inline head bootstrap, Astro's inlined menu module; on the homepage also the intro's head check and its same-origin module (5.2 KB), which on a first visit attaches local video files | No third-party script. No `eval`. Nothing reads URL parameters or user input into the DOM |
 | Other inline content | JSON-LD (`application/ld+json`), not executed | Built from repository data; `<` is escaped (`src/seo/schema.ts`) |
 | Assets | Self-hosted Commissioner (2 WOFF2), local images, PNG icons and sharing images | No third-party font, CDN or tracker |
 | Outbound links | `mailto:`, `tel:`, three client websites | Plain links |
@@ -148,8 +148,9 @@ script-src 'self' 'sha256-…' …;  style-src 'self' 'sha256-…' …;  style-s
 it, and Astro places it at the end of `<head>`. Before it are only static build-time head tags, the short motion
 bootstrap and, on the homepage only, the first-visit intro check (both in `BaseLayout.astro`, static text written at
 build time, reading nothing from the URL except whether it has a `#fragment`). Nothing in the page body and no script
-or style Astro injects is outside the policy. The intro's own module (`src/scripts/intro.ts`) is inlined by Astro
-after the policy and hashed like every other inline module.
+or style Astro injects is outside the policy. The intro's own module (`src/scripts/intro.ts`) is a same-origin file
+loaded after the policy (`script-src 'self'`). Its footage, poster and mask are local files under `/_astro/`, allowed by
+`default-src 'self'` (media and images); no host is added to any policy.
 Moving the whole policy into a header would need the per-page hashes copied into `_headers` after every build (a
 post-build script and a single shared hash list), which is more fragile than the gap it closes. Revisit if Astro adds
 header output for static sites.
