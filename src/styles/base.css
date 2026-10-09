@@ -261,6 +261,21 @@ main:focus {
   --fill-text: var(--color-sheet);
 }
 
+/* Windows High Contrast (forced colours) replaces every background, which removes two cues this design draws with
+   backgrounds: the hairline under a text link (a gradient) and the pill of a button. Without them a link is only a
+   different colour, and the call to action reads as plain text. Restore both with the system's own colours. Nothing
+   changes outside forced-colours mode. */
+@media (forced-colors: active) {
+  .tlink {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 5px;
+  }
+  .btn {
+    border: 1px solid currentColor;
+  }
+}
+
 /* While a modal dialog (the mobile menu) is open, the page behind it does not scroll. */
 html:has(dialog[open]) {
   overflow: hidden;

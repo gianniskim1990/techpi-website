@@ -183,8 +183,9 @@ const lines = Array.from({ length: COUNT }, (_, i) => {
   :global(.sc) .clear {
     transform: scaleX(clamp(0, (var(--pin, 1) - 0.42) / 0.4, 1));
   }
+  /* The second line dims as the scene settles, but never below 60% (about 3.4:1 on Ink): 3:1 is the floor for large text (WCAG 1.4.3). */
   :global(.sc) .ln-2 > span {
-    opacity: calc(1 - clamp(0, (var(--pin, 1) - 0.25) / 0.55, 1) * 0.55);
+    opacity: calc(1 - clamp(0, (var(--pin, 1) - 0.25) / 0.55, 1) * 0.4);
   }
   :global(.sc) h2 {
     translate: 0 calc((1 - var(--in, 1)) * 12vh);

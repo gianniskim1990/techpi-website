@@ -24,6 +24,13 @@ import rocketeerSignIn from '../assets/projects/rocketeer-sign-in.png';
 
 export interface ProjectImage {
   src: ImageMetadata;
+  /**
+   * The original's size in pixels, declared on purpose. Reading `src.width` or `src.height` marks the original as
+   * used, and Astro then also copies the full-size file into dist/ (about 1.3 MB that no page references). The
+   * documented `<Image>` only needs `src`. scripts/assets/validate.mjs checks these numbers against the files.
+   */
+  width: number;
+  height: number;
   /** Describes what is shown. Required for every image. */
   alt: string;
   caption?: string;
@@ -78,6 +85,8 @@ export const projects: readonly Project[] = [
     source: `${src}rocketeer-custom-web-application/`,
     image: {
       src: rocketeerAdmin,
+      width: 2612,
+      height: 980,
       alt: 'The Rocketeer administration dashboard: a side menu, summary counts for pending and active requests, businesses and drivers, and a list of recent requests.',
     },
     caseStudy: {
@@ -118,11 +127,15 @@ export const projects: readonly Project[] = [
       ],
       cover: {
         src: rocketeerAdmin,
+        width: 2612,
+        height: 980,
         alt: 'The Rocketeer administration dashboard: a side menu, summary counts for pending and active requests, businesses and drivers, and a list of recent requests.',
       },
       gallery: [
         {
           src: rocketeerSignIn,
+          width: 1018,
+          height: 850,
           alt: 'The Rocketeer sign-in screen, with the Rocketeer logo above an email and password form.',
         },
       ],
@@ -138,6 +151,8 @@ export const projects: readonly Project[] = [
     source: `${src}armans-ethnic-street-food-online-ordering/`,
     image: {
       src: armansDevices,
+      width: 940,
+      height: 788,
       alt: 'The Arman’s Ethnic Street Food website shown on a laptop, a tablet and a phone.',
     },
     caseStudy: {
@@ -176,11 +191,15 @@ export const projects: readonly Project[] = [
       ],
       cover: {
         src: armansDevices,
+        width: 940,
+        height: 788,
         alt: 'The Arman’s Ethnic Street Food website shown on a laptop, a tablet and a phone.',
       },
       gallery: [
         {
           src: armansAdmin,
+          width: 1711,
+          height: 1265,
           alt: 'The management area of the Arman’s website, with four sections: menu, settings, orders and statistics.',
         },
       ],
@@ -197,6 +216,8 @@ export const projects: readonly Project[] = [
     source: `${src}logotherapia-xanthi-website-redesign/`,
     image: {
       src: logotherapiaSite,
+      width: 2880,
+      height: 1800,
       alt: 'The Logotherapia Xanthi website: the site navigation above a section explaining speech therapy and occupational therapy.',
     },
     caseStudy: {
@@ -222,6 +243,8 @@ export const projects: readonly Project[] = [
       technology: ['WordPress', 'Responsive design', 'On-page SEO', 'Performance optimisation'],
       cover: {
         src: logotherapiaSite,
+        width: 2880,
+        height: 1800,
         alt: 'The Logotherapia Xanthi website: the site navigation above a section explaining speech therapy and occupational therapy.',
         caption: 'A capture of the live website.',
       },

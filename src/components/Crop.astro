@@ -23,8 +23,9 @@ interface Props {
 
 const full = { x: 0, y: 0, w: 1, h: 1 };
 const { image, alt = image.alt, crop = full, small = crop, vw = [60, 100], loading = 'lazy', class: className } = Astro.props;
-const W = image.src.width;
-const H = image.src.height;
+// The declared size, never `image.src.width`: reading that makes Astro emit the unused original (see projects.ts).
+const W = image.width;
+const H = image.height;
 const ar = (r: Rect) => ((W * r.w) / (H * r.h)).toFixed(4);
 const vars = (r: Rect, p: string) => `--${p}x:${r.x};--${p}y:${r.y};--${p}w:${r.w};--${p}h:${r.h};--${p}ar:${ar(r)}`;
 // The image is shown 1/w times wider than its frame.
