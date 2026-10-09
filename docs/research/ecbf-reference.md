@@ -54,6 +54,11 @@ From the supplied analysis, restated as principles:
 1. **Pin, then release.** A section holds while its content resolves, then lets go. The user always controls progress with native scroll.
 2. **Scrub for structure, trigger for text.** Large structural changes follow the scroll position. Text reveals play once at their own tempo when they enter.
 3. **Clip, do not fly.** Elements appear by being uncovered, with small translation. Nothing travels across the screen.
+   *Exception (2026-10-09, approved by the owner):* the first-visit TechPi homepage intro is the single approved
+   long-distance logo flight. The white symbol travels from the centre of a TechPi Blue overlay to the header name and
+   resolves into the typographic "TECHPI". The rule stands everywhere else on the site; the exception covers the intro
+   only (`docs/design/motion-system.md`, section 14). The reference was used for the mechanics of an opening logo moment
+   handing over to a header, not for its identity, type or layout.
 4. **Stagger in reading order.** Lines follow each other with a short, constant delay.
 5. **Opacity and translation only.** The movement vocabulary is small and consistent.
 6. **Ambient motion stays in the background.** Slow, low-contrast, never competing with text.

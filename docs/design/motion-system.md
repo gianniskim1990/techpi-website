@@ -12,7 +12,8 @@ Revision note: the arc is the signature device and must stay rare. The whole cir
 Four principles:
 
 1. **One circle.** All large movement is the same oversized circle from the Pi symbol shifting position. This gives the site one physical logic.
-2. **Uncover, do not fly.** Things appear by being revealed from behind an edge. Nothing travels far.
+2. **Uncover, do not fly.** Things appear by being revealed from behind an edge. Nothing travels far. (One approved
+   exception: the first-visit homepage intro, section 14.)
 3. **The reader drives.** Structural motion follows scroll position. Nothing loops or plays by itself.
 4. **Calm.** Slow starts are avoided, endings are soft, nothing bounces or overshoots.
 
@@ -25,7 +26,7 @@ The motion budget for the homepage:
 | Moments where the whole circle is visible | 1 (contact section only) |
 | Text line reveals | One per section statement |
 | Image reveals | Case-study imagery only |
-| Autoplaying or looping motion | 0 |
+| Autoplaying or looping motion | 0 (except the one-time first-visit intro, section 14; it never loops) |
 
 ## 2. Scroll behaviours
 
@@ -178,3 +179,83 @@ Rules:
 - All content is available without motion and without scripting.
 - Focus is never moved by an animation. Focused elements are always fully visible and unclipped.
 - Keyboard users who tab into a pinned sequence see the focused content in its final state.
+
+## 14. Intro: the symbol becomes the name
+
+Approved 2026-10-09 (Option A, typographic handoff). The one long-distance flight on the site, and the one motion that
+plays without the reader's input. It shows that the TechPi symbol and the TechPi name are the same thing.
+
+Implementation: `src/components/home/Intro.astro` (markup, the CSS half of the choreography), `src/scripts/intro.ts`
+(the flight and the handoff, Web Animations API), the homepage-only head script in `src/layouts/BaseLayout.astro`
+(eligibility), and one rule in `src/components/home/Hero.astro` (the hero entrance waits).
+
+**When it plays.** On the homepage only (`/` and `/el/`), once per browser, on the first visit to either language.
+Never on another page or a 404. Not with reduced motion, Save-Data, a `#fragment` in the URL, on a reload, on
+back/forward or a prerender, and not when scripting is off. Decided by a homepage-only inline script in the head, before
+first paint: a returning visitor never sees the overlay, a first visitor never sees the hero first.
+
+**Storage.** `localStorage` key `techpi-intro-seen` = `1`, written as the intro starts, shared by both languages. It
+is a one-time visual preference: no identifier, never sent anywhere, no cookie. If storage cannot be read or written
+(blocked, private modes that throw), the intro does not play: it cannot promise to play only once, so it does not play.
+
+**Timeline** (from the first frame of the overlay; target 3.0 s, measured 3.01 to 3.02 s at every tested size):
+
+| Time | What happens | How |
+|---|---|---|
+| 0 | TechPi Blue overlay over the page; a Sheet hairline circle (42% opacity) draws clockwise from the top, 700 ms, Reveal curve | CSS, `pathLength="1"` dash offset, as the hero arc |
+| 0.3 s | The white 3D symbol fades in and settles from 0.94 to 1, 600 ms, Reveal curve, centred in the circle | CSS, transform and opacity |
+| 0.6 s | One line rises out of a mask under the circle: "Digital Products & Technology" / "Ψηφιακά προϊόντα & τεχνολογία", 800 ms | CSS; copy in `home.en.ts` / `home.el.ts` (`intro.line`) |
+| 1.9 s | Line and circle fade out, 300 ms. The destination is measured | CSS; script |
+| 2.0 s | The symbol flies to the header name, 600 ms, `cubic-bezier(0.55, 0, 0.75, 0)` (accelerating, no overshoot) | WAAPI, one transform |
+| 2.3 s | The real header name appears in Sheet on the blue, 200 ms | WAAPI, opacity |
+| 2.52 s | The symbol dissolves into the name, 240 ms | WAAPI, opacity |
+| 2.6 s | The overlay fades, 400 ms, Shift curve; the navigation and language links fade in; the hero entrance starts | WAAPI; class `intro-hold` removed |
+| 2.767 s | The name turns Ink, in one step, when the fading blue behind it is exactly between Sheet and Ink (about 4.3:1 against either; a gradual change would pass through a grey that matches the background) | WAAPI |
+| 3.0 s | `finishIntro()`: every temporary class, animation and listener removed | script |
+
+The script places all of its animations on the document timeline as soon as it starts, timed from the overlay's first
+frame, so the compositor plays the flight and the fades on time even while the main thread is busy with the page's
+first layout (measured: 3.01 to 3.03 s at 1×, 4× and 6× CPU throttling). Just before the flight the destination is
+measured again and the flight updated. A script that starts after 1.9 s shifts the rest so the flight still plays
+whole; one that starts after 2.6 s ends the intro.
+
+**Geometry.** Measured just before the flight, never from fixed coordinates: the text of `.site-header > .site-name`
+(never the menu dialog's copy), through a Range (the letters, not the padded link box). The landing point is the
+centre of the capitals: the baseline is one font ascent below the top of the text box, and the cap height comes from
+`measureText()` on the name's own computed font. The letter-spacing after the last letter is excluded. The symbol
+lands 1.6 × the cap height wide (19 px at the 16 px name). This follows the viewport, browser zoom, device pixel ratio
+and both languages' header layouts. The wait for the name's font is bounded at 120 ms. Measured landing error: under
+1 px at all five tested sizes in both languages.
+
+**Header.** While `html.intro` is set (homepage only), the header sits above the overlay, its name and controls at
+opacity 0 but still in place, in the accessibility tree and reachable. No other header state is involved: the intro
+ends on any scroll, so the compact and hidden states never meet it. When it ends, the header is exactly the resting
+typographic header.
+
+**Hero.** Its CSS entrance (lines, rule, support, arc, map) is paused at its first frame under `html.intro-hold` and
+starts, whole, as the overlay clears. Nothing is removed or duplicated: the same animations run as on any other visit.
+
+**Skip.** Any key, pointer press or tap, wheel, scroll, focus, a resize to another width (a height-only change, such as
+a mobile address bar, does not count), an orientation change, leaving the page, the tab going to the background, or
+reduced motion switching on: `finishIntro()` runs at once. It never prevents the input: the key, tap or scroll still
+does its job, and a tap on the overlay never activates the page under it. Focus is never moved.
+
+**Fail-safes.** The head script removes both classes if the module has not started within 2.5 s (measured: exactly
+2.5 s with the module removed). The module ends the intro 3.6 s after the overlay's first frame whatever happens (4.5 s
+after its own start if that frame cannot be found), and at once on any error. Without scripting, or without its stylesheet, the
+overlay markup is `hidden`. A page restored from the back/forward cache never resumes it.
+
+**Images.** The symbol is a lazy `<img>` (BrandSymbol, 240/360/480 px WebP): inside a hidden overlay it is never
+requested, so returning visitors and every other page download nothing extra. On a first visit it costs 16 KB (desktop)
+or 26 KB (phones at 2×). The 480 px file is the one the Contact section also uses.
+
+**Accessibility.** The overlay is `aria-hidden` and has nothing focusable. The hero h1 stays in the document and is the
+page heading throughout. Screen-reader and keyboard users are never held: the first key or focus ends it.
+
+**Performance cost (first visit only, measured, see the PR record).** The reader sees the headline about 2.6 s later on
+desktop and about 3.1 s later on a 4× throttled phone. Chrome's LCP does not show this: it counts the headline as painted
+under the overlay at first paint (desktop), or reports the symbol image as LCP (phones, +0.1 to 0.25 s). Lighthouse
+Speed Index does not capture it either. Returning visits are unchanged within run-to-run noise.
+
+**Visual constraints.** Brand colours only (TechPi Blue, Sheet, Ink, Paper). No rotation, bounce, blur, glow, shadow,
+particles or sound. One circle, one symbol, one line, one flight.
