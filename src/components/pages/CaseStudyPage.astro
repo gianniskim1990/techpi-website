@@ -161,7 +161,8 @@ const trail = [
     )
   }
 
-  <a class="next s-ink" href={caseStudyPath(next.slug, locale)} aria-label={`${copy.next}: ${next.name}`}>
+  {/* No aria-label: the link is named by its own visible text, so the accessible name always contains what is shown (WCAG 2.5.3). */}
+  <a class="next s-ink" href={caseStudyPath(next.slug, locale)}>
     <span class="next-txt">
       <span class="meta-label">{copy.next}</span>
       <span class="next-name">{next.name}</span>

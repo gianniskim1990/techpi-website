@@ -15,7 +15,8 @@ const { locale, page, hrefs } = Astro.props;
 const t = getDictionary(locale);
 ---
 
-{/* Language choice is always explicit. Plain links to the same page in the other language. No script, no redirect. */}
+{/* The accessible name starts with the visible text ("EN"), so voice-control users can say what they see (WCAG 2.5.3),
+    and then spells the language out. Language choice is always explicit. Plain links to the same page in the other language. No script, no redirect. */}
 <ul class="language-switch" aria-label={t.language.label}>
   {
     locales.map((target) => {
@@ -27,7 +28,7 @@ const t = getDictionary(locale);
             href={href}
             lang={target}
             hreflang={target}
-            aria-label={label.name}
+            aria-label={`${label.short}, ${label.name}`}
             aria-current={target === locale ? 'true' : undefined}>
             {label.short}
           </a>
