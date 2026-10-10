@@ -23,6 +23,7 @@ export const pagesEl: PagesCopy = {
       },
     },
     solutionLink: 'Συζητήστε μια αντίστοιχη λύση',
+    highlightsLabel: 'Τι περιλαμβάνει',
   },
   capabilities: {
     heading: 'Τι φτιάχνουμε.',
