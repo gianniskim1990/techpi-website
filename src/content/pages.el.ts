@@ -7,7 +7,7 @@ import type { PagesCopy } from './pages.en';
 export const pagesEl: PagesCopy = {
   work: {
     linkLabel: 'Δείτε το έργο',
-    lead: 'Έργα για πελάτες, λύσεις για επιχειρήσεις και προϊόντα που αναπτύσσουμε οι ίδιοι.',
+    lead: 'Έργα πελατών, λύσεις για επιχειρήσεις, δικά μας προϊόντα και παλαιότερες δουλειές της pigiota314.',
     groups: {
       client: {
         heading: 'Έργα πελατών',
@@ -21,8 +21,16 @@ export const pagesEl: PagesCopy = {
         heading: 'Δικά μας προϊόντα',
         description: 'Ψηφιακά προϊόντα που σχεδιάζουμε και αναπτύσσουμε για δική μας χρήση και περαιτέρω εξέλιξη.',
       },
+      earlier: {
+        heading: 'Παλαιότερα έργα της pigiota314',
+        description: 'Ιστοσελίδες, branding, δημιουργία περιεχομένου και ψηφιακή επικοινωνία από την πορεία της pigiota314, ξεχωριστά από τις σημερινές τεχνολογικές υπηρεσίες της TechPi.',
+      },
     },
     solutionLink: 'Συζητήστε μια αντίστοιχη λύση',
+    highlightsLabel: 'Τι περιλαμβάνει',
+    disciplinesLabel: 'Αντικείμενο',
+    filterLabel: 'Φιλτράρισμα έργων',
+    filterAll: 'Όλα τα έργα',
   },
   capabilities: {
     heading: 'Τι φτιάχνουμε.',
@@ -68,6 +76,12 @@ export const pagesEl: PagesCopy = {
     technology: 'Τεχνολογία',
     outcome: 'Αποτέλεσμα',
     next: 'Επόμενο έργο',
+    solution: 'Η λύση',
+    services: 'Αντικείμενο έργου',
+    related: 'Σχετικά έργα',
+    context: 'Πλαίσιο έργου',
+    earlierTag: 'Παλαιότερο έργο της pigiota314',
+    earlier: 'Το έργο ανήκει στο χαρτοφυλάκιο της pigiota314 και παρουσιάζεται ξεχωριστά από τις σημερινές τεχνολογικές υπηρεσίες της TechPi.',
   },
   contact: {
     heading: 'Έχετε κάτι που αξίζει να χτιστεί;',

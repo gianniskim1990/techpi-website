@@ -19,7 +19,14 @@ const distIndex = args.indexOf('--dist');
 const DIST = distIndex >= 0 ? args[distIndex + 1] : 'dist';
 const ORIGIN = 'https://techpi.eu';
 
-const CONTENT = ['/', '/work', '/work/rocketeer', '/work/armans', '/work/logotherapia-xanthi', '/capabilities', '/eu-projects', '/about', '/contact'];
+// Every project on the Work page has a case study, in the order of the Work page (src/content/projects.ts).
+const CASE_STUDIES = [
+  'rocketeer', 'armans', 'logotherapia-xanthi', 'mavie', 'iliastech', 'alexandra-apartment', 'blackjack-streetwear',
+  'saloon', 'physio', 'project4you', 'rantevo',
+  'level-up-education-app',
+  'level-up-education', 'itsallaboutxanthi', 'local-xanthi', 'juliette-coffee-roasters', 'apox-fc', 'emoved',
+];
+const CONTENT = ['/', '/work', ...CASE_STUDIES.map((slug) => `/work/${slug}`), '/capabilities', '/eu-projects', '/about', '/contact'];
 const ROUTES = [...CONTENT.map((p) => ({ path: p, locale: 'en' })), ...CONTENT.map((p) => ({ path: p === '/' ? '/el/' : `/el${p}`, locale: 'el' }))];
 const NOT_FOUND = [
   { file: '404.html', locale: 'en' },
@@ -249,7 +256,7 @@ const walk = (dir) => {
 };
 walk('');
 const known = new Set([...ROUTES.map((r) => fileFor(r.path)), ...NOT_FOUND.map((n) => n.file)]);
-check(htmlFiles.length === 20, 'build', `${htmlFiles.length} HTML files, expected 20`);
+check(htmlFiles.length === ROUTES.length + NOT_FOUND.length, 'build', `${htmlFiles.length} HTML files, expected ${ROUTES.length + NOT_FOUND.length}`);
 for (const f of htmlFiles) check(known.has(f), 'build', `unexpected page ${f}`);
 
 // --- Sitemap ---
@@ -258,7 +265,7 @@ else {
   const xml = read('sitemap.xml');
   const locs = [...xml.matchAll(/<loc>([^<]*)<\/loc>/g)].map((m) => m[1]);
   check(xml.startsWith('<?xml') && xml.includes('http://www.sitemaps.org/schemas/sitemap/0.9'), 'sitemap.xml', 'XML sitemap namespace');
-  check(locs.length === 18, 'sitemap.xml', `${locs.length} URLs, expected 18`);
+  check(locs.length === ROUTES.length, 'sitemap.xml', `${locs.length} URLs, expected ${ROUTES.length}`);
   check(new Set(locs).size === locs.length, 'sitemap.xml', 'no duplicate URL');
   const expected = new Set(ROUTES.map((r) => ORIGIN + r.path));
   for (const l of locs) check(expected.has(l), 'sitemap.xml', `unexpected URL ${l}`);

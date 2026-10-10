@@ -12,27 +12,39 @@ interface Props {
   capabilitiesLabel: string;
   linkLabel: string;
   solutionLinkLabel: string;
+  highlightsLabel: string;
+  disciplinesLabel: string;
 }
 
-const { project, locale, capabilitiesLabel, linkLabel, solutionLinkLabel } = Astro.props;
+const { project, locale, capabilitiesLabel, linkLabel, solutionLinkLabel, highlightsLabel, disciplinesLabel } = Astro.props;
 const capabilities = project.capabilities.map((id) => capabilityName(id, locale)).join(', ');
 // A row links to its case study only when that page exists. Index-only projects stay plain.
 const href = project.caseStudy ? caseStudyPath(project.slug, locale) : undefined;
-const solutionHref = !href && project.workGroup === 'solution' ? pathFor('contact', locale) : undefined;
+// A business solution also invites a conversation about a similar build, with or without a case study.
+const solutionHref = project.workGroup === 'solution' ? pathFor('contact', locale) : undefined;
 const thumb = compositions[project.slug]?.thumb;
 ---
 
 {/* One line of the Work index, read across like a catalogue: the name, what it is, what was built, and for a
     project with a case study, a small 3:2 crop of the real capture at the end of the line. No placeholder picture
     for the others. The crop is decorative for assistive technology: the heading and the link carry the meaning. */}
-<article class:list={['row', { linked: href }]} data-reveal="fade">
+<article class:list={['row', { linked: href, 'no-thumb': !project.image, earlier: project.workGroup === 'earlier' }]} data-reveal="fade">
   <h3>
     {href ? <a class="name" href={href}>{project.name}</a> : project.name}
   </h3>
   <p class="cat">{project.category}</p>
   <div class="body">
     <p class="sum">{project.summary}</p>
-    <p class="caps"><span>{capabilitiesLabel}:</span> {capabilities}</p>
+    {project.highlights && project.highlights.length > 0 && (
+      <div class="highlights">
+        <p class="highlights-label">{highlightsLabel}</p>
+        <ul aria-label={highlightsLabel}>
+          {project.highlights.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    )}
+    {project.capabilities.length > 0 && <p class="caps"><span>{capabilitiesLabel}:</span> {capabilities}</p>}
+    {project.disciplines && <p class="caps"><span>{disciplinesLabel}:</span> {project.disciplines.join(', ')}</p>}
     {href && <p class="more" aria-hidden="true">{linkLabel}</p>}
     {solutionHref && <p class="solution-cta"><a href={solutionHref}>{solutionLinkLabel}</a></p>}
   </div>
@@ -123,6 +135,19 @@ const thumb = compositions[project.slug]?.thumb;
     .linked:hover .more {
       color: var(--color-cyan);
     }
+    .linked:hover .highlights-label {
+      color: var(--color-fog);
+    }
+    .linked:hover .highlights li {
+      color: var(--color-paper);
+      border-color: rgb(255 255 255 / 0.28);
+    }
+    .linked:hover .solution-cta a {
+      color: var(--color-paper);
+    }
+    .linked:hover .solution-cta a:hover {
+      color: var(--color-cyan);
+    }
     .linked:hover .thumb :global(img) {
       scale: 1.06;
     }
@@ -137,7 +162,42 @@ const thumb = compositions[project.slug]?.thumb;
     grid-column: 7 / span 3;
     padding-top: 0.3em;
   }
+  /* When no real image is available, give copy the entire remaining row. */
+  .row.no-thumb .body {
+    grid-column: 7 / -1;
+  }
+  .row.earlier {
+    padding-top: 20px;
+    padding-bottom: 23px;
+  }
+  .row.earlier h3 {
+    font-size: clamp(1.3rem, 2vw, 1.85rem);
+  }
   .sum {
+    color: var(--sec-c);
+  }
+  .highlights {
+    margin-top: 20px;
+  }
+  .highlights-label {
+    font-size: var(--text-small);
+    color: var(--ter);
+    font-weight: var(--weight-ui);
+  }
+  .highlights ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px 8px;
+    margin-top: 10px;
+    padding: 0;
+    list-style: none;
+  }
+  .highlights li {
+    padding: 5px 9px;
+    border: 1px solid var(--color-rule);
+    border-radius: 4px;
+    font-size: var(--text-small);
+    line-height: 1.35;
     color: var(--sec-c);
   }
   .caps {
@@ -158,7 +218,10 @@ const thumb = compositions[project.slug]?.thumb;
     font-size: var(--text-small);
     font-weight: var(--weight-ui);
   }
+  /* Above the line-wide case-study target, so both links stay reachable. */
   .solution-cta a {
+    position: relative;
+    z-index: 1;
     text-decoration: underline;
     text-underline-offset: 0.28em;
   }
@@ -185,6 +248,9 @@ const thumb = compositions[project.slug]?.thumb;
     .body {
       grid-column: 1 / span 5;
       margin-top: 14px;
+    }
+    .row.no-thumb .body {
+      grid-column: 1 / -1;
     }
     .thumb {
       grid-column: 6 / span 3;

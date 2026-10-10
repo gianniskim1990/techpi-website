@@ -5,7 +5,7 @@
 export const pagesEn = {
   work: {
     linkLabel: 'View case study',
-    lead: 'Client projects, adaptable business solutions and products we build ourselves.',
+    lead: 'Client projects, adaptable business solutions, our own products and earlier pigiota314 work.',
     groups: {
       client: {
         heading: 'Client Projects',
@@ -19,8 +19,16 @@ export const pagesEn = {
         heading: 'Our Products',
         description: 'Digital products we develop for our own use and further growth.',
       },
+      earlier: {
+        heading: 'Earlier Work by pigiota314',
+        description: 'Websites, branding, content and digital communication from our wider pigiota314 portfolio, shown separately from TechPi\'s current technology offering.',
+      },
     },
     solutionLink: 'Discuss a similar solution',
+    highlightsLabel: 'What it includes',
+    disciplinesLabel: 'Disciplines',
+    filterLabel: 'Filter the work portfolio',
+    filterAll: 'All work',
   },
   capabilities: {
     heading: 'What we build.',
@@ -69,6 +77,12 @@ export const pagesEn = {
     technology: 'Technology',
     outcome: 'Outcome',
     next: 'Next project',
+    solution: 'The solution',
+    services: 'Scope',
+    related: 'Related projects',
+    context: 'Project context',
+    earlierTag: 'Earlier work by pigiota314',
+    earlier: 'This work belongs to the pigiota314 portfolio and is shown separately from TechPi’s current technology offering.',
   },
   contact: {
     heading: 'Have something worth building?',
