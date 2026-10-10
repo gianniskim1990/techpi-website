@@ -77,6 +77,10 @@ export const pagesEn = {
     technology: 'Technology',
     outcome: 'Outcome',
     next: 'Next project',
+    solution: 'The solution',
+    services: 'Scope',
+    related: 'Related projects',
+    earlier: 'Earlier work by pigiota314. Shown separately from TechPi’s current technology offering.',
   },
   contact: {
     heading: 'Have something worth building?',

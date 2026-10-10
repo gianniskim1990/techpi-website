@@ -20,7 +20,8 @@ const { project, locale, capabilitiesLabel, linkLabel, solutionLinkLabel, highli
 const capabilities = project.capabilities.map((id) => capabilityName(id, locale)).join(', ');
 // A row links to its case study only when that page exists. Index-only projects stay plain.
 const href = project.caseStudy ? caseStudyPath(project.slug, locale) : undefined;
-const solutionHref = !href && project.workGroup === 'solution' ? pathFor('contact', locale) : undefined;
+// A business solution also invites a conversation about a similar build, with or without a case study.
+const solutionHref = project.workGroup === 'solution' ? pathFor('contact', locale) : undefined;
 const thumb = compositions[project.slug]?.thumb;
 ---
 
@@ -134,6 +135,19 @@ const thumb = compositions[project.slug]?.thumb;
     .linked:hover .more {
       color: var(--color-cyan);
     }
+    .linked:hover .highlights-label {
+      color: var(--color-fog);
+    }
+    .linked:hover .highlights li {
+      color: var(--color-paper);
+      border-color: rgb(255 255 255 / 0.28);
+    }
+    .linked:hover .solution-cta a {
+      color: var(--color-paper);
+    }
+    .linked:hover .solution-cta a:hover {
+      color: var(--color-cyan);
+    }
     .linked:hover .thumb :global(img) {
       scale: 1.06;
     }
@@ -204,7 +218,10 @@ const thumb = compositions[project.slug]?.thumb;
     font-size: var(--text-small);
     font-weight: var(--weight-ui);
   }
+  /* Above the line-wide case-study target, so both links stay reachable. */
   .solution-cta a {
+    position: relative;
+    z-index: 1;
     text-decoration: underline;
     text-underline-offset: 0.28em;
   }

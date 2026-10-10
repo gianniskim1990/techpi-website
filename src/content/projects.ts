@@ -6,6 +6,7 @@ import armansAdmin from '../assets/projects/armans-admin.png';
 import armansDevices from '../assets/projects/armans-devices.png';
 import logotherapiaSite from '../assets/projects/logotherapia-site.jpg';
 import rantevoBookingHome from '../assets/projects/rantevo-booking-home.png';
+import rantevoBusinessPage from '../assets/projects/rantevo-business-page.png';
 import rocketeerAdmin from '../assets/projects/rocketeer-admin-dashboard.png';
 import rocketeerSignIn from '../assets/projects/rocketeer-sign-in.png';
 
@@ -47,12 +48,17 @@ export interface CaseStudy {
   need: readonly string[];
   built: {
     intro?: string;
-    items: readonly string[];
+    /** What was delivered, item by item. Absent where the source describes the solution in one statement. */
+    items?: readonly string[];
   };
+  /** The services the source lists for the project, in its words. */
+  services?: readonly string[];
   technology?: readonly string[];
   /** Only where the source states real outcomes, and only qualitatively. Absent otherwise. */
   outcome?: readonly string[];
-  cover: ProjectImage;
+  /** A real capture of the project. Absent where none is published: the page is then led by typography, never by a
+   *  stand-in picture. */
+  cover?: ProjectImage;
   gallery?: readonly ProjectImage[];
 }
 
@@ -273,6 +279,25 @@ export const projects: readonly Project[] = [
     capabilities: ['digital-products'],
     featured: false,
     source: `${src}level-up-education-app/`,
+    caseStudy: {
+      year: 2026,
+      liveUrl: 'https://app.levelupeducation.gr/',
+      overview: [
+        'An education web app for managing students, courses and the digital operations of a tutoring centre.',
+      ],
+      need: [
+        'The day-to-day management of students, classes, absences and communication needed a more organised digital environment.',
+      ],
+      built: {
+        intro:
+          'A custom application with user roles, student and class management, and features that can evolve with the centre’s needs.',
+      },
+      services: ['UX/UI design', 'Web application development', 'Student management', 'Education platform'],
+      technology: ['React', 'TypeScript', 'Supabase', 'Tailwind CSS'],
+      outcome: [
+        'Better internal organisation for the tutoring centre, and room to add further digital capabilities.',
+      ],
+    },
   },
   {
     slug: 'saloon',
@@ -285,6 +310,30 @@ export const projects: readonly Project[] = [
     capabilities: ['digital-products'],
     featured: false,
     source: `${src}saloon/`,
+    caseStudy: {
+      year: 2026,
+      overview: [
+        'A modern web app for online appointments at beauty businesses, with a public booking page, a client dashboard and features that depend on the plan.',
+      ],
+      need: [
+        'Beauty businesses need a simple, professional way to accept online appointments, organise their clients and reduce day-to-day coordination by phone or message.',
+      ],
+      built: {
+        intro:
+          'A SaaS platform with a responsive interface, a public booking page and a management dashboard for clients and services, with features that can grow with each business’s plan.',
+      },
+      services: [
+        'UX/UI design',
+        'Web application development',
+        'SaaS strategy',
+        'Booking system',
+        'Client dashboard',
+      ],
+      technology: ['React', 'TypeScript', 'Supabase', 'Tailwind CSS'],
+      outcome: [
+        'A more organised, professional online presence for beauty businesses, with easier appointment management and a better experience for their clients.',
+      ],
+    },
   },
   {
     slug: 'physio',
@@ -297,6 +346,24 @@ export const projects: readonly Project[] = [
     capabilities: ['digital-products'],
     featured: false,
     source: `${src}physio/`,
+    caseStudy: {
+      year: 2026,
+      overview: [
+        'A web application for physiotherapists and clinics, with organised management of appointments, clients and sessions.',
+      ],
+      need: [
+        'Physiotherapists needed a simple system that reduces daily coordination by phone and helps them manage their sessions better.',
+      ],
+      built: {
+        intro:
+          'A responsive platform focused on a clean user experience, easy appointment booking and a professional online image.',
+      },
+      services: ['UX/UI design', 'Web application development', 'Booking system', 'SaaS strategy'],
+      technology: ['React', 'TypeScript', 'Supabase', 'Tailwind CSS'],
+      outcome: [
+        'More organised day-to-day operations, and a better experience for both the professional and the client.',
+      ],
+    },
   },
   {
     slug: 'project4you',
@@ -309,6 +376,22 @@ export const projects: readonly Project[] = [
     capabilities: ['digital-products'],
     featured: false,
     source: `${src}project4you/`,
+    caseStudy: {
+      year: 2026,
+      liveUrl: 'https://www.project4you.gr/',
+      overview: [
+        'A custom web application that combines CMS logic with the ability to create digital invitations and websites through a modern builder.',
+      ],
+      need: [
+        'A more flexible system was needed, able to support different kinds of digital project, from invitations to full websites.',
+      ],
+      built: {
+        intro:
+          'A modular CMS environment focused on easy management, themes, custom pages and features delivered step by step.',
+      },
+      services: ['Product strategy', 'UX/UI design', 'Web application development', 'CMS architecture'],
+      technology: ['React', 'TypeScript', 'Supabase', 'Tailwind CSS'],
+    },
   },
   {
     slug: 'mavie',
@@ -319,6 +402,22 @@ export const projects: readonly Project[] = [
     capabilities: ['web-experiences'],
     featured: false,
     source: 'https://pigiota314.eu/case-studies/mavie-website-rebranding',
+    caseStudy: {
+      client: 'Mavie',
+      year: 2025,
+      liveUrl: 'https://www.mavie.gr/',
+      overview: [
+        'A digital image upgrade with a more modern aesthetic, a cleaner structure and a refreshed feel for the brand.',
+      ],
+      need: ['The existing image needed a refresh, to feel more professional and more modern.'],
+      built: {
+        intro:
+          'A new visual direction with a cleaner interface, an improved structure and a more contemporary brand feel.',
+      },
+      services: ['Web design', 'Rebranding', 'Graphic design', 'UX/UI'],
+      technology: ['WordPress'],
+      outcome: ['An improved visual identity and a stronger perceived value of the brand online.'],
+    },
   },
   {
     slug: 'iliastech',
@@ -329,6 +428,24 @@ export const projects: readonly Project[] = [
     capabilities: ['web-experiences'],
     featured: false,
     source: 'https://pigiota314.eu/case-studies/iliastech',
+    caseStudy: {
+      client: 'iliastech',
+      year: 2026,
+      liveUrl: 'https://www.iliastech.gr/',
+      overview: [
+        'A modern corporate website with a clear presentation of services and a professional digital image.',
+      ],
+      need: [
+        'The main need was to present the company’s services clearly and to build a professional image online.',
+      ],
+      built: {
+        intro:
+          'A corporate website with structured content, a clean interface and a responsive experience.',
+      },
+      services: ['Web design', 'Corporate website', 'Content structure', 'Responsive design'],
+      technology: ['WordPress'],
+      outcome: ['A stronger professional image and a better ability to present services online.'],
+    },
   },
   {
     slug: 'alexandra-apartment',
@@ -339,6 +456,21 @@ export const projects: readonly Project[] = [
     capabilities: ['web-experiences', 'digital-visibility'],
     featured: false,
     source: 'https://pigiota314.eu/case-studies/alexandra-apartment',
+    caseStudy: {
+      client: 'Alexandra Apartment',
+      year: 2025,
+      overview: ['A clean, modern online presence for a tourist accommodation, focused on imagery and trust.'],
+      need: [
+        'The accommodation needed a professional online presence that builds credibility and clearly presents the experience of staying there.',
+      ],
+      built: {
+        intro:
+          'A website with a clear structure, imagery, content and a direction for local search visibility.',
+      },
+      services: ['Web design', 'Hospitality website', 'Local SEO', 'Content structure'],
+      technology: ['WordPress'],
+      outcome: ['A more professional image and a better online presentation of the accommodation.'],
+    },
   },
   {
     slug: 'blackjack-streetwear',
@@ -349,6 +481,23 @@ export const projects: readonly Project[] = [
     capabilities: ['web-experiences'],
     featured: false,
     source: 'https://pigiota314.eu/case-studies/blackjack-streetwear',
+    caseStudy: {
+      client: 'Blackjack Streetwear',
+      year: 2025,
+      overview: [
+        'A modern e-commerce experience for a fashion brand, with clean product presentation and a streetwear aesthetic.',
+      ],
+      need: [
+        'The brand needed an e-commerce environment that showcases its products and keeps the shopping experience clean.',
+      ],
+      built: {
+        intro:
+          'An online store focused on product presentation, the mobile experience and an aesthetic tuned to a streetwear audience.',
+      },
+      services: ['E-shop design', 'Web design', 'WooCommerce setup', 'UX/UI'],
+      technology: ['WordPress', 'WooCommerce'],
+      outcome: ['A more professional online image and a cleaner browsing and purchasing experience.'],
+    },
   },
   {
     slug: 'rantevo',
@@ -359,8 +508,8 @@ export const projects: readonly Project[] = [
     highlights: ['Business profiles', 'Service listings', 'Online appointments', 'Responsive interface'],
     capabilities: ['digital-products'],
     featured: false,
-    // The first of the three screenshots on the source case study (the public booking homepage). The third, a signed-in
-    // dashboard, shows a personal name and is not used.
+    // The first two of the three screenshots on the source case study: the public booking homepage and the page for
+    // businesses. The third, a signed-in dashboard, shows a personal name and is not used.
     image: {
       src: rantevoBookingHome,
       width: 1549,
@@ -368,6 +517,45 @@ export const projects: readonly Project[] = [
       alt: 'The Rantevo.gr homepage: the heading “Book an appointment easily and quickly” and a search form by service, city, date and time.',
     },
     source: 'https://pigiota314.eu/case-studies/rantevo',
+    caseStudy: {
+      year: 2026,
+      overview: [
+        'A modern SaaS booking platform for hair salons, beauty centres, physiotherapy clinics and other service professionals.',
+      ],
+      need: [
+        'Many small service businesses still manage appointments by hand, through phone calls, messages and notes. This creates delays, lost time, organisational friction and a limited online presence.',
+      ],
+      built: {
+        intro:
+          'A web-based SaaS booking platform with a clean, responsive interface, professional business pages, structured service listings and end-to-end online booking for customers.',
+      },
+      services: [
+        'SaaS development',
+        'Web application',
+        'UX/UI design',
+        'Booking system',
+        'Digital product strategy',
+      ],
+      technology: ['React', 'TypeScript', 'Supabase', 'Tailwind CSS'],
+      outcome: [
+        'A digital product that supports different types of business, strengthens their online presence and gives professionals and their customers a more organised booking experience.',
+      ],
+      cover: {
+        src: rantevoBookingHome,
+        width: 1549,
+        height: 679,
+        alt: 'The Rantevo.gr homepage: the heading “Book an appointment easily and quickly” and a search form by service, city, date and time.',
+        caption: 'The public booking homepage.',
+      },
+      gallery: [
+        {
+          src: rantevoBusinessPage,
+          width: 1412,
+          height: 1194,
+          alt: 'The Rantevo.gr page for businesses: the heading “Grow your business with Rantevo”, a short description of the platform and four cards describing what it offers.',
+        },
+      ],
+    },
   },
   {
     slug: 'level-up-education',
@@ -379,6 +567,26 @@ export const projects: readonly Project[] = [
     capabilities: [],
     featured: false,
     source: 'https://pigiota314.eu/case-studies/level-up-education',
+    caseStudy: {
+      client: 'Level Up Education',
+      year: 2026,
+      liveUrl: 'https://www.levelupeducation.gr/',
+      overview: [
+        'A complete digital presence for an education brand, covering its website, SEO, social media and content.',
+      ],
+      need: [
+        'Building a professional online presence that inspires trust in students, parents and adult learners.',
+      ],
+      built: {
+        intro:
+          'A website with a clear structure, SEO-driven content, social media campaigns and ongoing communication support.',
+      },
+      services: ['Web design', 'SEO', 'Content strategy', 'Social media management', 'Digital marketing'],
+      technology: ['WordPress', 'WPBakery', 'Yoast SEO', 'Meta Ads', 'Google Analytics 4'],
+      outcome: [
+        'A stronger local image, a better social media presence and more organised content for the brand’s services and activities.',
+      ],
+    },
   },
   {
     slug: 'itsallaboutxanthi',
@@ -390,6 +598,23 @@ export const projects: readonly Project[] = [
     capabilities: [],
     featured: false,
     source: 'https://pigiota314.eu/case-studies/itsallaboutxanthi',
+    caseStudy: {
+      client: 'Itsallaboutxanthi',
+      year: 2025,
+      overview: [
+        'A complete digital presence covering the website, social media, graphic design and digital marketing support.',
+      ],
+      need: [
+        'The project needed a unified image across its website, social media and creative assets, to improve recognition.',
+      ],
+      built: {
+        intro:
+          'Support across web design, social media content, graphics and digital marketing activities.',
+      },
+      services: ['Web design', 'Social media management', 'Graphic design', 'Digital marketing'],
+      technology: ['WordPress'],
+      outcome: ['A more consistent, recognisable presence that fits its local visibility goals.'],
+    },
   },
   {
     slug: 'local-xanthi',
@@ -401,6 +626,21 @@ export const projects: readonly Project[] = [
     capabilities: [],
     featured: false,
     source: 'https://pigiota314.eu/case-studies/local-xanthi',
+    caseStudy: {
+      client: 'Local Xanthi',
+      year: 2025,
+      overview: [
+        'Social media and digital marketing campaigns with local targeting, and content designed to increase visibility.',
+      ],
+      need: ['Building a more consistent online presence aimed at a local audience.'],
+      built: {
+        intro:
+          'Content and a communication direction focused on recognition and a connection with the local audience.',
+      },
+      services: ['Social media management', 'Digital marketing', 'Content creation', 'Local promotion'],
+      technology: ['Meta Business Suite'],
+      outcome: ['A stronger online presence and more consistent communication.'],
+    },
   },
   {
     slug: 'juliette-coffee-roasters',
@@ -412,6 +652,22 @@ export const projects: readonly Project[] = [
     capabilities: [],
     featured: false,
     source: 'https://pigiota314.eu/case-studies/juliette-coffee-roasters',
+    caseStudy: {
+      client: 'Juliette Coffee Roasters',
+      year: 2026,
+      overview: [
+        'Digital marketing and social media support for a coffee brand, focused on imagery, content and online visibility.',
+      ],
+      need: [
+        'The brand needed consistent online communication, and content that captures its identity and its coffee experience.',
+      ],
+      built: {
+        intro:
+          'A content direction, a social media presence and SEO support aimed at better visibility.',
+      },
+      services: ['Social media management', 'SEO support', 'Content strategy', 'Digital marketing'],
+      outcome: ['Stronger recognition and a more consistent online presence.'],
+    },
   },
   {
     slug: 'apox-fc',
@@ -423,6 +679,22 @@ export const projects: readonly Project[] = [
     capabilities: [],
     featured: false,
     source: 'https://pigiota314.eu/case-studies/apox-fc',
+    caseStudy: {
+      client: 'Apox FC',
+      year: 2025,
+      overview: [
+        'Content, creative assets and digital marketing support for a sports brand with a strong community presence.',
+      ],
+      need: [
+        'Creating content that resonates with a sports community and strengthens the brand’s social media presence.',
+      ],
+      built: {
+        intro:
+          'Graphics, social media content and a communication direction for a consistent online presence.',
+      },
+      services: ['Social media content', 'Graphic design', 'Digital marketing', 'Community communication'],
+      outcome: ['An improved brand image and better communication with the community.'],
+    },
   },
   {
     slug: 'emoved',
@@ -434,6 +706,19 @@ export const projects: readonly Project[] = [
     capabilities: [],
     featured: false,
     source: 'https://pigiota314.eu/case-studies/emoved',
+    caseStudy: {
+      client: 'Emoved',
+      year: 2025,
+      overview: ['A graphic design project focused on clean visual communication and a professional brand image.'],
+      need: ['Clearer, more consistent and more professional visual communication.'],
+      built: {
+        intro:
+          'Design assets and visual materials created to support a cohesive brand.',
+      },
+      services: ['Graphic design', 'Brand communication', 'Visual identity support'],
+      technology: ['Adobe Creative Suite'],
+      outcome: ['A more organised and professional visual presence for the brand.'],
+    },
   },
 ];
 
@@ -447,9 +732,13 @@ export function featuredIn(locale: Locale): readonly Project[] {
   return projectsIn(locale).filter((p) => p.featured);
 }
 
-/** Projects with a published case study, in a fixed order. Drives the case-study routes and "Next project". */
+/**
+ * Projects with a published case study, in the order of the Work page: by group, then as listed. Drives the
+ * case-study routes, "Next project" and the related projects.
+ */
 export function caseStudiesIn(locale: Locale): readonly Project[] {
-  return projectsIn(locale).filter((p) => p.caseStudy);
+  const list = projectsIn(locale).filter((p) => p.caseStudy);
+  return workGroups.flatMap((group) => list.filter((p) => p.workGroup === group));
 }
 
 /** The case study that follows this one, wrapping from the last back to the first. Deterministic. */
@@ -461,9 +750,18 @@ export function nextCaseStudy(slug: string, locale: Locale): Project {
   return next;
 }
 
-/** Published case studies that show a capability. Used for "Seen in". */
+/** Other published case studies in the same Work group, after the one that follows it. At most three. */
+export function relatedCaseStudies(slug: string, locale: Locale): readonly Project[] {
+  const list = caseStudiesIn(locale);
+  const self = list.find((p) => p.slug === slug);
+  if (!self) throw new Error(`No published case study with slug: ${slug}`);
+  const next = nextCaseStudy(slug, locale);
+  return list.filter((p) => p.workGroup === self.workGroup && p.slug !== slug && p.slug !== next.slug).slice(0, 3);
+}
+
+/** The featured case studies that show a capability. Used for "Seen in". */
 export function caseStudiesWith(capability: CapabilityId, locale: Locale): readonly Project[] {
-  return caseStudiesIn(locale).filter((p) => p.capabilities.includes(capability));
+  return caseStudiesIn(locale).filter((p) => p.featured && p.capabilities.includes(capability));
 }
 
 /**
@@ -497,11 +795,12 @@ function toGreek(p: Project): Project {
       overview: s.overview,
       need: s.need,
       built: s.built,
+      services: study.services && required(s.services, p.slug, 'services'),
       technology: study.technology && required(s.technology, p.slug, 'technology'),
       outcome: study.outcome && required(s.outcome, p.slug, 'outcome'),
-      cover: {
+      cover: study.cover && {
         ...study.cover,
-        alt: s.coverAlt,
+        alt: required(s.coverAlt, p.slug, 'coverAlt'),
         caption: study.cover.caption && required(s.coverCaption, p.slug, 'coverCaption'),
       },
       gallery,

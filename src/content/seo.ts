@@ -90,8 +90,12 @@ export const pageMeta: Record<Locale, Record<PageKey, PageMeta>> = {
  * A case study's metadata, from its own published facts: the name and category shown at the top of the page,
  * and the summary shown as its lead. `project` is already in the page's language.
  */
-export function caseStudyMeta(project: Project): PageMeta {
-  return { title: `${project.name} — ${project.category} | TechPi`, description: project.summary };
+export function caseStudyMeta(project: Project, locale: Locale): PageMeta {
+  const full = `${project.name} — ${project.category} | TechPi`;
+  // A long category would push the title past what search results show (70 characters): the name and the page's
+  // section then, which keeps the two languages distinct.
+  const short = `${project.name} | ${locale === 'el' ? 'Έργα' : 'Work'} | TechPi`;
+  return { title: full.length <= 70 ? full : short, description: project.summary };
 }
 
 /**

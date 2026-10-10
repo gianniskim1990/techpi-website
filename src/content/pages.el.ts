@@ -76,6 +76,10 @@ export const pagesEl: PagesCopy = {
     technology: 'Τεχνολογία',
     outcome: 'Αποτέλεσμα',
     next: 'Επόμενο έργο',
+    solution: 'Η λύση',
+    services: 'Αντικείμενο έργου',
+    related: 'Σχετικά έργα',
+    earlier: 'Παλαιότερο έργο της pigiota314. Παρουσιάζεται ξεχωριστά από τις σημερινές τεχνολογικές υπηρεσίες της TechPi.',
   },
   contact: {
     heading: 'Έχετε κάτι που αξίζει να χτιστεί;',

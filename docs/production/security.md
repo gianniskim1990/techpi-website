@@ -9,7 +9,7 @@ What the site is, as built and deployed:
 
 | Part | What it is | Security relevance |
 |---|---|---|
-| Build | Astro 7 static output (`output: 'static'`), 20 HTML pages | All HTML is generated once, at build time, from files in this repository |
+| Build | Astro 7 static output (`output: 'static'`), 50 HTML pages | All HTML is generated once, at build time, from files in this repository |
 | Hosting | Cloudflare Workers Static Assets (`wrangler.jsonc`): no Worker script, `404-page` not-found handling, `auto-trailing-slash` | Nothing executes on the server per request. Only GET and HEAD are served (other methods: 405) |
 | Server-side features | None: no SSR, database, login, API, contact form, upload, search, comments or cookies | No server-side injection, authentication or session surface |
 | Client JavaScript | One first-party module (motion and the mobile menu, 5.8 KB), one inline head bootstrap, Astro's inlined menu module; on the homepage also the intro's head check and its same-origin module (5.2 KB), which attaches local video files when the intro plays | No third-party script. No `eval`. Nothing reads URL parameters or user input into the DOM |

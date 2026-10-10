@@ -9,7 +9,8 @@ import { capabilityName } from '../../content/capabilities';
 import { pagesCopy } from '../../content/copy';
 import type { Locale } from '../../i18n/locales';
 import { locales } from '../../i18n/locales';
-import { nextCaseStudy, type Project, type ProjectImage } from '../../content/projects';
+import ClosingCTA from '../../components/secondary/ClosingCTA.astro';
+import { nextCaseStudy, relatedCaseStudies, type Project, type ProjectImage } from '../../content/projects';
 import { caseStudyPath, homePathFor, pathFor } from '../../i18n/routes';
 import { getDictionary } from '../../i18n';
 import { caseStudyMeta } from '../../content/seo';
@@ -23,8 +24,14 @@ const { project, locale } = Astro.props;
 const study = project.caseStudy;
 if (!study) throw new Error(`${project.slug} has no case study.`);
 
-const copy = pagesCopy[locale].caseStudy;
+const pages = pagesCopy[locale];
+const copy = pages.caseStudy;
 const next = nextCaseStudy(project.slug, locale);
+const related = relatedCaseStudies(project.slug, locale);
+const cover = study.cover;
+const services = study.services ?? [];
+const items = study.built.items ?? [];
+const earlier = project.workGroup === 'earlier';
 // Both languages exist for every published case study, so the canonical, hreflang and language switch pair them.
 const paths = Object.fromEntries(locales.map((l) => [l, caseStudyPath(project.slug, l)])) as Record<Locale, string>;
 const gallery: readonly ProjectImage[] = study.gallery ?? [];
@@ -34,7 +41,7 @@ const hasTechnology = Boolean(study.technology && study.technology.length > 0);
 const hasOutcome = Boolean(study.outcome && study.outcome.length > 0);
 const comp = compositions[project.slug];
 const t = getDictionary(locale);
-const meta = caseStudyMeta(project);
+const meta = caseStudyMeta(project, locale);
 // Home, Work, this case study: the real hierarchy of the URL and of the page's own "Work" link. Visible labels only.
 const trail = [
   { name: t.pages.home.heading, path: homePathFor(locale) },
@@ -43,9 +50,10 @@ const trail = [
 ];
 ---
 
-{/* The reusable case-study template: a product story, told editorially. Every block except the head, cover,
-    overview, need, what we built and next project is optional: a block with no supported content is not rendered.
-    No metrics, no KPI blocks, no testimonials. */}
+{/* The reusable case-study template: a product story, told editorially. Every block except the head, overview, need,
+    what was built, next project and the closing invitation is optional: a block with no supported content is not
+    rendered. A project with no published capture has no cover and no image section: its scope, set large on Ink,
+    leads the page instead. No stand-in pictures, no metrics, no KPI blocks, no testimonials. */}
 <BaseLayout
   locale={locale}
   page="work"
@@ -60,6 +68,7 @@ const trail = [
     <p class="meta-label cat">{project.category}</p>
     <h1 data-reveal="mask">{project.name}</h1>
     <p class="lead">{project.summary}</p>
+    {earlier && <p class="attribution">{copy.earlier}</p>}
     <div class="strip">
       <FactRows
         variant="strip"
@@ -79,16 +88,30 @@ const trail = [
 
   {/* The cover: the product at a scale where its interface reads, cropped to a band and run edge to edge. The
       whole capture follows later, after what was built. */}
-  <figure class="cover s-ink">
-    {
-      comp?.cover ? (
-        <Crop image={study.cover} crop={comp.cover} small={comp.thumb} vw={[100, 100]} loading="eager" />
-      ) : (
-        <ProjectMedia image={study.cover} sizes={imageSizes} loading="eager" class="shot" />
+  {
+    cover ? (
+      <figure class="cover s-ink">
+        {comp?.cover ? (
+          <Crop image={cover} crop={comp.cover} small={comp.thumb} vw={[100, 100]} loading="eager" />
+        ) : (
+          <ProjectMedia image={cover} sizes={imageSizes} loading="eager" class="shot" />
+        )}
+        {cover.caption && <figcaption>{cover.caption}</figcaption>}
+      </figure>
+    ) : (
+      services.length > 0 && (
+        /* No published capture: the scope of the work, set as display type on the same Ink band a cover would take. */
+        <section class="scope s-ink" aria-labelledby="scope-h">
+          <h2 id="scope-h" class="meta-label">{copy.services}</h2>
+          <ol class="scope-list">
+            {services.map((service, i) => (
+              <li style={`--n:${i}`}>{service}</li>
+            ))}
+          </ol>
+        </section>
       )
-    }
-    {study.cover.caption && <figcaption>{study.cover.caption}</figcaption>}
-  </figure>
+    )
+  }
 
   <SectionSplit id="overview" heading={copy.overview} size="s">
     {study.overview.map((p, i) => <p class={i === 0 ? 'lead-text' : 'read'}>{p}</p>)}
@@ -98,44 +121,59 @@ const trail = [
     {study.need.map((p) => <p class="read">{p}</p>)}
   </SectionSplit>
 
-  <SectionSplit id="built" heading={copy.built} size="s">
+  {/* "What we built" when the work is itemised; "The solution" when the source describes it in one statement. */}
+  <SectionSplit id="built" heading={items.length > 0 ? copy.built : copy.solution} size="s">
     {study.built.intro && <p class="lead-text">{study.built.intro}</p>}
-    <ol class="items">
-      {
-        study.built.items.map((item) => (
-          <li>{item}</li>
-        ))
-      }
-    </ol>
-    <p class="capline">
-      <span class="label">{copy.capabilities}</span>
-      {
-        project.capabilities.map((id, i) => (
-          <>
-            {i > 0 && ', '}
-            <a class="tlink" href={`${pathFor('capabilities', locale)}#${id}`}>
-              {capabilityName(id, locale)}
-            </a>
-          </>
-        ))
-      }
-    </p>
+    {
+      items.length > 0 && (
+        <ol class="items">
+          {items.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ol>
+      )
+    }
+    {
+      cover && services.length > 0 && (
+        <p class="capline">
+          <span class="label">{copy.services}</span>
+          {services.join(', ')}
+        </p>
+      )
+    }
+    {
+      project.capabilities.length > 0 && (
+        <p class="capline">
+          <span class="label">{copy.capabilities}</span>
+          {project.capabilities.map((id, i) => (
+            <>
+              {i > 0 && ', '}
+              <a class="tlink" href={`${pathFor('capabilities', locale)}#${id}`}>
+                {capabilityName(id, locale)}
+              </a>
+            </>
+          ))}
+        </p>
+      )
+    }
   </SectionSplit>
 
   {/* The whole picture: the full capture, and beside it the project's other real screens at a smaller scale. */}
-  <section class="whole s-ink horizon" aria-label={project.name} data-scene>
-    <figure class="whole-main">
-      <ProjectMedia image={study.cover} sizes="(min-width: 1024px) 64vw, 100vw" class="shot" />
-    </figure>
-    {
-      gallery.map((image) => (
-        <figure class="whole-side">
-          <ProjectMedia image={image} sizes="(min-width: 1024px) 30vw, 100vw" class="shot" />
-          {image.caption && <figcaption>{image.caption}</figcaption>}
+  {
+    cover && (
+      <section class="whole s-ink horizon" aria-label={project.name} data-scene>
+        <figure class="whole-main">
+          <ProjectMedia image={cover} sizes="(min-width: 1024px) 64vw, 100vw" class="shot" />
         </figure>
-      ))
-    }
-  </section>
+        {gallery.map((image) => (
+          <figure class="whole-side">
+            <ProjectMedia image={image} sizes="(min-width: 1024px) 30vw, 100vw" class="shot" />
+            {image.caption && <figcaption>{image.caption}</figcaption>}
+          </figure>
+        ))}
+      </section>
+    )
+  }
 
   {
     hasTechnology && (
@@ -161,6 +199,25 @@ const trail = [
     )
   }
 
+  {/* Other case studies from the same Work group, as a short catalogue: the name and what it is. */}
+  {
+    related.length > 0 && (
+      <section class="related" aria-labelledby="related-h">
+        <h2 id="related-h" class="meta-label">{copy.related}</h2>
+        <ul class="related-list">
+          {related.map((p) => (
+            <li>
+              <a href={caseStudyPath(p.slug, locale)}>
+                <span class="related-name">{p.name}</span>
+                <span class="related-cat">{p.category}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
   {/* No aria-label: the link is named by its own visible text, so the accessible name always contains what is shown (WCAG 2.5.3). */}
   <a class="next s-ink" href={caseStudyPath(next.slug, locale)}>
     <span class="next-txt">
@@ -177,6 +234,8 @@ const trail = [
       )
     }
   </a>
+
+  <ClosingCTA heading={pages.closer.heading} cta={pages.closer.cta} href={pathFor('contact', locale)} />
 </BaseLayout>
 
 <style>
@@ -217,9 +276,71 @@ const trail = [
     line-height: 1.42;
     color: var(--sec-c);
   }
+  .attribution {
+    grid-column: 1 / span 6;
+    margin-top: 20px;
+    padding-left: 14px;
+    border-left: 2px solid var(--line);
+    max-width: 52ch;
+    font-size: var(--text-small);
+    color: var(--ter);
+  }
   .strip {
     grid-column: 1 / -1;
     margin-top: clamp(48px, 6vw, 88px);
+  }
+
+  /* ---------- Scope, in place of a cover, on Ink ---------- */
+  .scope {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    align-items: start;
+    padding: clamp(56px, 6vw, 96px) var(--space-margin) clamp(64px, 7vw, 112px);
+  }
+  .scope h2 {
+    grid-column: 1 / span 3;
+    padding-top: 0.9em;
+    color: var(--ter);
+  }
+  .scope-list {
+    grid-column: 4 / -1;
+    counter-reset: scope;
+  }
+  .scope-list li {
+    counter-increment: scope;
+    display: flex;
+    align-items: baseline;
+    gap: clamp(16px, 2vw, 32px);
+    padding: clamp(14px, 1.4vw, 22px) 0;
+    border-top: 1px solid var(--line);
+    font-size: clamp(1.625rem, 3.6vw, 3.25rem);
+    font-weight: var(--weight-display);
+    line-height: 1.05;
+    letter-spacing: -0.024em;
+  }
+  .scope-list li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .scope-list li::before {
+    content: counter(scope, decimal-leading-zero);
+    flex: none;
+    min-width: 2.2em;
+    font-size: var(--text-label);
+    font-weight: var(--weight-ui);
+    letter-spacing: 0.02em;
+    color: var(--ter);
+    font-variant-numeric: tabular-nums;
+  }
+  /* The lines rise in from the left on first paint, after the heading, as a cover would be uncovered. */
+  :global(.mo) .scope-list li {
+    animation: scope-in 900ms var(--ease-reveal) calc(300ms + var(--n, 0) * 70ms) both;
+  }
+  @keyframes scope-in {
+    from {
+      opacity: 0;
+      translate: -24px 0;
+    }
   }
 
   /* ---------- The cover band and the whole picture, on Ink ---------- */
@@ -318,6 +439,54 @@ const trail = [
     padding: 18px 0;
   }
 
+  /* ---------- Related projects ---------- */
+  .related {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    margin-top: var(--space-section);
+    padding: 0 var(--space-margin);
+  }
+  .related h2 {
+    grid-column: 1 / span 3;
+    padding-top: 22px;
+    color: var(--ter);
+  }
+  .related-list {
+    grid-column: 4 / -1;
+  }
+  .related-list li {
+    border-top: 1px solid var(--line);
+  }
+  .related-list li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .related-list a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--space-gap);
+    align-items: baseline;
+    padding: 20px 0;
+    text-decoration: none;
+  }
+  .related-name {
+    font-size: clamp(1.25rem, 2vw, 1.75rem);
+    font-weight: var(--weight-display);
+    line-height: 1.1;
+    letter-spacing: -0.016em;
+    transition: color var(--duration-fast) var(--ease-state);
+  }
+  .related-cat {
+    font-size: var(--text-small);
+    color: var(--ter);
+  }
+  .related-list a:hover .related-name,
+  .related-list a:focus-visible .related-name {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 6px;
+  }
+
   /* ---------- Next project ---------- */
   .next {
     position: relative;
@@ -329,15 +498,9 @@ const trail = [
     padding: clamp(56px, 6vw, 88px) var(--space-margin) clamp(80px, 9vw, 136px);
     text-decoration: none;
   }
-  /* Separates the next project from the Ink footer that follows. */
-  .next::after {
-    content: '';
-    position: absolute;
-    left: var(--space-margin);
-    right: var(--space-margin);
-    bottom: 0;
-    height: 1px;
-    background: var(--line);
+  /* The closing invitation follows directly, Blue against Ink, with no Paper gap between them. */
+  .next + :global(.closer) {
+    margin-top: 0;
   }
   .next-txt {
     grid-column: 1 / span 6;
@@ -424,6 +587,23 @@ const trail = [
     .whole-side {
       grid-column: 1 / span 5;
     }
+    .scope,
+    .related {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .scope h2,
+    .related h2 {
+      grid-column: 1 / -1;
+      padding-top: 0;
+      margin-bottom: 20px;
+    }
+    .scope-list,
+    .related-list {
+      grid-column: 1 / -1;
+    }
+    .attribution {
+      grid-column: 1 / -1;
+    }
   }
 
   @media (max-width: 760px) {
@@ -453,6 +633,17 @@ const trail = [
     }
     .tech li:nth-last-child(2):nth-child(odd) {
       border-bottom: 0;
+    }
+    .scope,
+    .related {
+      display: block;
+    }
+    .related-list a {
+      display: block;
+    }
+    .related-cat {
+      display: block;
+      margin-top: 6px;
     }
 
   }

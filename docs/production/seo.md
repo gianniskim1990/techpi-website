@@ -6,7 +6,7 @@ architecture and the locked crawler policy (its section 6.3); where the two diff
 
 ## 1. What every page carries
 
-18 content pages (9 routes in English and Greek) and two 404 pages.
+48 content pages (24 routes in English and Greek: six pages and 18 case studies) and two 404 pages.
 
 | Item | Content pages | 404 pages |
 |---|---|---|
@@ -24,7 +24,7 @@ files (verified: every page body byte-identical to `main`, and pixel-identical c
 
 ## 2. Titles and descriptions
 
-One source: `src/content/seo.ts` (`pageMeta` for the six page types, `caseStudyMeta()` for the case studies). The
+One source: `src/content/seo.ts` (`pageMeta` for the six page types, `caseStudyMeta()` for the case studies: "Name — category | TechPi", or "Name | Work | TechPi" where that would pass 70 characters). The
 same text feeds `<title>`, the meta description, `og:`/`twitter:` title and description, and the WebPage node.
 
 Rules:
@@ -94,7 +94,7 @@ One `<script type="application/ld+json">` per content page with an `@graph`. Bui
 | `Organization` | `https://techpi.eu/#organization` | Every content page | `name` TechPi, `alternateName` pigiota314, `url`, `logo` (`/techpi-logo.png`, 512 x 512, the blue 3D symbol), `email`, `telephone`, `address` (locality Xanthi, country GR only) |
 | `WebSite` | `https://techpi.eu/#website` | Every content page | `name`, `url`, `inLanguage` `en` and `el`, `publisher` the Organization |
 | `WebPage` and subtypes | `<canonical>#webpage` | Every content page | `name`, `description`, `url`, `inLanguage`, `isPartOf` the WebSite, `publisher`. `about` the Organization on the homepage and About. Type: `CollectionPage` (Work), `AboutPage`, `ContactPage`, otherwise `WebPage` |
-| `BreadcrumbList` | `<canonical>#breadcrumb` | The six case-study pages | Home, Work, the case study, with the visible labels. This is the real URL hierarchy and the page's own "Work" link. No breadcrumb UI was added |
+| `BreadcrumbList` | `<canonical>#breadcrumb` | The 36 case-study pages | Home, Work, the case study, with the visible labels. This is the real URL hierarchy and the page's own "Work" link. No breadcrumb UI was added |
 | `Service` x 4 | `<canonical>#service-<id>` | Capabilities, both languages | Each capability's visible name and summary, `provider` the Organization |
 | `Service` x 2 | `<canonical>#service-eu-projects`, `…#service-eu-project-websites` | EU Projects, both languages | The page's visible hero heading and lead, and its "EU project websites" section heading and introduction |
 
@@ -110,7 +110,7 @@ published on the Contact page (`launch-blockers.md`, section 1).
 ## 6. Sitemap
 
 `/sitemap.xml`, generated at build time by `src/pages/sitemap.xml.ts` from the same route map and case-study list as
-the pages: **exactly 18 URLs**, absolute, canonical form. No 404, redirect source, slash variant or preview URL.
+the pages: **exactly 48 URLs**, absolute, canonical form. No 404, redirect source, slash variant or preview URL.
 **No `<lastmod>`**: the site has no real modification dates, and an invented one is worse than none. No hreflang in
 the sitemap: the pages carry it.
 
@@ -138,7 +138,7 @@ added, it should only restate the About page and link the sitemap.
 ## 8. The indexing switch
 
 `PUBLIC_ALLOW_INDEXING=true` at build time is the only switch. Without it, every page carries
-`noindex, nofollow`. With it, the 18 content pages carry no robots tag and are indexable; the two 404 pages stay
+`noindex, nofollow`. With it, the 48 content pages carry no robots tag and are indexable; the two 404 pages stay
 `noindex` in every build. Set it only for the production build, only at launch, never for previews (launch
 blocker 14). It is not set anywhere today.
 
@@ -155,7 +155,7 @@ npm run build && node scripts/seo/validate.mjs
 About 1,140 checks: per page the title, description, `lang`, one `h1`, robots, canonical, hreflang and reciprocity,
 x-default, every Open Graph and Twitter field, that the image exists, valid JSON-LD with the expected nodes,
 `@id`s on the production origin, resolved references, forbidden types and properties, no development or preview
-origin in the head, unique titles and descriptions; then the 404s, the set of built pages, the sitemap (18 URLs, no
+origin in the head, unique titles and descriptions; then the 404s, the set of built pages, the sitemap (48 URLs, no
 `lastmod`), `robots.txt` (no Disallow, no agent rules, sitemap line) and the image files. It exits 1 on any failure.
 The expected route list is written out in the script, independently of the route map, so an accidental route change
 is caught.
