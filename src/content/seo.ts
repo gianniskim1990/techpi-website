@@ -29,7 +29,7 @@ export const pageMeta: Record<Locale, Record<PageKey, PageMeta>> = {
     work: {
       title: 'Work — Digital Products & Platforms | TechPi',
       description:
-        'Explore TechPi client projects, adaptable business solutions and original products: digital platforms, websites and applications for real business needs.',
+        'Explore TechPi client websites and applications, SaaS business solutions, original products and earlier branding and digital communication work by pigiota314.',
     },
     capabilities: {
       title: 'Capabilities — Products, Web & AI | TechPi',
@@ -61,7 +61,7 @@ export const pageMeta: Record<Locale, Record<PageKey, PageMeta>> = {
     work: {
       title: 'Έργα — Ψηφιακά προϊόντα & πλατφόρμες | TechPi',
       description:
-        'Δείτε έργα πελατών της TechPi, ευέλικτες λύσεις για επιχειρήσεις και δικά μας ψηφιακά προϊόντα: πλατφόρμες, ιστοσελίδες και εφαρμογές.',
+        'Έργα της TechPi: ιστοσελίδες και εφαρμογές πελατών, λύσεις SaaS, δικά μας προϊόντα και παλαιότερα έργα branding και ψηφιακής επικοινωνίας της pigiota314.',
     },
     capabilities: {
       title: 'Δυνατότητες — Εφαρμογές, ιστότοποι & AI | TechPi',
