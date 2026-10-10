@@ -324,7 +324,7 @@ export const projects: readonly Project[] = [
     workGroup: 'client',
     name: 'iliastech',
     category: 'Corporate website',
-    summary: 'A responsive corporate website with structured content and clear presentation of a technology company's services.',
+    summary: 'A responsive corporate website with structured content and a clear presentation of services offered by a technology company.',
     capabilities: ['web-experiences'],
     featured: false,
     source: 'https://pigiota314.eu/case-studies/iliastech',
