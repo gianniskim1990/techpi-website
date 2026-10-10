@@ -5,6 +5,7 @@ import { projectsEl } from './projects.el';
 import armansAdmin from '../assets/projects/armans-admin.png';
 import armansDevices from '../assets/projects/armans-devices.png';
 import logotherapiaSite from '../assets/projects/logotherapia-site.jpg';
+import rantevoBookingHome from '../assets/projects/rantevo-booking-home.png';
 import rocketeerAdmin from '../assets/projects/rocketeer-admin-dashboard.png';
 import rocketeerSignIn from '../assets/projects/rocketeer-sign-in.png';
 
@@ -358,6 +359,14 @@ export const projects: readonly Project[] = [
     highlights: ['Business profiles', 'Service listings', 'Online appointments', 'Responsive interface'],
     capabilities: ['digital-products'],
     featured: false,
+    // The first of the three screenshots on the source case study (the public booking homepage). The third, a signed-in
+    // dashboard, shows a personal name and is not used.
+    image: {
+      src: rantevoBookingHome,
+      width: 1549,
+      height: 679,
+      alt: 'The Rantevo.gr homepage: the heading “Book an appointment easily and quickly” and a search form by service, city, date and time.',
+    },
     source: 'https://pigiota314.eu/case-studies/rantevo',
   },
   {

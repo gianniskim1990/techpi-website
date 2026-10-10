@@ -60,4 +60,10 @@ export const compositions: Record<string, Composition> = {
       caption: { en: 'Website: services', el: 'Ιστοσελίδα: υπηρεσίες' },
     },
   },
+  // Not featured on the homepage: only its Work index thumbnail is used, a 3:2 crop around the heading and search form.
+  rantevo: {
+    layout: 'band',
+    thumb: { x: 0.171, y: 0, w: 0.6575, h: 1 },
+    main: { caption: { en: 'Booking homepage', el: 'Αρχική σελίδα κρατήσεων' } },
+  },
 };

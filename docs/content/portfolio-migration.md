@@ -9,8 +9,45 @@
 > was consolidated; Rantevo.gr is recorded separately from Saloon, with their precise relationship
 > still to be confirmed before writing any comparison of the two. Historical creative/marketing
 > work is presented in a clearly separate section, without claiming these disciplines belong to
-> the four current TechPi capabilities. No new real media has been added. Current implementation
-> and copy: `src/content/projects.ts`, `projects.el.ts`, `pages.en.ts` and `pages.el.ts`.
+> the four current TechPi capabilities. Current implementation and copy: `src/content/projects.ts`,
+> `projects.el.ts`, `pages.en.ts` and `pages.el.ts`.
+>
+> **2026-10-10 reconciliation audit (live source re-checked).** https://pigiota314.eu/case-studies lists
+> exactly 18 case studies, matching the 18 Work entries one to one by stable slug:
+>
+> | Source case study (slug on pigiota314.eu) | TechPi slug | Section | TechPi page | Real image on the source |
+> |---|---|---|---|---|
+> | Rocketeeer (`rocketeer`) | `rocketeer` | Client Projects | case study | yes (already used) |
+> | Arman's Ethnic Street Food (`armans-ethnic-street-food-online-ordering`) | `armans` | Client Projects | case study | yes (already used) |
+> | Logotherapia Xanthi (`logotherapia-xanthi`) | `logotherapia-xanthi` | Client Projects | case study | placeholder (TechPi uses its own capture of the live site) |
+> | Mavie (`mavie-website-rebranding`) | `mavie` | Client Projects | index row | placeholder |
+> | iliastech (`iliastech`) | `iliastech` | Client Projects | index row | placeholder |
+> | Alexandra Apartment (`alexandra-apartment`) | `alexandra-apartment` | Client Projects | index row | placeholder |
+> | Blackjack Streetwear (`blackjack-streetwear`) | `blackjack-streetwear` | Client Projects | index row | placeholder |
+> | Rantevo.gr (`rantevo`) | `rantevo` | Business Solutions | index row | **yes, 3 screenshots: now used** |
+> | Saloon (`saloon`) | `saloon` | Business Solutions | index row | placeholder |
+> | Physio (`physio`) | `physio` | Business Solutions | index row | placeholder |
+> | Project4You (`project4you`) | `project4you` | Business Solutions | index row | placeholder |
+> | Level Up Education App (`level-up-education-app`) | `level-up-education-app` | Our Products | index row | placeholder |
+> | Level Up Education (`level-up-education`) | `level-up-education` | Earlier Work | index row | placeholder |
+> | Itsallaboutxanthi (`itsallaboutxanthi`) | `itsallaboutxanthi` | Earlier Work | index row | placeholder |
+> | Local Xanthi (`local-xanthi`) | `local-xanthi` | Earlier Work | index row | placeholder |
+> | Juliette Coffee Roasters (`juliette-coffee-roasters`) | `juliette-coffee-roasters` | Earlier Work | index row | placeholder |
+> | Apox FC (`apox-fc`) | `apox-fc` | Earlier Work | index row | placeholder |
+> | Emoved (`emoved`) | `emoved` | Earlier Work | index row | placeholder |
+>
+> - **Rantevo.gr preview added.** The first source screenshot (the public booking homepage),
+>   `src/assets/projects/rantevo-booking-home.png`, is its Work row image. The third source screenshot,
+>   a signed-in dashboard showing a personal name, is deliberately not used. Every other entry without
+>   a TechPi capture keeps the text-only row: the source itself shows "visual placeholder · real
+>   screenshot pending" for them, so there is no real media to reuse.
+> - **Level Up Education App** stays under Our Products, by the owner's confirmation (2026-10-10),
+>   although the source names its client as "Level Up Education". Project4You, Physio and Saloon name
+>   the client "Pigiota314"; Rantevo.gr names "rantevo.gr".
+> - **Level Up Education** (website and communication, Earlier Work) and **Level Up Education App**
+>   (education web application, Our Products) are separate entries with separate source pages.
+> - **Open for the owner:** the source styles the brand "Pigiota314" in titles and authorship, while the
+>   TechPi copy writes "pigiota314". Not changed.
 
 
 Status: **content extraction and editorial preparation (Phase 3C.2).** Internal production documentation. No production code, imagery or routes are changed by this document.
