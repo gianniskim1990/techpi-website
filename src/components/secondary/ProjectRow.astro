@@ -13,9 +13,10 @@ interface Props {
   linkLabel: string;
   solutionLinkLabel: string;
   highlightsLabel: string;
+  disciplinesLabel: string;
 }
 
-const { project, locale, capabilitiesLabel, linkLabel, solutionLinkLabel, highlightsLabel } = Astro.props;
+const { project, locale, capabilitiesLabel, linkLabel, solutionLinkLabel, highlightsLabel, disciplinesLabel } = Astro.props;
 const capabilities = project.capabilities.map((id) => capabilityName(id, locale)).join(', ');
 // A row links to its case study only when that page exists. Index-only projects stay plain.
 const href = project.caseStudy ? caseStudyPath(project.slug, locale) : undefined;
@@ -26,7 +27,7 @@ const thumb = compositions[project.slug]?.thumb;
 {/* One line of the Work index, read across like a catalogue: the name, what it is, what was built, and for a
     project with a case study, a small 3:2 crop of the real capture at the end of the line. No placeholder picture
     for the others. The crop is decorative for assistive technology: the heading and the link carry the meaning. */}
-<article class:list={['row', { linked: href, solution: project.workGroup === 'solution' }]} data-reveal="fade">
+<article class:list={['row', { linked: href, 'no-thumb': !project.image, earlier: project.workGroup === 'earlier' }]} data-reveal="fade">
   <h3>
     {href ? <a class="name" href={href}>{project.name}</a> : project.name}
   </h3>
@@ -41,7 +42,8 @@ const thumb = compositions[project.slug]?.thumb;
         </ul>
       </div>
     )}
-    <p class="caps"><span>{capabilitiesLabel}:</span> {capabilities}</p>
+    {project.capabilities.length > 0 && <p class="caps"><span>{capabilitiesLabel}:</span> {capabilities}</p>}
+    {project.disciplines && <p class="caps"><span>{disciplinesLabel}:</span> {project.disciplines.join(', ')}</p>}
     {href && <p class="more" aria-hidden="true">{linkLabel}</p>}
     {solutionHref && <p class="solution-cta"><a href={solutionHref}>{solutionLinkLabel}</a></p>}
   </div>
@@ -146,9 +148,16 @@ const thumb = compositions[project.slug]?.thumb;
     grid-column: 7 / span 3;
     padding-top: 0.3em;
   }
-  /* Business Solutions have no screenshots yet: use the available width for readable descriptions. */
-  .row.solution .body {
+  /* When no real image is available, give copy the entire remaining row. */
+  .row.no-thumb .body {
     grid-column: 7 / -1;
+  }
+  .row.earlier {
+    padding-top: 20px;
+    padding-bottom: 23px;
+  }
+  .row.earlier h3 {
+    font-size: clamp(1.3rem, 2vw, 1.85rem);
   }
   .sum {
     color: var(--sec-c);
@@ -223,7 +232,7 @@ const thumb = compositions[project.slug]?.thumb;
       grid-column: 1 / span 5;
       margin-top: 14px;
     }
-    .row.solution .body {
+    .row.no-thumb .body {
       grid-column: 1 / -1;
     }
     .thumb {
