@@ -45,7 +45,7 @@ const thumb = compositions[project.slug]?.thumb;
     )}
     {project.capabilities.length > 0 && <p class="caps"><span>{capabilitiesLabel}:</span> {capabilities}</p>}
     {project.disciplines && <p class="caps"><span>{disciplinesLabel}:</span> {project.disciplines.join(', ')}</p>}
-    {href && <p class="more" aria-hidden="true">{linkLabel}</p>}
+    {href && <p class="more"><a href={href}>{linkLabel}</a></p>}
     {solutionHref && <p class="solution-cta"><a href={solutionHref}>{solutionLinkLabel}</a></p>}
   </div>
   {
@@ -209,9 +209,18 @@ const thumb = compositions[project.slug]?.thumb;
     margin-top: 14px;
     font-size: var(--text-small);
     font-weight: var(--weight-ui);
+    transition: color var(--duration-fast) var(--ease-state);
+  }
+  /* Real anchor, not a visual label relying on the title's stretched pseudo-element.
+     Stack above that full-row target so the visible CTA itself receives pointer and keyboard input. */
+  .more a {
+    position: relative;
+    z-index: 2;
+    display: inline-block;
+    min-height: 44px;
+    padding: 10px 0;
     text-decoration: underline;
     text-underline-offset: 0.28em;
-    transition: color var(--duration-fast) var(--ease-state);
   }
   .solution-cta {
     margin-top: 14px;
