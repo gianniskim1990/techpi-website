@@ -21,6 +21,7 @@ export const pagesEn = {
       },
     },
     solutionLink: 'Discuss a similar solution',
+    highlightsLabel: 'What it includes',
   },
   capabilities: {
     heading: 'What we build.',
