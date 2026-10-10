@@ -55,7 +55,7 @@ export interface CaseStudy {
   gallery?: readonly ProjectImage[];
 }
 
-export const workGroups = ['client', 'solution', 'product'] as const;
+export const workGroups = ['client', 'solution', 'product', 'earlier'] as const;
 export type WorkGroup = (typeof workGroups)[number];
 
 export interface Project {
@@ -68,6 +68,8 @@ export interface Project {
   summary: string;
   /** Source-backed, scannable functionality labels shown on the Work index for business solutions only. */
   highlights?: readonly string[];
+  /** Past creative/marketing disciplines, distinct from TechPi's four current technical capabilities. */
+  disciplines?: readonly string[];
   /** Only the four capability ids, and only where the source supports the mapping. */
   capabilities: readonly CapabilityId[];
   featured: boolean;
@@ -307,6 +309,123 @@ export const projects: readonly Project[] = [
     featured: false,
     source: `${src}project4you/`,
   },
+  {
+    slug: 'mavie',
+    workGroup: 'client',
+    name: 'Mavie',
+    category: 'Website rebranding',
+    summary: 'A refreshed company website with modern visual direction, clearer content structure and a more cohesive presentation.',
+    capabilities: ['web-experiences'],
+    featured: false,
+    source: 'https://pigiota314.eu/case-studies/mavie-website-rebranding',
+  },
+  {
+    slug: 'iliastech',
+    workGroup: 'client',
+    name: 'iliastech',
+    category: 'Corporate website',
+    summary: 'A responsive corporate website with structured content and clear presentation of a technology company's services.',
+    capabilities: ['web-experiences'],
+    featured: false,
+    source: 'https://pigiota314.eu/case-studies/iliastech',
+  },
+  {
+    slug: 'alexandra-apartment',
+    workGroup: 'client',
+    name: 'Alexandra Apartment',
+    category: 'Hospitality website',
+    summary: 'A hospitality website combining property imagery, clear information and an approach to local search visibility.',
+    capabilities: ['web-experiences', 'digital-visibility'],
+    featured: false,
+    source: 'https://pigiota314.eu/case-studies/alexandra-apartment',
+  },
+  {
+    slug: 'blackjack-streetwear',
+    workGroup: 'client',
+    name: 'Blackjack Streetwear',
+    category: 'E-commerce website',
+    summary: 'An online store designed around clear fashion product presentation, a responsive browsing experience and WooCommerce.',
+    capabilities: ['web-experiences'],
+    featured: false,
+    source: 'https://pigiota314.eu/case-studies/blackjack-streetwear',
+  },
+  {
+    slug: 'rantevo',
+    workGroup: 'solution',
+    name: 'Rantevo.gr',
+    category: 'Multi-sector SaaS booking platform',
+    summary: 'A web-based appointment platform for service businesses, combining business profiles, service listings and customer bookings.',
+    highlights: ['Business profiles', 'Service listings', 'Online appointments', 'Responsive interface'],
+    capabilities: ['digital-products'],
+    featured: false,
+    source: 'https://pigiota314.eu/case-studies/rantevo',
+  },
+  {
+    slug: 'level-up-education',
+    workGroup: 'earlier',
+    name: 'Level Up Education',
+    category: 'Education website & digital communication',
+    summary: 'A coordinated digital presence for an education brand, including its website, SEO content and social media communication.',
+    disciplines: ['Web design', 'SEO', 'Content strategy', 'Social media'],
+    capabilities: [],
+    featured: false,
+    source: 'https://pigiota314.eu/case-studies/level-up-education',
+  },
+  {
+    slug: 'itsallaboutxanthi',
+    workGroup: 'earlier',
+    name: 'Itsallaboutxanthi',
+    category: 'Local platform & digital communication',
+    summary: 'Website work, social media content and graphic design for a local information platform and its digital presence.',
+    disciplines: ['Web design', 'Social media', 'Graphic design', 'Digital marketing'],
+    capabilities: [],
+    featured: false,
+    source: 'https://pigiota314.eu/case-studies/itsallaboutxanthi',
+  },
+  {
+    slug: 'local-xanthi',
+    workGroup: 'earlier',
+    name: 'Local Xanthi',
+    category: 'Local social media & digital marketing',
+    summary: 'Social media content and digital marketing communications aimed at building a consistent presence for a local audience.',
+    disciplines: ['Social media', 'Content creation', 'Local promotion'],
+    capabilities: [],
+    featured: false,
+    source: 'https://pigiota314.eu/case-studies/local-xanthi',
+  },
+  {
+    slug: 'juliette-coffee-roasters',
+    workGroup: 'earlier',
+    name: 'Juliette Coffee Roasters',
+    category: 'Coffee brand digital communication',
+    summary: 'Social media content, digital marketing and search visibility support for a coffee brand.',
+    disciplines: ['Social media', 'SEO support', 'Content strategy'],
+    capabilities: [],
+    featured: false,
+    source: 'https://pigiota314.eu/case-studies/juliette-coffee-roasters',
+  },
+  {
+    slug: 'apox-fc',
+    workGroup: 'earlier',
+    name: 'Apox FC',
+    category: 'Sports brand content & design',
+    summary: 'Graphic design and social media content supporting consistent communication with a sports audience.',
+    disciplines: ['Social media', 'Graphic design', 'Digital marketing'],
+    capabilities: [],
+    featured: false,
+    source: 'https://pigiota314.eu/case-studies/apox-fc',
+  },
+  {
+    slug: 'emoved',
+    workGroup: 'earlier',
+    name: 'Emoved',
+    category: 'Branding & graphic design',
+    summary: 'Graphic assets and visual identity support for a clear and consistent professional brand image.',
+    disciplines: ['Brand communication', 'Graphic design', 'Visual identity support'],
+    capabilities: [],
+    featured: false,
+    source: 'https://pigiota314.eu/case-studies/emoved',
+  },
 ];
 
 /** The portfolio in a language. English is the source; Greek takes its editorial text from projects.el.ts. */
@@ -352,6 +471,7 @@ function toGreek(p: Project): Project {
     category: el.category,
     summary: el.summary,
     highlights: p.highlights && required(el.highlights, p.slug, 'highlights'),
+    disciplines: p.disciplines && required(el.disciplines, p.slug, 'disciplines'),
     image,
   };
   const s = el.caseStudy;
