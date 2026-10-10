@@ -66,6 +66,8 @@ export interface Project {
   name: string;
   category: string;
   summary: string;
+  /** Source-backed, scannable functionality labels shown on the Work index for business solutions only. */
+  highlights?: readonly string[];
   /** Only the four capability ids, and only where the source supports the mapping. */
   capabilities: readonly CapabilityId[];
   featured: boolean;
@@ -275,7 +277,8 @@ export const projects: readonly Project[] = [
     name: 'Saloon',
     category: 'Booking platform',
     summary:
-      'An online booking web application for beauty businesses, with a public booking page, a client dashboard and plan-based features.',
+      'An online appointment and client management platform for salons and beauty businesses, combining customer-facing bookings with an organised daily schedule and administration area.',
+    highlights: ['Online appointments', 'Calendar and schedule', 'Client management', 'Mobile-friendly interface'],
     capabilities: ['digital-products'],
     featured: false,
     source: `${src}saloon/`,
@@ -285,7 +288,9 @@ export const projects: readonly Project[] = [
     workGroup: 'solution',
     name: 'Physio',
     category: 'Appointment management platform',
-    summary: 'A platform for physiotherapists and physiotherapy clinics to organise appointments and sessions.',
+    summary:
+      'A web platform for physiotherapy practices to coordinate appointments, client details and treatment sessions through a clear, responsive interface.',
+    highlights: ['Online booking', 'Session scheduling', 'Client organisation', 'Responsive interface'],
     capabilities: ['digital-products'],
     featured: false,
     source: `${src}physio/`,
@@ -295,7 +300,9 @@ export const projects: readonly Project[] = [
     workGroup: 'solution',
     name: 'Project4You',
     category: 'CMS platform',
-    summary: 'A CMS web application for creating digital invitations and websites, built on builder-style logic.',
+    summary:
+      'A modular content management platform for building digital invitations and websites, with themes, custom pages and flexible content editing.',
+    highlights: ['Modular CMS', 'Themes', 'Digital invitations', 'Custom website pages'],
     capabilities: ['digital-products'],
     featured: false,
     source: `${src}project4you/`,
@@ -340,7 +347,13 @@ function toGreek(p: Project): Project {
   if (!el) throw new Error(`Missing Greek text for project: ${p.slug}`);
   const image = p.image && { ...p.image, alt: required(el.imageAlt, p.slug, 'imageAlt') };
   const study = p.caseStudy;
-  if (!study) return { ...p, category: el.category, summary: el.summary, image };
+  if (!study) return {
+    ...p,
+    category: el.category,
+    summary: el.summary,
+    highlights: p.highlights && required(el.highlights, p.slug, 'highlights'),
+    image,
+  };
   const s = el.caseStudy;
   if (!s) throw new Error(`Missing Greek case study for project: ${p.slug}`);
   const gallery = study.gallery?.map((g, i) => ({ ...g, alt: required(s.galleryAlts?.[i], p.slug, 'galleryAlts') }));
