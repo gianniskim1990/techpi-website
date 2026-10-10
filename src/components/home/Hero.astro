@@ -179,6 +179,14 @@ const { copy, locale } = Astro.props;
     }
   }
 
+  /* The header's name now carries its symbol, so it is wider: on the narrowest phones the arc crosses the top edge 25px
+     further right, to stay between the name and the language switch. */
+  @media (max-width: 349px) {
+    .arc {
+      left: calc(100% - 311px);
+    }
+  }
+
   @media (max-width: 760px) {
     .stage {
       min-height: 100svh;
