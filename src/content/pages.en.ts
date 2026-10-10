@@ -80,7 +80,9 @@ export const pagesEn = {
     solution: 'The solution',
     services: 'Scope',
     related: 'Related projects',
-    earlier: 'Earlier work by pigiota314. Shown separately from TechPi’s current technology offering.',
+    context: 'Project context',
+    earlierTag: 'Earlier work by pigiota314',
+    earlier: 'This work belongs to the pigiota314 portfolio and is shown separately from TechPi’s current technology offering.',
   },
   contact: {
     heading: 'Have something worth building?',

@@ -398,7 +398,7 @@ export const projects: readonly Project[] = [
     workGroup: 'client',
     name: 'Mavie',
     category: 'Website rebranding',
-    summary: 'A refreshed company website with modern visual direction, clearer content structure and a more cohesive presentation.',
+    summary: 'A website rebranding and visual refresh with a more modern aesthetic, a cleaner structure and a more cohesive brand presentation.',
     capabilities: ['web-experiences'],
     featured: false,
     source: 'https://pigiota314.eu/case-studies/mavie-website-rebranding',
@@ -477,7 +477,7 @@ export const projects: readonly Project[] = [
     workGroup: 'client',
     name: 'Blackjack Streetwear',
     category: 'E-commerce website',
-    summary: 'An online store designed around clear fashion product presentation, a responsive browsing experience and WooCommerce.',
+    summary: 'An online store built on WooCommerce, designed around clear product presentation, the mobile experience and a streetwear aesthetic.',
     capabilities: ['web-experiences'],
     featured: false,
     source: 'https://pigiota314.eu/case-studies/blackjack-streetwear',
@@ -545,7 +545,7 @@ export const projects: readonly Project[] = [
         width: 1549,
         height: 679,
         alt: 'The Rantevo.gr homepage: the heading “Book an appointment easily and quickly” and a search form by service, city, date and time.',
-        caption: 'The public booking homepage.',
+        caption: 'The public booking homepage. The screenshots on this page show the Greek-language interface.',
       },
       gallery: [
         {
@@ -710,7 +710,7 @@ export const projects: readonly Project[] = [
       client: 'Emoved',
       year: 2025,
       overview: ['A graphic design project focused on clean visual communication and a professional brand image.'],
-      need: ['Clearer, more consistent and more professional visual communication.'],
+      need: ['The project called for clearer, more consistent and more professional visual communication.'],
       built: {
         intro:
           'Design assets and visual materials created to support a cohesive brand.',

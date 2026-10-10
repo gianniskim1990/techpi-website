@@ -32,6 +32,12 @@ const cover = study.cover;
 const services = study.services ?? [];
 const items = study.built.items ?? [];
 const earlier = project.workGroup === 'earlier';
+// The client is shown only where it adds something to the name above it.
+const client = study.client && study.client !== project.name ? study.client : undefined;
+const year = study.year ? String(study.year) : undefined;
+const live = study.liveUrl;
+// A strip with a single fact (the year) looks lopsided: it joins the category line instead.
+const yearInline = Boolean(year) && !client && !live;
 // Both languages exist for every published case study, so the canonical, hreflang and language switch pair them.
 const paths = Object.fromEntries(locales.map((l) => [l, caseStudyPath(project.slug, l)])) as Record<Locale, string>;
 const gallery: readonly ProjectImage[] = study.gallery ?? [];
@@ -65,25 +71,30 @@ const trail = [
 >
   <section class="head s-paper">
     <a class="back" href={pathFor('work', locale)}><span aria-hidden="true">←</span> {copy.back}</a>
-    <p class="meta-label cat">{project.category}</p>
+    <p class="meta-label cat">{project.category}{yearInline && ` · ${year}`}</p>
+    {earlier && <p class="origin"><span>{copy.earlierTag}</span></p>}
     <h1 data-reveal="mask">{project.name}</h1>
     <p class="lead">{project.summary}</p>
     {earlier && <p class="attribution">{copy.earlier}</p>}
-    <div class="strip">
-      <FactRows
-        variant="strip"
-        rows={[
-          { label: copy.client, value: study.client },
-          { label: copy.year, value: study.year ? String(study.year) : undefined },
-          {
-            label: copy.live,
-            value: study.liveUrl ? study.liveUrl.replace(/^https?:\/\//, '').replace(/\/$/, '') : undefined,
-            href: study.liveUrl,
-            hrefLabel: copy.liveAria,
-          },
-        ]}
-      />
-    </div>
+    {
+      !yearInline && (
+        <div class="strip">
+          <FactRows
+            variant="strip"
+            rows={[
+              { label: copy.client, value: client },
+              { label: copy.year, value: year },
+              {
+                label: copy.live,
+                value: live ? live.replace(/^https?:\/\//, '').replace(/\/$/, '') : undefined,
+                href: live,
+                hrefLabel: copy.liveAria,
+              },
+            ]}
+          />
+        </div>
+      )
+    }
   </section>
 
   {/* The cover: the product at a scale where its interface reads, cropped to a band and run edge to edge. The
@@ -117,7 +128,7 @@ const trail = [
     {study.overview.map((p, i) => <p class={i === 0 ? 'lead-text' : 'read'}>{p}</p>)}
   </SectionSplit>
 
-  <SectionSplit id="need" heading={copy.need} size="s">
+  <SectionSplit id="need" heading={earlier ? copy.context : copy.need} size="s">
     {study.need.map((p) => <p class="read">{p}</p>)}
   </SectionSplit>
 
@@ -276,14 +287,29 @@ const trail = [
     line-height: 1.42;
     color: var(--sec-c);
   }
+  /* Earlier work: a quiet provenance tag above the title and one plain sentence under the lead. Ink-toned, not a banner. */
+  .origin {
+    grid-column: 1 / -1;
+    margin-top: 14px;
+  }
+  .origin span {
+    display: inline-block;
+    padding: 5px 12px;
+    border: 1px solid var(--color-ink);
+    border-radius: 999px;
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    line-height: 1.3;
+  }
+  .origin + h1 {
+    margin-top: 22px;
+  }
   .attribution {
     grid-column: 1 / span 6;
-    margin-top: 20px;
-    padding-left: 14px;
-    border-left: 2px solid var(--line);
+    margin-top: 24px;
     max-width: 52ch;
     font-size: var(--text-small);
-    color: var(--ter);
+    color: var(--sec-c);
   }
   .strip {
     grid-column: 1 / -1;

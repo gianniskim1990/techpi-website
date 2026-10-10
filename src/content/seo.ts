@@ -95,7 +95,9 @@ export function caseStudyMeta(project: Project, locale: Locale): PageMeta {
   // A long category would push the title past what search results show (70 characters): the name and the page's
   // section then, which keeps the two languages distinct.
   const short = `${project.name} | ${locale === 'el' ? 'Έργα' : 'Work'} | TechPi`;
-  return { title: full.length <= 70 ? full : short, description: project.summary };
+  // Earlier work says so in the description too, so a search result never reads as current TechPi work.
+  const origin = project.workGroup === 'earlier' ? (locale === 'el' ? ' Παλαιότερο έργο της pigiota314.' : ' Earlier work by pigiota314.') : '';
+  return { title: full.length <= 70 ? full : short, description: project.summary + origin };
 }
 
 /**
