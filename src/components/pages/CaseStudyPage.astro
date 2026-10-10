@@ -32,8 +32,9 @@ const cover = study.cover;
 const services = study.services ?? [];
 const items = study.built.items ?? [];
 const earlier = project.workGroup === 'earlier';
-// The client is shown only where it adds something to the name above it.
-const client = study.client && study.client !== project.name ? study.client : undefined;
+// The client is shown only where it adds something to the name above it. The first three case studies keep theirs.
+const keepsClient = ['rocketeer', 'armans', 'logotherapia-xanthi'].includes(project.slug);
+const client = study.client && (keepsClient || study.client !== project.name) ? study.client : undefined;
 const year = study.year ? String(study.year) : undefined;
 const live = study.liveUrl;
 // A strip with a single fact (the year) looks lopsided: it joins the category line instead.
