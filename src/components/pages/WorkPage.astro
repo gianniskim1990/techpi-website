@@ -29,14 +29,20 @@ const grouped = workGroups.map((id) => ({
 
 <BaseLayout locale={locale} page="work" title={meta.title} description={meta.description} pageType="CollectionPage" bleed>
   <PageIntro heading={t.pages.work.heading} lead={copy.lead} variant="word" />
-  {/* Work stays a single catalogue, now with truthful distinctions between commissions, adaptable
-      solutions, and TechPi's own products. Only projects with published case studies link to one. */}
-  <div class="groups s-paper">
+  {/* The complete Work catalogue is grouped. Filters are progressive enhancement: with scripting disabled,
+      every project is visible and every heading remains navigable. */}
+  <div class="filters s-paper" data-work-filters role="group" aria-label={copy.filterLabel} hidden>
+    <button type="button" data-work-filter="all" aria-pressed="true">{copy.filterAll} <span>{projectList.length}</span></button>
+    {grouped.map((group) => (
+      <button type="button" data-work-filter={group.id} aria-pressed="false">{group.heading} <span>{group.projects.length}</span></button>
+    ))}
+  </div>
+  <div class="groups s-paper" data-work-groups>
     {
       grouped.map((group) => (
-        <section class="group" aria-labelledby={`work-${group.id}`}>
+        <section class="group" data-work-group={group.id} id={`work-${group.id}`} aria-labelledby={`work-heading-${group.id}`}>
           <div class="group-head" data-reveal="fade">
-            <h2 id={`work-${group.id}`}>{group.heading}</h2>
+            <h2 id={`work-heading-${group.id}`}>{group.heading}</h2>
             <p>{group.description}</p>
           </div>
           <div class="list">
@@ -48,6 +54,7 @@ const grouped = workGroups.map((id) => ({
                 linkLabel={copy.linkLabel}
                 solutionLinkLabel={copy.solutionLink}
                 highlightsLabel={copy.highlightsLabel}
+                disciplinesLabel={copy.disciplinesLabel}
               />
             ))}
           </div>
@@ -58,11 +65,65 @@ const grouped = workGroups.map((id) => ({
   <ClosingCTA heading={pages.closer.heading} cta={pages.closer.cta} href={pathFor('contact', locale)} />
 </BaseLayout>
 
+<script>
+  const filters = document.querySelector<HTMLElement>('[data-work-filters]');
+  const groups = document.querySelectorAll<HTMLElement>('[data-work-group]');
+  if (filters && groups.length) {
+    const buttons = filters.querySelectorAll<HTMLButtonElement>('[data-work-filter]');
+    for (const button of buttons) {
+      button.addEventListener('click', () => {
+        const selected = button.dataset.workFilter ?? 'all';
+        for (const group of groups) group.hidden = selected !== 'all' && group.dataset.workGroup !== selected;
+        for (const other of buttons) other.setAttribute('aria-pressed', String(other === button));
+      });
+    }
+    filters.hidden = false;
+  }
+</script>
+
 <style>
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin: clamp(48px, 6vw, 88px) var(--space-margin) 0;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .filters[hidden],
+  .group[hidden] {
+    display: none;
+  }
+  .filters button {
+    cursor: pointer;
+    padding: 9px 13px;
+    border: 1px solid var(--color-rule);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-small);
+    line-height: 1.3;
+    transition: background-color 180ms var(--ease-state), color 180ms var(--ease-state);
+  }
+  .filters button span {
+    padding-left: 5px;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.7;
+  }
+  .filters button[aria-pressed='true'] {
+    background: var(--color-ink);
+    color: var(--color-paper);
+    border-color: var(--color-ink);
+  }
+  .filters button:focus-visible {
+    outline: 2px solid var(--color-techpi-blue);
+    outline-offset: 3px;
+  }
   .groups {
     margin: clamp(64px, 7vw, 112px) var(--space-margin) 0;
   }
-  .group + .group {
+  .group:not([hidden]) + .group:not([hidden]) {
     margin-top: clamp(80px, 9vw, 144px);
   }
   .group-head {
