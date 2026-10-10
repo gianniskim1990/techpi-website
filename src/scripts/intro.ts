@@ -1,6 +1,6 @@
 /**
- * The homepage intro: the symbol, filled with moving light, flies to the header and resolves into the typographic name
- * (docs/design/motion-system.md, section 14). It plays on every entry to the homepage (owner's decision, 2026-10-09):
+ * The homepage intro: the symbol, filled with moving light, flies to the header and settles beside the typographic
+ * name, becoming the header's own symbol (docs/design/motion-system.md, section 14). It plays on every entry to the homepage (owner's decision, 2026-10-09):
  * a direct load, a reload, a link from another page or the other language, and back/forward, including a page
  * restored from the back/forward cache. Not when the tab only comes back into view.
  *
@@ -11,10 +11,10 @@
  *
  *   0.3 s  the footage plays inside the symbol, if it is running by 1.0 s (otherwise the static 3D symbol stays)
  *   1.7 s  the footage gives way to the white 3D symbol
- *   2.0 s  the symbol flies to the measured centre of the header name, shrinking to the name's cap height
- *   2.3 s  the name rises out of a mask, in Sheet, on the dark backdrop
- *   ~2.5 s the symbol dissolves into the name, gone one frame before it would touch the letters (measured)
- *   2.6 s  the backdrop fades; in one frame of it the name and the navigation turn to their normal Ink
+ *   2.0 s  the symbol flies to the measured place of the header's symbol, shrinking to its size, and settles there
+ *   2.5 s  the name rises out of a mask, in Sheet, beside the arriving symbol, on the dark backdrop
+ *   2.6 s  the backdrop fades; in one frame of it the white symbol hands over to the header's blue symbol, and the
+ *          name and the navigation turn to their normal Ink
  *   3.0 s  finishIntro(): every temporary element, class, animation, listener and video source is gone
  *
  * Any input (key, pointer, wheel, scroll, focus), a resize to another width, leaving the page, or a switch to reduced
@@ -35,13 +35,11 @@ const FOOTAGE_LATEST = 1000;
 const SOLID_AT = 1700;
 const FLIGHT_AT = 2000;
 const FLIGHT_MS = 600;
-const NAME_AT = 2300;
-/** The symbol dissolves over 80 ms, ending one frame before its flight path first touches the name's letters (measured,
- * so it holds on every window size), and never later than 2.585 s. So it is whole through the fast end of the flight
- * and never sits over a letter while it is visible. */
-const DISSOLVE_MS = 80;
-const DISSOLVE_END_LATEST = 2585;
-const FLIGHT_EASE = [0.55, 0, 0.75, 0] as const;
+/** The name rises as the symbol arrives beside it, so the symbol never passes over the letters while they are readable. */
+const NAME_AT = 2500;
+const NAME_MS = 240;
+/** Slow to leave, as before, but it decelerates into the header: the symbol settles in its place instead of arriving at speed. */
+const FLIGHT_EASE = [0.55, 0, 0.25, 1] as const;
 const OUT_AT = 2600;
 const OUT_MS = 400;
 const END_AT = 3000;
@@ -64,60 +62,24 @@ const CROSS = 0.42;
 const LATE_CROSS = 0.87;
 const ALPHA_DARK = 0.7;
 const ALPHA_LIGHT = 0.55;
-/** The symbol lands this many times the name's cap height wide: a mark the size of a capital pair. */
-const LAND = 1.6;
 /** Arriving after this point, the script ends the intro instead of starting a flight that would overrun 3.2 s. */
 const LATEST_START = 2600;
 
 const now = () => Number((document.timeline as Timeline).currentTime ?? performance.now());
 
-/** Where the letters of the header name are, not its padded link box: centre of the capitals, and their height. */
-function measureName(name: HTMLElement) {
-  const range = document.createRange();
-  range.selectNodeContents(name);
-  const box = range.getBoundingClientRect();
-  const cs = getComputedStyle(name);
-  const size = parseFloat(cs.fontSize) || 16;
-  const tracking = parseFloat(cs.letterSpacing) || 0;
-  // The range box ends after the last letter's tracking, which is space, not ink.
-  const cx = box.left + (box.width - tracking) / 2;
-  let capHeight = size * 0.7;
-  let cy = box.top + box.height / 2;
-  const ctx = document.createElement('canvas').getContext('2d');
-  if (ctx) {
-    ctx.font = `${cs.fontWeight} ${size}px ${cs.fontFamily}`;
-    const m = ctx.measureText(name.textContent ?? '');
-    if (m.actualBoundingBoxAscent > 0 && m.fontBoundingBoxAscent > 0) {
-      // The range box is the font's content area, so the baseline sits one font ascent below its top.
-      capHeight = m.actualBoundingBoxAscent;
-      cy = box.top + m.fontBoundingBoxAscent - capHeight / 2;
-    }
-  }
-  return { cx, cy, capHeight };
-}
-
-/** A CSS cubic-bezier timing function: time fraction in, progress out. */
-function bezier([x1, y1, x2, y2]: readonly number[]) {
-  const at = (a: number, b: number, t: number) => 3 * (1 - t) * (1 - t) * t * a + 3 * (1 - t) * t * t * b + t * t * t;
-  return (x: number) => {
-    let lo = 0, hi = 1;
-    for (let i = 0; i < 30; i++) { const m = (lo + hi) / 2; if (at(x1, x2, m) < x) lo = m; else hi = m; }
-    return at(y1, y2, (lo + hi) / 2);
-  };
-}
-
 /** A decorative copy of the header name, in Sheet, exactly over the real one: it carries the name on the dark backdrop. */
-function makeTwin(name: HTMLElement) {
+function makeTwin(name: HTMLElement, word: HTMLElement, header: HTMLElement) {
   const twin = document.createElement('span');
   for (const attr of Array.from(name.attributes)) if (attr.name.startsWith('data-astro-cid')) twin.setAttribute(attr.name, '');
   twin.className = 'site-name intro-name';
   twin.setAttribute('aria-hidden', 'true');
-  // The twin has no padding, so its clip is the line of text: it sits at the name's padding edge.
-  const cs = getComputedStyle(name);
-  twin.style.left = `${name.offsetLeft + parseFloat(cs.paddingLeft)}px`;
-  twin.style.top = `${name.offsetTop + parseFloat(cs.paddingTop)}px`;
+  // The twin has no padding, so its clip is the line of text: it sits exactly over the word, which stands beside the symbol.
+  const at = word.getBoundingClientRect();
+  const box = header.getBoundingClientRect();
+  twin.style.left = `${at.left - box.left}px`;
+  twin.style.top = `${at.top - box.top}px`;
   const inner = document.createElement('span');
-  inner.textContent = name.textContent;
+  inner.textContent = word.textContent;
   twin.append(inner);
   name.after(twin);
   return { twin, inner };
@@ -148,6 +110,9 @@ function start() {
   const header = document.querySelector<HTMLElement>('.site-header');
   // Only the header's own name. The menu dialog has a second .site-name, which is never the destination.
   const name = header?.querySelector<HTMLElement>(':scope > .site-name');
+  const word = name?.querySelector<HTMLElement>('.site-word');
+  // The header's own symbol: the destination of the flight, measured, never assumed.
+  const target = name?.querySelector<HTMLElement>('.site-mark');
   const chrome = header ? Array.from(header.querySelectorAll<HTMLElement>(':scope > .site-nav, :scope > .util')) : [];
 
   const anims: Animation[] = [];
@@ -192,7 +157,7 @@ function start() {
   };
   const later = (fn: () => void, ms: number) => timers.push(window.setTimeout(fn, Math.max(0, ms)));
 
-  if (!overlay || !mark || !glyph || !solid || !header || !name) return finishIntro();
+  if (!overlay || !mark || !glyph || !solid || !header || !name || !word || !target) return finishIntro();
   running = finishIntro;
   root.classList.add('intro-live');
   later(finishIntro, LIMIT_FROM_START);
@@ -292,27 +257,14 @@ function start() {
     })
     .catch(finishIntro);
 
-  /** Where the symbol must go: from its resting place in the circle to the centre of the name's capitals. */
+  /** Where the symbol must go: from its resting place in the circle onto the header's symbol, same centre, same size. */
   function flightTo() {
-    const to = measureName(name!);
+    const to = target!.getBoundingClientRect();
     const from = mark!.getBoundingClientRect();
-    const dx = to.cx - (from.left + from.width / 2);
-    const dy = to.cy - (from.top + from.height / 2);
-    const scale = (to.capHeight * LAND) / from.width;
-    // When does the flying symbol first touch the name's letters? Follow the same path and easing the flight uses.
-    const box = document.createRange();
-    box.selectNodeContents(name!);
-    const n = box.getBoundingClientRect();
-    const ease = bezier(FLIGHT_EASE);
-    let touch = FLIGHT_MS;
-    for (let k = 0; k <= 120; k++) {
-      const p = ease(k / 120);
-      const half = (from.width * (1 + (scale - 1) * p)) / 2;
-      const cx = from.left + from.width / 2 + dx * p, cy = from.top + from.height / 2 + dy * p;
-      if (cx + half > n.left && cx - half < n.right && cy + half > n.top && cy - half < n.bottom) { touch = (k / 120) * FLIGHT_MS; break; }
-    }
-    const dissolveAt = Math.min(FLIGHT_AT + touch - 16, DISSOLVE_END_LATEST) - DISSOLVE_MS;
-    return { frames: [{ transform: 'translate(0, 0) scale(1)' }, { transform: `translate(${dx}px, ${dy}px) scale(${scale})` }], dissolveAt };
+    const dx = to.left + to.width / 2 - (from.left + from.width / 2);
+    const dy = to.top + to.height / 2 - (from.top + from.height / 2);
+    const scale = to.width / from.width;
+    return { frames: [{ transform: 'translate(0, 0) scale(1)' }, { transform: `translate(${dx}px, ${dy}px) scale(${scale})` }] };
   }
 
   // Every animation is placed on the document timeline now, at its time from the overlay's first frame. Transform and
@@ -327,14 +279,11 @@ function start() {
       if (footage) returnToSolid(b);
       const path = flightTo();
       const flight = play(mark!, path.frames, FLIGHT_AT, FLIGHT_MS, `cubic-bezier(${FLIGHT_EASE.join(', ')})`);
-      // Late and steep: the symbol is whole through the fast end of the flight and gone exactly as it reaches the name,
-      // so it never sits over a letter while it is visible.
-      const dissolve = play(mark!, [{ opacity: 1 }, { opacity: 0 }], path.dissolveAt, DISSOLVE_MS, 'cubic-bezier(0.6, 0, 1, 1)');
 
       // The name: its Sheet twin rises out of a mask at full colour, then hands over to the real name in one frame.
-      const made = makeTwin(name!);
+      const made = makeTwin(name!, word!, header!);
       twin = made.twin;
-      play(made.inner, [{ transform: 'translateY(110%)' }, { transform: 'translateY(0)' }], NAME_AT, 260, 'cubic-bezier(0.16, 1, 0.3, 1)');
+      play(made.inner, [{ transform: 'translateY(110%)' }, { transform: 'translateY(0)' }], NAME_AT, NAME_MS, 'cubic-bezier(0.16, 1, 0.3, 1)');
       const step = (from: number, to: number, at = CROSS): Keyframe[] => [
         { opacity: from, offset: 0 },
         { opacity: from, offset: at },
@@ -342,6 +291,9 @@ function start() {
         { opacity: to, offset: 1 },
       ];
       play(made.twin, step(1, 0), OUT_AT, OUT_MS);
+      // In the same frame the real name arrives, symbol included (the symbol is inside the name's link), and the white
+      // symbol that settled exactly over it steps out: one symbol before, one after, never two and never none.
+      play(mark!, step(1, 0), OUT_AT, OUT_MS);
       play(name!, step(0, 1), OUT_AT, OUT_MS);
       for (const el of chrome) {
         // The navigation is uncovered from the left, at full colour, from the moment it can be read.
@@ -371,7 +323,6 @@ function start() {
             if (done || now() - b >= FLIGHT_AT) return;
             const again = flightTo();
             (flight.effect as KeyframeEffect).setKeyframes(again.frames);
-            dissolve.effect?.updateTiming({ delay: again.dissolveAt });
           });
       }, at(FLIGHT_AT - 120));
       later(finishIntro, at(END_AT));

@@ -2,7 +2,9 @@
 import { getDictionary } from '../i18n';
 import type { Locale } from '../i18n/locales';
 import { homePathFor, navPages, pathFor, type PageKey } from '../i18n/routes';
+import BrandSymbol from './BrandSymbol.astro';
 import LanguageSwitch from './LanguageSwitch.astro';
+import headerSymbol from '../assets/brand/techpi-symbol-blue.png';
 
 interface Props {
   locale: Locale;
@@ -18,17 +20,19 @@ const t = getDictionary(locale);
 const items = navPages;
 ---
 
-{/* Typographic name only, by decision (Phase 3G.2): the 3D symbol and the glossy wordmark are too heavy for this
-     restrained header, and the identity appears once, in the homepage Contact section. The header sits over the top of the
-     page and scrolls away with it (no sticky or pinned behaviour yet).
-     One exception, approved 2026-10-09: on each entry to the homepage the white 3D symbol flies into the header area
-     during the intro and dissolves into this typographic name (src/components/home/Intro.astro). It never stays: the
-     symbol is not a header element, and the resting header is exactly this one.
+{/* The brand lockup: the approved blue 3D symbol beside the typographic name, one link to the homepage (approved
+     2026-10-10; before that the header held the name alone). The symbol is decorative and the link keeps its one
+     accessible name. On the homepage the white symbol of the intro (src/components/home/Intro.astro) flies to this
+     symbol's measured place and hands over to it (src/scripts/intro.ts). The header sits over the top of the page and
+     scrolls away with it (no sticky or pinned behaviour yet).
      Up to 900px wide the links move into a full-screen native <dialog> opened by the Menu button. Without
      JavaScript the button never appears and the Menu link to the footer navigation stays, so the links are
      always reachable. */}
 <header class="site-header">
-  <a class="site-name" href={homePathFor(locale)} aria-label={`TechPi, ${t.pages.home.heading}`}>{t.site.name}</a>
+  <a class="site-name" href={homePathFor(locale)} aria-label={`TechPi, ${t.pages.home.heading}`}>
+    <span class="site-mark" data-site-mark><BrandSymbol symbol={headerSymbol} sizes="28px" widths={[56, 84]} loading="eager" /></span>
+    <span class="site-word">{t.site.name}</span>
+  </a>
   <nav class="site-nav" aria-label={t.nav.label}>
     <ul>
       {
@@ -53,7 +57,10 @@ const items = navPages;
 
 <dialog class="menu-dialog s-paper" id="site-menu" aria-label={t.nav.menu}>
   <div class="menu-top">
-    <a class="site-name" href={homePathFor(locale)} aria-label={`TechPi, ${t.pages.home.heading}`}>{t.site.name}</a>
+    <a class="site-name" href={homePathFor(locale)} aria-label={`TechPi, ${t.pages.home.heading}`}>
+      <span class="site-mark" data-site-mark><BrandSymbol symbol={headerSymbol} sizes="28px" widths={[56, 84]} loading="eager" /></span>
+      <span class="site-word">{t.site.name}</span>
+    </a>
     <button class="menu menu-close" type="button" data-menu-close>{t.nav.close}</button>
   </div>
   <nav aria-label={t.nav.label}>
@@ -142,11 +149,20 @@ const items = navPages;
     transform: none;
   }
   .site-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     font-size: 1rem;
     font-weight: var(--weight-name);
     letter-spacing: 0.09em;
     text-decoration: none;
-    padding: 12px 0;
+    /* 10px above and below the 28px symbol keeps the link as tall as it was (48px) and the header unchanged. */
+    padding: 10px 0;
+  }
+  .site-mark {
+    flex: none;
+    width: 28px;
+    height: 28px;
   }
   .site-nav {
     margin-left: auto;

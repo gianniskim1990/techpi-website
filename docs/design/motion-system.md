@@ -236,11 +236,11 @@ keeps the ribbons' depth. The mask moves with the symbol, so it holds at any sca
 | 0.6 s | "Digital Products / & Technology" (EL "Ψηφιακά προϊόντα / & τεχνολογία") rises line by line in front of the symbol, 800 ms, 120 ms apart | CSS masked lines; copy in `home.*.ts` (`intro.line`) |
 | 1.7 s | The white 3D symbol returns over the footage, 250 ms | WAAPI |
 | 1.82 s | The type sinks back into its masks; the circle fades | CSS |
-| 2.0 s | The symbol flies to the header name, 600 ms, `cubic-bezier(0.55, 0, 0.75, 0)` | WAAPI, one transform |
-| 2.3 s | The name rises out of a mask, in Sheet, on the dark backdrop | WAAPI on a decorative twin of the name |
-| about 2.5 s | The symbol dissolves over 80 ms, whole through the fast end of the flight and gone one frame before its path first touches the letters (computed from the measured path and the flight's own curve, so it holds at every window size) | WAAPI, opacity |
+| 2.0 s | The symbol flies onto the header's own symbol, 600 ms, `cubic-bezier(0.55, 0, 0.25, 1)`: it leaves as slowly as before and decelerates into place | WAAPI, one transform |
+| 2.5 s | The name rises out of a mask (240 ms), in Sheet, beside the arriving symbol, on the dark backdrop | WAAPI on a decorative twin of the name |
+| 2.6 s | The symbol has settled exactly over the header's symbol (same centre, same size) | (end of the flight) |
 | 2.6 s | The backdrop fades, 400 ms | WAAPI, opacity |
-| 2.768 s | In one frame: the backdrop steps across the luminance band where neither Sheet nor Ink reaches 4.5:1, the twin leaves, the real Ink name and the navigation arrive (the navigation uncovered from the left) | WAAPI, all on the compositor |
+| 2.768 s | In one frame: the backdrop steps across the luminance band where neither Sheet nor Ink reaches 4.5:1, the twin and the white symbol leave, the real Ink name with its blue symbol and the navigation arrive (the navigation uncovered from the left) | WAAPI, all on the compositor |
 | 2.95 s | The language switch arrives (its inactive language is Slate, which needs the lighter background) | WAAPI |
 | 3.0 s | `finishIntro()`: every temporary element, class, animation, listener and video source removed | script |
 
@@ -249,11 +249,10 @@ even while the main thread is busy with the page's first layout. Just before the
 again. A script that starts after 1.9 s shifts the rest so the flight still plays whole; one that starts after 2.6 s
 ends the intro.
 
-**Geometry.** Measured just before the flight, never from fixed coordinates: the text of `.site-header > .site-name`
-(never the menu dialog's copy), through a Range (the letters, not the padded link box). The landing point is the
-centre of the capitals (baseline one font ascent below the top of the text box, cap height from `measureText()` on the
-name's own font, trailing letter-spacing excluded). The symbol lands 1.6 × the cap height wide (19 px at the 16 px
-name). Measured landing error: under 1 px at all tested sizes in both languages, unchanged from the first version.
+**Geometry.** Measured just before the flight, never from fixed coordinates: the header's own symbol
+(`.site-header > .site-name .site-mark`, never the menu dialog's copy) through `getBoundingClientRect()`. The overlay's
+symbol is translated so its centre is the target's centre and scaled to the target's width (28 px), so it lands exactly
+over the blue symbol. The name's Sheet twin is placed over the word beside it, from the measured rectangle.
 
 **Contrast.** Measured from rendered pixels, not from colour values: the header name, at 10 ms steps from 2.3 to 3.0 s,
 never drops below 5.34:1, and the navigation never below 4.65:1, at 1440, 768, 390 and 320 in both languages. The
