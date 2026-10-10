@@ -1,5 +1,18 @@
 # Portfolio migration: pigiota314 → TechPi
 
+> **2026-10-10 update — expanded Work catalogue.** The inventory and seven-row recommendations below
+> document the original Phase 3C.2 migration, not the current launch candidate. The owner approved
+> showcasing all 18 distinct listings from https://pigiota314.eu/case-studies on the TechPi Work page:
+> **7 Client Projects, 4 Business Solutions, 1 Our Product and 6 Earlier Work by pigiota314**.
+> These are Work index listings, **not 18 full TechPi case-study pages**. Only the original three
+> featured projects have TechPi case-study pages at this stage. Existing duplicated/renamed work
+> was consolidated; Rantevo.gr is recorded separately from Saloon, with their precise relationship
+> still to be confirmed before writing any comparison of the two. Historical creative/marketing
+> work is presented in a clearly separate section, without claiming these disciplines belong to
+> the four current TechPi capabilities. No new real media has been added. Current implementation
+> and copy: `src/content/projects.ts`, `projects.el.ts`, `pages.en.ts` and `pages.el.ts`.
+
+
 Status: **content extraction and editorial preparation (Phase 3C.2).** Internal production documentation. No production code, imagery or routes are changed by this document.
 Date: 2026-10-03
 Source of truth: the public pigiota314 portfolio, https://pigiota314.gr/portfolio/ (page modified 2026-05-20), and the 18 project pages linked from it, all fetched live on 2026-10-03.
