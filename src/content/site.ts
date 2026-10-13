@@ -40,5 +40,5 @@ export const operatorFacts = {
  */
 export const registrationFacts: { gemi: string | null; vat: string | null } = {
   gemi: null,
-  vat: null,
+  vat: '142536715',
 };
