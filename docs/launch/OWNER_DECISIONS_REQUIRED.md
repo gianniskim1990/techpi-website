@@ -33,8 +33,8 @@ schedules, contracts) through a private channel and record only the approved pub
 
 | # | Question | Unblocks |
 |---|---|---|
-| O8 | Approve fix F2 (Greek lists on `/el/work`) | P0-7 |
-| O9 | Approve fix F1 (optional branch-scoped indexing guard), and check how the production and preview Workers Builds triggers are configured (per-trigger build variables; not inspected yet) | P1-2, P1-8 |
+| O8 | Review and merge the Phase 2A Draft PR (`phase-2a-greek-work-lists`): fix F2, Greek lists on `/el/work` | P0-7 |
+| O9 | Approve fix F1 (optional branch-scoped indexing guard), and check how the production and preview Workers Builds triggers are configured (per-trigger build variables; not inspected yet). Phase 2A: F1 not implemented; if wanted, first record `WORKERS_CI`/`WORKERS_CI_BRANCH` from one production and one preview build | P1-2, P1-8 |
 | O10 | Who is the native Greek editorial reviewer, and by when? Scope: 26 Greek pages (24 existing content pages + Greek Privacy and Cookies) | P0-8 |
 | O11 | Rights confirmations (rights checklist in `TECHPI_LAUNCH_CHECKLIST.md`): client screenshots, Logotherapia imagery, client naming and links | P0-9 |
 | O12 | Which products are TechPi-owned vs client-owned (Saloon, Physio, Project4You, Rantevo.gr, Level Up Education App); relationship of Rantevo.gr and Saloon | Launch blocker 9; product presentation |
@@ -55,7 +55,7 @@ schedules, contracts) through a private channel and record only the approved pub
 
 | # | Question | Unblocks |
 |---|---|---|
-| O20 | Turn on **Always Use HTTPS** for the `techpi.eu` zone (plain HTTP currently serves pages) | P0-3, HSTS |
+| ✓ O20 | **Always Use HTTPS** for the `techpi.eu` zone: enabled by the owner; verified 2026-10-13 (HTTP → HTTPS 301) | Done |
 | O21 | HSTS policy after a week of HTTPS-only (recommended `max-age=31536000`, no `includeSubDomains`/`preload` at first) | P2-3 |
 | O22 | Enable DNSSEC for `techpi.eu` and `techpi.gr` (needs the DS record added at Pointer) | P1-6 |
 | O23 | DMARC: reporting address for `rua=`; when to move from `p=none` to `quarantine` | P1-4 |

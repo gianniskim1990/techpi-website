@@ -73,7 +73,7 @@ Astro's own dev server and `astro preview` are not authoritative for these rules
 ### 1.2 Host
 
 - Canonical host: `https://techpi.eu`. `www.techpi.eu` redirects permanently to it.
-- HTTPS only. **Open (2026-10-13):** plain `http://techpi.eu` still serves pages (200) until "Always Use HTTPS" is enabled in the Cloudflare zone; `http://www.techpi.eu` already 301s to `https://techpi.eu`.
+- HTTPS only. "Always Use HTTPS" is on for the `techpi.eu` zone (owner, verified 2026-10-13): `http://techpi.eu/…` returns 301 to the same path and query on `https://`; `http://www.techpi.eu` 301s to `https://techpi.eu`. HSTS is not sent yet.
 - `techpi.gr` and `www.techpi.gr` redirect (301, Cloudflare Redirect Rule, configured by the owner and verified 2026-10-13) to `https://techpi.eu/el/`, keeping the path and query string. A path that already starts with `/el/` becomes `/el/el/…` (404); optional refinement in `docs/launch/OWNER_DECISIONS_REQUIRED.md` (O25).
 - `www.techpi.eu` → `https://techpi.eu` + path, 301 (query string dropped). Verified 2026-10-13.
 
