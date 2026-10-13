@@ -179,7 +179,7 @@ and after (verified then). This statement is historical and does not apply to la
 |---|---|---|
 | Greek `highlights` and `disciplines` mapped for projects with a case study (F2) | `src/content/projects.ts` | Only `el/work.html` changes: 22 strings in 10 rows become Greek. The other 109 output files are byte-identical to `main` |
 | Locale check on the built Work pages | `scripts/content/validate.mjs` (new) | None: reads the build output |
-| The check runs as part of `npm run build` (`"build": "astro build && node scripts/content/validate.mjs"`), so a Greek translation regression fails the build, and with it the Cloudflare build, before deploy | `package.json` | None on the output. Applies only if the Workers Builds build command is `npm run build`; the dashboard setting was not inspected |
+| The check runs as part of `npm run build` (`"build": "astro build && node scripts/content/validate.mjs"`), so a Greek translation regression fails the build, and with it the Cloudflare build, before deploy | `package.json` | None on the output. Verified on 2026-10-13 with a throwaway branch (deleted afterwards, no PR, nothing deployed): the same code with the old `toGreek()` restored failed its Cloudflare build, while the fixed code passed it, so the Workers Builds build command does run `npm run build`. The dashboard setting itself was not inspected |
 | HTTPS redirect recorded; indexing review (F1 not implemented) | `docs/launch/*`, `docs/production/*` | None |
 
 ---

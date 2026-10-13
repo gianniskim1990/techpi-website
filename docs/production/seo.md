@@ -166,7 +166,7 @@ npm run build && node scripts/seo/validate.mjs
 `npm run build` itself ends with `node scripts/content/validate.mjs` (Phase 2A): the Greek Work-page lists must be in
 Greek, or the build fails. It reads the build output, never the indexing switch, so it passes for normal and indexable
 builds alike. For an isolated test build into another directory (`PUBLIC_ALLOW_INDEXING=true npx astro build --outDir <dir>`)
-run it with `--dist <dir>`, like the validators below.
+run it with `--dist <dir>`, like the validators below. Verified on 2026-10-13 with a throwaway branch (deleted afterwards, no PR, nothing deployed): the same code with the old `toGreek()` restored failed its Cloudflare build, while the fixed code passed it, so the Workers Builds build command does run `npm run build`. The dashboard setting itself was not inspected.
 
 `--indexable` validates a `PUBLIC_ALLOW_INDEXING=true` build; `--dist <dir>` another output directory. No dependency.
 About 1,140 checks: per page the title, description, `lang`, one `h1`, robots, canonical, hreflang and reciprocity,
