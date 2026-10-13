@@ -1,6 +1,6 @@
 import type { Locale } from '../i18n/locales';
 import { pathFor } from '../i18n/routes';
-import { contactFacts, operatorFacts } from './site';
+import { contactFacts, operatorFacts, registrationFacts } from './site';
 
 /**
  * The Privacy Policy and the Cookies Policy, in English and Greek (Phase 2B).
@@ -16,9 +16,12 @@ import { contactFacts, operatorFacts } from './site';
  *   owner's computer (Outlook Classic) over IMAP/SMTP. Outlook Classic is an email program, not a hosting provider, so
  *   no other email processor is named.
  * - Retention: 12 months after the last communication for enquiries that do not lead to work (owner decision).
- * - Search: Google Search Console only, verified through DNS: no script or cookie on the site.
+ * - Search: Google Search Console is the only search tool approved for launch, but it is not yet set up, so the
+ *   pages describe it as intended (prospective wording). It is set up through DNS: no script or cookie on the site.
  * - Transfers: described as Cloudflare states them in its own privacy policy (effective 4 November 2025). No contract,
- *   DPA or certification on TechPi's side is claimed.
+ *   DPA or certification on TechPi's side is claimed, and no absolute statement about TechPi's own transfers is made.
+ * - Registration (GEMI and VAT numbers): rendered from registrationFacts in site.ts only once supplied; until then the
+ *   pages show neither the numbers nor any label or placeholder for them.
  *
  * Inline links use the form [text](href). Nothing here is a lawyer-approved text, and the pages do not claim to be.
  */
@@ -47,6 +50,16 @@ const UPDATED = '2026-10-13';
 const email = contactFacts.email;
 const mail = `[${email}](mailto:${email})`;
 const phone = `[${contactFacts.phoneDisplay}](tel:${contactFacts.phoneDial})`;
+/** GEMI and VAT numbers, once supplied (site.ts, registrationFacts). Returns no block while neither is set. */
+const registration = (locale: Locale): LegalBlock[] => {
+  const labels = locale === 'el'
+    ? { gemi: 'Αριθμός Γ.Ε.ΜΗ.', vat: 'ΑΦΜ' }
+    : { gemi: 'GEMI (General Commercial Registry) number', vat: 'VAT number (ΑΦΜ)' };
+  const parts = (['gemi', 'vat'] as const)
+    .filter((k) => registrationFacts[k])
+    .map((k) => `${labels[k]}: ${registrationFacts[k]}.`);
+  return parts.length ? [{ p: parts.join(' ') }] : [];
+};
 const cloudflarePrivacy = 'https://www.cloudflare.com/privacypolicy/';
 const cloudflareCookies = 'https://developers.cloudflare.com/fundamentals/reference/policies-compliances/cloudflare-cookies/';
 const dpa = 'https://www.dpa.gr/';
@@ -67,6 +80,7 @@ const en: Record<'privacy' | 'cookies', LegalPageCopy> = {
         blocks: [
           { p: `TechPi is the commercial brand of ${operatorFacts.name.en}, a sole proprietorship (ατομική επιχείρηση) established in Greece. TechPi is not a separate company. ${operatorFacts.name.en} is the controller of the personal data described in this policy.` },
           { address: [`${operatorFacts.name.en} (TechPi)`, ...operatorFacts.address.en] },
+          ...registration('en'),
           { p: `Email: ${mail}. Telephone: ${phone}.` },
           { p: 'For any question about this policy or about your personal data, write to us at the email address above.' },
         ],
@@ -115,7 +129,7 @@ const en: Record<'privacy' | 'cookies', LegalPageCopy> = {
               '**Pointer.gr** hosts our email. Messages sent to and from @techpi.eu addresses are stored on its servers. We read our mail through the provider\'s webmail and through an email program on our own computer, which keeps a copy of the messages it downloads.',
             ],
           },
-          { p: 'We also use Google Search Console to see how techpi.eu appears in Google Search. It is verified through our domain settings and works without any script or cookie on this website: it gives us aggregated search reports and does not send us data about individual visitors.' },
+          { p: 'We intend to use Google Search Console to see how techpi.eu appears in Google Search. It is set up through our domain settings, not through code on this website, so it adds no script or cookie here. It provides aggregated search reports and does not send us data about individual visitors.' },
           { p: 'We do not sell personal data and we do not share it with third parties for their own marketing.' },
         ],
       },
@@ -124,7 +138,6 @@ const en: Record<'privacy' | 'cookies', LegalPageCopy> = {
         heading: 'International transfers',
         blocks: [
           { p: `Cloudflare is a United States company with a global network, so technical request data may be processed outside the European Economic Area, including in the United States. In its [privacy policy](${cloudflarePrivacy}), Cloudflare states that for transfers from the EEA to the United States it relies on its certification under the EU–U.S. Data Privacy Framework and, should that certification lapse, on standard contractual clauses.` },
-          { p: 'We do not transfer your personal data outside the EEA ourselves.' },
         ],
       },
       {
@@ -204,7 +217,7 @@ const en: Record<'privacy' | 'cookies', LegalPageCopy> = {
               'No fonts, scripts or embedded content loaded from other companies.',
             ],
           },
-          { p: 'We use Google Search Console to see how the website appears in Google Search. It is verified through our domain settings and needs no script or cookie on this website.' },
+          { p: 'We intend to use Google Search Console to see how the website appears in Google Search. It is set up through our domain settings, not through code on this website, so it adds no script or cookie here.' },
         ],
       },
       {
@@ -270,6 +283,7 @@ const el: Record<'privacy' | 'cookies', LegalPageCopy> = {
         blocks: [
           { p: `Η TechPi είναι η εμπορική ονομασία της ατομικής επιχείρησης του Ιωάννη Κιμούντρη, με έδρα στην Ελλάδα. Η TechPi δεν είναι χωριστή εταιρεία. Υπεύθυνος επεξεργασίας για τα προσωπικά δεδομένα που περιγράφονται σε αυτή την πολιτική είναι ο ${operatorFacts.name.el}.` },
           { address: [`${operatorFacts.name.el} (TechPi)`, ...operatorFacts.address.el] },
+          ...registration('el'),
           { p: `Email: ${mail}. Τηλέφωνο: ${phone}.` },
           { p: 'Για κάθε ερώτηση σχετικά με αυτή την πολιτική ή με τα προσωπικά σας δεδομένα, γράψτε μας στη διεύθυνση email παραπάνω.' },
         ],
@@ -318,7 +332,7 @@ const el: Record<'privacy' | 'cookies', LegalPageCopy> = {
               'Η **Pointer.gr** φιλοξενεί το email μας. Τα μηνύματα προς και από διευθύνσεις @techpi.eu αποθηκεύονται στους διακομιστές της. Διαβάζουμε την αλληλογραφία μας μέσω του webmail του παρόχου και μέσω προγράμματος email στον δικό μας υπολογιστή, το οποίο κρατά αντίγραφο των μηνυμάτων που κατεβάζει.',
             ],
           },
-          { p: 'Χρησιμοποιούμε επίσης το Google Search Console για να βλέπουμε πώς εμφανίζεται το techpi.eu στην Αναζήτηση Google. Η επαλήθευσή του γίνεται μέσω των ρυθμίσεων του τομέα μας και λειτουργεί χωρίς script ή cookie σε αυτόν τον ιστότοπο: μας δίνει συγκεντρωτικές αναφορές αναζήτησης και δεν μας στέλνει δεδομένα για μεμονωμένους επισκέπτες.' },
+          { p: 'Σκοπεύουμε να χρησιμοποιήσουμε το Google Search Console για να βλέπουμε πώς εμφανίζεται το techpi.eu στην Αναζήτηση Google. Ρυθμίζεται μέσω των ρυθμίσεων του τομέα μας και όχι με κώδικα σε αυτόν τον ιστότοπο, επομένως δεν προσθέτει script ή cookie εδώ. Παρέχει συγκεντρωτικές αναφορές αναζήτησης και δεν μας στέλνει δεδομένα για μεμονωμένους επισκέπτες.' },
           { p: 'Δεν πουλάμε προσωπικά δεδομένα και δεν τα μοιραζόμαστε με τρίτους για δικούς τους σκοπούς προώθησης.' },
         ],
       },
@@ -327,7 +341,6 @@ const el: Record<'privacy' | 'cookies', LegalPageCopy> = {
         heading: 'Διαβιβάσεις εκτός ΕΟΧ',
         blocks: [
           { p: `Η Cloudflare είναι αμερικανική εταιρεία με παγκόσμιο δίκτυο, επομένως τεχνικά δεδομένα αιτημάτων μπορεί να υποβάλλονται σε επεξεργασία εκτός του Ευρωπαϊκού Οικονομικού Χώρου, μεταξύ άλλων στις Ηνωμένες Πολιτείες. Στην [πολιτική απορρήτου](${cloudflarePrivacy}) της, η Cloudflare αναφέρει ότι για διαβιβάσεις από τον ΕΟΧ προς τις Ηνωμένες Πολιτείες βασίζεται στην πιστοποίησή της στο Πλαίσιο Προστασίας Δεδομένων ΕΕ-ΗΠΑ και, αν η πιστοποίηση αυτή πάψει να ισχύει, σε τυποποιημένες συμβατικές ρήτρες.` },
-          { p: 'Εμείς οι ίδιοι δεν διαβιβάζουμε τα προσωπικά σας δεδομένα εκτός ΕΟΧ.' },
         ],
       },
       {
@@ -407,7 +420,7 @@ const el: Record<'privacy' | 'cookies', LegalPageCopy> = {
               'Χωρίς γραμματοσειρές, scripts ή ενσωματωμένο περιεχόμενο από άλλες εταιρείες.',
             ],
           },
-          { p: 'Χρησιμοποιούμε το Google Search Console για να βλέπουμε πώς εμφανίζεται ο ιστότοπος στην Αναζήτηση Google. Η επαλήθευσή του γίνεται μέσω των ρυθμίσεων του τομέα μας και δεν απαιτεί script ή cookie σε αυτόν τον ιστότοπο.' },
+          { p: 'Σκοπεύουμε να χρησιμοποιήσουμε το Google Search Console για να βλέπουμε πώς εμφανίζεται ο ιστότοπος στην Αναζήτηση Google. Ρυθμίζεται μέσω των ρυθμίσεων του τομέα μας και όχι με κώδικα σε αυτόν τον ιστότοπο, επομένως δεν προσθέτει script ή cookie εδώ.' },
         ],
       },
       {

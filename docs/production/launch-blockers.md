@@ -70,7 +70,7 @@ Each of these must be resolved, or consciously accepted, before indexing is enab
 
 | # | Blocker | Needs | Affects |
 |---|---|---|---|
-| 1 | ~~Legal entity details~~ | **Confirmed 2026-10-13:** Ioannis Kimoundris (Ιωάννης Κιμούντρης), Greek sole proprietorship (ατομική επιχείρηση), Χρ. Μπρωκούμη 30, Ξάνθη; TechPi is the brand, not a separate company. GEMI, VAT and postal code not supplied and not published | Footer legal line, Privacy page (`src/content/site.ts`, `operatorFacts`) |
+| 1 | Legal entity details | **Confirmed 2026-10-13:** Ioannis Kimoundris (Ιωάννης Κιμούντρης), Greek sole proprietorship (ατομική επιχείρηση), Χρ. Μπρωκούμη 30, Ξάνθη; TechPi is the brand, not a separate company; registered in GEMI and subject to VAT. **Still open: the GEMI and VAT numbers**, which must be shown on the website (Law 4919/2022, Art. 22(3)(d); P.D. 131/2003, Art. 4(1)(d) and (g)); the Privacy pages are prepared to show them (`registrationFacts`). Postal code not supplied and not published | Privacy page (`src/content/site.ts`, `operatorFacts`, `registrationFacts`), footer legal line |
 | 2 | Privacy and Cookies pages | **Implemented on the Phase 2B Draft PR** (`/privacy`, `/cookies`, `/el/privacy`, `/el/cookies`; footer links on every page). Resolved once the owner approves the wording and the PR is merged. No external legal review, by the owner's decision | Footer links |
 | 3 | ~~Tracking and analytics decision~~ | **Decided 2026-10-13:** Google Search Console only. No GA4, Meta Pixel, advertising trackers or profiling, so no consent banner | Privacy, cookies |
 | 4 | ~~Self-hosted Commissioner~~ | **Resolved in Phase 3G.2** (below) | |

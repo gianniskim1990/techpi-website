@@ -9,7 +9,8 @@ sole proprietorship, Χρ. Μπρωκούμη 30, Ξάνθη (L1–L3); retentio
 (L4); Outlook Classic over IMAP/SMTP, so no Microsoft processor (L5); Cloudflare Free with Bot Fight Mode off, so
 `cf_clearance` is the example of a possible security cookie (L6); no contract or DPA is claimed, transfers are described
 as Cloudflare states them (L7); no external legal review, by the owner's decision (L8); Search Console only (L10). No
-GEMI, VAT or postal code is published.
+GEMI, VAT or postal code is published yet; the GEMI and VAT numbers are legally required and pending from the owner
+(OWNER_DECISIONS_REQUIRED.md L4).
 
 Original status: review drafts prepared 2026-10-13 for owner review. Not legal advice.
 

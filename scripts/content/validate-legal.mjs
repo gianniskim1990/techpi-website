@@ -10,6 +10,11 @@
 //    address, a working mailto: link to the privacy contact, and a link to the other policy in the same language.
 // 3. Every built page carries both policy links in its footer, in its own language.
 // 4. The street address appears on the Privacy pages only (the footer shows the town, not the address).
+// 5. Retired claims stay out: Search Console described as already in use (it is not yet set up), and the absolute
+//    statement that TechPi itself makes no transfers outside the EEA. Once Search Console is verified, update the
+//    wording in src/content/legal.ts and remove its patterns here in the same change.
+// 6. GEMI and VAT numbers (site.ts, registrationFacts): a label is never rendered without a real-looking number
+//    (digits only, optionally with the EL prefix for VAT), so an empty or placeholder value fails the build.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -32,6 +37,15 @@ const PAGES = [
 const STREETS = ['30 Chr. Brokoumi Street', 'Χρ. Μπρωκούμη 30', 'Brokoumi', 'Μπρωκούμη'];
 const DRAFT = /\[OWNER|\[LEGAL|OWNER INPUT|LEGAL REVIEW|\bTODO\b|\bTBD\b|lorem ipsum|\{\{|\}\}|placeholder/i;
 const greek = /[Ͱ-Ͽἀ-῿]/;
+const RETIRED = [
+  /We (also )?use Google Search Console/i,
+  /Χρησιμοποιούμε (επίσης )?το Google Search Console/,
+  /verified through (our )?(DNS|domain settings)/i,
+  /Η επαλήθευσή του γίνεται/,
+  /do not transfer your personal data outside/i,
+  /δεν διαβιβάζουμε τα προσωπικά σας δεδομένα εκτός/,
+];
+const REG = /(GEMI \(General Commercial Registry\) number|Αριθμός Γ\.Ε\.ΜΗ\.|VAT number \(ΑΦΜ\)|ΑΦΜ):\s*([^\s<]*?)\.?(?=\s|<|$)/g;
 const text = (h) => h.replace(/<script[\s\S]*?<\/script>/g, ' ').replace(/<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ');
 const main = (h) => (h.match(/<main[\s\S]*?<\/main>/) || [''])[0];
 const footer = (h) => (h.match(/<footer[\s\S]*?<\/footer>/) || [''])[0];
@@ -63,6 +77,12 @@ for (const p of PAGES) {
   check(/href="mailto:info@techpi\.eu"/.test(body), `${p.file}: no mailto:info@techpi.eu link`);
   check(body.includes(`href="${p.other}"`), `${p.file}: no link to the other policy (${p.other})`);
   if (p.street) check(t.includes(p.street), `${p.file}: registered address "${p.street}" missing`);
+  for (const r of RETIRED) check(!r.test(t), `${p.file}: retired claim in the text: ${r}`);
+  for (const m of t.matchAll(REG)) {
+    const vat = /ΑΦΜ/.test(m[1]);
+    const ok = (vat ? /^(EL)?\d{9}$/ : /^\d{9,12}$/).test(m[2]) && !/^(EL)?(\d)\2+$/.test(m[2]);
+    check(ok, `${p.file}: ${m[1]} rendered without a valid number: "${m[2]}"`);
+  }
 }
 
 // Every page: both policy links in the footer, in the page's language; the street address only on Privacy pages.
