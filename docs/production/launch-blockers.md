@@ -1,6 +1,6 @@
 # Launch blockers and confirmed facts
 
-Status: current as of 2026-10-08 (Phase 5, security and technical hardening). This is the single place that records what is confirmed for public display, what is deliberately deferred, and what still blocks launch. Other documents point here instead of repeating it.
+Status: current as of 2026-10-13 (Launch readiness phase 1: domains and email connected; see `docs/launch/`). This is the single place that records what is confirmed for public display, what is deliberately deferred, and what still blocks launch. Other documents point here instead of repeating it.
 
 The site stays `noindex` until every blocker below that applies is resolved and indexing is switched on deliberately.
 
@@ -83,10 +83,18 @@ Each of these must be resolved, or consciously accepted, before indexing is enab
 | 11 | EU project case studies (optional) | Approved factual content per project | Would extend the EU Projects page; the service page itself is not blocked |
 | 12 | The training-crawler decision | The owner's decision; then re-verify crawler names and policies and add narrow per-agent rules, if any. The base `robots.txt` (allow all, sitemap line) exists since Phase 4 and needs no change if nothing is blocked | Search and answer-engine visibility |
 | 13 | Confirmed contact method beyond email and phone, if wanted | A decision | Whether a form is needed |
-| 14 | `PUBLIC_ALLOW_INDEXING` unset in Cloudflare | Confirm in the Cloudflare dashboard that the variable is not set for production or previews. Since Phase 3G.2 it is the only indexing switch: the TemporaryFonts guard, which also failed indexable builds, went with the remote fonts. Set it only for production, only at launch | Every page's `noindex` |
-| 15 | HTTPS and HSTS on `techpi.eu` | After the domain is connected: Always Use HTTPS, minimum TLS 1.2, then HSTS without `includeSubDomains` or `preload` at first (`security.md`, section 9). Not checked in the dashboard yet | Transport security of the production domain |
+| 14 | `PUBLIC_ALLOW_INDEXING` unset in Cloudflare | Confirm in the Cloudflare dashboard that the variable is not set for production or previews. **Note (2026-10-13, corrected on review):** Workers Builds supports build variables per trigger (production and preview), so the variable can be set for production only; how this Worker's two triggers are configured has not been inspected, so check both (`docs/launch/TECHPI_LAUNCH_CHECKLIST.md` P1-8). Previews would stay non-indexable through `X-Robots-Tag` in any case. Optional defence in depth: F1 in `docs/launch/TECHPI_LAUNCH_STATUS.md`. Since Phase 3G.2 it is the only indexing switch: the TemporaryFonts guard, which also failed indexable builds, went with the remote fonts. Set it only for production, only at launch | Every page's `noindex` |
+| 15 | HTTPS and HSTS on `techpi.eu` | **Domain connected and certificate valid (verified 2026-10-13); TLS 1.2+ only.** Still open: plain `http://techpi.eu` serves pages with 200 instead of redirecting (turn on Always Use HTTPS), then HSTS without `includeSubDomains` or `preload` at first (`security.md`, section 9) | Transport security of the production domain |
+| 16 | Greek lists on `/el/work` | 10 rows show English highlights/disciplines on the live Greek Work page; fix F2 in `docs/launch/TECHPI_LAUNCH_STATUS.md` (needs approval) | Greek Work page |
+| 17 | Email authentication verified | SPF, DKIM and DMARC records exist for `techpi.eu`; a delivered message proving SPF/DKIM/DMARC **pass with alignment** is still needed (`docs/launch/TECHPI_LAUNCH_CHECKLIST.md` P1-3) | Deliverability of `info@techpi.eu` |
 
 Resolved in Phase 3F: confirmed email, phone and town (section 1).
+
+Launch readiness phase 1 (2026-10-13, `docs/launch/`):
+- **Domains connected (owner).** `techpi.eu` and `techpi.gr` on Cloudflare. `https://techpi.eu` serves the production Worker: all 50 pages byte-identical to the `main` build, all `noindex`. `www.techpi.eu` → apex 301; `techpi.gr` and `www.techpi.gr` → `https://techpi.eu/el/` + path, 301.
+- **Email (owner).** `info@techpi.eu` on the Pointer.gr cPanel server (MX `mail.techpi.eu` 0, `mail2.techpi.eu` 40; SPF, DKIM `default` selector and DMARC `p=none` published). Delivery tested by the owner; authentication alignment not yet verified (blocker 17).
+- **Counts now:** 50 built pages = 48 content URLs (6 page types + 18 case studies, EN and EL) + 2 not-found pages; sitemap 48 URLs. The "18 content pages" and "18 URLs" in the Phase 4 note below were correct when written.
+- **Not inspected:** the Cloudflare, Pointer and cPanel dashboards. Settings are recorded as owner-confirmed or inferred from live behaviour.
 
 Resolved in Phase 5 (`security.md`):
 - **Dependency advisories.** 4 high → 1 high. `sharp` (GHSA-wq5f-xc86-pv6w) fixed with an npm override of miniflare's pinned copy. `http-cache-semantics` (GHSA-ch52-4w7c-c8xp) has no upstream fix; npm's suggested 4.3.0 does not change the affected code, so it was not taken; the code path (build-time remote-image caching) is not reachable in this site.
