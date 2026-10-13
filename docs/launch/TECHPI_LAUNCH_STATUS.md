@@ -104,7 +104,7 @@ for the legacy sites; their `techpi.eu` "no DNS" finding is **superseded** by th
 | Preview deployments remain noindex | Branch previews: `X-Robots-Tag: noindex` on 200 and 404; meta tag on pages. Preview 404s are Cloudflare's plain "Not found" (9 bytes), not the site's 404 page: still 404 + noindex | [V] |
 | 404 pages non-indexable | `noindex, nofollow` in every build mode (validator, live) | [V] |
 | `PUBLIC_ALLOW_INDEXING` unset | No page is indexable, so it is unset or not `true` for production | [V] effect / [D] dashboard |
-| The production switch cannot affect previews | **Partly.** Workers Builds has one set of *build variables* for the Worker, used by production **and** preview builds (Cloudflare docs, "Build variables and secrets"). Setting `PUBLIC_ALLOW_INDEXING=true` there would also remove the meta `noindex` from preview builds. Previews would **still** be non-indexable through `X-Robots-Tag: noindex` (sent by Cloudflare on preview URLs and by `public/_headers` for every `*.workers.dev` host). Proposed hardening F1 below | [V] (docs + headers) |
+| The production switch cannot affect previews | **Platform: yes, it can be isolated. This Worker: not verified.** Cloudflare documents up to two build triggers per Worker (production, on the production branch; preview, on all other branches) with build variables set **per trigger**, so production and preview can have different values (Builds API reference, "Manage build environment variables"). What was verified here is only the effect, not the configuration: no page is indexable today, and preview and `*.workers.dev` URLs send `X-Robots-Tag: noindex` (from Cloudflare and from `public/_headers`), so they stay non-indexable even if a preview build lost its meta `noindex`. How this Worker's production and preview triggers are configured was **not inspected** (no dashboard or API access). Blocker 14 and checklist P1-8 close that gap; F1 below is optional defence in depth | [V] docs and headers; [D] this Worker's triggers |
 
 ---
 
@@ -125,8 +125,10 @@ for the legacy sites; their `techpi.eu` "no DNS" finding is **superseded** by th
 
 ### Proposed source fixes (not implemented: outside this documentation-only scope)
 
-- **F1. Branch-scoped indexing switch** (defence in depth). Make indexing require both `PUBLIC_ALLOW_INDEXING=true` and the
-  production branch, e.g. in `astro.config.mjs` read `process.env.WORKERS_CI_BRANCH` (injected by Workers Builds) and
+- **F1. Branch-scoped indexing switch** (defence in depth; not a fix for a known fault). Per-trigger variables already allow
+  the variable to be set on the production trigger only, but that depends on dashboard configuration that has not been
+  inspected, and a later change to the triggers could undo it. F1 would make the code itself require both
+  `PUBLIC_ALLOW_INDEXING=true` and the production branch, e.g. in `astro.config.mjs` read `process.env.WORKERS_CI_BRANCH` (injected by Workers Builds) and
   only allow indexing when it is `main`; keep local isolated test builds possible with an explicit override. Update
   `docs/production/seo.md` §8 and the SEO validator.
 - **F2. Greek highlights and disciplines.** In `toGreek()`, add `highlights` and `disciplines` (with `required(…)`) to the
@@ -150,12 +152,12 @@ configuration, dependency or output change: the build is byte-identical before a
 | **B1** | Legal entity details; Privacy and Cookies pages (EN/EL) | Required before public launch; also destinations of legacy privacy redirects | Owner inputs L1–L10 (`LEGAL_CONTENT_DRAFTS.md`), legal review, then an implementation PR |
 | **B2** | HTTP → HTTPS on the `techpi.eu` apex; then HSTS | Plain-HTTP access serves pages unencrypted; indexing could pick up `http://` URLs | Owner: Cloudflare "Always Use HTTPS" on the `techpi.eu` zone (or a redirect rule); HSTS later |
 | **B3** | Greek translation bug on `/el/work` (F2) | Visible English text on a Greek page | Approve fix F2 |
-| **B4** | Native-speaker Greek editorial review (24 Greek pages) | Launch blocker 8 | Owner / reviewer |
+| **B4** | Native-speaker Greek editorial review (24 Greek content pages now; 26 once the Greek Privacy and Cookies pages exist) | Launch blocker 8 | Owner / reviewer |
 | **B5** | Rights confirmations: client screenshots, Logotherapia imagery, third-party logos in screenshots | Launch blockers 10 and the rights checklist | Owner |
 | **B6** | Analytics decision | Determines the cookie policy and monitoring | Owner (`ANALYTICS_RECOMMENDATION.md`) |
 | **B7** | Email authentication verified (SPF, DKIM, DMARC pass with alignment) | Deliverability of replies to enquiries | Owner test (checklist P1-3) |
 | **B8** | Search Console Domain property for `techpi.eu`; legacy property access; data exports | Needed to launch and to migrate signals | Owner (`SEARCH_CONSOLE_SETUP.md`) |
-| B9 | Branch-scoped indexing guard (F1) | Defence in depth; previews already protected by headers | Approve F1 |
+| B9 | Branch-scoped indexing guard (F1) | Optional defence in depth; no known fault. Previews are already protected by `X-Robots-Tag`, and per-trigger variables can keep the switch off previews if configured that way (not inspected) | Approve F1 (optional) |
 | B10 | DNSSEC on `techpi.eu` (and `techpi.gr`) | Hardening, not a hard blocker | Owner (Cloudflare one-click + DS at Pointer) |
 | B11 | Training-crawler policy (launch blocker 12) | Owner decision; current allow-all is valid | Owner |
 | — | Legacy redirects, Change of Address, `proposal.techpi.eu` | After launch, separate phases | `migration-audit/*`, Decision A |

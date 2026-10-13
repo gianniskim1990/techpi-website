@@ -34,8 +34,8 @@ schedules, contracts) through a private channel and record only the approved pub
 | # | Question | Unblocks |
 |---|---|---|
 | O8 | Approve fix F2 (Greek lists on `/el/work`) | P0-7 |
-| O9 | Approve fix F1 (branch-scoped indexing guard) | P1-2 |
-| O10 | Who is the native Greek editorial reviewer, and by when? | P0-8 |
+| O9 | Approve fix F1 (optional branch-scoped indexing guard), and check how the production and preview Workers Builds triggers are configured (per-trigger build variables; not inspected yet) | P1-2, P1-8 |
+| O10 | Who is the native Greek editorial reviewer, and by when? Scope: 26 Greek pages (24 existing content pages + Greek Privacy and Cookies) | P0-8 |
 | O11 | Rights confirmations (rights checklist in `TECHPI_LAUNCH_CHECKLIST.md`): client screenshots, Logotherapia imagery, client naming and links | P0-9 |
 | O12 | Which products are TechPi-owned vs client-owned (Saloon, Physio, Project4You, Rantevo.gr, Level Up Education App); relationship of Rantevo.gr and Saloon | Launch blocker 9; product presentation |
 | O13 | Approve final wording of company and service claims (EU Projects programmes, Intelligence capability, About) | Launch |
