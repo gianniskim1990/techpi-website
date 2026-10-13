@@ -100,6 +100,8 @@ below). Verified on real responses (section 8).
 | `X-Robots-Tag` | `noindex`, **only on `https://:worker.:account.workers.dev/*`** | Section 6 |
 | `Cache-Control` | `public, max-age=31536000, immutable`, **only on `/_astro/*`** (2026-10-09) | Build output there is content-hashed: a changed file gets a new name. Cloudflare otherwise serves it with `max-age=0`, so every homepage entry (the intro plays on each) would re-ask for the symbol, mask and footage. HTML is not covered and keeps revalidating |
 
+**Update 2026-10-13:** on the custom domain `techpi.eu`, 404 responses **do** carry every header above (verified live); the gap below applies to the preview hosts.
+
 **404 responses get none of these on Cloudflare.** On the deployed preview, a 404 (served from `404.html` by
 `not_found_handling: "404-page"`) carries only Cloudflare's own headers (on workers.dev, its `X-Robots-Tag: noindex`).
 The local Wrangler runtime does add them, so this is a difference between local and deployed behaviour, found only by
@@ -243,7 +245,7 @@ redirect (harmless on `.dev`, which browsers only ever reach over HTTPS).
 
 ## 9. Launch recommendations
 
-1. **Connect `techpi.eu`, then in the zone:** "Always Use HTTPS" on, minimum TLS 1.2, automatic HTTPS rewrites on.
+1. **(Domain connected 2026-10-13; TLS 1.2+ verified. "Always Use HTTPS" still off: `http://techpi.eu` returns 200. See `docs/launch/`.) Connect `techpi.eu`, then in the zone:** "Always Use HTTPS" on, minimum TLS 1.2, automatic HTTPS rewrites on.
    Confirm `http://techpi.eu/` redirects to `https://`.
 2. **HSTS for `techpi.eu`:** once HTTPS is confirmed on the apex and `www`, start with
    `Strict-Transport-Security: max-age=31536000` (zone setting or a host-specific `_headers` rule for
