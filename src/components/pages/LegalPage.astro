@@ -1,0 +1,227 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../secondary/PageIntro.astro';
+import { legalCopy, type LegalBlock } from '../../content/legal';
+import { pageMeta } from '../../content/seo';
+import type { Locale } from '../../i18n/locales';
+
+interface Props {
+  locale: Locale;
+  page: 'privacy' | 'cookies';
+}
+
+const { locale, page } = Astro.props;
+const copy = legalCopy[locale][page];
+const meta = pageMeta[locale][page];
+
+type Part =
+  | { kind: 'text' | 'strong' | 'code'; value: string }
+  | { kind: 'link'; value: string; href: string };
+
+/** Inline markup in the legal copy: **bold**, `code` and [text](href). Nothing else is interpreted. */
+function inline(text: string): Part[] {
+  const parts: Part[] = [];
+  const re = /\*\*([^*]+)\*\*|`([^`]+)`|\[([^\]]+)\]\(([^)\s]+)\)/g;
+  let last = 0;
+  for (const m of text.matchAll(re)) {
+    if (m.index > last) parts.push({ kind: 'text', value: text.slice(last, m.index) });
+    if (m[1]) parts.push({ kind: 'strong', value: m[1] });
+    else if (m[2]) parts.push({ kind: 'code', value: m[2] });
+    else parts.push({ kind: 'link', value: m[3], href: m[4] });
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push({ kind: 'text', value: text.slice(last) });
+  return parts;
+}
+const external = (href: string) => /^https?:\/\//.test(href);
+---
+
+{/* A legal page: the secondary-page head, then a contents list and the date beside readable sections. No reveal
+    animation on the text, no decoration: these pages are read, not browsed. Linked from the footer only. */}
+<BaseLayout locale={locale} page={page} title={meta.title} description={meta.description} bleed>
+  <PageIntro heading={copy.heading} lead={copy.lead} />
+  <div class="legal s-paper">
+    <aside class="side">
+      <p class="updated">
+        {copy.updatedLabel}: <time datetime={copy.updated}>{copy.updatedText}</time>
+      </p>
+      <nav class="toc" aria-labelledby={`${page}-toc`}>
+        <p class="toc-label" id={`${page}-toc`}>{copy.contentsLabel}</p>
+        <ol>
+          {
+            copy.sections.map((s) => (
+              <li>
+                <a href={`#${s.id}`}>{s.heading}</a>
+              </li>
+            ))
+          }
+        </ol>
+      </nav>
+    </aside>
+    <div class="text">
+      {
+        copy.sections.map((s) => (
+          <section id={s.id} aria-labelledby={`${s.id}-h`}>
+            <h2 id={`${s.id}-h`}>{s.heading}</h2>
+            {s.blocks.map((b: LegalBlock) => {
+              const render = (text: string) =>
+                inline(text).map((p) =>
+                  p.kind === 'strong' ? (
+                    <strong>{p.value}</strong>
+                  ) : p.kind === 'code' ? (
+                    <code>{p.value}</code>
+                  ) : p.kind === 'link' ? (
+                    external(p.href) ? (
+                      <a class="tlink" href={p.href} rel="noopener">
+                        {p.value}
+                        <span aria-hidden="true"> ↗</span>
+                      </a>
+                    ) : (
+                      <a class="tlink" href={p.href}>
+                        {p.value}
+                      </a>
+                    )
+                  ) : (
+                    p.value
+                  ),
+                );
+              if ('ul' in b) return <ul>{b.ul.map((item) => <li>{render(item)}</li>)}</ul>;
+              if ('address' in b)
+                return (
+                  <address>
+                    {b.address.map((line, i) => (
+                      <>
+                        {i > 0 && <br />}
+                        {line}
+                      </>
+                    ))}
+                  </address>
+                );
+              return <p>{render(b.p)}</p>;
+            })}
+          </section>
+        ))
+      }
+    </div>
+  </div>
+  <div class="end"></div>
+</BaseLayout>
+
+<style>
+  .legal {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    padding: clamp(56px, 7vw, 104px) var(--space-margin) 0;
+    align-items: start;
+  }
+  .side {
+    grid-column: 1 / span 3;
+    position: sticky;
+    top: 104px;
+    font-size: var(--text-small);
+    color: var(--sec-c);
+  }
+  .updated {
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .toc-label {
+    margin: 22px 0 10px;
+    font-weight: var(--weight-ui);
+    color: var(--color-ink);
+  }
+  .toc a {
+    display: inline-block;
+    padding: 4px 0;
+    color: var(--sec-c);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-state);
+  }
+  .toc a:hover {
+    color: var(--link);
+  }
+  .text {
+    grid-column: 5 / span 7;
+    max-width: 68ch;
+    font-size: var(--text-body);
+    line-height: 1.65;
+  }
+  section + section {
+    margin-top: clamp(44px, 5vw, 64px);
+    padding-top: clamp(28px, 3vw, 36px);
+    border-top: 1px solid var(--line);
+  }
+  h2 {
+    font-size: var(--text-heading);
+    line-height: 1.2;
+    letter-spacing: -0.012em;
+    margin-bottom: 18px;
+  }
+  p + p,
+  p + ul,
+  ul + p,
+  p + address,
+  address + p {
+    margin-top: 14px;
+  }
+  ul {
+    list-style: disc;
+    padding-left: 1.25em;
+  }
+  li + li {
+    margin-top: 10px;
+  }
+  li::marker {
+    color: var(--ter);
+  }
+  address {
+    font-style: normal;
+    padding-left: 16px;
+    border-left: 2px solid var(--line);
+  }
+  strong {
+    font-weight: var(--weight-ui);
+  }
+  code {
+    font-family: inherit;
+    font-size: 0.94em;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: rgba(8, 14, 30, 0.06);
+    white-space: nowrap;
+  }
+  /* Long addresses and URLs must wrap rather than widen the page on a phone. */
+  .text a {
+    overflow-wrap: anywhere;
+  }
+  /* A telephone number reads as one unit: never split it across lines. */
+  .text a[href^='tel:'] {
+    white-space: nowrap;
+  }
+  .end {
+    height: calc(var(--space-section) * 1.2);
+  }
+
+  @media (max-width: 1023px) {
+    .side {
+      grid-column: 1 / span 4;
+    }
+    .text {
+      grid-column: 5 / span 8;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .legal {
+      display: block;
+    }
+    .side {
+      position: static;
+      margin-bottom: 40px;
+    }
+    .text {
+      max-width: none;
+    }
+  }
+</style>

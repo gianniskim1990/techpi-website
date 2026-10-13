@@ -1,7 +1,8 @@
 ---
 import { getDictionary } from '../i18n';
 import type { Locale } from '../i18n/locales';
-import { navPages, pathFor, type PageKey } from '../i18n/routes';
+import { operatorFacts } from '../content/site';
+import { legalPages, navPages, pathFor, type PageKey } from '../i18n/routes';
 import LanguageSwitch from './LanguageSwitch.astro';
 
 interface Props {
@@ -17,9 +18,8 @@ const t = getDictionary(locale);
 const items = navPages;
 ---
 
-{/* Minimal. Only what is justified: name, navigation, language. Contact details live on the Contact page, not here.
-     Address, legal entity and the Privacy and Cookies links are added when the facts and the routes exist
-     (docs/production/launch-blockers.md). No link points at a page that does not exist. */}
+{/* Minimal. Only what is justified: name, navigation, language, and a quiet legal line: who operates TechPi and the
+     two policies. Contact details live on the Contact page, and the street address on the Privacy page, not here. */}
 <footer class="site-footer s-ink" id="footer" tabindex="-1">
   <div class="top">
     <div class="brand">
@@ -41,7 +41,23 @@ const items = navPages;
       <LanguageSwitch locale={locale} page={page} hrefs={languageHrefs} />
     </div>
   </div>
-  <p class="base">{t.site.descriptor}</p>
+  <div class="base">
+    <p>{t.site.descriptor}</p>
+    <p>{operatorFacts.name[locale]} · {operatorFacts.legalForm[locale]} · {operatorFacts.town[locale]}</p>
+    <nav class="legal" aria-label={t.footer.legalLabel}>
+      <ul>
+        {
+          legalPages.map((key) => (
+            <li>
+              <a href={pathFor(key, locale)} aria-current={key === page ? 'page' : undefined}>
+                {t.pages[key].heading}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
 </footer>
 
 <style>
@@ -108,11 +124,44 @@ const items = navPages;
     color: var(--color-paper);
   }
   .base {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 32px;
+    row-gap: 6px;
     padding: 22px 0 30px;
     border-top: 1px solid var(--line);
     color: var(--sec-c);
     font-size: var(--text-small);
     font-weight: var(--weight-ui);
+  }
+  .base p + p {
+    font-weight: var(--weight-body);
+  }
+  .legal {
+    margin-left: auto;
+  }
+  .legal ul {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 24px;
+  }
+  .legal a {
+    display: inline-block;
+    padding: 6px 0;
+    color: var(--sec-c);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--line);
+    transition:
+      color var(--duration-fast) var(--ease-state),
+      text-decoration-color var(--duration-fast) var(--ease-state);
+  }
+  .legal a:hover,
+  .legal a[aria-current='page'] {
+    color: var(--color-paper);
+    text-decoration-color: currentColor;
   }
 
   @media (max-width: 760px) {
@@ -126,6 +175,15 @@ const items = navPages;
     .lang {
       margin-top: 20px;
       margin-left: -6px;
+    }
+    .base {
+      display: block;
+    }
+    .base > * + * {
+      margin-top: 6px;
+    }
+    .legal {
+      margin-top: 14px;
     }
   }
 </style>

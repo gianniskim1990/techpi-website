@@ -51,6 +51,16 @@ export const pageMeta: Record<Locale, Record<PageKey, PageMeta>> = {
       description:
         'Start a project with TechPi: digital products, platforms, web systems and other technology projects. Tell us about the problem you need to solve.',
     },
+    privacy: {
+      title: 'Privacy Policy | TechPi',
+      description:
+        'How TechPi, the brand of Ioannis Kimoundris (sole proprietorship, Xanthi), handles personal data from enquiries and website visits, and how to exercise your rights.',
+    },
+    cookies: {
+      title: 'Cookies Policy | TechPi',
+      description:
+        'TechPi uses no analytics, advertising or tracking cookies. This policy explains the security cookies Cloudflare may set and how you can control cookies.',
+    },
   },
   el: {
     home: {
@@ -82,6 +92,16 @@ export const pageMeta: Record<Locale, Record<PageKey, PageMeta>> = {
       title: 'Επικοινωνία — Ξεκινήστε ένα έργο | TechPi',
       description:
         'Ξεκινήστε ένα έργο με την TechPi: ψηφιακά προϊόντα, πλατφόρμες, web συστήματα και άλλα τεχνολογικά έργα. Πείτε μας ποιο πρόβλημα θέλετε να λύσετε.',
+    },
+    privacy: {
+      title: 'Πολιτική Απορρήτου | TechPi',
+      description:
+        'Πώς η TechPi, ατομική επιχείρηση του Ιωάννη Κιμούντρη στην Ξάνθη, χειρίζεται τα προσωπικά δεδομένα από την επικοινωνία και τις επισκέψεις, και πώς ασκείτε τα δικαιώματά σας.',
+    },
+    cookies: {
+      title: 'Πολιτική Cookies | TechPi',
+      description:
+        'Η TechPi δεν χρησιμοποιεί cookies στατιστικών, διαφήμισης ή παρακολούθησης. Εξηγούμε τα cookies ασφαλείας που μπορεί να ορίσει η Cloudflare και πώς τα ελέγχετε.',
     },
   },
 };
