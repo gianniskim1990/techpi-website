@@ -10,6 +10,10 @@
 //
 // Brand and technology names (SEO, CMS, Social media) may stay in Latin inside a Greek item; rule 2 checks the whole
 // item or line, so they are allowed as long as the rest is Greek. No dependencies.
+//
+// Runs as part of `npm run build` (package.json), so a regression fails the build, and with it the Cloudflare build,
+// before anything is deployed. A build into another directory (`astro build --outDir <dir>`) is checked by passing
+// `--dist <dir>`.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -32,8 +36,14 @@ function rows(file) {
     lines: [...m[2].matchAll(/<p class="caps"[^>]*><span[^>]*>[^<]*<\/span>([^<]*)<\/p>/g)].map((x) => decode(x[1])),
   }));
 }
-const greek = /[Ͱ-Ͽἀ-῿]/;
+const greek = /[\u0370-\u03ff\u1f00-\u1fff]/; // Greek and Coptic, Greek Extended
 
+for (const f of ['work.html', 'el/work.html']) {
+  if (!fs.existsSync(path.join(dist, f))) {
+    console.log(`FAIL ${path.join(dist, f)} not found: run the build first, or pass --dist <build directory>.`);
+    process.exit(1);
+  }
+}
 const en = rows('work.html');
 const el = rows('el/work.html');
 check(en.length > 0, 'no project rows found on /work (markup changed? update this validator)');

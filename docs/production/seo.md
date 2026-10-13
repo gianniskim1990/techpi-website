@@ -163,6 +163,11 @@ pages, 2 noindex**, no preview or development URL anywhere. The normal build aft
 npm run build && node scripts/seo/validate.mjs
 ```
 
+`npm run build` itself ends with `node scripts/content/validate.mjs` (Phase 2A): the Greek Work-page lists must be in
+Greek, or the build fails. It reads the build output, never the indexing switch, so it passes for normal and indexable
+builds alike. For an isolated test build into another directory (`PUBLIC_ALLOW_INDEXING=true npx astro build --outDir <dir>`)
+run it with `--dist <dir>`, like the validators below.
+
 `--indexable` validates a `PUBLIC_ALLOW_INDEXING=true` build; `--dist <dir>` another output directory. No dependency.
 About 1,140 checks: per page the title, description, `lang`, one `h1`, robots, canonical, hreflang and reciprocity,
 x-default, every Open Graph and Twitter field, that the image exists, valid JSON-LD with the expected nodes,

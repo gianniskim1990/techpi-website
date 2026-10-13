@@ -1,6 +1,8 @@
 # TechPi launch status
 
-Status date: **2026-10-13**. Branch `launch-readiness-phase-1` from `origin/main` `701cb09`.
+Status date: **2026-10-13**. Written in Phase 1 (PR #19, branch `launch-readiness-phase-1`, merged as `fe12f39`), and
+updated in Phase 2A (PR #20). The Phase 1 audit statements below ("documentation only", "byte-identical") describe PR #19
+only; what Phase 2A changed is listed in section 5.
 **The site is live on `https://techpi.eu` and remains `noindex`. It is not launched in search.**
 
 **Phase 2A update (2026-10-13, branch `phase-2a-greek-work-lists`, Draft PR):** HTTP → HTTPS is now on and verified (B2 reduced to HSTS
@@ -129,7 +131,7 @@ for the legacy sites; their `techpi.eu` "no DNS" finding is **superseded** by th
 | Legal links | No Privacy or Cookie link anywhere (pages do not exist yet) | [V] |
 | Image accessibility | Case-study screenshots have descriptive alt text in both languages; decorative thumbnails use empty `alt` | [V] |
 
-### Proposed source fixes (not implemented: outside this documentation-only scope)
+### Proposed source fixes (F2 was implemented in Phase 2A; F1 reviewed and not implemented; F3 not implemented)
 
 - **F1. Branch-scoped indexing switch** (defence in depth; not a fix for a known fault). Per-trigger variables already allow
   the variable to be set on the production trigger only, but that depends on dashboard configuration that has not been
@@ -165,10 +167,20 @@ for the legacy sites; their `techpi.eu` "no DNS" finding is **superseded** by th
 
 ---
 
-## 5. What changed on this branch
+## 5. What changed, by phase
 
-Documentation only (`docs/launch/*`, `docs/production/launch-blockers.md`, `routes.md`, `security.md`). No source,
-configuration, dependency or output change: the build is byte-identical before and after (verified).
+**Phase 1 (PR #19, merged as `fe12f39`): documentation only** (`docs/launch/*`, `docs/production/launch-blockers.md`,
+`routes.md`, `security.md`). No source, configuration, dependency or output change: the build was byte-identical before
+and after (verified then). This statement is historical and does not apply to later phases.
+
+**Phase 2A (PR #20): one content fix, one build check, documentation.**
+
+| Change | Files | Effect on the generated site |
+|---|---|---|
+| Greek `highlights` and `disciplines` mapped for projects with a case study (F2) | `src/content/projects.ts` | Only `el/work.html` changes: 22 strings in 10 rows become Greek. The other 109 output files are byte-identical to `main` |
+| Locale check on the built Work pages | `scripts/content/validate.mjs` (new) | None: reads the build output |
+| The check runs as part of `npm run build` (`"build": "astro build && node scripts/content/validate.mjs"`), so a Greek translation regression fails the build, and with it the Cloudflare build, before deploy | `package.json` | None on the output. Applies only if the Workers Builds build command is `npm run build`; the dashboard setting was not inspected |
+| HTTPS redirect recorded; indexing review (F1 not implemented) | `docs/launch/*`, `docs/production/*` | None |
 
 ---
 
