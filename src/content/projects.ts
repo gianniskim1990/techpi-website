@@ -788,6 +788,9 @@ function toGreek(p: Project): Project {
     ...p,
     category: el.category,
     summary: el.summary,
+    // The Work-page lists, as in the branch above: without these, the English arrays from `...p` would show on /el/work.
+    highlights: p.highlights && required(el.highlights, p.slug, 'highlights'),
+    disciplines: p.disciplines && required(el.disciplines, p.slug, 'disciplines'),
     image,
     caseStudy: {
       ...study,
