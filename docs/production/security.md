@@ -245,7 +245,7 @@ redirect (harmless on `.dev`, which browsers only ever reach over HTTPS).
 
 ## 9. Launch recommendations
 
-1. **(Domain connected 2026-10-13; TLS 1.2+ verified. "Always Use HTTPS" still off: `http://techpi.eu` returns 200. See `docs/launch/`.) Connect `techpi.eu`, then in the zone:** "Always Use HTTPS" on, minimum TLS 1.2, automatic HTTPS rewrites on.
+1. **(Domain connected 2026-10-13; TLS 1.2+ verified; "Always Use HTTPS" on and verified, HTTP → HTTPS 301. HSTS not sent yet. See `docs/launch/`.) Connect `techpi.eu`, then in the zone:** "Always Use HTTPS" on, minimum TLS 1.2, automatic HTTPS rewrites on.
    Confirm `http://techpi.eu/` redirects to `https://`.
 2. **HSTS for `techpi.eu`:** once HTTPS is confirmed on the apex and `www`, start with
    `Strict-Transport-Security: max-age=31536000` (zone setting or a host-specific `_headers` rule for

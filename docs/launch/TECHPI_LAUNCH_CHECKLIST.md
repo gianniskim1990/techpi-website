@@ -14,22 +14,22 @@ Status keys: ☐ open · ☑ done (verified) · ◐ partly done.
 |---|---|---|---|---|
 | ☑ P0-1 | `techpi.eu` on Cloudflare, Worker connected, HTTPS certificate | Owner | — | Done (verified 2026-10-13): 50 pages live, identical to `main`, certificate valid to 2027-01-11 |
 | ☑ P0-2 | `www.techpi.eu` → apex 301; `techpi.gr` → `/el/` 301 | Owner | — | Done (verified): 301s for HTTP and HTTPS, paths preserved |
-| ☐ P0-3 | **Force HTTPS on the `techpi.eu` apex** (Cloudflare → `techpi.eu` → SSL/TLS → Edge Certificates → **Always Use HTTPS**: On) | Owner | — | `curl -I http://techpi.eu/work` returns **301** to `https://techpi.eu/work` |
+| ☑ P0-3 | **Force HTTPS on the `techpi.eu` apex** (Cloudflare → `techpi.eu` → SSL/TLS → Edge Certificates → **Always Use HTTPS**: On) | Owner | — | Done: owner-enabled; verified 2026-10-13: `http://techpi.eu/work` → **301** → `https://techpi.eu/work` (path and query kept) |
 | ☐ P0-4 | Legal entity details (name, form, address, GEMI/VAT if applicable) | Owner | — | Values supplied privately for `LEGAL_CONTENT_DRAFTS.md` L1–L3 |
 | ☐ P0-5 | Privacy and Cookies policy text approved, EN and EL | Owner, Legal | P0-4, analytics decision (P1-1) | Every `[OWNER INPUT]` / `[LEGAL REVIEW]` marker resolved |
 | ☐ P0-6 | Publish `/privacy`, `/cookies`, `/el/privacy`, `/el/cookies` and footer links | Dev | P0-5 | Build: sitemap 52 URLs, hreflang pairs, validators updated and passing; footer links on all pages in both languages |
-| ☐ P0-7 | Fix Greek lists on `/el/work` (fix F2 in `TECHPI_LAUNCH_STATUS.md`) | Dev | Owner approval | `/el/work`: no English highlights/disciplines; all other 49 page bodies unchanged |
+| ◐ P0-7 | Fix Greek lists on `/el/work` (fix F2 in `TECHPI_LAUNCH_STATUS.md`) | Dev | Owner approval | Implemented on `phase-2a-greek-work-lists` (Draft PR): only `/el/work` changes (22 strings, 10 rows), the other 109 output files are identical; `node scripts/content/validate.mjs` passes. Done when merged and deployed |
 | ☐ P0-8 | Greek editorial review of all **26 Greek pages**: the 24 existing content pages (6 page types + 18 case studies) plus the new Greek Privacy and Cookies pages | Reviewer | P0-6, P0-7 | Reviewer sign-off; corrections merged |
 | ☐ P0-9 | Rights and approvals checklist below completed | Owner | — | Every row marked confirmed or the asset removed/replaced by decision |
 | ☐ P0-10 | Search Console: `techpi.eu` Domain property verified; legacy property access confirmed; historical data exported | Owner | — | `SEARCH_CONSOLE_SETUP.md` §1–3 done; exports stored privately |
-| ☐ P0-11 | Final pre-launch QA on the release candidate | Dev | P0-6 … P0-8 | check/build/SEO/security/asset validators pass; live = build; browser sweep clean |
+| ☐ P0-11 | Final pre-launch QA on the release candidate | Dev | P0-6 … P0-8 | check/build/SEO/security/asset/content validators pass; live = build; browser sweep clean |
 
 ## P1 — strongly recommended before launch
 
 | # | Item | Owner | Depends on | Verification |
 |---|---|---|---|---|
 | ☐ P1-1 | Analytics decision (recommended: Search Console only at launch) | Owner | `ANALYTICS_RECOMMENDATION.md` | Decision recorded in `OWNER_DECISIONS_REQUIRED.md` |
-| ☐ P1-2 | Optional defence in depth: branch-scoped indexing guard (fix F1), so the code itself keeps preview builds `noindex` whatever the trigger variables are | Dev | Owner approval | Isolated test: indexable only for a `main` build with the variable set; preview build stays `noindex` |
+| ☐ P1-2 | Optional defence in depth: branch-scoped indexing guard (fix F1), so the code itself keeps preview builds `noindex` whatever the trigger variables are | Dev | Owner approval | Isolated test: indexable only for a `main` build with the variable set; preview build stays `noindex`. **Phase 2A: reviewed, not implemented** until `WORKERS_CI`/`WORKERS_CI_BRANCH` are confirmed in this Worker's builds (`TECHPI_LAUNCH_STATUS.md` §4, F1) |
 | ☐ P1-3 | **Email authentication test.** From `info@techpi.eu` send a message to a Gmail address → Gmail → ⋮ → **Show original**: SPF **PASS**, DKIM **PASS** (`d=techpi.eu`), DMARC **PASS**. Repeat from Outlook if it sends through a different server. Optionally use a mail-tester service | Owner | — | Screenshot or header excerpt with three PASS results and `header.d=techpi.eu` |
 | ☐ P1-4 | DMARC reporting: add `rua=mailto:<address>` to `_dmarc.techpi.eu` (keep `p=none` for 2–4 weeks, then consider `quarantine`) | Owner | P1-3 | Aggregate reports arrive; all legitimate sources aligned |
 | ☐ P1-5 | `techpi.gr` anti-spoofing (domain sends no mail): SPF `v=spf1 -all`, DMARC `v=DMARC1; p=reject;`, optionally null MX `0 .` | Owner | Decision that `techpi.gr` will not send mail | DNS shows the records; no mail flow affected (none exists) |
@@ -43,7 +43,7 @@ Status keys: ☐ open · ☑ done (verified) · ◐ partly done.
 |---|---|---|---|---|
 | ☐ P2-1 | Set `PUBLIC_ALLOW_INDEXING=true` on the **production trigger** only (P1-8; or rely on F1 if implemented) and redeploy `main` | Owner | All P0 | Live: content pages have **no** robots meta; 404s still `noindex`; workers.dev/previews still `X-Robots-Tag: noindex` |
 | ☐ P2-2 | Submit `https://techpi.eu/sitemap.xml` in Search Console; inspect home, `/el/`, two case studies | Owner | P2-1 | Sitemap "Success", URL count matches |
-| ☐ P2-3 | HSTS on `techpi.eu`: `max-age=31536000` without `includeSubDomains`/`preload` | Owner | P0-3 verified for a week | Header present on HTTPS responses |
+| ☐ P2-3 | HSTS on `techpi.eu`: `max-age=31536000` without `includeSubDomains`/`preload` | Owner | P0-3 (done 2026-10-13), then about a week of HTTPS-only | Header present on HTTPS responses |
 
 ## P3 — after launch (separate approvals)
 

@@ -3,6 +3,10 @@
 Status date: **2026-10-13**. Branch `launch-readiness-phase-1` from `origin/main` `701cb09`.
 **The site is live on `https://techpi.eu` and remains `noindex`. It is not launched in search.**
 
+**Phase 2A update (2026-10-13, branch `phase-2a-greek-work-lists`, Draft PR):** HTTP → HTTPS is now on and verified (B2 reduced to HSTS
+only); the Greek `/el/work` lists are fixed on the branch (F2, pending merge); the indexing hardening F1 was reviewed
+and deliberately not implemented (section 4).
+
 Confidence legend: **[V] Verified** in this audit (live request, DNS query, build or browser test) · **[O] Owner-confirmed**
 (not independently verifiable from outside) · **[D] Needs dashboard access** (Cloudflare, Pointer, cPanel, Search Console:
 not inspected) · **[A] Assumption**.
@@ -37,8 +41,10 @@ for the legacy sites; their `techpi.eu` "no DNS" finding is **superseded** by th
 - [V] `https://techpi.eu` serves the production `techpi-website` Worker: **all 50 pages are byte-identical to a local build
   of `origin/main` `701cb09`**. No mismatch between live site and repository.
 - [V] `www.techpi.eu` (HTTP and HTTPS) → **301** → `https://techpi.eu` + same path (query string dropped).
-- [V] **Finding:** `http://techpi.eu/…` (plain HTTP, apex) returns **200 over HTTP** instead of redirecting to HTTPS.
-  "Always Use HTTPS" (or an equivalent rule) is not active for the apex. See blocker B2.
+- [O][V] **HTTP → HTTPS: operational.** The owner enabled Cloudflare "Always Use HTTPS" for the `techpi.eu` zone
+  (Phase 2A), and it was verified from outside: `http://techpi.eu/`, `http://techpi.eu/work` and
+  `http://techpi.eu/el/work/rocketeer?x=1` return **301** to the same path (and query) on `https://`. (Before this, on
+  2026-10-13, plain HTTP returned 200.)
 - [V] DNSSEC: **not enabled** (no DS at the registry, no DNSKEY in the zone; method validated against cloudflare.com).
 - [V] No CAA record (allowed; optional hardening).
 
@@ -85,7 +91,7 @@ for the legacy sites; their `techpi.eu` "no DNS" finding is **superseded** by th
 | Canonical and hreflang | Validated on all 48 (self-canonical, `en`/`el`/`x-default` reciprocal) | [V] |
 | Structured data | Organization, WebSite, WebPage types, Service, BreadcrumbList; valid JSON-LD (validator) | [V] |
 | Security headers on `techpi.eu` | CSP (`frame-ancestors 'none'` …), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, COOP on HTML, assets, sitemap, robots, redirects **and on 404 responses** (the custom domain applies `_headers` to 404s, unlike the preview hosts seen in Phase 5) | [V] |
-| HSTS | Not sent (intentional until HTTPS-only is confirmed; blocker B2) | [V] |
+| HSTS | **Not enabled**: no `Strict-Transport-Security` header on HTTPS responses (verified after Always Use HTTPS was turned on). Next: `max-age=31536000` without `includeSubDomains`/`preload` after about a week of HTTPS-only (checklist P2-3) | [V] |
 | `/_astro/*` caching | `public, max-age=31536000, immutable`; HTML `max-age=0, must-revalidate` | [V] |
 | Internal 301s (`_redirects`) | e.g. `/index.html` → `/` 301 on the custom domain | [V] (sample) |
 | Cookies, storage, third parties | No `Set-Cookie` on any response; no storage; 0 third-party requests; no Cloudflare beacon or email obfuscation injected | [V] |
@@ -118,7 +124,7 @@ for the legacy sites; their `techpi.eu` "no DNS" finding is **superseded** by th
 | Brand naming | Consistent (TechPi; "TECHPI" as the typographic header name by design). No variants found | [V] |
 | Placeholders, overreaching claims | None found (scan for placeholder text and superlative/guarantee/award/percentage wording, EN and EL) | [V] |
 | External links | Only 8 client websites (case studies) | [V] |
-| **Untranslated Greek lists** | On `/el/work`, **10 rows show English lists**: the "Τι περιλαμβάνει" highlights of Saloon, Physio, Project4You, Rantevo.gr and the disciplines of the 6 earlier-work projects (e.g. "Online booking", "Graphic design"). Greek translations exist in `src/content/projects.el.ts`, but `toGreek()` in `src/content/projects.ts` (≈ line 771) only applies `highlights`/`disciplines` to projects **without** a case study, and every project now has one. Live on production. Fix F2 | [V] |
+| **Untranslated Greek lists** (**fixed on `phase-2a-greek-work-lists`, pending merge**) | On `/el/work`, **10 rows show English lists**: the "Τι περιλαμβάνει" highlights of Saloon, Physio, Project4You, Rantevo.gr and the disciplines of the 6 earlier-work projects (e.g. "Online booking", "Graphic design"). Greek translations exist in `src/content/projects.el.ts`, but `toGreek()` in `src/content/projects.ts` (≈ line 771) only applies `highlights`/`disciplines` to projects **without** a case study, and every project now has one. Live on production. Fix F2 | [V] |
 | Meta titles/descriptions | All unique; 9 case-study titles are 66–71 characters (may be truncated in results); `/work/saloon` description 179 characters | [V] |
 | Legal links | No Privacy or Cookie link anywhere (pages do not exist yet) | [V] |
 | Image accessibility | Case-study screenshots have descriptive alt text in both languages; decorative thumbnails use empty `alt` | [V] |
@@ -131,7 +137,28 @@ for the legacy sites; their `techpi.eu` "no DNS" finding is **superseded** by th
   `PUBLIC_ALLOW_INDEXING=true` and the production branch, e.g. in `astro.config.mjs` read `process.env.WORKERS_CI_BRANCH` (injected by Workers Builds) and
   only allow indexing when it is `main`; keep local isolated test builds possible with an explicit override. Update
   `docs/production/seo.md` §8 and the SEO validator.
-- **F2. Greek highlights and disciplines.** In `toGreek()`, add `highlights` and `disciplines` (with `required(…)`) to the
+- **F1, Phase 2A review: not implemented.** Findings:
+  - Indexing is controlled at one point, `src/layouts/BaseLayout.astro`: a page is indexable only when the build sees
+    `PUBLIC_ALLOW_INDEXING === 'true'`, the page is a content page and is not flagged `noindex`; 404 pages never are.
+    Nothing else reads the variable.
+  - Preview and `*.workers.dev` URLs are protected independently of the build: Cloudflare sends `X-Robots-Tag: noindex`
+    on preview URLs, and `public/_headers` sends it for every three-label `*.workers.dev` host, on 200 and 404 responses
+    (re-verified 2026-10-13 on the production workers.dev host and a branch preview).
+  - Cloudflare documents `WORKERS_CI_BRANCH` as a default build variable holding the branch of the push event, and also
+    says default variables "can be overridden". Its actual value in this Worker's production and preview builds (and
+    for retried or manually started builds) has **not** been verified: there is no build-log or dashboard access here.
+  - F1 adds a condition, so it can only make pages *less* indexable. Its risk is the opposite failure: if the production
+    build does not see `WORKERS_CI_BRANCH=main`, the launch build silently stays `noindex`. Given the two header-level
+    protections, the extra safety for previews is small.
+  - Recommended, in order: (1) set `PUBLIC_ALLOW_INDEXING` on the **production trigger only** and confirm both triggers
+    (checklist P1-8); (2) if F1 is still wanted, first record `WORKERS_CI` and `WORKERS_CI_BRANCH` from one production
+    and one preview build (for example by temporarily echoing them in the build command, an owner dashboard change), then
+    implement it as: indexable only if `PUBLIC_ALLOW_INDEXING === 'true'` **and not** (`WORKERS_CI === '1'` and
+    `WORKERS_CI_BRANCH !== 'main'`). Local isolated test builds (no `WORKERS_CI`) keep working unchanged; run the
+    production, preview, local and indexing-enabled test matrix before merging; (3) on launch day, verify live that
+    content pages have no robots meta and previews keep `X-Robots-Tag: noindex`.
+- **F2. Greek highlights and disciplines** (**implemented in Phase 2A**, `phase-2a-greek-work-lists`: two lines in the case-study branch of
+  `toGreek()`; verified: only `/el/work` changes, 22 strings in 10 rows; new check `scripts/content/validate.mjs`). In `toGreek()`, add `highlights` and `disciplines` (with `required(…)`) to the
   case-study branch as in the non-case-study branch. Expected effect: only `/el/work` changes (10 lists become Greek);
   verify with a body diff of all 50 pages against `main`.
 - **F3 (optional).** Shorten the 9 case-study titles over 65 characters during the Greek/English editorial review.
@@ -150,14 +177,14 @@ configuration, dependency or output change: the build is byte-identical before a
 | Rank | Blocker | Why it blocks | Owner / dependency |
 |---|---|---|---|
 | **B1** | Legal entity details; Privacy and Cookies pages (EN/EL) | Required before public launch; also destinations of legacy privacy redirects | Owner inputs L1–L10 (`LEGAL_CONTENT_DRAFTS.md`), legal review, then an implementation PR |
-| **B2** | HTTP → HTTPS on the `techpi.eu` apex; then HSTS | Plain-HTTP access serves pages unencrypted; indexing could pick up `http://` URLs | Owner: Cloudflare "Always Use HTTPS" on the `techpi.eu` zone (or a redirect rule); HSTS later |
-| **B3** | Greek translation bug on `/el/work` (F2) | Visible English text on a Greek page | Approve fix F2 |
+| B2 | HSTS on `techpi.eu` (HTTP → HTTPS **done**: owner-enabled, verified 301) | Without HSTS a first plain-HTTP request can still be intercepted before the redirect; not a launch blocker on its own | Owner: after about a week of HTTPS-only (checklist P2-3) |
+| **B3** | Greek translation bug on `/el/work` (F2) | **Fixed on `phase-2a-greek-work-lists`** (Draft PR); resolved once merged and deployed | Owner: review and merge |
 | **B4** | Native-speaker Greek editorial review (24 Greek content pages now; 26 once the Greek Privacy and Cookies pages exist) | Launch blocker 8 | Owner / reviewer |
 | **B5** | Rights confirmations: client screenshots, Logotherapia imagery, third-party logos in screenshots | Launch blockers 10 and the rights checklist | Owner |
 | **B6** | Analytics decision | Determines the cookie policy and monitoring | Owner (`ANALYTICS_RECOMMENDATION.md`) |
 | **B7** | Email authentication verified (SPF, DKIM, DMARC pass with alignment) | Deliverability of replies to enquiries | Owner test (checklist P1-3) |
 | **B8** | Search Console Domain property for `techpi.eu`; legacy property access; data exports | Needed to launch and to migrate signals | Owner (`SEARCH_CONSOLE_SETUP.md`) |
-| B9 | Branch-scoped indexing guard (F1) | Optional defence in depth; no known fault. Previews are already protected by `X-Robots-Tag`, and per-trigger variables can keep the switch off previews if configured that way (not inspected) | Approve F1 (optional) |
+| B9 | Branch-scoped indexing guard (F1) | Optional defence in depth; no known fault. Previews are already protected by `X-Robots-Tag`, and per-trigger variables can keep the switch off previews if configured that way (not inspected) | Reviewed in Phase 2A: not implemented; prerequisites in section 4 (F1) |
 | B10 | DNSSEC on `techpi.eu` (and `techpi.gr`) | Hardening, not a hard blocker | Owner (Cloudflare one-click + DS at Pointer) |
 | B11 | Training-crawler policy (launch blocker 12) | Owner decision; current allow-all is valid | Owner |
 | — | Legacy redirects, Change of Address, `proposal.techpi.eu` | After launch, separate phases | `migration-audit/*`, Decision A |

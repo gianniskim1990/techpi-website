@@ -142,6 +142,18 @@ added, it should only restate the About page and link the sitemap.
 `noindex` in every build. Set it only for the production build, only at launch, never for previews (launch
 blocker 14). It is not set anywhere today.
 
+How previews stay out of search (reviewed in Phase 2A, 2026-10-13):
+
+- The meta switch above is decided at build time. Workers Builds supports build variables per trigger (production and
+  preview), so the variable belongs on the **production trigger only**. How this Worker's triggers are configured has
+  not been inspected yet (`docs/launch/TECHPI_LAUNCH_CHECKLIST.md` P1-8).
+- Independently of the build, preview and `*.workers.dev` URLs send `X-Robots-Tag: noindex` (Cloudflare on preview
+  URLs; `public/_headers` for every three-label `*.workers.dev` host). Verified live on 200 and 404 responses.
+- A branch-scoped code guard (F1, using Workers Builds' `WORKERS_CI_BRANCH`) was reviewed and **not implemented**: the
+  variable's value in this Worker's builds is not verified, and a wrong value would make the launch build stay
+  `noindex`. Design and prerequisites: `docs/launch/TECHPI_LAUNCH_STATUS.md`, section 4. Local isolated test builds
+  (`PUBLIC_ALLOW_INDEXING=true` into a separate output directory, then `--indexable` validation) are unchanged.
+
 Tested in Phase 4 with an isolated local build into a separate output directory (never deployed): **18 indexable
 pages, 2 noindex**, no preview or development URL anywhere. The normal build afterwards: 20 of 20 `noindex`.
 
