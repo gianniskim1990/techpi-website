@@ -6,7 +6,8 @@ architecture and the locked crawler policy (its section 6.3); where the two diff
 
 ## 1. What every page carries
 
-48 content pages (24 routes in English and Greek: six pages and 18 case studies) and two 404 pages.
+52 content pages (26 routes in English and Greek: six pages, the Privacy and Cookies pages, and 18 case studies) and
+two 404 pages. (48 content pages before Phase 2B added the legal pages.)
 
 | Item | Content pages | 404 pages |
 |---|---|---|
@@ -110,7 +111,7 @@ published on the Contact page (`launch-blockers.md`, section 1).
 ## 6. Sitemap
 
 `/sitemap.xml`, generated at build time by `src/pages/sitemap.xml.ts` from the same route map and case-study list as
-the pages: **exactly 48 URLs**, absolute, canonical form. No 404, redirect source, slash variant or preview URL.
+the pages: **exactly 52 URLs** (48 before Phase 2B), absolute, canonical form. No 404, redirect source, slash variant or preview URL.
 **No `<lastmod>`**: the site has no real modification dates, and an invented one is worse than none. No hreflang in
 the sitemap: the pages carry it.
 
@@ -138,7 +139,7 @@ added, it should only restate the About page and link the sitemap.
 ## 8. The indexing switch
 
 `PUBLIC_ALLOW_INDEXING=true` at build time is the only switch. Without it, every page carries
-`noindex, nofollow`. With it, the 48 content pages carry no robots tag and are indexable; the two 404 pages stay
+`noindex, nofollow`. With it, the 52 content pages carry no robots tag and are indexable; the two 404 pages stay
 `noindex` in every build. Set it only for the production build, only at launch, never for previews (launch
 blocker 14). It is not set anywhere today.
 
@@ -172,7 +173,7 @@ run it with `--dist <dir>`, like the validators below. Verified on 2026-10-13 wi
 About 1,140 checks: per page the title, description, `lang`, one `h1`, robots, canonical, hreflang and reciprocity,
 x-default, every Open Graph and Twitter field, that the image exists, valid JSON-LD with the expected nodes,
 `@id`s on the production origin, resolved references, forbidden types and properties, no development or preview
-origin in the head, unique titles and descriptions; then the 404s, the set of built pages, the sitemap (48 URLs, no
+origin in the head, unique titles and descriptions; then the 404s, the set of built pages, the sitemap (52 URLs, no
 `lastmod`), `robots.txt` (no Disallow, no agent rules, sitemap line) and the image files. It exits 1 on any failure.
 The expected route list is written out in the script, independently of the route map, so an accidental route change
 is caught.

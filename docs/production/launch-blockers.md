@@ -70,9 +70,9 @@ Each of these must be resolved, or consciously accepted, before indexing is enab
 
 | # | Blocker | Needs | Affects |
 |---|---|---|---|
-| 1 | Legal entity details | Legal name, registered address, registration and VAT numbers | Footer legal line, Privacy and Cookies pages, Organization schema |
-| 2 | Privacy and Cookies pages | Item 1, and the tracking decision | Footer links, consent handling |
-| 3 | Tracking and analytics decision | Choice of product, or a decision to use none | Privacy, cookies, whether a consent banner is needed |
+| 1 | ~~Legal entity details~~ | **Confirmed 2026-10-13:** Ioannis Kimoundris (Ιωάννης Κιμούντρης), Greek sole proprietorship (ατομική επιχείρηση), Χρ. Μπρωκούμη 30, Ξάνθη; TechPi is the brand, not a separate company. GEMI, VAT and postal code not supplied and not published | Footer legal line, Privacy page (`src/content/site.ts`, `operatorFacts`) |
+| 2 | Privacy and Cookies pages | **Implemented on the Phase 2B Draft PR** (`/privacy`, `/cookies`, `/el/privacy`, `/el/cookies`; footer links on every page). Resolved once the owner approves the wording and the PR is merged. No external legal review, by the owner's decision | Footer links |
+| 3 | ~~Tracking and analytics decision~~ | **Decided 2026-10-13:** Google Search Console only. No GA4, Meta Pixel, advertising trackers or profiling, so no consent banner | Privacy, cookies |
 | 4 | ~~Self-hosted Commissioner~~ | **Resolved in Phase 3G.2** (below) | |
 | 5 | ~~Final identity and favicon~~ | **Resolved in Phase 3G.2** (below). The flat vector master is no longer a blocker | |
 | 6 | ~~Open Graph metadata, social images and the structured-data logo~~ | **Resolved in Phase 4** (below) | |

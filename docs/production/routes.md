@@ -18,6 +18,10 @@ English is the default language and has no prefix. Greek lives under `/el/`. Slu
 | Contact | `/contact` | `/el/contact` |
 | Privacy | `/privacy` | `/el/privacy` |
 | Cookies | `/cookies` | `/el/cookies` |
+
+Privacy and Cookies are in the route map (`pages` in `src/i18n/routes.ts`) since Phase 2B, so canonical, hreflang, the
+sitemap and the language switch include them. They are not in `navPages` (header and main footer navigation): they are
+linked from the footer's legal line only (`legalPages`).
 | Not found | `404` | Greek `404` under `/el/` |
 
 Case studies at launch (revised in Phase 3C.2). The portfolio comes from the public pigiota314 portfolio, audited in `docs/content/portfolio-migration.md`. The earlier cAIrelink and SOWISE+ routes were never built, launched or indexed, so they are removed from the plan with no redirects.
@@ -55,6 +59,7 @@ Notes:
 |---|---|
 | `/`, `/work`, `/capabilities`, `/eu-projects`, `/about`, `/contact` | 200 |
 | `/el/`, `/el/work`, `/el/capabilities`, `/el/eu-projects`, `/el/about`, `/el/contact` | 200 |
+| `/privacy`, `/cookies`, `/el/privacy`, `/el/cookies` (Phase 2B, Wrangler 2026-10-13) | 200; their `/…/` and `….html` variants 301 to the canonical form (explicit rules in `public/_redirects`) |
 | `/work/`, `/el/work/` | 301 to `/work`, `/el/work` |
 | `/work.html`, `/index.html`, `/el/work.html`, `/el/index.html` | 301 to the canonical form |
 | `/el` | 301 to `/el/` |

@@ -1,8 +1,17 @@
 # Legal content drafts: Privacy Policy and Cookies Policy (EN / EL)
 
-Status: **REVIEW DRAFTS, NOT FOR PUBLICATION.** Prepared 2026-10-13 for owner and legal review. This is not legal
-advice. Nothing here is published on the website, and the drafts must not be published while any `[OWNER INPUT]` or
-`[LEGAL REVIEW]` marker remains.
+Status: **superseded by the implemented pages (Phase 2B).** The published text lives in `src/content/legal.ts` and is
+rendered at `/privacy`, `/cookies`, `/el/privacy` and `/el/cookies`. The drafts below are kept as the record of how
+the text was derived; do not publish them.
+
+What changed from these drafts, from the owner's confirmed decisions of 2026-10-13: controller Ioannis Kimoundris, Greek
+sole proprietorship, Χρ. Μπρωκούμη 30, Ξάνθη (L1–L3); retention 12 months for enquiries that do not lead to work
+(L4); Outlook Classic over IMAP/SMTP, so no Microsoft processor (L5); Cloudflare Free with Bot Fight Mode off, so
+`cf_clearance` is the example of a possible security cookie (L6); no contract or DPA is claimed, transfers are described
+as Cloudflare states them (L7); no external legal review, by the owner's decision (L8); Search Console only (L10). No
+GEMI, VAT or postal code is published.
+
+Original status: review drafts prepared 2026-10-13 for owner review. Not legal advice.
 
 Note: this repository is public. Do not write private information (personal home address, ID numbers) into this file;
 complete the final texts in a private document and add only the approved public wording to the site.

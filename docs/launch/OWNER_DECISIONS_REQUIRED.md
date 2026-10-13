@@ -21,13 +21,13 @@ schedules, contracts) through a private channel and record only the approved pub
 
 | # | Question | Unblocks |
 |---|---|---|
-| O1 | Legal name, legal form, registered business address, GEMI and VAT numbers (if applicable) | Privacy/Cookies pages, footer legal line, Organization schema |
-| O2 | Privacy contact (proposed `info@techpi.eu`) | Privacy page |
-| O3 | Retention periods for enquiries and client correspondence | Privacy page §6 |
-| O4 | Does Outlook sync `info@techpi.eu` through a Microsoft account, or is it a direct IMAP/SMTP client of the Pointer server? | Processor list in the Privacy page |
-| O5 | Cloudflare: is Bot Fight Mode, a WAF challenge or any feature that sets `__cf_bm`/`cf_clearance` enabled for `techpi.eu`? | Cookies page §2 |
-| O6 | Has the Cloudflare Data Processing Addendum been accepted; Pointer's data processing terms? | Privacy page §7 |
-| O7 | Who performs the legal review of the Privacy and Cookies texts? | Publishing the legal pages |
+| ✓ O1 | Legal name, legal form, registered address: **confirmed 2026-10-13** (Ioannis Kimoundris, Greek sole proprietorship, Χρ. Μπρωκούμη 30, Ξάνθη). GEMI and VAT numbers, postal code: not supplied, not published | Done |
+| ✓ O2 | Privacy contact: **info@techpi.eu** (confirmed) | Done |
+| ✓ O3 | Retention: **12 months after the most recent communication** for enquiries and quotation requests that do not lead to work; client records per statutory requirements (periods not stated) | Done (an operational duty: checklist P0-12) |
+| ✓ O4 | Email client: **Outlook Classic over IMAP/SMTP** (not New Outlook) and Roundcube webmail; mailbox hosted by Pointer.gr cPanel. Microsoft is not listed as a provider | Done |
+| ✓ O5 | Cloudflare security (owner's settings export, 2026-10-13): Free plan; Bot Fight Mode **off**; AI Labyrinth off; Browser Integrity Check **on**; Managed Ruleset active; HTTP DDoS protection active; Email Address Obfuscation shown as enabled; Continuous Script Monitoring off. Cookies Policy written accordingly (`cf_clearance` possible when a security check is shown; never claimed as always present) | Done |
+| ✓ O6 | Contracts (Cloudflare DPA, Pointer terms): **not verified**, so the pages claim no contract; transfers are described as Cloudflare states them in its own privacy policy | Done (no claim made) |
+| ✓ O7 | Legal review: the owner has decided **not** to commission an external lawyer review at this stage. Not a development blocker; the texts do not claim lawyer approval | Done |
 
 ### Website and content
 
@@ -42,11 +42,23 @@ schedules, contracts) through a private channel and record only the approved pub
 | O14 | Contact method beyond email and phone (a form?) | Launch blocker 13; would change Privacy and CSP |
 | O15 | Optional: shorten 9 case-study titles over 65 characters | SEO polish |
 
+### Phase 2B: points for the owner's review of the legal pages (Draft PR)
+
+| # | Question | Why it matters |
+|---|---|---|
+| L1 | Read and approve the final wording of the four pages on the Draft PR preview | They will be published at merge |
+| L2 | Both policies say Google Search Console **is** used. Set it up before merging, or ask for the sentence to change | Accuracy at publication |
+| L3 | The Privacy Policy says "we do not transfer your personal data outside the EEA ourselves" (only Cloudflare's processing is described). Confirm this is true for how you work (for example no non-EEA tools or staff handling enquiries) | Accuracy |
+| L4 | The pages name no GEMI or VAT number. If you want them published (some Greek sole proprietors show them on their websites), supply them | Completeness; not required to publish the pages |
+| L5 | Pointer.gr is named by its brand name only; its legal entity name was not supplied. Add it only if you want it shown | Precision |
+| L6 | Legal bases are stated as Article 6(1)(b), (c) and (f) GDPR, with no consent-based processing. This is the standard reading for this kind of site, but it has not been reviewed by a lawyer (your decision) | Awareness |
+| L7 | Cloudflare's dashboard shows Email Address Obfuscation enabled, but live pages (served by the Worker) show no rewriting. If Cloudflare ever began rewriting `mailto:` links, its decode script would be blocked by the site's Content Security Policy. Re-check `/contact` and the legal pages after deploy; turning the feature off is optional | Email links keep working |
+
 ### Analytics, search and crawling
 
 | # | Question | Unblocks |
 |---|---|---|
-| O16 | Analytics: A (Search Console only, recommended), B (cookieless analytics) or C (GA4 with consent banner) | Cookies page, monitoring |
+| ✓ O16 | Analytics: **Google Search Console only** (no GA4, no Meta Pixel, no advertising trackers, no profiling, no other analytics) | Done |
 | O17 | Which Google account owns Search Console; second owner; access to the `pigiota314.eu` and `pigiota314.gr` properties | P0-10, Change of Address |
 | O18 | Training-crawler policy for `robots.txt` (allow all, or block specific AI training agents) | Launch blocker 12 |
 | O19 | Launch date / explicit authorisation to enable indexing | P2 |

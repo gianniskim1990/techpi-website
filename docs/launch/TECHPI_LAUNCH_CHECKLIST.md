@@ -4,7 +4,7 @@ Prepared 2026-10-13. Ordered by priority. **Nothing in this list has been execut
 "done (verified)". Owners: **Owner** = business owner; **Dev** = implementation PR (Claude Code or developer, after
 approval); **Legal** = legal reviewer; **Reviewer** = native Greek editor.
 
-Status keys: ☐ open · ☑ done (verified) · ◐ partly done.
+Status keys: ☐ open · ☑ done (verified) · ◐ partly done · **▣ implemented on a Draft PR** (not merged, not deployed: done only after merge and a production check).
 
 ---
 
@@ -15,20 +15,22 @@ Status keys: ☐ open · ☑ done (verified) · ◐ partly done.
 | ☑ P0-1 | `techpi.eu` on Cloudflare, Worker connected, HTTPS certificate | Owner | — | Done (verified 2026-10-13): 50 pages live, identical to `main`, certificate valid to 2027-01-11 |
 | ☑ P0-2 | `www.techpi.eu` → apex 301; `techpi.gr` → `/el/` 301 | Owner | — | Done (verified): 301s for HTTP and HTTPS, paths preserved |
 | ☑ P0-3 | **Force HTTPS on the `techpi.eu` apex** (Cloudflare → `techpi.eu` → SSL/TLS → Edge Certificates → **Always Use HTTPS**: On) | Owner | — | Done: owner-enabled; verified 2026-10-13: `http://techpi.eu/work` → **301** → `https://techpi.eu/work` (path and query kept) |
-| ☐ P0-4 | Legal entity details (name, form, address, GEMI/VAT if applicable) | Owner | — | Values supplied privately for `LEGAL_CONTENT_DRAFTS.md` L1–L3 |
-| ☐ P0-5 | Privacy and Cookies policy text approved, EN and EL | Owner, Legal | P0-4, analytics decision (P1-1) | Every `[OWNER INPUT]` / `[LEGAL REVIEW]` marker resolved |
-| ☐ P0-6 | Publish `/privacy`, `/cookies`, `/el/privacy`, `/el/cookies` and footer links | Dev | P0-5 | Build: sitemap 52 URLs, hreflang pairs, validators updated and passing; footer links on all pages in both languages |
+| ☑ P0-4 | Legal entity details | Owner | — | Done (owner-confirmed 2026-10-13): Ioannis Kimoundris / Ιωάννης Κιμούντρης, Greek sole proprietorship (ατομική επιχείρηση), registered address Χρ. Μπρωκούμη 30, Ξάνθη (30 Chr. Brokoumi Street, Xanthi), privacy contact info@techpi.eu, approved for publication. VAT, GEMI and postal code: not supplied and not published |
+| ◐ P0-5 | Privacy and Cookies policy text, EN and EL | Owner | P0-4 ✓, analytics decision ✓ | Written from the confirmed facts (`src/content/legal.ts`). The owner has decided **not** to commission an external legal review; the texts are not lawyer-approved and do not claim to be. Remaining: the owner reads and approves the final wording on the Draft PR preview (`OWNER_DECISIONS_REQUIRED.md` §Phase 2B) |
+| ▣ P0-6 | Publish `/privacy`, `/cookies`, `/el/privacy`, `/el/cookies` and footer links | Dev | P0-5 | Implemented on the Phase 2B Draft PR (branch `phase-2b-legal-pages`): 54 pages, sitemap 52 URLs, reciprocal hreflang, footer legal links on every page, 301s for slash and `.html` variants, `scripts/content/validate-legal.mjs` in `npm run build`. Done when merged and verified on production |
 | ◐ P0-7 | Fix Greek lists on `/el/work` (fix F2 in `TECHPI_LAUNCH_STATUS.md`) | Dev | Owner approval | Implemented on `phase-2a-greek-work-lists` (Draft PR): only `/el/work` changes (22 strings, 10 rows), the other 109 output files are identical; `node scripts/content/validate.mjs` passes and now runs inside `npm run build`. Done when merged and deployed |
-| ☐ P0-8 | Greek editorial review of all **26 Greek pages**: the 24 existing content pages (6 page types + 18 case studies) plus the new Greek Privacy and Cookies pages | Reviewer | P0-6, P0-7 | Reviewer sign-off; corrections merged |
+| ☐ P0-8 | Greek editorial review of all **26 Greek pages**: the 24 existing content pages (6 page types + 18 case studies) plus the Greek Privacy and Cookies pages (now written, on the Phase 2B Draft PR) | Reviewer | P0-6, P0-7 | Reviewer sign-off; corrections merged |
 | ☐ P0-9 | Rights and approvals checklist below completed | Owner | — | Every row marked confirmed or the asset removed/replaced by decision |
 | ☐ P0-10 | Search Console: `techpi.eu` Domain property verified; legacy property access confirmed; historical data exported | Owner | — | `SEARCH_CONSOLE_SETUP.md` §1–3 done; exports stored privately |
 | ☐ P0-11 | Final pre-launch QA on the release candidate | Dev | P0-6 … P0-8 | check/build/SEO/security/asset/content validators pass; live = build; browser sweep clean |
+| ☐ P0-12 | **Operate the 12-month enquiry retention** stated in the Privacy Policy: at least every few months, delete or anonymise enquiry emails (and local Outlook copies) more than 12 months after the last communication when no collaboration followed, unless a legal obligation or justified need applies | Owner | P0-6 merged | A recurring reminder exists; first review done |
+| ☐ P0-13 | Before the legal pages go live (merge = production deploy): set up Search Console (P0-10), because both policies state that it is used; or ask for that sentence to be adjusted | Owner | — | GSC property verified, or wording changed |
 
 ## P1 — strongly recommended before launch
 
 | # | Item | Owner | Depends on | Verification |
 |---|---|---|---|---|
-| ☐ P1-1 | Analytics decision (recommended: Search Console only at launch) | Owner | `ANALYTICS_RECOMMENDATION.md` | Decision recorded in `OWNER_DECISIONS_REQUIRED.md` |
+| ☑ P1-1 | Analytics decision | Owner | — | Decided 2026-10-13: **Google Search Console only** at launch. No GA4, no Meta Pixel, no advertising trackers, no profiling, no other analytics |
 | ☐ P1-2 | Optional defence in depth: branch-scoped indexing guard (fix F1), so the code itself keeps preview builds `noindex` whatever the trigger variables are | Dev | Owner approval | Isolated test: indexable only for a `main` build with the variable set; preview build stays `noindex`. **Phase 2A: reviewed, not implemented** until `WORKERS_CI`/`WORKERS_CI_BRANCH` are confirmed in this Worker's builds (`TECHPI_LAUNCH_STATUS.md` §4, F1) |
 | ☐ P1-3 | **Email authentication test.** From `info@techpi.eu` send a message to a Gmail address → Gmail → ⋮ → **Show original**: SPF **PASS**, DKIM **PASS** (`d=techpi.eu`), DMARC **PASS**. Repeat from Outlook if it sends through a different server. Optionally use a mail-tester service | Owner | — | Screenshot or header excerpt with three PASS results and `header.d=techpi.eu` |
 | ☐ P1-4 | DMARC reporting: add `rua=mailto:<address>` to `_dmarc.techpi.eu` (keep `p=none` for 2–4 weeks, then consider `quarantine`) | Owner | P1-3 | Aggregate reports arrive; all legitimate sources aligned |
