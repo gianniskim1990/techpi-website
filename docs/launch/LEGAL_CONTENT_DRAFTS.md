@@ -1,7 +1,7 @@
 # Legal content drafts: Privacy Policy and Cookies Policy (EN / EL)
 
-Status: **superseded by the implemented pages (Phase 2B).** The published text lives in `src/content/legal.ts` and is
-rendered at `/privacy`, `/cookies`, `/el/privacy` and `/el/cookies`. The drafts below are kept as the record of how
+Status: **superseded by the implemented pages (Phase 2B, Draft PR #21; not merged).** The final proposed text lives in `src/content/legal.ts` and is
+rendered at `/privacy`, `/cookies`, `/el/privacy` and `/el/cookies` in the preview. The drafts below record how
 the text was derived; do not publish them.
 
 What changed from these drafts, from the owner's confirmed decisions of 2026-10-13: controller Ioannis Kimoundris, Greek
@@ -9,7 +9,7 @@ sole proprietorship, Χρ. Μπρωκούμη 30, Ξάνθη (L1–L3); retentio
 (L4); Outlook Classic over IMAP/SMTP, so no Microsoft processor (L5); Cloudflare Free with Bot Fight Mode off, so
 `cf_clearance` is the example of a possible security cookie (L6); no contract or DPA is claimed, transfers are described
 as Cloudflare states them (L7); no external legal review, by the owner's decision (L8); Search Console only (L10). No
-GEMI, VAT or postal code is published yet; the GEMI and VAT numbers are legally required and pending from the owner
+GEMI or VAT identifier is published in production yet: the owner has supplied and approved both, and they are staged on Draft PR #21. Postal code remains unsupplied
 (OWNER_DECISIONS_REQUIRED.md L4).
 
 Original status: review drafts prepared 2026-10-13 for owner review. Not legal advice.
@@ -33,7 +33,7 @@ complete the final texts in a private document and add only the approved public 
 | Cloudflare **may set strictly necessary security cookies** (`__cf_bm`, `cf_clearance`) if bot protection or a challenge is active | Cloudflare documentation; **none observed** in live tests | **Owner to confirm in the dashboard** (Bot Fight Mode / Security settings) |
 | Email `info@techpi.eu` hosted on the owner's **Pointer.gr cPanel server** (`mail.techpi.eu`, `mail2.techpi.eu`) | Owner confirmation; MX records verified | **Verified (DNS) + owner** |
 | Mail also accessed through **Roundcube** (on the cPanel server) and **Outlook** | Owner confirmation | **Owner to confirm** whether Outlook is a desktop IMAP client only or a Microsoft account that syncs mail through Microsoft's cloud (that would add Microsoft as a processor) |
-| Legal entity, address, VAT, registration | Not confirmed (launch blocker 1) | **Missing** |
+| Legal entity, address, VAT, registration | Historical at draft creation; all identity, address, VAT and GEMI items have since been owner-confirmed and staged in Draft PR #21 | **Resolved in PR; awaiting owner preview approval and merge** |
 
 Processing activities this site actually involves: (1) people writing to `info@techpi.eu` or calling the published
 number; (2) technical data processed by Cloudflare to deliver and protect the website (IP address, request data,
