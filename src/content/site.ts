@@ -34,11 +34,12 @@ export const operatorFacts = {
  * - the trade register and registration number, and the VAT identification number: Presidential Decree 131/2003,
  *   Article 4(1)(d) and (g) (the e-Commerce Directive 2000/31/EC, Article 5).
  *
- * Both are null until the owner supplies them and approves their publication. While null, nothing is rendered: no
- * label, no placeholder. Once set, they appear in the "Who we are" section of the Privacy pages (EN and EL), and the
- * legal validator checks their format. Enter only the real numbers, exactly as registered; never example values.
+ * Both identifiers have been supplied and expressly approved by the owner for publication.
+ * They appear in the "Who we are" section of the Privacy pages (EN and EL).
+ * GEMI number supplied with public registry link: https://publicity.businessportal.gr/company/151838746000
+ * Check both values and their presence in the built Privacy pages; do not use example values.
  */
 export const registrationFacts: { gemi: string | null; vat: string | null } = {
-  gemi: null,
+  gemi: '151838746000',
   vat: '142536715',
 };
