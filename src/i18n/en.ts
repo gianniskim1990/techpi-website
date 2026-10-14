@@ -23,6 +23,8 @@ export const en = {
   footer: {
     label: 'Footer',
     note: 'TechPi — the evolution of pigiota314.',
+    /** The accessible name of the footer's legal links. */
+    legalLabel: 'Legal',
   },
   language: {
     label: 'Language',
@@ -37,6 +39,8 @@ export const en = {
     euProjects: { heading: 'EU Projects' },
     about: { heading: 'About' },
     contact: { heading: 'Contact' },
+    privacy: { heading: 'Privacy Policy' },
+    cookies: { heading: 'Cookies Policy' },
   },
   notFound: {
     title: 'Page not found | TechPi',

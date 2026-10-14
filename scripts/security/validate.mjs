@@ -42,8 +42,8 @@ walk('');
 // --- Pages ---
 const sha = (s) => `'sha256-${crypto.createHash('sha256').update(s).digest('base64')}'`;
 const pages = files.filter((f) => f.endsWith('.html'));
-// 6 pages and 18 case studies in each of two languages (48), and a 404 per language.
-check(pages.length === 50, 'build', `${pages.length} pages, expected 50`);
+// 8 pages (6 + Privacy and Cookies) and 18 case studies in each of two languages (52), and a 404 per language.
+check(pages.length === 54, 'build', `${pages.length} pages, expected 54`);
 for (const f of pages) {
   const html = fs.readFileSync(path.join(DIST, f), 'utf8');
   const metas = [...html.matchAll(/<meta http-equiv="content-security-policy" content="([^"]*)">/g)].map((m) => m[1]);

@@ -12,6 +12,10 @@
 /about.html /about  301
 /contact/ /contact  301
 /contact.html /contact  301
+/privacy/ /privacy  301
+/privacy.html /privacy  301
+/cookies/ /cookies  301
+/cookies.html /cookies  301
 /el/work/ /el/work  301
 /el/work.html /el/work  301
 /el/capabilities/ /el/capabilities  301
@@ -22,6 +26,10 @@
 /el/about.html /el/about  301
 /el/contact/ /el/contact  301
 /el/contact.html /el/contact  301
+/el/privacy/ /el/privacy  301
+/el/privacy.html /el/privacy  301
+/el/cookies/ /el/cookies  301
+/el/cookies.html /el/cookies  301
 /work/rocketeer/ /work/rocketeer  301
 /work/rocketeer.html /work/rocketeer  301
 /work/armans/ /work/armans  301

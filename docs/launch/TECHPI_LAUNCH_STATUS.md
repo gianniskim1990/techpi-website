@@ -9,6 +9,16 @@ only; what Phase 2A changed is listed in section 5.
 only); the Greek `/el/work` lists are fixed on the branch (F2, pending merge); the indexing hardening F1 was reviewed
 and deliberately not implemented (section 4).
 
+**Phase 2B update (2026-10-13, branch `phase-2b-legal-pages`, Draft PR, not merged):** the four legal pages
+(`/privacy`, `/cookies`, `/el/privacy`, `/el/cookies`) and the footer's legal line are implemented from the owner's
+confirmed decisions (operator, address, retention, analytics, Cloudflare settings, no external legal review). The site
+now builds 54 pages (52 content URLs, sitemap 52). Still `noindex`.
+
+**Phase 2B corrections (2026-10-13, same Draft PR):** Search Console is described as intended, not as in use (the
+Domain property is not yet verified); the absolute statement that TechPi itself makes no transfers outside the EEA is
+removed; the Privacy pages are prepared to show the GEMI and VAT numbers, which Greek law requires on the website
+(Law 4919/2022, Art. 22(3)(d); P.D. 131/2003, Art. 4(1)(d) and (g)). Both identifiers have now been supplied and expressly approved for public display; they are staged on Draft PR #21. The PR stays in draft pending final owner preview review and merge approval (OWNER_DECISIONS_REQUIRED.md L1).
+
 Confidence legend: **[V] Verified** in this audit (live request, DNS query, build or browser test) · **[O] Owner-confirmed**
 (not independently verifiable from outside) · **[D] Needs dashboard access** (Cloudflare, Pointer, cPanel, Search Console:
 not inspected) · **[A] Assumption**.
@@ -182,18 +192,27 @@ and after (verified then). This statement is historical and does not apply to la
 | The check runs as part of `npm run build` (`"build": "astro build && node scripts/content/validate.mjs"`), so a Greek translation regression fails the build, and with it the Cloudflare build, before deploy | `package.json` | None on the output. Verified on 2026-10-13 with a throwaway branch (deleted afterwards, no PR, nothing deployed): the same code with the old `toGreek()` restored failed its Cloudflare build, while the fixed code passed it, so the Workers Builds build command does run `npm run build`. The dashboard setting itself was not inspected |
 | HTTPS redirect recorded; indexing review (F1 not implemented) | `docs/launch/*`, `docs/production/*` | None |
 
+**Phase 2B (Draft PR, not merged): the legal pages.**
+
+| Change | Files | Effect on the generated site |
+|---|---|---|
+| Privacy and Cookies routes in the route map, EN and EL | `src/i18n/routes.ts`, `src/pages/{privacy,cookies}.astro`, `src/pages/el/{privacy,cookies}.astro`, `src/components/pages/LegalPage.astro`, `src/content/legal.ts`, `src/content/seo.ts`, `src/i18n/{en,el}.ts`, `src/content/site.ts` | 4 new pages; sitemap 48 → 52 |
+| Footer legal line (operator, two policy links) | `src/components/Footer.astro` | Every page's footer; the shared stylesheet; every page's CSP meta gains one style hash (added only) |
+| 301s for the new pages' slash and `.html` variants | `public/_redirects` | 8 rules |
+| Validators | `scripts/seo/validate.mjs`, `scripts/security/validate.mjs`, `scripts/content/validate-legal.mjs` (new, in `npm run build`), `package.json` | None |
+
 ---
 
 ## 6. Remaining blockers, ranked
 
 | Rank | Blocker | Why it blocks | Owner / dependency |
 |---|---|---|---|
-| **B1** | Legal entity details; Privacy and Cookies pages (EN/EL) | Required before public launch; also destinations of legacy privacy redirects | Owner inputs L1–L10 (`LEGAL_CONTENT_DRAFTS.md`), legal review, then an implementation PR |
+| **B1** | Privacy and Cookies pages (EN/EL) | **Implemented on the Phase 2B Draft PR (branch `phase-2b-legal-pages`)**; both GEMI and VAT numbers now staged and approved (L4, checklist P0-14); remaining: owner approval of final wording (no external legal review, by decision), then merge | Owner: review (OWNER_DECISIONS_REQUIRED.md L1, L4–L7), then merge |
 | B2 | HSTS on `techpi.eu` (HTTP → HTTPS **done**: owner-enabled, verified 301) | Without HSTS a first plain-HTTP request can still be intercepted before the redirect; not a launch blocker on its own | Owner: after about a week of HTTPS-only (checklist P2-3) |
 | **B3** | Greek translation bug on `/el/work` (F2) | **Fixed on `phase-2a-greek-work-lists`** (Draft PR); resolved once merged and deployed | Owner: review and merge |
 | **B4** | Native-speaker Greek editorial review (24 Greek content pages now; 26 once the Greek Privacy and Cookies pages exist) | Launch blocker 8 | Owner / reviewer |
 | **B5** | Rights confirmations: client screenshots, Logotherapia imagery, third-party logos in screenshots | Launch blockers 10 and the rights checklist | Owner |
-| **B6** | Analytics decision | Determines the cookie policy and monitoring | Owner (`ANALYTICS_RECOMMENDATION.md`) |
+| ~~B6~~ | Analytics decision | **Decided:** Search Console only, no GA4, no Meta Pixel, no trackers | Done |
 | **B7** | Email authentication verified (SPF, DKIM, DMARC pass with alignment) | Deliverability of replies to enquiries | Owner test (checklist P1-3) |
 | **B8** | Search Console Domain property for `techpi.eu`; legacy property access; data exports | Needed to launch and to migrate signals | Owner (`SEARCH_CONSOLE_SETUP.md`) |
 | B9 | Branch-scoped indexing guard (F1) | Optional defence in depth; no known fault. Previews are already protected by `X-Robots-Tag`, and per-trigger variables can keep the switch off previews if configured that way (not inspected) | Reviewed in Phase 2A: not implemented; prerequisites in section 4 (F1) |

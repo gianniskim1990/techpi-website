@@ -24,6 +24,7 @@ export const el: Dictionary = {
     // The accessible name of the footer navigation (not visible).
     label: 'Δευτερεύουσα πλοήγηση',
     note: 'TechPi — η εξέλιξη της pigiota314.',
+    legalLabel: 'Νομικές πληροφορίες',
   },
   language: {
     label: 'Γλώσσα',
@@ -37,6 +38,8 @@ export const el: Dictionary = {
     euProjects: { heading: 'Ευρωπαϊκά έργα' },
     about: { heading: 'Εταιρεία' },
     contact: { heading: 'Επικοινωνία' },
+    privacy: { heading: 'Πολιτική Απορρήτου' },
+    cookies: { heading: 'Πολιτική Cookies' },
   },
   notFound: {
     title: 'Η σελίδα δεν βρέθηκε | TechPi',

@@ -26,7 +26,7 @@ const CASE_STUDIES = [
   'level-up-education-app',
   'level-up-education', 'itsallaboutxanthi', 'local-xanthi', 'juliette-coffee-roasters', 'apox-fc', 'emoved',
 ];
-const CONTENT = ['/', '/work', ...CASE_STUDIES.map((slug) => `/work/${slug}`), '/capabilities', '/eu-projects', '/about', '/contact'];
+const CONTENT = ['/', '/work', ...CASE_STUDIES.map((slug) => `/work/${slug}`), '/capabilities', '/eu-projects', '/about', '/contact', '/privacy', '/cookies'];
 const ROUTES = [...CONTENT.map((p) => ({ path: p, locale: 'en' })), ...CONTENT.map((p) => ({ path: p === '/' ? '/el/' : `/el${p}`, locale: 'el' }))];
 const NOT_FOUND = [
   { file: '404.html', locale: 'en' },

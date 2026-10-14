@@ -8,7 +8,7 @@ import { defaultLocale, locales, type Locale } from './locales';
  * and the two language roots keep theirs ("/" and "/el/").
  * Never derive these from Astro.url: with build.format "preserve" it contains ".html".
  */
-export const pages = ['home', 'work', 'capabilities', 'euProjects', 'about', 'contact'] as const;
+export const pages = ['home', 'work', 'capabilities', 'euProjects', 'about', 'contact', 'privacy', 'cookies'] as const;
 export type PageKey = (typeof pages)[number];
 
 /**
@@ -18,6 +18,9 @@ export type PageKey = (typeof pages)[number];
  */
 export const navPages = ['work', 'capabilities', 'euProjects', 'about', 'contact'] as const satisfies readonly PageKey[];
 
+/** The legal pages, linked from the footer's legal line only, never from the main navigation. */
+export const legalPages = ['privacy', 'cookies'] as const satisfies readonly PageKey[];
+
 /** Slugs are Latin and identical in both languages. */
 const slugs: Record<Exclude<PageKey, 'home'>, string> = {
   work: 'work',
@@ -25,6 +28,8 @@ const slugs: Record<Exclude<PageKey, 'home'>, string> = {
   euProjects: 'eu-projects',
   about: 'about',
   contact: 'contact',
+  privacy: 'privacy',
+  cookies: 'cookies',
 };
 
 const prefix = (locale: Locale): string => (locale === defaultLocale ? '' : `/${locale}`);
