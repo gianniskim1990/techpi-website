@@ -17,7 +17,7 @@ The site stays `noindex` until every blocker below that applies is resolved and 
 - The values live in `src/content/site.ts` (email, phone) and `src/content/pages.en.ts` / `pages.el.ts` (labels and location). They appear on the Contact pages only. They are deliberately **not** in the footer, the homepage, page titles or descriptions. Since Phase 4 they are also in the Organization structured data (email, phone, and the town as locality and country only), as the Phase 4 brief specified (`seo.md`, section 5).
 - The Contact lead is kept: "Tell us about the problem you need to solve." / "Πείτε μας ποιο πρόβλημα θέλετε να λύσετε."
 
-Contact facts, registered business address and operator identity are now owner-approved (Phase 2B Draft PR); the VAT/ΑΦΜ is staged on the draft PR. GEMI registration number remains pending from the accountant. Unconfirmed WhatsApp, social profiles, office hours, map and booking links must not be invented or shown.
+Contact facts, registered business address, legal operator identity, and both VAT and GEMI identifiers are owner-approved and staged on the Phase 2B Draft PR. Unconfirmed WhatsApp, social profiles, office hours, map and booking links must not be invented or shown.
 
 ## 2. Must never be displayed
 
@@ -70,7 +70,7 @@ Each of these must be resolved, or consciously accepted, before indexing is enab
 
 | # | Blocker | Needs | Affects |
 |---|---|---|---|
-| 1 | Legal entity details | **Confirmed 2026-10-13:** Ioannis Kimoundris (Ιωάννης Κιμούντρης), Greek sole proprietorship (ατομική επιχείρηση), Χρ. Μπρωκούμη 30, Ξάνθη; TechPi is the brand, not a separate company; registered in GEMI and subject to VAT. **VAT/ΑΦΜ supplied, owner-approved and staged on Draft PR #21; still open: the GEMI number**, which must be shown on the website (Law 4919/2022, Art. 22(3)(d); P.D. 131/2003, Art. 4(1)(d) and (g)); the Privacy pages are prepared to show them (`registrationFacts`). Postal code not supplied and not published | Privacy page (`src/content/site.ts`, `operatorFacts`, `registrationFacts`), footer legal line |
+| 1 | Legal entity details | **Resolved on Draft PR #21, pending merge/production verification:** Ioannis Kimoundris (Ιωάννης Κιμούντρης), Greek sole proprietorship, Χρ. Μπρωκούμη 30, Ξάνθη. Owner supplied and approved GEMI and VAT/ΑΦΜ identifiers, now set in `registrationFacts` and to be displayed on both Privacy pages. Verify preview and production once approved. Postal code not supplied. | Privacy page and footer legal line |
 | 2 | Privacy and Cookies pages | **Implemented on the Phase 2B Draft PR** (`/privacy`, `/cookies`, `/el/privacy`, `/el/cookies`; footer links on every page). Resolved once the owner approves the wording and the PR is merged. No external legal review, by the owner's decision | Footer links |
 | 3 | ~~Tracking and analytics decision~~ | **Decided 2026-10-13:** Google Search Console only. No GA4, Meta Pixel, advertising trackers or profiling, so no consent banner | Privacy, cookies |
 | 4 | ~~Self-hosted Commissioner~~ | **Resolved in Phase 3G.2** (below) | |
