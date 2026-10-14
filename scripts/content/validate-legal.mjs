@@ -13,8 +13,8 @@
 // 5. Retired claims stay out: Search Console described as already in use (it is not yet set up), and the absolute
 //    statement that TechPi itself makes no transfers outside the EEA. Once Search Console is verified, update the
 //    wording in src/content/legal.ts and remove its patterns here in the same change.
-// 6. GEMI and VAT numbers (site.ts, registrationFacts): a label is never rendered without a real-looking number
-//    (digits only, optionally with the EL prefix for VAT), so an empty or placeholder value fails the build.
+// 6. Both GEMI and VAT numbers must be present on each Privacy page, with plausible numeric formats (GEMI
+//    9-12 digits; VAT 9 digits, optionally EL-prefixed). An absent number or placeholder must fail the build.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -82,6 +82,11 @@ for (const p of PAGES) {
     const vat = /ΑΦΜ/.test(m[1]);
     const ok = (vat ? /^(EL)?\d{9}$/ : /^\d{9,12}$/).test(m[2]) && !/^(EL)?(\d)\2+$/.test(m[2]);
     check(ok, `${p.file}: ${m[1]} rendered without a valid number: "${m[2]}"`);
+  }
+  if (p.street) {
+    const identifiers = [...t.matchAll(REG)];
+    check(identifiers.some((m) => !/ΑΦΜ/.test(m[1])), `${p.file}: GEMI number missing from Privacy page`);
+    check(identifiers.some((m) => /ΑΦΜ/.test(m[1])), `${p.file}: VAT number missing from Privacy page`);
   }
 }
 
