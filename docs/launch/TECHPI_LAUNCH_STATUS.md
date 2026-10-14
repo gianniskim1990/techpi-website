@@ -17,8 +17,7 @@ now builds 54 pages (52 content URLs, sitemap 52). Still `noindex`.
 **Phase 2B corrections (2026-10-13, same Draft PR):** Search Console is described as intended, not as in use (the
 Domain property is not yet verified); the absolute statement that TechPi itself makes no transfers outside the EEA is
 removed; the Privacy pages are prepared to show the GEMI and VAT numbers, which Greek law requires on the website
-(Law 4919/2022, Art. 22(3)(d); P.D. 131/2003, Art. 4(1)(d) and (g)). The numbers have not been supplied, so nothing
-is shown and **the PR stays in draft until the owner supplies and approves them** (OWNER_DECISIONS_REQUIRED.md L4).
+(Law 4919/2022, Art. 22(3)(d); P.D. 131/2003, Art. 4(1)(d) and (g)). Both identifiers have now been supplied and expressly approved for public display; they are staged on Draft PR #21. The PR stays in draft pending final owner preview review and merge approval (OWNER_DECISIONS_REQUIRED.md L1).
 
 Confidence legend: **[V] Verified** in this audit (live request, DNS query, build or browser test) · **[O] Owner-confirmed**
 (not independently verifiable from outside) · **[D] Needs dashboard access** (Cloudflare, Pointer, cPanel, Search Console:
@@ -208,7 +207,7 @@ and after (verified then). This statement is historical and does not apply to la
 
 | Rank | Blocker | Why it blocks | Owner / dependency |
 |---|---|---|---|
-| **B1** | Privacy and Cookies pages (EN/EL) | **Implemented on the Phase 2B Draft PR (branch `phase-2b-legal-pages`)**; remaining: the GEMI and VAT numbers (legally required; L4, checklist P0-14), owner approval of the wording (no external legal review, by decision), then merge | Owner: supply the numbers, review (OWNER_DECISIONS_REQUIRED.md L1, L4–L7), then merge |
+| **B1** | Privacy and Cookies pages (EN/EL) | **Implemented on the Phase 2B Draft PR (branch `phase-2b-legal-pages`)**; both GEMI and VAT numbers now staged and approved (L4, checklist P0-14); remaining: owner approval of final wording (no external legal review, by decision), then merge | Owner: review (OWNER_DECISIONS_REQUIRED.md L1, L4–L7), then merge |
 | B2 | HSTS on `techpi.eu` (HTTP → HTTPS **done**: owner-enabled, verified 301) | Without HSTS a first plain-HTTP request can still be intercepted before the redirect; not a launch blocker on its own | Owner: after about a week of HTTPS-only (checklist P2-3) |
 | **B3** | Greek translation bug on `/el/work` (F2) | **Fixed on `phase-2a-greek-work-lists`** (Draft PR); resolved once merged and deployed | Owner: review and merge |
 | **B4** | Native-speaker Greek editorial review (24 Greek content pages now; 26 once the Greek Privacy and Cookies pages exist) | Launch blocker 8 | Owner / reviewer |
