@@ -59,7 +59,7 @@ schedules, contracts) through a private channel and record only the approved pub
 | # | Question | Unblocks |
 |---|---|---|
 | ✓ O16 | Analytics: **Google Search Console only** (no GA4, no Meta Pixel, no advertising trackers, no profiling, no other analytics) | Done |
-| O17 | Which Google account owns Search Console; second owner; access to the `pigiota314.eu` and `pigiota314.gr` properties | P0-10, Change of Address |
+| ◐ O17 | Which Google account owns Search Console; second owner; access to the `pigiota314.eu` and `pigiota314.gr` properties. **2026-10-16:** `techpi.eu` Domain property verified and both legacy properties' data exported by the owner (P0-10 done); a second owner is still worth adding | Change of Address |
 | O18 | Training-crawler policy for `robots.txt` (allow all, or block specific AI training agents) | Launch blocker 12 |
 | O19 | Launch date / explicit authorisation to enable indexing | P2 |
 
@@ -80,7 +80,7 @@ schedules, contracts) through a private channel and record only the approved pub
 
 | # | Question | Unblocks |
 |---|---|---|
-| O28 | Insights: create `/insights` with the seven `pigiota314.eu` articles (recommended) or redirect them to `/eu-projects` | Legacy redirects (D2) |
+| ✓ O28 | Insights: **decided 2026-10-16: create `/insights` with the seven `pigiota314.eu` articles, slugs kept, English only.** Built on the Phase 2D Draft PR (`docs/content/insights-migration.md`). Greek versions: a later phase | Legacy redirects (D2) |
 | O29 | `pigiota314.eu/` → `/eu-projects` (recommended) or `/` (D1) | Legacy redirects |
 | O30 | Retired services and 13 historical portfolio items: 301 to `/el/work` or 410 (D3, D4); local and product landings (D5, D6); long-tail fallback (D7); Street Box = Rocketeer (D8) | Legacy redirects |
 | O31 | Move the legacy DNS zones to Cloudflare to run the redirects (copying every mail and subdomain record unchanged) | Legacy redirects |

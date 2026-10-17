@@ -1,7 +1,7 @@
 ---
 import { getDictionary } from '../i18n';
 import type { Locale } from '../i18n/locales';
-import { homePathFor, navPages, pathFor, type PageKey } from '../i18n/routes';
+import { homePathFor, navPages, pathFor, type LanguageFallback, type PageKey, type Translations } from '../i18n/routes';
 import BrandSymbol from './BrandSymbol.astro';
 import LanguageSwitch from './LanguageSwitch.astro';
 import headerSymbol from '../assets/brand/techpi-symbol-blue.png';
@@ -10,10 +10,12 @@ interface Props {
   locale: Locale;
   page?: PageKey;
   /** Exact language counterparts for a page outside the route map, passed to the language switch. */
-  languageHrefs?: Record<Locale, string>;
+  languageHrefs?: Translations;
+  /** Where the switch sends a language the page does not exist in (a one-language page). */
+  languageFallbacks?: LanguageFallback;
 }
 
-const { locale, page, languageHrefs } = Astro.props;
+const { locale, page, languageHrefs, languageFallbacks } = Astro.props;
 const t = getDictionary(locale);
 
 // The visible navigation, in order, from the route map. The desktop links and the mobile dialog share it.
@@ -47,7 +49,7 @@ const items = navPages;
     </ul>
   </nav>
   <div class="util">
-    <LanguageSwitch locale={locale} page={page} hrefs={languageHrefs} />
+    <LanguageSwitch locale={locale} page={page} hrefs={languageHrefs} fallbacks={languageFallbacks} />
     <a class="menu menu-link" href="#footer">{t.nav.menu}</a>
     <button class="menu menu-button" type="button" aria-expanded="false" aria-controls="site-menu" data-menu-open>
       {t.nav.menu}
@@ -76,7 +78,7 @@ const items = navPages;
       }
     </ul>
   </nav>
-  <div class="menu-lang"><LanguageSwitch locale={locale} page={page} hrefs={languageHrefs} /></div>
+  <div class="menu-lang"><LanguageSwitch locale={locale} page={page} hrefs={languageHrefs} fallbacks={languageFallbacks} /></div>
 </dialog>
 
 <script>

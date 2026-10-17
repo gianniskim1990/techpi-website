@@ -19,6 +19,13 @@ Domain property is not yet verified); the absolute statement that TechPi itself 
 removed; the Privacy pages are prepared to show the GEMI and VAT numbers, which Greek law requires on the website
 (Law 4919/2022, Art. 22(3)(d); P.D. 131/2003, Art. 4(1)(d) and (g)). Both identifiers have now been supplied and expressly approved for public display; they are staged on Draft PR #21. The PR stays in draft pending final owner preview review and merge approval (OWNER_DECISIONS_REQUIRED.md L1).
 
+**Phase 2D update (2026-10-16, branch `feat/insights-migration`, Draft PR, not merged):** the owner approved the
+Insights migration (decision D2 / O28). `/insights` and the seven `pigiota314.eu` articles are built at their original
+slugs, **English only** (no Greek version, no hreflang, an honest language-switch fallback: `routes.md` §4.1). The site
+now builds **62 pages: 60 content URLs, sitemap 60**, two 404s. Still `noindex`; no legacy redirect, sitemap submission
+or Change of Address. Details: `docs/content/insights-migration.md`. **Search Console (owner, 2026-10-16):** the
+`techpi.eu` Domain property is verified and historical data has been exported from both legacy properties (B8, P0-10).
+
 Confidence legend: **[V] Verified** in this audit (live request, DNS query, build or browser test) · **[O] Owner-confirmed**
 (not independently verifiable from outside) · **[D] Needs dashboard access** (Cloudflare, Pointer, cPanel, Search Console:
 not inspected) · **[A] Assumption**.
@@ -201,6 +208,17 @@ and after (verified then). This statement is historical and does not apply to la
 | 301s for the new pages' slash and `.html` variants | `public/_redirects` | 8 rules |
 | Validators | `scripts/seo/validate.mjs`, `scripts/security/validate.mjs`, `scripts/content/validate-legal.mjs` (new, in `npm run build`), `package.json` | None |
 
+**Phase 2D (Draft PR, not merged): Insights, English only.**
+
+| Change | Files | Effect on the generated site |
+|---|---|---|
+| Insights index and seven articles | `src/content/insights.ts`, `src/components/pages/InsightsIndexPage.astro`, `InsightPage.astro`, `src/pages/insights.astro`, `src/pages/insights/[slug].astro` | 8 new pages; sitemap 52 → 60; 62 HTML files |
+| One-language mechanism: real versions only drive hreflang, `og:locale:alternate` and the language switch, with a labelled fallback for a missing language | `src/i18n/routes.ts`, `src/layouts/BaseLayout.astro`, `src/components/{LanguageSwitch,Header,Footer}.astro`, `src/i18n/{en,el}.ts` | None on bilingual pages' metadata (verified against `main`) |
+| `Article` JSON-LD and `og:type article` on the articles only | `src/seo/schema.ts`, `src/layouts/BaseLayout.astro` | Articles only |
+| English footer link to Insights; "Further reading" pointer on the English EU Projects page | `src/components/Footer.astro`, `src/components/pages/EuProjectsPage.astro` | English pages' footers; `/eu-projects`. Greek pages: only the shared CSP style-hash list gains one hash |
+| 301s for the slash and `.html` variants of the eight URLs | `public/_redirects` | 16 rules |
+| Validators | `scripts/seo/validate.mjs`, `scripts/security/validate.mjs` (62 pages), `scripts/content/validate-insights.mjs` (new, in `npm run build`), `package.json` | None |
+
 ---
 
 ## 6. Remaining blockers, ranked
@@ -214,7 +232,7 @@ and after (verified then). This statement is historical and does not apply to la
 | **B5** | Rights confirmations: client screenshots, Logotherapia imagery, third-party logos in screenshots | Launch blockers 10 and the rights checklist | Owner |
 | ~~B6~~ | Analytics decision | **Decided:** Search Console only, no GA4, no Meta Pixel, no trackers | Done |
 | **B7** | Email authentication verified (SPF, DKIM, DMARC pass with alignment) | Deliverability of replies to enquiries | Owner test (checklist P1-3) |
-| **B8** | Search Console Domain property for `techpi.eu`; legacy property access; data exports | Needed to launch and to migrate signals | Owner (`SEARCH_CONSOLE_SETUP.md`) |
+| ~~B8~~ | Search Console Domain property for `techpi.eu`; legacy property access; data exports | **Done (owner, 2026-10-16):** Domain property verified; historical data exported from both legacy properties. Sitemap submission and Change of Address remain launch-day / post-launch steps, not done | Owner |
 | B9 | Branch-scoped indexing guard (F1) | Optional defence in depth; no known fault. Previews are already protected by `X-Robots-Tag`, and per-trigger variables can keep the switch off previews if configured that way (not inspected) | Reviewed in Phase 2A: not implemented; prerequisites in section 4 (F1) |
 | B10 | DNSSEC on `techpi.eu` (and `techpi.gr`) | Hardening, not a hard blocker | Owner (Cloudflare one-click + DS at Pointer) |
 | B11 | Training-crawler policy (launch blocker 12) | Owner decision; current allow-all is valid | Owner |

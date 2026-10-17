@@ -8,7 +8,7 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { getDictionary } from '../i18n';
 import { defaultLocale, locales, type Locale } from '../i18n/locales';
-import { alternatesFor, pathFor, type PageKey } from '../i18n/routes';
+import { alternatesFor, pathFor, type LanguageFallback, type PageKey, type Translations } from '../i18n/routes';
 import { ogLocale, socialImage } from '../content/seo';
 import { breadcrumb, organization, serialise, webPage, website, type WebPageType } from '../seo/schema';
 import { getImage } from 'astro:assets';
@@ -23,10 +23,16 @@ interface Props {
   description?: string;
   kind?: 'page' | 'notfound';
   /**
-   * Canonical paths in every language, for a page that is not in the route map (a case study). They drive the
-   * canonical URL, reciprocal hreflang and the language switch. Pass `page` too, so the header marks the right section.
+   * Canonical paths of the language versions that really exist, for a page that is not in the route map (a case
+   * study: both languages; an Insights page: English only). They drive the canonical URL, hreflang and the language
+   * switch. With one version only, the page has no hreflang and no og:locale:alternate (routes.md, section 4.1).
+   * Pass `page` too where the page belongs to a section of the route map, so the header marks it.
    */
-  paths?: Record<Locale, string>;
+  paths?: Translations;
+  /** For a one-language page: where the language switch sends each missing language instead (labelled, never a translation). */
+  languageFallbacks?: LanguageFallback;
+  /** Sharing type: `article` for an Insights article, with its verified first-publication date. */
+  og?: { type: 'article'; published: string; section: string };
   /** Full-bleed pages (the homepage) lay out their own sections. Shell pages get the padded container. */
   bleed?: boolean;
   /** Keeps this page out of search indexes even in a build that enables indexing. For unpublished route shells. */
@@ -54,6 +60,8 @@ const {
   pageType = 'WebPage',
   trail,
   schema = [],
+  languageFallbacks,
+  og,
 } = Astro.props;
 const t = getDictionary(locale);
 
@@ -64,12 +72,18 @@ if (!site) throw new Error('astro.config.mjs must set `site` so canonical URLs c
 const absolute = (path: string) => new URL(path, site).href;
 
 const hasRoute = kind === 'page' && page !== undefined;
-const canonical = paths ? absolute(paths[locale]) : hasRoute ? absolute(pathFor(page, locale)) : undefined;
+if (paths && !paths[locale]) throw new Error(`\`paths\` has no ${locale} version of the page being built.`);
+// The languages this page really exists in. hreflang is only for pages with more than one: a one-language page names
+// no alternate, and never a page in another language that is not its translation.
+const versions = paths ? locales.filter((l) => paths[l] !== undefined) : locales;
+const canonical = paths ? absolute(paths[locale]!) : hasRoute ? absolute(pathFor(page, locale)) : undefined;
 const alternates = paths
-  ? [
-      ...locales.map((l) => ({ hreflang: l, href: absolute(paths[l]) })),
-      { hreflang: 'x-default', href: absolute(paths[defaultLocale]) },
-    ]
+  ? versions.length > 1
+    ? [
+        ...versions.map((l) => ({ hreflang: l, href: absolute(paths[l]!) })),
+        ...(paths[defaultLocale] ? [{ hreflang: 'x-default', href: absolute(paths[defaultLocale]) }] : []),
+      ]
+    : []
   : hasRoute
     ? alternatesFor(page).map((a) => ({ hreflang: a.hreflang, href: absolute(a.path) }))
     : [];
@@ -81,7 +95,7 @@ const indexable = import.meta.env.PUBLIC_ALLOW_INDEXING === 'true' && kind === '
 // Sharing metadata and JSON-LD, for content pages only: a 404 has no URL of its own to share or describe.
 // Everything is absolute on the production origin and static: no client script reads or writes any of it.
 const ogImage = absolute(socialImage.path[locale]);
-const ogAlternates = locales.filter((l) => l !== locale).map((l) => ogLocale[l]);
+const ogAlternates = versions.filter((l) => l !== locale).map((l) => ogLocale[l]);
 const jsonLd = canonical
   ? serialise([
       organization(),
@@ -182,7 +196,9 @@ const introPreload = intro
     {
       canonical && (
         <>
-          <meta property="og:type" content="website" />
+          <meta property="og:type" content={og ? og.type : 'website'} />
+          {og && <meta property="article:published_time" content={og.published} />}
+          {og && <meta property="article:section" content={og.section} />}
           <meta property="og:site_name" content="TechPi" />
           <meta property="og:title" content={title} />
           {description && <meta property="og:description" content={description} />}
@@ -206,11 +222,17 @@ const introPreload = intro
   </head>
   <body>
     <a class="skip-link" href="#main">{t.skipLink}</a>
-    <Header locale={locale} page={hasRoute ? page : undefined} languageHrefs={paths} />
+    <Header locale={locale} page={hasRoute ? page : undefined} languageHrefs={paths} languageFallbacks={languageFallbacks} />
     <main id="main" tabindex="-1" class={bleed ? 'bleed' : undefined}>
       <slot />
     </main>
-    <Footer locale={locale} page={hasRoute ? page : undefined} languageHrefs={paths} />
+    <Footer
+      locale={locale}
+      page={hasRoute ? page : undefined}
+      languageHrefs={paths}
+      languageFallbacks={languageFallbacks}
+      currentPath={paths ? paths[locale] : undefined}
+    />
     <script>
       import '../scripts/motion';
     </script>

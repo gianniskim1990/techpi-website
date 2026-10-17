@@ -134,6 +134,14 @@ The guardrails from Phase 1 apply to the copy: Digital visibility is described i
 - No string is built by joining fragments. Word order differs between the languages.
 - Greek copy is written and curated by hand. There is no machine translation step anywhere in the build.
 
+### Insights (English only)
+
+`src/content/insights.ts` holds the seven migrated articles as typed data: legacy slug, topic, title, lead, the
+source's publication date (ISO and as written), sections (heading, paragraphs, an optional list), an optional note,
+related slugs and the page metadata, plus the legacy source URL (never rendered). Internal links in the copy use
+`[label](/path)` only. A related slug that does not exist fails the build. There is no Greek text and no CMS.
+Source capture, dates and every editorial change: `docs/content/insights-migration.md`.
+
 ## 7. What stays in code
 
 - The composition of each homepage section.

@@ -57,6 +57,30 @@ export function alternatesFor(page: PageKey): Alternate[] {
   return [...versions, { hreflang: 'x-default', path: pathFor(page, defaultLocale) }];
 }
 
+/**
+ * Content published in one language only (Insights, English). It has no counterpart in the other language, so it has
+ * no hreflang, is never listed under another locale and the language switch offers an honest fallback instead of a
+ * translation (`Translations` and `LanguageFallback` below; docs/production/routes.md, section 4.1).
+ */
+export const insightsLocale: Locale = 'en';
+
+/** The Insights index, or one article. English only, by decision (2026-10-16): no /el/insights exists. */
+export function insightsPath(slug?: string): string {
+  return slug ? `/insights/${slug}` : '/insights';
+}
+
+/**
+ * The language versions a page really has, by locale. A bilingual page has every locale; a one-language page has one.
+ * Only these produce hreflang links and language-switch targets.
+ */
+export type Translations = Partial<Record<Locale, string>>;
+
+/**
+ * For a page with no version in a locale: where the language switch should send a reader of that locale instead,
+ * and what to call it, in that locale. It is never presented as a translation (no hreflang, labelled as such).
+ */
+export type LanguageFallback = Partial<Record<Locale, { href: string; label: string }>>;
+
 /** The canonical path of a case study. Case studies are English-only until Phase 3D adds the Greek versions. */
 export function caseStudyPath(slug: string, locale: Locale = defaultLocale): string {
   return `${prefix(locale)}/work/${slug}`;

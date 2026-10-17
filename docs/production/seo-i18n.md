@@ -49,6 +49,9 @@ Because everything reads the same map, the language switch, the hreflang set and
 - **No machine translation anywhere in the build.** Greek is written and curated by hand, and reviewed by the client.
 - English defines the shape of the dictionary. A missing Greek key fails the build.
 - Standard pages must exist in both languages before launch.
+- **One exception, by decision (2026-10-16): Insights is English only.** One-language pages pass only the language
+  they exist in; they get no hreflang, no `og:locale:alternate`, and the language switch offers a labelled fallback
+  (the Greek EU Projects page), never a fake translation. Mechanism and navigation: `routes.md`, section 4.1.
 - Display statements store their own line breaks per language.
 - Greek uppercase labels rely on `lang="el"` so accents are handled by convention.
 - Layouts allow about 25% more text length for Greek, and Greek display sizes follow the rules set in the prototype.

@@ -1,0 +1,17 @@
+---
+import InsightPage from '../../components/pages/InsightPage.astro';
+import { insights, type Insight } from '../../content/insights';
+
+// English only: there is no /el/insights route (docs/production/routes.md, section 4.1).
+export function getStaticPaths() {
+  return insights.map((article) => ({ params: { slug: article.slug }, props: { article } }));
+}
+
+interface Props {
+  article: Insight;
+}
+
+const { article } = Astro.props;
+---
+
+<InsightPage article={article} />

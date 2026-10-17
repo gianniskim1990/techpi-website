@@ -1,34 +1,44 @@
 ---
 import { getDictionary } from '../i18n';
 import { locales, type Locale } from '../i18n/locales';
-import { homePathFor, pathFor, type PageKey } from '../i18n/routes';
+import { homePathFor, pathFor, type LanguageFallback, type PageKey, type Translations } from '../i18n/routes';
 
 interface Props {
   locale: Locale;
   /** The current page. Absent on a 404, where there is no equivalent page and the link goes to each home page. */
   page?: PageKey;
-  /** Exact counterparts for a page outside the route map (a case study). Takes precedence over `page`. */
-  hrefs?: Record<Locale, string>;
+  /** Exact counterparts for a page outside the route map (a case study, an article). Takes precedence over `page`. */
+  hrefs?: Translations;
+  /** For a locale `hrefs` lacks (a one-language page): an honestly labelled destination instead of a translation. */
+  fallbacks?: LanguageFallback;
 }
 
-const { locale, page, hrefs } = Astro.props;
+const { locale, page, hrefs, fallbacks } = Astro.props;
 const t = getDictionary(locale);
 ---
 
 {/* The accessible name starts with the visible text ("EN"), so voice-control users can say what they see (WCAG 2.5.3),
-    and then spells the language out. Language choice is always explicit. Plain links to the same page in the other language. No script, no redirect. */}
+    and then spells the language out. Language choice is always explicit. Plain links to the same page in the other language. No script, no redirect.
+    A page with no version in a language (Insights, English only) links that language to its fallback instead, and says
+    so, in that language, in the accessible name and the tooltip: it never presents the fallback as a translation. */}
 <ul class="language-switch" aria-label={t.language.label}>
   {
     locales.map((target) => {
-      const href = hrefs ? hrefs[target] : page ? pathFor(page, target) : homePathFor(target);
+      const exact = hrefs ? hrefs[target] : page ? pathFor(page, target) : homePathFor(target);
+      const fallback = exact === undefined ? fallbacks?.[target] : undefined;
+      if (exact === undefined && !fallback) throw new Error(`No ${target} version or fallback for this page.`);
+      const href = exact ?? fallback!.href;
       const label = t.language[target];
+      const note = fallback ? `${getDictionary(target).language.notTranslated}: ${fallback.label}` : undefined;
       return (
         <li>
           <a
             href={href}
             lang={target}
             hreflang={target}
-            aria-label={`${label.short}, ${label.name}`}
+            aria-label={note ? `${label.short}, ${label.name}. ${note}` : `${label.short}, ${label.name}`}
+            title={note}
+            data-fallback={fallback ? '' : undefined}
             aria-current={target === locale ? 'true' : undefined}>
             {label.short}
           </a>

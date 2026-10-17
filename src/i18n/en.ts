@@ -30,6 +30,8 @@ export const en = {
     label: 'Language',
     en: { short: 'EN', name: 'English' },
     el: { short: 'ΕΛ', name: 'Ελληνικά' },
+    /** Said, in this language, when a page has no version in it and the switch offers a fallback instead. */
+    notTranslated: 'This page is not available in English',
   },
   /** The short name of each page (accessible names, breadcrumbs). Titles and descriptions: src/content/seo.ts. */
   pages: {

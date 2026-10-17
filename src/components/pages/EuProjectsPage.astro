@@ -3,10 +3,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ClosingCTA from '../../components/secondary/ClosingCTA.astro';
 import PageIntro from '../../components/secondary/PageIntro.astro';
 import { euCopy } from '../../content/eu';
+import { insightsCopy } from '../../content/insights';
 import { pageMeta } from '../../content/seo';
 import { service } from '../../seo/schema';
 import type { Locale } from '../../i18n/locales';
-import { pathFor } from '../../i18n/routes';
+import { insightsLocale, insightsPath, pathFor } from '../../i18n/routes';
 
 interface Props {
   locale: Locale;
@@ -23,6 +24,8 @@ const services = [
   service(url, { id: 'eu-project-websites', name: c.websites.heading, description: c.websites.intro, locale }),
 ];
 const pad = (n: number) => String(n).padStart(2, '0');
+// Insights are English only, so only the English page points to them (docs/production/routes.md, section 4.1).
+const reading = locale === insightsLocale ? { ...insightsCopy.euPointer, href: insightsPath() } : undefined;
 ---
 
 {/* EU Projects: one specialist market within TechPi, told as technology: websites, platforms, applications,
@@ -218,6 +221,20 @@ const pad = (n: number) => String(n).padStart(2, '0');
     </div>
   </section>
 
+  {
+    reading && (
+      <aside class="reading s-paper" aria-labelledby="reading-h" data-reveal="fade">
+        <p class="meta-label" id="reading-h">{reading.label}</p>
+        <p class="reading-text">
+          {reading.text}{' '}
+          <a class="tlink" href={reading.href}>
+            {reading.link}
+          </a>
+        </p>
+      </aside>
+    )
+  }
+
   <ClosingCTA heading={c.closer.heading} text={c.closer.text} cta={c.closer.cta} href={contact} />
 </BaseLayout>
 
@@ -264,6 +281,30 @@ const pad = (n: number) => String(n).padStart(2, '0');
   }
 
   /* ---------- A Paper section: index, heading, lead, then its own body ---------- */
+  /* English only: a quiet pointer to the Insights articles, between the last section and the closing invitation. */
+  .reading {
+    margin: var(--space-block) var(--space-margin) 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+  }
+  .reading .meta-label {
+    grid-column: 1 / span 3;
+  }
+  .reading-text {
+    grid-column: 4 / span 7;
+    color: var(--sec-c);
+  }
+  @media (max-width: 760px) {
+    .reading {
+      display: block;
+    }
+    .reading-text {
+      margin-top: 8px;
+    }
+  }
   .sec {
     margin: var(--space-section) var(--space-margin) 0;
     display: grid;

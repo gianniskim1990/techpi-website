@@ -30,6 +30,7 @@ export const el: Dictionary = {
     label: 'Γλώσσα',
     en: { short: 'EN', name: 'English' },
     el: { short: 'ΕΛ', name: 'Ελληνικά' },
+    notTranslated: 'Η σελίδα δεν είναι διαθέσιμη στα ελληνικά',
   },
   pages: {
     home: { heading: 'Αρχική' },

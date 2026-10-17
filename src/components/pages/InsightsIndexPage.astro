@@ -1,0 +1,196 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ClosingCTA from '../secondary/ClosingCTA.astro';
+import PageIntro from '../secondary/PageIntro.astro';
+import { insights, insightsCopy, insightsIndex } from '../../content/insights';
+import { pagesCopy } from '../../content/copy';
+import { insightsLocale, insightsPath, pathFor } from '../../i18n/routes';
+
+// English only (routes.md, section 4.1): one version, no hreflang, and the language switch offers the Greek EU Projects
+// page, labelled as what it is, instead of a translation that does not exist.
+const locale = insightsLocale;
+const pages = pagesCopy[locale];
+const fallback = { el: { href: pathFor('euProjects', 'el'), label: 'Ευρωπαϊκά έργα' } };
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+{/* The Insights index: the secondary-page head (the h1, then the lead under a hairline), then the articles as a catalogue,
+    one ruled row each: number and date, topic, then the title and its excerpt. The title is the link; the whole row is
+    its target. No images, filters, search or script: there are seven articles. */}
+<BaseLayout
+  locale={locale}
+  title={insightsIndex.meta.title}
+  description={insightsIndex.meta.description}
+  paths={{ en: insightsPath() }}
+  languageFallbacks={fallback}
+  pageType="CollectionPage"
+  bleed
+>
+  <PageIntro heading={insightsIndex.heading} lead={insightsIndex.lead}>
+    <p class="lang-note" slot="after">
+      {insightsCopy.englishOnly}
+      <a class="tlink" href={fallback.el.href} lang="el" hreflang="el">{insightsCopy.greekFallback}</a>
+    </p>
+  </PageIntro>
+
+  <section class="list s-paper" aria-labelledby="articles-h">
+    <h2 id="articles-h" class="vh">{insightsIndex.listLabel}</h2>
+    <ol class="entries">
+      {
+        insights.map((a, i) => (
+          <li class="entry" data-reveal="fade">
+            <article aria-labelledby={`a-${a.slug}`}>
+              <p class="when">
+                <span class="num">{pad(i + 1)}</span>
+                <time datetime={a.published}>{a.publishedText}</time>
+              </p>
+              <p class="meta-label cat">{a.category}</p>
+              <div class="main">
+                <h3 id={`a-${a.slug}`}>
+                  <a class="title" href={insightsPath(a.slug)}>
+                    {a.title}
+                  </a>
+                </h3>
+                <p class="excerpt">{a.lead}</p>
+                <p class="more" aria-hidden="true">
+                  {insightsIndex.read}
+                  <span class="arr">→</span>
+                </p>
+              </div>
+            </article>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="eu" data-reveal="fade">
+      {insightsIndex.eu.text}:{' '}
+      <a class="tlink" href={pathFor('euProjects', locale)}>
+        {insightsIndex.eu.link}
+      </a>
+    </p>
+  </section>
+
+  <ClosingCTA heading={pages.closer.heading} cta={pages.closer.cta} href={pathFor('contact', locale)} />
+</BaseLayout>
+
+<style>
+  .lang-note {
+    margin-top: 20px;
+    font-size: var(--text-small);
+    color: var(--ter);
+  }
+  .lang-note a {
+    margin-left: 6px;
+    white-space: nowrap;
+  }
+
+  .list {
+    padding: clamp(64px, 7vw, 112px) var(--space-margin) 0;
+  }
+  .entries {
+    border-bottom: 1px solid var(--line);
+  }
+  .entry article {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    align-items: baseline;
+    padding: clamp(28px, 3vw, 44px) 0 clamp(32px, 3.4vw, 48px);
+    border-top: 1px solid var(--line);
+  }
+  .when {
+    grid-column: 1 / span 2;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: var(--text-small);
+    color: var(--ter);
+  }
+  .cat {
+    grid-column: 3 / span 2;
+  }
+  .main {
+    grid-column: 5 / span 7;
+  }
+  h3 {
+    font-size: var(--text-heading);
+    font-weight: var(--weight-display);
+    line-height: 1.18;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+  }
+  .title {
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-state);
+  }
+  /* The whole row is the target of its one link. */
+  .title::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .title:focus-visible {
+    outline: none;
+  }
+  .entry article:has(.title:focus-visible) {
+    outline: 2px solid var(--focus);
+    outline-offset: 4px;
+  }
+  .excerpt {
+    margin-top: 14px;
+    max-width: 58ch;
+    color: var(--sec-c);
+  }
+  .more {
+    margin-top: 18px;
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+  }
+  @media (hover: hover) {
+    .entry article:hover .title {
+      color: var(--link);
+    }
+    .entry article:hover .arr {
+      transform: translateX(5px);
+    }
+  }
+  .eu {
+    margin-top: clamp(40px, 4vw, 56px);
+    font-size: var(--text-small);
+    color: var(--sec-c);
+  }
+
+  @media (max-width: 1023px) {
+    .entry article {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .when {
+      grid-column: 1 / span 2;
+    }
+    .cat {
+      grid-column: 3 / -1;
+    }
+    .main {
+      grid-column: 3 / -1;
+      margin-top: 10px;
+    }
+  }
+  @media (max-width: 760px) {
+    .entry article {
+      display: block;
+    }
+    .when {
+      flex-direction: row;
+      gap: 14px;
+      align-items: baseline;
+    }
+    .cat {
+      margin-top: 6px;
+    }
+    .main {
+      margin-top: 12px;
+    }
+  }
+</style>
