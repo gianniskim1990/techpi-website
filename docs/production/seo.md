@@ -56,7 +56,9 @@ visible copy. The English homepage, which had no description, now has one (launc
   No query string, fragment, preview or development host ever appears.
 - Each content page lists itself and its counterpart (`en`, `el`) plus `x-default`, which points to the English page.
   Reciprocal by construction, and checked by the validator.
-- No automatic language redirect. Routing and the 35 redirects in `public/_redirects` are unchanged (all 301).
+- No automatic language redirect. `public/_redirects` holds only canonical-form redirects on `techpi.eu`, all 301
+  (119 since Phase 2E: every page's slash and `.html` variants, including all 18 case studies in both languages and
+  Insights; `routes.md`, section 1.1).
 
 ## 4. Open Graph and the Twitter card
 

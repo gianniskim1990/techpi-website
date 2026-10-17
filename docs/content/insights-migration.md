@@ -1,6 +1,7 @@
 # Insights migration: pigiota314.eu → techpi.eu
 
-Status: **implemented on a Draft PR (Phase 2D), not merged, not deployed, `noindex`.** Approved by the owner on
+Status: **published** (Phase 2D, PR #22, merged 2026-10-17 and live on techpi.eu), still **`noindex`** like the whole
+site. One post-migration clarification (Phase 2E, section 7). Approved by the owner on
 2026-10-16 (migration-audit decision D2 / owner decision O28: create `/insights` with the seven articles, keeping their
 slugs). English only; a Greek version is a separate, later phase. No legacy redirect is active.
 
@@ -69,12 +70,18 @@ rather than generic agency content") became the TechPi lead; the page title is "
 ## 4. Statements to verify (flagged, not changed)
 
 - Article 4: "WCAG 2.2 AA is the realistic target for most publicly funded project websites." Kept as the source's
-  recommendation. It is not a legal claim: the EU Web Accessibility Directive (2016/2102) applies to public sector
+  recommendation at migration; **clarified in Phase 2E** (section 7). It is not a legal claim: the EU Web Accessibility Directive (2016/2102) applies to public sector
   bodies and refers to EN 301 549, which currently references WCAG 2.1 AA; whether it applies to a given project
   website depends on who operates it. Do not strengthen the sentence into a legal requirement without checking.
 - Article 4's lead says "What WCAG 2.2 AA means in practice"; the body is short. Accurate, but a fuller treatment would
   be new content and needs approval.
 - Article 3: "the most downloaded items" assumes download counts are measured on the project site. Kept as advice.
+
+## 4a. Recorded source wording (unchanged evidence)
+
+Article 4, first section, as published on pigiota314.eu (read 2026-10-16): "Treat accessibility as part of the
+original specification, not as a remediation effort before review. WCAG 2.2 AA is the realistic target for most
+public-funded project websites." The Phase 2D migration kept the second sentence, with "publicly funded".
 
 ## 5. What was not done
 
@@ -91,3 +98,23 @@ rather than generic agency content") became the TechPi lead; the page title is "
 - English-only mechanism: `docs/production/routes.md`, section 4.1.
 - Structured data: `docs/production/seo.md`, section 5.
 - Validation: `scripts/content/validate-insights.mjs` (in `npm run build`), and `scripts/seo/validate.mjs`.
+
+## 7. Post-migration clarification (Phase 2E, 2026-10-17)
+
+Article 4 (`/insights/accessibility-considerations-for-project-websites`), first section, second sentence:
+
+- Before: "WCAG 2.2 AA is the realistic target for most publicly funded project websites."
+- After: "WCAG 2.2 Level AA is a useful accessibility target when planning a project website. The precise compliance
+  requirements depend on the organisation operating the site and any applicable legal or contractual obligations."
+
+Why: the earlier sentence could be read as a general requirement. WCAG 2.2 Level AA stays the recommended target
+(W3C recommends WCAG 2.2 for new work: https://www.w3.org/TR/WCAG22/), but the legal reference is narrower and moving:
+EN 301 549 v4.1.1 (published September 2026) adopts WCAG 2.2, while AccessibleEU reported on 7 September 2026 that it
+is not yet cited in the Official Journal, so v3.2.1 (based on WCAG 2.1 Level AA) remains the reference for the EAA
+and the Web Accessibility Directive
+(https://accessible-eu-centre.ec.europa.eu/content-corner/news/european-accessibility-standard-en-301-549-has-been-updated-2026-09-07_en,
+read 2026-10-17; the Official Journal itself was not checked). The article states no legal reference, so it does
+not need to follow that status; it only says that requirements depend on the operator and its obligations.
+
+Unchanged: slug, date (9 June 2025), headings, structure, lead, metadata, related articles, provenance line,
+English-only routing.

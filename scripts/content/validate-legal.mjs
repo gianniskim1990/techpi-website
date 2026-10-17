@@ -10,9 +10,12 @@
 //    address, a working mailto: link to the privacy contact, and a link to the other policy in the same language.
 // 3. Every built page carries both policy links in its footer, in its own language.
 // 4. The street address appears on the Privacy pages only (the footer shows the town, not the address).
-// 5. Retired claims stay out: Search Console described as already in use (it is not yet set up), and the absolute
-//    statement that TechPi itself makes no transfers outside the EEA. Once Search Console is verified, update the
-//    wording in src/content/legal.ts and remove its patterns here in the same change.
+// 5. Search Console is described as it is (owner-confirmed 2026-10-16): the techpi.eu Domain property is verified. Each
+//    page must carry its exact statement, in its language. Retired or unsupported claims stay out: the former
+//    prospective wording ("we intend to use"), a submitted sitemap, the site already being indexed, reports already
+//    generated, Google Analytics, Search Console identifying visitors, and the absolute statement that TechPi itself
+//    makes no transfers outside the EEA.
+// 7. All four pages show the same version date.
 // 6. Both GEMI and VAT numbers must be present on each Privacy page, with plausible numeric formats (GEMI
 //    9-12 digits; VAT 9 digits, optionally EL-prefixed). An absent number or placeholder must fail the build.
 import fs from 'node:fs';
@@ -27,21 +30,30 @@ let checks = 0;
 const failures = [];
 const check = (ok, msg) => { checks++; if (!ok) failures.push(msg); };
 
+// The verified-property statements (src/content/legal.ts). Privacy adds that Search Console does not identify visitors.
+const GSC_EN = 'The domain techpi.eu has been verified in Google Search Console, which we can use to review aggregated information about how the website performs in Google Search when data is available.';
+const GSC_EL = 'Ο τομέας techpi.eu έχει επαληθευτεί στο Google Search Console, το οποίο μπορούμε να χρησιμοποιούμε για να βλέπουμε συγκεντρωτικά στοιχεία για την απόδοση του ιστότοπου στην Αναζήτηση Google, όταν υπάρχουν διαθέσιμα δεδομένα.';
+const dates = new Set();
 const PAGES = [
-  { file: 'privacy.html', lang: 'en', h1: 'Privacy Policy', other: '/cookies', name: 'Ioannis Kimoundris', street: '30 Chr. Brokoumi Street' },
-  { file: 'cookies.html', lang: 'en', h1: 'Cookies Policy', other: '/privacy', name: 'Ioannis Kimoundris' },
+  { file: 'privacy.html', lang: 'en', h1: 'Privacy Policy', other: '/cookies', name: 'Ioannis Kimoundris', street: '30 Chr. Brokoumi Street', gsc: GSC_EN },
+  { file: 'cookies.html', lang: 'en', h1: 'Cookies Policy', other: '/privacy', name: 'Ioannis Kimoundris', gsc: GSC_EN },
   // Greek: the surname stem, which matches the nominative (Κιμούντρης) and the genitive/accusative (Κιμούντρη).
-  { file: 'el/privacy.html', lang: 'el', h1: 'Πολιτική Απορρήτου', other: '/el/cookies', name: 'Κιμούντρη', street: 'Χρ. Μπρωκούμη 30' },
-  { file: 'el/cookies.html', lang: 'el', h1: 'Πολιτική Cookies', other: '/el/privacy', name: 'Κιμούντρη' },
+  { file: 'el/privacy.html', lang: 'el', h1: 'Πολιτική Απορρήτου', other: '/el/cookies', name: 'Κιμούντρη', street: 'Χρ. Μπρωκούμη 30', gsc: GSC_EL },
+  { file: 'el/cookies.html', lang: 'el', h1: 'Πολιτική Cookies', other: '/el/privacy', name: 'Κιμούντρη', gsc: GSC_EL },
 ];
 const STREETS = ['30 Chr. Brokoumi Street', 'Χρ. Μπρωκούμη 30', 'Brokoumi', 'Μπρωκούμη'];
 const DRAFT = /\[OWNER|\[LEGAL|OWNER INPUT|LEGAL REVIEW|\bTODO\b|\bTBD\b|lorem ipsum|\{\{|\}\}|placeholder/i;
 const greek = /[Ͱ-Ͽἀ-῿]/;
 const RETIRED = [
-  /We (also )?use Google Search Console/i,
-  /Χρησιμοποιούμε (επίσης )?το Google Search Console/,
-  /verified through (our )?(DNS|domain settings)/i,
-  /Η επαλήθευσή του γίνεται/,
+  /intend to use Google Search Console/i,
+  /Σκοπεύουμε να χρησιμοποιήσουμε το Google Search Console/,
+  /sitemap[^.]*(has been|was|is) submitted/i,
+  /(already|is|has been) indexed (by|in) Google/i,
+  /ευρετηριασ|έχει υποβληθεί[^.]*sitemap|sitemap[^.]*έχει υποβληθεί/i,
+  /(we use|we have installed|uses) Google Analytics/i,
+  /Χρησιμοποιούμε (το )?Google Analytics/,
+  /Search Console[^.]*(identifies|tells us who)/i,
+  /Search Console[^.]*(reports show|has (shown|reported))/i,
   /do not transfer your personal data outside/i,
   /δεν διαβιβάζουμε τα προσωπικά σας δεδομένα εκτός/,
 ];
@@ -78,6 +90,8 @@ for (const p of PAGES) {
   check(body.includes(`href="${p.other}"`), `${p.file}: no link to the other policy (${p.other})`);
   if (p.street) check(t.includes(p.street), `${p.file}: registered address "${p.street}" missing`);
   for (const r of RETIRED) check(!r.test(t), `${p.file}: retired claim in the text: ${r}`);
+  check(t.includes(p.gsc), `${p.file}: the Search Console statement is missing or changed`);
+  dates.add((body.match(/<time datetime="(\d{4}-\d{2}-\d{2})"/) || [])[1]);
   for (const m of t.matchAll(REG)) {
     const vat = /ΑΦΜ/.test(m[1]);
     const ok = (vat ? /^(EL)?\d{9}$/ : /^\d{9,12}$/).test(m[2]) && !/^(EL)?(\d)\2+$/.test(m[2]);
@@ -89,6 +103,8 @@ for (const p of PAGES) {
     check(identifiers.some((m) => /ΑΦΜ/.test(m[1])), `${p.file}: VAT number missing from Privacy page`);
   }
 }
+
+check(dates.size === 1, `the four legal pages show different version dates: ${[...dates].join(', ')}`);
 
 // Every page: both policy links in the footer, in the page's language; the street address only on Privacy pages.
 const htmlFiles = [];

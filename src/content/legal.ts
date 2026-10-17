@@ -16,8 +16,10 @@ import { contactFacts, operatorFacts, registrationFacts } from './site';
  *   owner's computer (Outlook Classic) over IMAP/SMTP. Outlook Classic is an email program, not a hosting provider, so
  *   no other email processor is named.
  * - Retention: 12 months after the last communication for enquiries that do not lead to work (owner decision).
- * - Search: Google Search Console is the only search tool approved for launch, but it is not yet set up, so the
- *   pages describe it as intended (prospective wording). It is set up through DNS: no script or cookie on the site.
+ * - Search: Google Search Console is the only search tool approved for launch. The techpi.eu Domain property was
+ *   verified on 2026-10-16 (owner-confirmed), so the pages say so. They do not say that a sitemap was submitted, that
+ *   the site is indexed or that reports exist: none of that is true yet. Set up through DNS: no script or cookie on the
+ *   site.
  * - Transfers: described as Cloudflare states them in its own privacy policy (effective 4 November 2025). No contract,
  *   DPA or certification on TechPi's side is claimed, and no absolute statement about TechPi's own transfers is made.
  * - Registration (GEMI and VAT numbers): rendered from registrationFacts in site.ts only once supplied; until then the
@@ -46,7 +48,7 @@ export interface LegalPageCopy {
   sections: readonly LegalSection[];
 }
 
-const UPDATED = '2026-10-13';
+const UPDATED = '2026-10-17';
 const email = contactFacts.email;
 const mail = `[${email}](mailto:${email})`;
 const phone = `[${contactFacts.phoneDisplay}](tel:${contactFacts.phoneDial})`;
@@ -71,7 +73,7 @@ const en: Record<'privacy' | 'cookies', LegalPageCopy> = {
     lead: 'What personal data we process when you visit techpi.eu or contact us, why, for how long, and how to exercise your rights.',
     updated: UPDATED,
     updatedLabel: 'Last updated',
-    updatedText: '13 October 2026',
+    updatedText: '17 October 2026',
     contentsLabel: 'On this page',
     sections: [
       {
@@ -129,7 +131,7 @@ const en: Record<'privacy' | 'cookies', LegalPageCopy> = {
               '**Pointer.gr** hosts our email. Messages sent to and from @techpi.eu addresses are stored on its servers. We read our mail through the provider\'s webmail and through an email program on our own computer, which keeps a copy of the messages it downloads.',
             ],
           },
-          { p: 'We intend to use Google Search Console to see how techpi.eu appears in Google Search. It is set up through our domain settings, not through code on this website, so it adds no script or cookie here. It provides aggregated search reports and does not send us data about individual visitors.' },
+          { p: 'The domain techpi.eu has been verified in Google Search Console, which we can use to review aggregated information about how the website performs in Google Search when data is available. It is set up through our domain settings, not through code on this website, so it adds no analytics script or tracking cookie here, and it does not identify individual visitors.' },
           { p: 'We do not sell personal data and we do not share it with third parties for their own marketing.' },
         ],
       },
@@ -195,7 +197,7 @@ const en: Record<'privacy' | 'cookies', LegalPageCopy> = {
     lead: 'TechPi does not use cookies for analytics, advertising or tracking. This page explains the security cookies our hosting provider may set, and how you can control cookies.',
     updated: UPDATED,
     updatedLabel: 'Last updated',
-    updatedText: '13 October 2026',
+    updatedText: '17 October 2026',
     contentsLabel: 'On this page',
     sections: [
       {
@@ -217,7 +219,7 @@ const en: Record<'privacy' | 'cookies', LegalPageCopy> = {
               'No fonts, scripts or embedded content loaded from other companies.',
             ],
           },
-          { p: 'We intend to use Google Search Console to see how the website appears in Google Search. It is set up through our domain settings, not through code on this website, so it adds no script or cookie here.' },
+          { p: 'The domain techpi.eu has been verified in Google Search Console, which we can use to review aggregated information about how the website performs in Google Search when data is available. It is set up through our domain settings, not through code on this website, so it adds no analytics script or cookie here.' },
         ],
       },
       {
@@ -274,7 +276,7 @@ const el: Record<'privacy' | 'cookies', LegalPageCopy> = {
     lead: 'Ποια προσωπικά δεδομένα επεξεργαζόμαστε όταν επισκέπτεστε το techpi.eu ή επικοινωνείτε μαζί μας, για ποιον λόγο, για πόσο διάστημα και πώς μπορείτε να ασκήσετε τα δικαιώματά σας.',
     updated: UPDATED,
     updatedLabel: 'Τελευταία ενημέρωση',
-    updatedText: '13 Οκτωβρίου 2026',
+    updatedText: '17 Οκτωβρίου 2026',
     contentsLabel: 'Σε αυτή τη σελίδα',
     sections: [
       {
@@ -332,7 +334,7 @@ const el: Record<'privacy' | 'cookies', LegalPageCopy> = {
               'Η **Pointer.gr** φιλοξενεί το email μας. Τα μηνύματα προς και από διευθύνσεις @techpi.eu αποθηκεύονται στους διακομιστές της. Διαβάζουμε την αλληλογραφία μας μέσω του webmail του παρόχου και μέσω προγράμματος email στον δικό μας υπολογιστή, το οποίο κρατά αντίγραφο των μηνυμάτων που κατεβάζει.',
             ],
           },
-          { p: 'Σκοπεύουμε να χρησιμοποιήσουμε το Google Search Console για να βλέπουμε πώς εμφανίζεται το techpi.eu στην Αναζήτηση Google. Ρυθμίζεται μέσω των ρυθμίσεων του τομέα μας και όχι με κώδικα σε αυτόν τον ιστότοπο, επομένως δεν προσθέτει script ή cookie εδώ. Παρέχει συγκεντρωτικές αναφορές αναζήτησης και δεν μας στέλνει δεδομένα για μεμονωμένους επισκέπτες.' },
+          { p: 'Ο τομέας techpi.eu έχει επαληθευτεί στο Google Search Console, το οποίο μπορούμε να χρησιμοποιούμε για να βλέπουμε συγκεντρωτικά στοιχεία για την απόδοση του ιστότοπου στην Αναζήτηση Google, όταν υπάρχουν διαθέσιμα δεδομένα. Ρυθμίζεται μέσω των ρυθμίσεων του τομέα μας και όχι με κώδικα σε αυτόν τον ιστότοπο, επομένως δεν προσθέτει εδώ script ανάλυσης επισκεψιμότητας ή cookie παρακολούθησης και δεν ταυτοποιεί μεμονωμένους επισκέπτες.' },
           { p: 'Δεν πουλάμε προσωπικά δεδομένα και δεν τα μοιραζόμαστε με τρίτους για δικούς τους σκοπούς προώθησης.' },
         ],
       },
@@ -398,7 +400,7 @@ const el: Record<'privacy' | 'cookies', LegalPageCopy> = {
     lead: 'Η TechPi δεν χρησιμοποιεί cookies για στατιστικά, διαφήμιση ή παρακολούθηση. Εδώ εξηγούμε τα cookies ασφαλείας που μπορεί να ορίσει ο πάροχος φιλοξενίας μας και πώς ελέγχετε τα cookies.',
     updated: UPDATED,
     updatedLabel: 'Τελευταία ενημέρωση',
-    updatedText: '13 Οκτωβρίου 2026',
+    updatedText: '17 Οκτωβρίου 2026',
     contentsLabel: 'Σε αυτή τη σελίδα',
     sections: [
       {
@@ -420,7 +422,7 @@ const el: Record<'privacy' | 'cookies', LegalPageCopy> = {
               'Χωρίς γραμματοσειρές, scripts ή ενσωματωμένο περιεχόμενο από άλλες εταιρείες.',
             ],
           },
-          { p: 'Σκοπεύουμε να χρησιμοποιήσουμε το Google Search Console για να βλέπουμε πώς εμφανίζεται ο ιστότοπος στην Αναζήτηση Google. Ρυθμίζεται μέσω των ρυθμίσεων του τομέα μας και όχι με κώδικα σε αυτόν τον ιστότοπο, επομένως δεν προσθέτει script ή cookie εδώ.' },
+          { p: 'Ο τομέας techpi.eu έχει επαληθευτεί στο Google Search Console, το οποίο μπορούμε να χρησιμοποιούμε για να βλέπουμε συγκεντρωτικά στοιχεία για την απόδοση του ιστότοπου στην Αναζήτηση Google, όταν υπάρχουν διαθέσιμα δεδομένα. Ρυθμίζεται μέσω των ρυθμίσεων του τομέα μας και όχι με κώδικα σε αυτόν τον ιστότοπο, επομένως δεν προσθέτει εδώ script ανάλυσης επισκεψιμότητας ή cookie.' },
         ],
       },
       {

@@ -33,7 +33,7 @@ schedules, contracts) through a private channel and record only the approved pub
 
 | # | Question | Unblocks |
 |---|---|---|
-| O8 | Review and merge the Phase 2A Draft PR (`phase-2a-greek-work-lists`): fix F2, Greek lists on `/el/work` | P0-7 |
+| ✓ O8 | ~~Review and merge the Phase 2A Draft PR~~: merged as PR #20 (2026-10-13) | Done |
 | O9 | Approve fix F1 (optional branch-scoped indexing guard), and check how the production and preview Workers Builds triggers are configured (per-trigger build variables; not inspected yet). Phase 2A: F1 not implemented; if wanted, first record `WORKERS_CI`/`WORKERS_CI_BRANCH` from one production and one preview build | P1-2, P1-8 |
 | O10 | Who is the native Greek editorial reviewer, and by when? Scope: 26 Greek pages (24 existing content pages + Greek Privacy and Cookies) | P0-8 |
 | O11 | Rights confirmations (rights checklist in `TECHPI_LAUNCH_CHECKLIST.md`): client screenshots, Logotherapia imagery, client naming and links | P0-9 |
@@ -46,20 +46,21 @@ schedules, contracts) through a private channel and record only the approved pub
 
 | # | Question | Why it matters |
 |---|---|---|
-| L1 | Read and approve the final wording of the four pages on the Draft PR preview | They will be published at merge |
-| ✓ L2 | ~~Both policies said Search Console **is** used~~. **Corrected 2026-10-13:** the Domain property is not yet verified, so both policies (EN and EL) now say TechPi *intends* to use it and describe how it works (set up through domain settings, no script or cookie on the site). When it is verified (P0-10), the present tense can be restored; the legal validator rejects the present-tense wording until its patterns are removed in the same change | Done (wording accurate today) |
+| ✓ L1 | ~~Read and approve the final wording of the four pages on the Draft PR preview~~: approved and published with PR #21 (merged 2026-10-14) | Done |
+| ✓ L2 | ~~Both policies said Search Console **is** used~~. **Corrected 2026-10-13** to prospective wording while the property was unverified. **Phase 2E (2026-10-17, Draft PR):** the property is verified, so both policies (EN and EL) now say so, without claiming a submitted sitemap, indexing or reports. Review the wording on the Phase 2E preview (L8) | Done at merge |
 | ✓ L3 | ~~"We do not transfer your personal data outside the EEA ourselves"~~. **Removed 2026-10-13** in EN and EL. The Transfers section now only describes Cloudflare's possible processing outside the EEA and the mechanisms Cloudflare itself states (EU–U.S. DPF, SCCs as fallback), attributed to Cloudflare's privacy policy. The validator keeps the absolute statement out | Done |
-| ✓ L4 | **Both GEMI and VAT/ΑΦΜ numbers supplied and approved for publication.** Values are set in `src/content/site.ts` on Draft PR #21 and appear in both Privacy pages. The legal validator now requires both on each Privacy page and rejects invalid formats. The GEMI identifier was supplied with a link to the public GEMI portal; the portal entry could not be independently fetched from this environment. | Done, subject to final preview review |
+| ✓ L4 | **Both GEMI and VAT/ΑΦΜ numbers supplied and approved for publication**, set in `src/content/site.ts` and published on both Privacy pages with PR #21 (verified on production 2026-10-17). The legal validator requires both on each Privacy page and rejects invalid formats | Done |
 | L5 | Pointer.gr is named by its brand name only; its legal entity name was not supplied. Add it only if you want it shown | Precision |
 | L6 | Legal bases are stated as Article 6(1)(b), (c) and (f) GDPR, with no consent-based processing. This is the standard reading for this kind of site, but it has not been reviewed by a lawyer (your decision) | Awareness |
 | L7 | Cloudflare's dashboard shows Email Address Obfuscation enabled, but live pages (served by the Worker) show no rewriting. If Cloudflare ever began rewriting `mailto:` links, its decode script would be blocked by the site's Content Security Policy. Re-check `/contact` and the legal pages after deploy; turning the feature off is optional | Email links keep working |
+| L8 | **Phase 2E (Draft PR):** read the new Search Console sentence in the four policies (EN and EL) and the version date 17 October 2026 on the preview, then approve the merge | Accurate policies |
 
 ### Analytics, search and crawling
 
 | # | Question | Unblocks |
 |---|---|---|
 | ✓ O16 | Analytics: **Google Search Console only** (no GA4, no Meta Pixel, no advertising trackers, no profiling, no other analytics) | Done |
-| ◐ O17 | Which Google account owns Search Console; second owner; access to the `pigiota314.eu` and `pigiota314.gr` properties. **2026-10-16:** `techpi.eu` Domain property verified and both legacy properties' data exported by the owner (P0-10 done); a second owner is still worth adding | Change of Address |
+| ◐ O17 | Search Console ownership. **2026-10-16 (owner):** `techpi.eu` Domain property verified; access to the `pigiota314.eu` and `pigiota314.gr` properties confirmed; historical exports saved (P0-10 done). Still open: a second owner account | Change of Address |
 | O18 | Training-crawler policy for `robots.txt` (allow all, or block specific AI training agents) | Launch blocker 12 |
 | O19 | Launch date / explicit authorisation to enable indexing | P2 |
 
@@ -80,7 +81,7 @@ schedules, contracts) through a private channel and record only the approved pub
 
 | # | Question | Unblocks |
 |---|---|---|
-| ✓ O28 | Insights: **decided 2026-10-16: create `/insights` with the seven `pigiota314.eu` articles, slugs kept, English only.** Built on the Phase 2D Draft PR (`docs/content/insights-migration.md`). Greek versions: a later phase | Legacy redirects (D2) |
+| ✓ O28 | Insights: **decided 2026-10-16: `/insights` with the seven `pigiota314.eu` articles, slugs kept, English only.** Published with PR #22 (merged 2026-10-17), still `noindex` (`docs/content/insights-migration.md`). Greek versions: a later phase | Legacy redirects (D2) |
 | O29 | `pigiota314.eu/` → `/eu-projects` (recommended) or `/` (D1) | Legacy redirects |
 | O30 | Retired services and 13 historical portfolio items: 301 to `/el/work` or 410 (D3, D4); local and product landings (D5, D6); long-tail fallback (D7); Street Box = Rocketeer (D8) | Legacy redirects |
 | O31 | Move the legacy DNS zones to Cloudflare to run the redirects (copying every mail and subdomain record unchanged) | Legacy redirects |

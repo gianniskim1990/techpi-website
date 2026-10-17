@@ -170,7 +170,7 @@ export const insights: readonly Insight[] = [
       {
         heading: 'Accessibility is part of the brief',
         paragraphs: [
-          'Treat accessibility as part of the original specification, not as a remediation effort before review. WCAG 2.2 AA is the realistic target for most publicly funded project websites.',
+          'Treat accessibility as part of the original specification, not as a remediation effort before review. WCAG 2.2 Level AA is a useful accessibility target when planning a project website. The precise compliance requirements depend on the organisation operating the site and any applicable legal or contractual obligations.',
         ],
       },
       {
