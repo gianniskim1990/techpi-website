@@ -27,7 +27,23 @@ const CASE_STUDIES = [
   'level-up-education', 'itsallaboutxanthi', 'local-xanthi', 'juliette-coffee-roasters', 'apox-fc', 'emoved',
 ];
 const CONTENT = ['/', '/work', ...CASE_STUDIES.map((slug) => `/work/${slug}`), '/capabilities', '/eu-projects', '/about', '/contact', '/privacy', '/cookies'];
-const ROUTES = [...CONTENT.map((p) => ({ path: p, locale: 'en' })), ...CONTENT.map((p) => ({ path: p === '/' ? '/el/' : `/el${p}`, locale: 'el' }))];
+// English-only content (docs/production/routes.md, section 4.1): the Insights index and its seven articles, migrated
+// from pigiota314.eu with their slugs unchanged. No Greek version exists, so these have no hreflang and no counterpart.
+const INSIGHTS = [
+  'what-every-eu-project-website-should-include',
+  'common-mistakes-in-horizon-europe-project-websites',
+  'how-to-structure-deliverables-and-publications',
+  'accessibility-considerations-for-project-websites',
+  'preparing-a-website-brief-during-the-proposal-stage',
+  'what-communication-partners-should-ask-a-web-development-supplier',
+  'how-analytics-can-support-dissemination-reporting',
+];
+const EN_ONLY = ['/insights', ...INSIGHTS.map((slug) => `/insights/${slug}`)];
+const ROUTES = [
+  ...CONTENT.map((p) => ({ path: p, locale: 'en' })),
+  ...CONTENT.map((p) => ({ path: p === '/' ? '/el/' : `/el${p}`, locale: 'el' })),
+  ...EN_ONLY.map((p) => ({ path: p, locale: 'en', single: true })),
+];
 const NOT_FOUND = [
   { file: '404.html', locale: 'en' },
   { file: 'el/404.html', locale: 'el' },
@@ -35,7 +51,8 @@ const NOT_FOUND = [
 const counterpart = (p) => (p === '/' ? '/el/' : p === '/el/' ? '/' : p.startsWith('/el/') ? p.slice(3) : `/el${p}`);
 const fileFor = (p) => (p === '/' ? 'index.html' : p === '/el/' ? 'el/index.html' : `${p.slice(1)}.html`);
 const OG_LOCALE = { en: 'en_US', el: 'el_GR' };
-const FORBIDDEN_TYPES = ['Review', 'AggregateRating', 'FAQPage', 'SearchAction', 'Product', 'SoftwareApplication', 'Article', 'Rating'];
+// Article is allowed on the Insights articles only, and checked there (below); everywhere else it is forbidden.
+const FORBIDDEN_TYPES = ['Review', 'AggregateRating', 'FAQPage', 'SearchAction', 'Product', 'SoftwareApplication', 'Rating', 'BlogPosting', 'NewsArticle'];
 const FORBIDDEN_KEYS = ['sameAs', 'foundingDate', 'numberOfEmployees', 'legalName', 'vatID', 'taxID', 'award', 'aggregateRating', 'review', 'potentialAction'];
 const LEAKS = [/localhost/i, /127\.0\.0\.1/, /workers\.dev/i, /pages\.dev/i, /pigiota314\.(eu|gr|com)/i];
 
@@ -75,10 +92,13 @@ function parse(html) {
     canonicals: links.filter((t) => attr(t, 'rel') === 'canonical').map((t) => attr(t, 'href')),
     alternates: links.filter((t) => attr(t, 'rel') === 'alternate' && attr(t, 'hreflang')).map((t) => ({ hreflang: attr(t, 'hreflang'), href: attr(t, 'href') })),
     og: (p) => meta('property', `og:${p}`),
+    prop: (name) => meta('property', name),
     ogAll: (p) => metaAll('property', `og:${p}`),
     tw: (p) => meta('name', `twitter:${p}`),
     ld,
     h1: (body.match(/<h1[\s>]/g) || []).length,
+    h1Text: decode(((body.match(/<h1[^>]*>([\s\S]*?)<\/h1>/) || [])[1] || '').replace(/<[^>]+>/g, '')).trim(),
+    times: [...body.matchAll(/<time datetime="([^"]+)"/g)].map((m) => m[1]),
     head,
   };
 }
@@ -132,27 +152,39 @@ for (const route of ROUTES) {
   check(p.canonicals.length === 1, where, `${p.canonicals.length} canonical links`);
   check(p.canonicals[0] === url, where, `canonical ${p.canonicals[0]}, expected ${url}`);
 
-  // hreflang: en, el, x-default; reciprocal; x-default is the English page.
-  const alt = Object.fromEntries(p.alternates.map((a) => [a.hreflang, a.href]));
-  check(p.alternates.length === 3, where, `${p.alternates.length} hreflang links, expected 3`);
-  const enPath = route.locale === 'en' ? route.path : counterpart(route.path);
-  const elPath = route.locale === 'el' ? route.path : counterpart(route.path);
-  check(alt.en === ORIGIN + enPath, where, `hreflang en ${alt.en}`);
-  check(alt.el === ORIGIN + elPath, where, `hreflang el ${alt.el}`);
-  check(alt['x-default'] === ORIGIN + enPath, where, `x-default ${alt['x-default']}`);
-  const other = parse(read(fileFor(counterpart(route.path))));
-  const back = other.alternates.find((a) => a.hreflang === route.locale);
-  check(back && back.href === url, where, 'the counterpart page links back (reciprocal hreflang)');
+  if (route.single) {
+    // One language only: no hreflang at all, so no translation is claimed, and no Greek page is named.
+    check(p.alternates.length === 0, where, `${p.alternates.length} hreflang links on an English-only page, expected none`);
+    check(!exists(`el${route.path}.html`), where, 'no Greek counterpart is built');
+  } else {
+    // hreflang: en, el, x-default; reciprocal; x-default is the English page.
+    const alt = Object.fromEntries(p.alternates.map((a) => [a.hreflang, a.href]));
+    check(p.alternates.length === 3, where, `${p.alternates.length} hreflang links, expected 3`);
+    const enPath = route.locale === 'en' ? route.path : counterpart(route.path);
+    const elPath = route.locale === 'el' ? route.path : counterpart(route.path);
+    check(alt.en === ORIGIN + enPath, where, `hreflang en ${alt.en}`);
+    check(alt.el === ORIGIN + elPath, where, `hreflang el ${alt.el}`);
+    check(alt['x-default'] === ORIGIN + enPath, where, `x-default ${alt['x-default']}`);
+    const other = parse(read(fileFor(counterpart(route.path))));
+    const back = other.alternates.find((a) => a.hreflang === route.locale);
+    check(back && back.href === url, where, 'the counterpart page links back (reciprocal hreflang)');
+  }
+  // No page, in either language, names a Greek Insights page that does not exist.
+  check(!/\/el\/insights/.test(html), where, 'no link or hreflang to /el/insights');
 
   // Open Graph and Twitter.
-  check(p.og('type') === 'website', where, 'og:type website');
+  const isArticle = Boolean(route.single) && route.path !== '/insights';
+  check(p.og('type') === (isArticle ? 'article' : 'website'), where, `og:type ${p.og('type')}`);
+  const published = p.prop('article:published_time');
+  check(isArticle ? /^\d{4}-\d{2}-\d{2}$/.test(published || '') : published === undefined, where, `article:published_time ${published}`);
   check(p.og('site_name') === 'TechPi', where, 'og:site_name');
   check(p.og('title') === p.title, where, 'og:title matches the title');
   check(p.og('description') === p.description, where, 'og:description matches the description');
   check(p.og('url') === url, where, `og:url ${p.og('url')}`);
   check(p.og('locale') === OG_LOCALE[route.locale], where, `og:locale ${p.og('locale')}`);
   const altLocales = p.ogAll('locale:alternate');
-  check(altLocales.length === 1 && altLocales[0] === OG_LOCALE[route.locale === 'en' ? 'el' : 'en'], where, `og:locale:alternate ${altLocales}`);
+  if (route.single) check(altLocales.length === 0, where, `og:locale:alternate on an English-only page: ${altLocales}`);
+  else check(altLocales.length === 1 && altLocales[0] === OG_LOCALE[route.locale === 'en' ? 'el' : 'en'], where, `og:locale:alternate ${altLocales}`);
   const image = p.og('image');
   check(image === `${ORIGIN}/og/techpi-${route.locale}.png`, where, `og:image ${image}`);
   if (image && image.startsWith(ORIGIN)) check(exists(image.slice(ORIGIN.length + 1)), where, `og:image file missing in the build: ${image}`);
@@ -188,12 +220,24 @@ for (const route of ROUTES) {
   if (page) check(page.isPartOf && page.isPartOf['@id'] === `${ORIGIN}/#website`, where, 'WebPage isPartOf the WebSite');
   const isCase = /\/work\/./.test(route.path);
   const crumbs = byType('BreadcrumbList')[0];
-  if (isCase) {
+  if (isCase || isArticle) {
+    const section = isArticle ? '/insights' : route.locale === 'el' ? '/el/work' : '/work';
     const items = crumbs ? crumbs.itemListElement : [];
-    check(items.length === 3, where, 'breadcrumb Home, Work, case study');
-    check(items[0] && items[0].item === ORIGIN + (route.locale === 'el' ? '/el/' : '/') && items[1] && items[1].item === ORIGIN + (route.locale === 'el' ? '/el/work' : '/work') && items[2] && items[2].item === url, where, 'breadcrumb URLs');
+    check(items.length === 3, where, 'breadcrumb Home, section, page');
+    check(items[0] && items[0].item === ORIGIN + (route.locale === 'el' ? '/el/' : '/') && items[1] && items[1].item === ORIGIN + section && items[2] && items[2].item === url, where, 'breadcrumb URLs');
     check(page && page.breadcrumb && page.breadcrumb['@id'] === `${url}#breadcrumb`, where, 'WebPage links its breadcrumb');
-  } else check(!crumbs, where, 'no breadcrumb outside the case studies');
+  } else check(!crumbs, where, 'no breadcrumb outside the case studies and articles');
+  // Article: only on an Insights article, and only verifiable properties (docs/production/seo.md, section 5).
+  const articles = graph.filter((n) => n['@type'] === 'Article');
+  check(articles.length === (isArticle ? 1 : 0), where, `${articles.length} Article nodes, expected ${isArticle ? 1 : 0}`);
+  for (const a of articles) {
+    check(a['@id'] === `${url}#article` && a.headline === p.h1Text, where, `Article @id and headline (= visible h1): ${a.headline}`);
+    check(Boolean(a.description) && a.inLanguage === 'en' && Boolean(a.articleSection), where, 'Article description, inLanguage, articleSection');
+    check(a.datePublished === published && p.times.includes(a.datePublished), where, `datePublished ${a.datePublished} matches the visible date and article:published_time`);
+    check(!('dateModified' in a) && !('image' in a), where, 'no dateModified or image (none is established)');
+    check(a.author && a.author['@id'] === `${ORIGIN}/#organization` && a.publisher && a.publisher['@id'] === `${ORIGIN}/#organization`, where, 'author and publisher are the Organization (no invented person)');
+    check(a.mainEntityOfPage && a.mainEntityOfPage['@id'] === `${url}#webpage`, where, 'Article is the main entity of its WebPage');
+  }
   const services = byType('Service');
   const wantServices = route.path.endsWith('/capabilities') ? 4 : route.path.endsWith('/eu-projects') ? 2 : 0;
   check(services.length === wantServices, where, `${services.length} Service nodes, expected ${wantServices}`);

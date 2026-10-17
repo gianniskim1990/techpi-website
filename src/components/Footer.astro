@@ -2,20 +2,27 @@
 import { getDictionary } from '../i18n';
 import type { Locale } from '../i18n/locales';
 import { operatorFacts } from '../content/site';
-import { legalPages, navPages, pathFor, type PageKey } from '../i18n/routes';
+import { insightsCopy } from '../content/insights';
+import { insightsLocale, insightsPath, legalPages, navPages, pathFor, type LanguageFallback, type PageKey, type Translations } from '../i18n/routes';
 import LanguageSwitch from './LanguageSwitch.astro';
 
 interface Props {
   locale: Locale;
   page?: PageKey;
   /** Exact language counterparts for a page outside the route map, passed to the language switch. */
-  languageHrefs?: Record<Locale, string>;
+  languageHrefs?: Translations;
+  /** Where the switch sends a language the page does not exist in (a one-language page). */
+  languageFallbacks?: LanguageFallback;
+  /** The canonical path of the current page, where it is outside the route map (marks the Insights link). */
+  currentPath?: string;
 }
 
-const { locale, page, languageHrefs } = Astro.props;
+const { locale, page, languageHrefs, languageFallbacks, currentPath } = Astro.props;
 const t = getDictionary(locale);
-// The same visible navigation as the header, from the route map.
+// The same visible navigation as the header, from the route map. In English only, Insights follows EU Projects: the
+// articles are English-only, so the Greek footer has no link to them (docs/production/routes.md, section 4.1).
 const items = navPages;
+const insights = locale === insightsLocale ? { href: insightsPath(), label: insightsCopy.back } : undefined;
 ---
 
 {/* Minimal. Only what is justified: name, navigation, language, and a quiet legal line: who operates TechPi and the
@@ -30,15 +37,24 @@ const items = navPages;
       <ul>
         {
           items.map((key) => (
-            <li>
-              <a href={pathFor(key, locale)}>{t.nav[key]}</a>
-            </li>
+            <>
+              <li>
+                <a href={pathFor(key, locale)}>{t.nav[key]}</a>
+              </li>
+              {key === 'euProjects' && insights && (
+                <li>
+                  <a href={insights.href} aria-current={currentPath === insights.href ? 'page' : undefined}>
+                    {insights.label}
+                  </a>
+                </li>
+              )}
+            </>
           ))
         }
       </ul>
     </nav>
     <div class="lang">
-      <LanguageSwitch locale={locale} page={page} hrefs={languageHrefs} />
+      <LanguageSwitch locale={locale} page={page} hrefs={languageHrefs} fallbacks={languageFallbacks} />
     </div>
   </div>
   <div class="base">

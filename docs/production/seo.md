@@ -6,8 +6,9 @@ architecture and the locked crawler policy (its section 6.3); where the two diff
 
 ## 1. What every page carries
 
-52 content pages (26 routes in English and Greek: six pages, the Privacy and Cookies pages, and 18 case studies) and
-two 404 pages. (48 content pages before Phase 2B added the legal pages.)
+60 content pages: 26 routes in English and Greek (six pages, the Privacy and Cookies pages, and 18 case studies),
+plus 8 English-only Insights pages (the index and seven articles, `routes.md` section 4.1), and two 404 pages.
+(48 content pages before Phase 2B added the legal pages; 52 before Insights.)
 
 | Item | Content pages | 404 pages |
 |---|---|---|
@@ -59,8 +60,9 @@ visible copy. The English homepage, which had no description, now has one (launc
 
 ## 4. Open Graph and the Twitter card
 
-`og:type` `website`, `og:site_name` `TechPi`, `og:title`, `og:description`, `og:url` (the canonical),
-`og:locale` (`en_US` or `el_GR`) and `og:locale:alternate` (the other), `og:image` with type, width, height and alt.
+`og:type` `website` (`article` on the seven Insights articles, with `article:published_time`, the source date, and
+`article:section`), `og:site_name` `TechPi`, `og:title`, `og:description`, `og:url` (the canonical),
+`og:locale` (`en_US` or `el_GR`) and `og:locale:alternate` (the other; none on the English-only Insights pages), `og:image` with type, width, height and alt.
 Twitter: `summary_large_image`, title, description, image and alt. **No `twitter:site` or `twitter:creator`:** no
 TechPi account is confirmed, so none is invented.
 
@@ -95,13 +97,15 @@ One `<script type="application/ld+json">` per content page with an `@graph`. Bui
 | `Organization` | `https://techpi.eu/#organization` | Every content page | `name` TechPi, `alternateName` pigiota314, `url`, `logo` (`/techpi-logo.png`, 512 x 512, the blue 3D symbol), `email`, `telephone`, `address` (locality Xanthi, country GR only) |
 | `WebSite` | `https://techpi.eu/#website` | Every content page | `name`, `url`, `inLanguage` `en` and `el`, `publisher` the Organization |
 | `WebPage` and subtypes | `<canonical>#webpage` | Every content page | `name`, `description`, `url`, `inLanguage`, `isPartOf` the WebSite, `publisher`. `about` the Organization on the homepage and About. Type: `CollectionPage` (Work), `AboutPage`, `ContactPage`, otherwise `WebPage` |
-| `BreadcrumbList` | `<canonical>#breadcrumb` | The 36 case-study pages | Home, Work, the case study, with the visible labels. This is the real URL hierarchy and the page's own "Work" link. No breadcrumb UI was added |
+| `BreadcrumbList` | `<canonical>#breadcrumb` | The 36 case-study pages and the 7 Insights articles | Home, Work (or Insights), the page, with the visible labels. This is the real URL hierarchy and the page's own "Work" or "Insights" link. No breadcrumb UI was added |
+| `Article` | `<canonical>#article` | The 7 Insights articles only | `headline` (the visible h1), `description` (the lead), `articleSection` (the topic), `datePublished` (the date the original pigiota314.eu page displays and declared, also shown on the page), `inLanguage` en, `author` and `publisher` the Organization (TechPi, `alternateName` pigiota314), `mainEntityOfPage` the WebPage. No `dateModified`, personal author or `image`: none is established. The index is a `CollectionPage` |
 | `Service` x 4 | `<canonical>#service-<id>` | Capabilities, both languages | Each capability's visible name and summary, `provider` the Organization |
 | `Service` x 2 | `<canonical>#service-eu-projects`, `…#service-eu-project-websites` | EU Projects, both languages | The page's visible hero heading and lead, and its "EU project websites" section heading and introduction |
 
 Deliberately absent: `legalName`, VAT, street address, founding date, employee count, `sameAs` (no confirmed social
 profile), `SearchAction` (the site has no search), reviews, ratings, awards, `FAQPage`, and any case-study markup
-(`Article`, `Product`, `SoftwareApplication`, or an invented "CaseStudy" type). `CreativeWork` for a case study was
+(`Product`, `SoftwareApplication`, or an invented "CaseStudy" type). `Article` exists only on the Insights articles
+(above); the validator rejects it, and `BlogPosting` and `NewsArticle`, everywhere else. `CreativeWork` for a case study was
 considered (the planning document proposed it) and left out: the WebPage and breadcrumb already describe the page,
 and a CreativeWork would need a creator and client relationship the site states only loosely.
 
@@ -111,7 +115,8 @@ published on the Contact page (`launch-blockers.md`, section 1).
 ## 6. Sitemap
 
 `/sitemap.xml`, generated at build time by `src/pages/sitemap.xml.ts` from the same route map and case-study list as
-the pages: **exactly 52 URLs** (48 before Phase 2B), absolute, canonical form. No 404, redirect source, slash variant or preview URL.
+the pages: **exactly 60 URLs** (48 before Phase 2B, 52 before Insights): 26 bilingual routes in two languages plus
+the 8 English-only Insights URLs, absolute, canonical form. No 404, redirect source, slash variant or preview URL.
 **No `<lastmod>`**: the site has no real modification dates, and an invented one is worse than none. No hreflang in
 the sitemap: the pages carry it.
 
@@ -139,7 +144,7 @@ added, it should only restate the About page and link the sitemap.
 ## 8. The indexing switch
 
 `PUBLIC_ALLOW_INDEXING=true` at build time is the only switch. Without it, every page carries
-`noindex, nofollow`. With it, the 52 content pages carry no robots tag and are indexable; the two 404 pages stay
+`noindex, nofollow`. With it, the 60 content pages carry no robots tag and are indexable; the two 404 pages stay
 `noindex` in every build. Set it only for the production build, only at launch, never for previews (launch
 blocker 14). It is not set anywhere today.
 
@@ -173,7 +178,10 @@ run it with `--dist <dir>`, like the validators below. Verified on 2026-10-13 wi
 About 1,140 checks: per page the title, description, `lang`, one `h1`, robots, canonical, hreflang and reciprocity,
 x-default, every Open Graph and Twitter field, that the image exists, valid JSON-LD with the expected nodes,
 `@id`s on the production origin, resolved references, forbidden types and properties, no development or preview
-origin in the head, unique titles and descriptions; then the 404s, the set of built pages, the sitemap (52 URLs, no
+origin in the head, unique titles and descriptions; on the English-only Insights pages, no hreflang, no
+`og:locale:alternate`, no built Greek counterpart and, on articles, one `Article` whose headline is the h1 and whose
+`datePublished` equals the visible `<time>` and `article:published_time`; on every page, no link to `/el/insights`;
+then the 404s, the set of built pages (62), the sitemap (60 URLs, no
 `lastmod`), `robots.txt` (no Disallow, no agent rules, sitemap line) and the image files. It exits 1 on any failure.
 The expected route list is written out in the script, independently of the route map, so an accidental route change
 is caught.

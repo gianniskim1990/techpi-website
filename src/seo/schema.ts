@@ -103,6 +103,28 @@ export function service(pageUrl: string, opts: { id: string; name: string; descr
   };
 }
 
+/**
+ * An Insights article, and only that (the SEO validator rejects Article anywhere else). Only what the page shows and
+ * the source establishes: the headline, the lead as description, the section, the date of first publication as shown
+ * on the original page, and TechPi (formerly pigiota314) as author and publisher. No dateModified, personal author or
+ * image: none is established.
+ */
+export function article(pageUrl: string, opts: { headline: string; description: string; section: string; published: string; locale: Locale }): Node {
+  return {
+    '@type': 'Article',
+    '@id': `${pageUrl}#article`,
+    headline: opts.headline,
+    description: opts.description,
+    articleSection: opts.section,
+    datePublished: opts.published,
+    inLanguage: opts.locale,
+    author: { '@id': ORGANIZATION_ID },
+    publisher: { '@id': ORGANIZATION_ID },
+    isPartOf: { '@id': WEBSITE_ID },
+    mainEntityOfPage: { '@id': `${pageUrl}#webpage` },
+  };
+}
+
 /** Serialised for a `<script type="application/ld+json">`. `<` is escaped so no string can close the element. */
 export function serialise(nodes: readonly Node[]): string {
   return JSON.stringify({ '@context': 'https://schema.org', '@graph': nodes }).replace(/</g, '\\u003c');

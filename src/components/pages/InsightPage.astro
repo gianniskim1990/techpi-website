@@ -1,0 +1,390 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { insightBySlug, insightsCopy, type Insight } from '../../content/insights';
+import { getDictionary } from '../../i18n';
+import { homePathFor, insightsLocale, insightsPath, pathFor } from '../../i18n/routes';
+import { article as articleNode, SITE } from '../../seo/schema';
+
+interface Props {
+  article: Insight;
+}
+
+const { article } = Astro.props;
+// English only (routes.md, section 4.1): no Greek version exists, so none is linked or announced.
+const locale = insightsLocale;
+const t = getDictionary(locale);
+const path = insightsPath(article.slug);
+const url = new URL(path, SITE).href;
+const fallback = { el: { href: pathFor('euProjects', 'el'), label: 'Ευρωπαϊκά έργα' } };
+const related = article.related.map(insightBySlug);
+// Home, Insights, this article: the real hierarchy of the URL and of the page's own "Insights" link.
+const trail = [
+  { name: t.pages.home.heading, path: homePathFor(locale) },
+  { name: insightsCopy.back, path: insightsPath() },
+  { name: article.title, path },
+];
+
+type Part = { kind: 'text'; value: string } | { kind: 'link'; value: string; href: string };
+/** `[label](href)` to an internal page is the only markup the article copy uses. */
+function inline(text: string): Part[] {
+  const parts: Part[] = [];
+  let last = 0;
+  for (const m of text.matchAll(/\[([^\]]+)\]\((\/[^)\s]*)\)/g)) {
+    if (m.index > last) parts.push({ kind: 'text', value: text.slice(last, m.index) });
+    parts.push({ kind: 'link', value: m[1], href: m[2] });
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push({ kind: 'text', value: text.slice(last) });
+  return parts;
+}
+---
+
+{/* One Insights article: a quiet editorial page. The head (back link, topic, title, lead, the date the article was
+    first published and where), then the text at a reading measure, related reading and a restrained invitation.
+    The text is never hidden by the reveal system: it is read, not revealed. No image, author or reading time. */}
+<BaseLayout
+  locale={locale}
+  title={article.meta.title}
+  description={article.meta.description}
+  paths={{ en: path }}
+  languageFallbacks={fallback}
+  trail={trail}
+  og={{ type: 'article', published: article.published, section: article.category }}
+  schema={[articleNode(url, { headline: article.title, description: article.lead, section: article.category, published: article.published, locale })]}
+  bleed
+>
+  <article class="s-paper" aria-labelledby="article-h">
+    <header class="head">
+      <a class="back" href={insightsPath()}><span aria-hidden="true">←</span> {insightsCopy.back}</a>
+      <p class="meta-label cat">{article.category}</p>
+      <h1 id="article-h">{article.title}</h1>
+      <p class="lead">{article.lead}</p>
+      <div class="facts">
+        <p>
+          {insightsCopy.published} <time datetime={article.published}>{article.publishedText}</time>
+        </p>
+        <p>{insightsCopy.provenance}</p>
+        <p>
+          {insightsCopy.englishOnly}
+          <a class="tlink" href={fallback.el.href} lang="el" hreflang="el">{insightsCopy.greekFallback}</a>
+        </p>
+      </div>
+    </header>
+
+    <div class="body">
+      {
+        article.sections.map((s, i) => (
+          <section aria-labelledby={`s${i + 1}-h`}>
+            <h2 id={`s${i + 1}-h`}>{s.heading}</h2>
+            {s.paragraphs?.map((p) => (
+              <p>{p}</p>
+            ))}
+            {s.list && (
+              <ul class="ruled points">
+                {s.list.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            )}
+            {s.after?.map((p) => (
+              <p>{p}</p>
+            ))}
+          </section>
+        ))
+      }
+      {
+        article.note && (
+          <aside class="note" aria-label="Note">
+            <p>
+              {inline(article.note).map((p) =>
+                p.kind === 'link' ? (
+                  <a class="tlink" href={p.href}>
+                    {p.value}
+                  </a>
+                ) : (
+                  p.value
+                ),
+              )}
+            </p>
+          </aside>
+        )
+      }
+    </div>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="related s-paper" aria-labelledby="related-h">
+        <h2 id="related-h" class="meta-label">
+          {insightsCopy.related}
+        </h2>
+        <ul class="related-list">
+          {related.map((r) => (
+            <li>
+              <a href={insightsPath(r.slug)}>
+                <span class="r-title">{r.title}</span>
+                <span class="r-cat">{r.category}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <aside class="invite s-paper" aria-labelledby="invite-h">
+    <p class="invite-h" id="invite-h">{insightsCopy.closing.heading}</p>
+    <p class="invite-text">{insightsCopy.closing.text}</p>
+    <p class="invite-links">
+      <a class="tlink" href={pathFor('euProjects', locale)}>{insightsCopy.closing.eu}</a>
+      <a class="btn" href={pathFor('contact', locale)}>
+        {insightsCopy.closing.contact}
+        <span class="arr" aria-hidden="true">→</span>
+      </a>
+    </p>
+  </aside>
+</BaseLayout>
+
+<style>
+  /* ---------- Head ---------- */
+  .head {
+    padding: clamp(136px, 13vw, 184px) var(--space-margin) clamp(48px, 5vw, 72px);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+  }
+  .back {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-bottom: clamp(36px, 4.5vw, 64px);
+    padding: 8px 0;
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    text-decoration: none;
+  }
+  .back:hover {
+    text-decoration: underline;
+    text-underline-offset: 6px;
+  }
+  .cat {
+    grid-column: 1 / -1;
+  }
+  h1 {
+    grid-column: 1 / span 10;
+    margin-top: 18px;
+    font-size: var(--text-display-l);
+    line-height: 1.04;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+  }
+  .lead {
+    grid-column: 1 / span 7;
+    margin-top: clamp(24px, 2.6vw, 36px);
+    font-size: var(--text-lead);
+    line-height: 1.45;
+    color: var(--sec-c);
+  }
+  .facts {
+    grid-column: 1 / span 7;
+    margin-top: clamp(32px, 3.6vw, 48px);
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 28px;
+    font-size: var(--text-small);
+    color: var(--ter);
+  }
+  .facts a {
+    margin-left: 6px;
+    white-space: nowrap;
+  }
+
+  /* ---------- Text ---------- */
+  .body {
+    padding: 0 var(--space-margin);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+  }
+  .body > * {
+    grid-column: 4 / span 7;
+    max-width: 68ch;
+  }
+  .body section + section,
+  .body .note {
+    margin-top: clamp(40px, 4.4vw, 64px);
+  }
+  .body h2 {
+    font-size: var(--text-heading);
+    font-weight: var(--weight-display);
+    line-height: 1.2;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+  }
+  .body p {
+    margin-top: 16px;
+    font-size: 1.125rem;
+    line-height: 1.65;
+  }
+  .points {
+    margin-top: 20px;
+  }
+  .points li {
+    font-size: 1.0625rem;
+    line-height: 1.5;
+  }
+  .note {
+    padding: 18px 0 18px 20px;
+    border-left: 2px solid var(--color-techpi-blue);
+  }
+  .note p {
+    margin-top: 0;
+    font-size: var(--text-small);
+    line-height: 1.6;
+    color: var(--sec-c);
+  }
+
+  /* ---------- Related reading ---------- */
+  .related {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    margin-top: var(--space-block);
+    padding: var(--space-block) var(--space-margin) 0;
+  }
+  .related h2 {
+    grid-column: 1 / span 3;
+    padding-top: 20px;
+  }
+  .related-list {
+    grid-column: 4 / -1;
+  }
+  .related-list li {
+    border-top: 1px solid var(--line);
+  }
+  .related-list li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .related-list a {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    column-gap: var(--space-gap);
+    align-items: baseline;
+    padding: 20px 0;
+    text-decoration: none;
+  }
+  .r-title {
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    font-weight: var(--weight-display);
+    line-height: 1.25;
+    transition: color var(--duration-fast) var(--ease-state);
+  }
+  .r-cat {
+    font-size: var(--text-small);
+    color: var(--ter);
+  }
+  .related-list a:hover .r-title,
+  .related-list a:focus-visible .r-title {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 6px;
+  }
+
+  /* ---------- Invitation ---------- */
+  .invite {
+    margin-top: var(--space-section);
+    padding: clamp(48px, 5vw, 72px) var(--space-margin) clamp(72px, 8vw, 120px);
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    align-items: end;
+  }
+  .invite-h {
+    grid-column: 1 / span 7;
+    font-size: var(--text-display-m);
+    font-weight: var(--weight-display);
+    line-height: 1.08;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+  .invite-text {
+    grid-column: 1 / span 7;
+    margin-top: 18px;
+    color: var(--sec-c);
+  }
+  .invite-links {
+    grid-column: 9 / -1;
+    grid-row: 1 / span 2;
+    justify-self: end;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px 28px;
+  }
+
+  @media (max-width: 1023px) {
+    .head,
+    .body,
+    .related,
+    .invite {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    h1,
+    .lead,
+    .facts,
+    .body > * {
+      grid-column: 1 / -1;
+    }
+    .related h2,
+    .related-list {
+      grid-column: 1 / -1;
+    }
+    .related h2 {
+      padding-top: 0;
+      margin-bottom: 16px;
+    }
+    .invite-h,
+    .invite-text {
+      grid-column: 1 / -1;
+    }
+    .invite-links {
+      grid-column: 1 / -1;
+      grid-row: auto;
+      justify-self: start;
+      margin-top: 28px;
+    }
+  }
+  @media (max-width: 760px) {
+    .head {
+      display: block;
+      padding-top: 112px;
+    }
+    .back {
+      display: inline-block;
+      margin-bottom: 32px;
+    }
+    h1 {
+      margin-top: 14px;
+    }
+    .facts {
+      flex-direction: column;
+    }
+    .body,
+    .related,
+    .invite {
+      display: block;
+    }
+    .body p {
+      font-size: 1.0625rem;
+    }
+    .related-list a {
+      display: block;
+    }
+    .r-cat {
+      display: block;
+      margin-top: 6px;
+    }
+  }
+</style>

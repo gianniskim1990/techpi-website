@@ -18,6 +18,8 @@ English is the default language and has no prefix. Greek lives under `/el/`. Slu
 | Contact | `/contact` | `/el/contact` |
 | Privacy | `/privacy` | `/el/privacy` |
 | Cookies | `/cookies` | `/el/cookies` |
+| Insights index | `/insights` | none (English only) |
+| Insights article | `/insights/[slug]` | none (English only) |
 
 Privacy and Cookies are in the route map (`pages` in `src/i18n/routes.ts`) since Phase 2B, so canonical, hreflang, the
 sitemap and the language switch include them. They are not in `navPages` (header and main footer navigation): they are
@@ -106,6 +108,8 @@ x-default  → the English URL
 
 ## 4. Language and the language switch
 
+(Section 4.1 below covers the one exception: English-only content.)
+
 - `lang="en"` on English documents and `lang="el"` on Greek documents.
 - The switch is a pair of plain links, not a script.
 - It always leads to **the same page in the other language**. It never sends the visitor to the homepage.
@@ -119,6 +123,35 @@ Policy for missing translations:
 |---|---|
 | Standard pages (home, work index, capabilities, EU projects, about, contact, legal) | Must exist in both languages. The build fails if one is missing |
 | A case study not yet translated | The page is not published in that language. The switch on the existing version leads to the work index in the other language |
+
+### 4.1 English-only content (Insights, 2026-10-16)
+
+The Insights index and its seven articles, migrated from `pigiota314.eu/insights` with their slugs unchanged
+(`docs/content/insights-migration.md`), are published **in English only**. A Greek translation is a separate,
+future phase. One explicit, reusable mechanism handles this, not page-by-page conditions:
+
+- **Route map.** `insightsLocale`, `insightsPath()` and the `Translations` / `LanguageFallback` types in
+  `src/i18n/routes.ts`. A page passes `paths` with only the languages it really exists in (`{ en: '/insights/…' }`).
+- **Canonical and hreflang.** `BaseLayout` derives hreflang from the versions that exist. With one version there is
+  **no hreflang at all** (no `el`, no `x-default`), and no `og:locale:alternate`. The canonical is self-referencing.
+  No Greek page names an Insights URL, and no `/el/insights` route exists.
+- **Language switch.** For the missing language the switch links to an explicitly labelled fallback, the Greek EU
+  Projects page (`/el/eu-projects`), the nearest Greek page on the same subject. Its accessible name and tooltip say,
+  in Greek, that the page is not available in Greek and where the link goes ("ΕΛ, Ελληνικά. Η σελίδα δεν είναι
+  διαθέσιμη στα ελληνικά: Ευρωπαϊκά έργα"). Each Insights page also says so visibly: "Available in English only.
+  Ελληνικά: Ευρωπαϊκά έργα". This is the only case where the switch does not lead to the same page; it is never
+  presented as a translation.
+- **Navigation.** Insights is not in the header (no header redesign, and the Greek header would point to English
+  content). The **English** footer lists Insights after EU Projects, and the **English** EU Projects page has a quiet
+  "Further reading" pointer before its closing invitation. The Greek footer and the Greek EU Projects page have no
+  Insights link, because there is no Greek destination.
+- **Sitemap.** The eight URLs are listed once, in English (60 URLs in total).
+- **Redirects.** `/insights/` and `/insights.html`, and the same for each article, 301 to the canonical form in
+  `public/_redirects`. The legacy `pigiota314.eu/insights/<slug>` URLs are **not** redirected yet: that belongs to
+  the legacy-domain migration, which needs separate approval.
+
+When Greek versions are approved, add them under `/el/insights/[slug]`, pass both languages in `paths`, and the
+hreflang pairs, the switch and the sitemap follow without further changes.
 
 ## 5. 404 behaviour
 
