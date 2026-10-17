@@ -1,6 +1,8 @@
 # Google Search Console setup and migration monitoring
 
-Owner-facing procedure. Prepared 2026-10-13. **Nothing has been submitted to Search Console.** Steps marked
+Owner-facing procedure. Prepared 2026-10-13. **Status 2026-10-16 (owner-confirmed):** sections 1 to 3 are done: the
+`techpi.eu` Domain property is verified, the `pigiota314.eu` and `pigiota314.gr` properties are accessible, and their
+historical data has been exported. **No sitemap has been submitted and indexing is not enabled.** Steps marked
 **[WAIT FOR LAUNCH]** must not be done until the owner has authorised indexing (`TECHPI_LAUNCH_CHECKLIST.md`).
 Google's interface changes from time to time; menu names below are the current English ones.
 

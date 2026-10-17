@@ -14,7 +14,7 @@ plus 8 English-only Insights pages (the index and seven articles, `routes.md` se
 |---|---|---|
 | `<title>`, `meta description` | From `src/content/seo.ts` | Title only (`src/i18n`) |
 | `canonical` | Absolute, self-referencing, `https://techpi.eu` | None |
-| `hreflang` | `en`, `el`, `x-default` (English), reciprocal | None |
+| `hreflang` | Bilingual pages: `en`, `el`, `x-default` (English), reciprocal. The 8 English-only Insights pages: none (no Greek counterpart exists or is advertised) | None |
 | `robots` | `noindex, nofollow` unless the build sets `PUBLIC_ALLOW_INDEXING=true` | `noindex, nofollow` in every build |
 | Open Graph, Twitter card | Yes | None |
 | JSON-LD | Yes | None |
@@ -54,9 +54,14 @@ visible copy. The English homepage, which had no description, now has one (launc
   `astro.config.mjs`).
 - The language roots keep their slash (`https://techpi.eu/`, `https://techpi.eu/el/`); every other URL has none.
   No query string, fragment, preview or development host ever appears.
-- Each content page lists itself and its counterpart (`en`, `el`) plus `x-default`, which points to the English page.
-  Reciprocal by construction, and checked by the validator.
-- No automatic language redirect. Routing and the 35 redirects in `public/_redirects` are unchanged (all 301).
+- Each bilingual content page (26 routes, 52 pages) lists itself and its counterpart (`en`, `el`) plus `x-default`,
+  which points to the English page. Reciprocal by construction, and checked by the validator.
+- The 8 English-only Insights pages (`/insights` and its seven articles) have no Greek counterpart: they carry no
+  hreflang and no `og:locale:alternate`, no Greek page names them, and their language switch offers the Greek EU
+  Projects page as a labelled fallback, not as a translation (`routes.md`, section 4.1). The validator checks this.
+- No automatic language redirect. `public/_redirects` holds only canonical-form redirects on `techpi.eu`, all 301
+  (119 since Phase 2E: every page's slash and `.html` variants, including all 18 case studies in both languages and
+  Insights; `routes.md`, section 1.1).
 
 ## 4. Open Graph and the Twitter card
 

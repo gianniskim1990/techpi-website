@@ -62,6 +62,8 @@ Notes:
 | `/`, `/work`, `/capabilities`, `/eu-projects`, `/about`, `/contact` | 200 |
 | `/el/`, `/el/work`, `/el/capabilities`, `/el/eu-projects`, `/el/about`, `/el/contact` | 200 |
 | `/privacy`, `/cookies`, `/el/privacy`, `/el/cookies` (Phase 2B, Wrangler 2026-10-13) | 200; their `/…/` and `….html` variants 301 to the canonical form (explicit rules in `public/_redirects`) |
+| All 18 case studies, `/work/<slug>` and `/el/work/<slug>` (Phase 2E, Wrangler 2026-10-17) | 200; their `/…/` and `….html` variants 301 to the canonical form: 72 rules. Before Phase 2E only 3 case studies had rules, and production answered `/work/mavie/` with Cloudflare's automatic **307** |
+| Insights, `/insights` and `/insights/<slug>` (Phase 2D) | 200; `/…/` and `….html` variants 301: 16 rules |
 | `/work/`, `/el/work/` | 301 to `/work`, `/el/work` |
 | `/work.html`, `/index.html`, `/el/work.html`, `/el/index.html` | 301 to the canonical form |
 | `/el` | 301 to `/el/` |
@@ -74,6 +76,16 @@ Two details differ from the earlier plan:
 2. The not-found page file is itself a normal asset, so `/404` and `/el/404` return **200** with the not-found content. They carry `noindex`, nothing links to them, and they are best excluded from the sitemap and disallowed at launch. This is not harmful, but it is a soft-404 pattern and is recorded so it is not a surprise.
 
 Local results come from Wrangler's local runtime. They are re-checked on the first Cloudflare preview deployment, and an automated check of this table is added to CI in a later stage.
+
+**Phase 2E (2026-10-17): the rules are checked, in the build and against a server.** `public/_redirects` holds 119
+rules, all 301: the 31 earlier page rules, 72 for the 18 case studies in both languages and 16 for Insights.
+`scripts/content/validate-redirects.mjs` (part of `npm run build`) reads the published routes from the build and
+fails on a missing, duplicate, chained, looping or non-301 rule, on a rule on a canonical URL, on a target the build
+does not serve and on a rule for an unpublished case study. `scripts/redirects/verify-live.mjs --base <origin>` sends
+every rule to a running server (the local Workers runtime or a Preview URL; never `astro dev` or `astro preview`,
+which ignore `_redirects`): 301 in one hop to the canonical URL, query string kept, every target 200, unknown
+case-study and Insights slugs 404. These are canonical-form redirects on `techpi.eu` only; the pigiota314 domains are
+not touched.
 
 Astro's own dev server and `astro preview` are not authoritative for these rules. `astro preview` serves `/work/` and `/work.html` as 200. Only the Cloudflare runtime decides the production behaviour.
 

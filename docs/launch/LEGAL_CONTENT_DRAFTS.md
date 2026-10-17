@@ -1,6 +1,6 @@
 # Legal content drafts: Privacy Policy and Cookies Policy (EN / EL)
 
-Status: **superseded by the implemented pages (Phase 2B, Draft PR #21; not merged).** The final proposed text lives in `src/content/legal.ts` and is
+Status: **superseded by the published pages (Phase 2B, PR #21, merged 2026-10-14; Search Console sentence updated in Phase 2E).** The final proposed text lives in `src/content/legal.ts` and is
 rendered at `/privacy`, `/cookies`, `/el/privacy` and `/el/cookies` in the preview. The drafts below record how
 the text was derived; do not publish them.
 

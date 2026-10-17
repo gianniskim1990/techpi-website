@@ -5,26 +5,33 @@ updated in Phase 2A (PR #20). The Phase 1 audit statements below ("documentation
 only; what Phase 2A changed is listed in section 5.
 **The site is live on `https://techpi.eu` and remains `noindex`. It is not launched in search.**
 
-**Phase 2A update (2026-10-13, branch `phase-2a-greek-work-lists`, Draft PR):** HTTP → HTTPS is now on and verified (B2 reduced to HSTS
-only); the Greek `/el/work` lists are fixed on the branch (F2, pending merge); the indexing hardening F1 was reviewed
+**Phase 2A update (2026-10-13, branch `phase-2a-greek-work-lists`, PR #20, merged 2026-10-13):** HTTP → HTTPS is now on and verified (B2 reduced to HSTS
+only); the Greek `/el/work` lists are fixed (F2; PR #20 merged on 2026-10-13); the indexing hardening F1 was reviewed
 and deliberately not implemented (section 4).
 
-**Phase 2B update (2026-10-13, branch `phase-2b-legal-pages`, Draft PR, not merged):** the four legal pages
+**Phase 2B update (2026-10-13, branch `phase-2b-legal-pages`, PR #21, merged 2026-10-14 and live):** the four legal pages
 (`/privacy`, `/cookies`, `/el/privacy`, `/el/cookies`) and the footer's legal line are implemented from the owner's
 confirmed decisions (operator, address, retention, analytics, Cloudflare settings, no external legal review). The site
 now builds 54 pages (52 content URLs, sitemap 52). Still `noindex`.
 
-**Phase 2B corrections (2026-10-13, same Draft PR):** Search Console is described as intended, not as in use (the
-Domain property is not yet verified); the absolute statement that TechPi itself makes no transfers outside the EEA is
+**Phase 2B corrections (2026-10-13, same PR):** Search Console is described as intended, not as in use (the
+Domain property was not yet verified then; superseded by Phase 2E below); the absolute statement that TechPi itself makes no transfers outside the EEA is
 removed; the Privacy pages are prepared to show the GEMI and VAT numbers, which Greek law requires on the website
-(Law 4919/2022, Art. 22(3)(d); P.D. 131/2003, Art. 4(1)(d) and (g)). Both identifiers have now been supplied and expressly approved for public display; they are staged on Draft PR #21. The PR stays in draft pending final owner preview review and merge approval (OWNER_DECISIONS_REQUIRED.md L1).
+(Law 4919/2022, Art. 22(3)(d); P.D. 131/2003, Art. 4(1)(d) and (g)). Both identifiers were supplied and expressly approved for public display, and are published since PR #21 was merged (verified on production 2026-10-17).
 
-**Phase 2D update (2026-10-16, branch `feat/insights-migration`, Draft PR, not merged):** the owner approved the
+**Phase 2D update (2026-10-16, branch `feat/insights-migration`, PR #22, merged 2026-10-17 and live):** the owner approved the
 Insights migration (decision D2 / O28). `/insights` and the seven `pigiota314.eu` articles are built at their original
 slugs, **English only** (no Greek version, no hreflang, an honest language-switch fallback: `routes.md` §4.1). The site
 now builds **62 pages: 60 content URLs, sitemap 60**, two 404s. Still `noindex`; no legacy redirect, sitemap submission
 or Change of Address. Details: `docs/content/insights-migration.md`. **Search Console (owner, 2026-10-16):** the
 `techpi.eu` Domain property is verified and historical data has been exported from both legacy properties (B8, P0-10).
+
+**Phase 2E update (2026-10-17, branch `feat/phase-2e-seo-cleanup`, Draft PR, not merged):** (1) the four legal
+pages now say the `techpi.eu` Domain property **is verified** in Search Console, without claiming a submitted sitemap,
+indexing or reports; version date 17 October 2026; (2) canonical 301s for all 18 case studies in both languages (72
+rules; production still answers e.g. `/work/mavie/` with a 307 until merged), checked in the build and against the
+Workers runtime; (3) the WCAG sentence of one Insights article clarified. Counts unchanged (62 pages, 60 URLs);
+still `noindex`; sitemap not submitted; no legacy-domain redirect.
 
 Confidence legend: **[V] Verified** in this audit (live request, DNS query, build or browser test) · **[O] Owner-confirmed**
 (not independently verifiable from outside) · **[D] Needs dashboard access** (Cloudflare, Pointer, cPanel, Search Console:
@@ -40,10 +47,10 @@ for the legacy sites; their `techpi.eu` "no DNS" finding is **superseded** by th
 | Area | State | Confidence |
 |---|---|---|
 | Production site on `techpi.eu` | Live, HTTPS, serving exactly the `main` build | [V] |
-| Indexing safeguards | All 50 pages `noindex, nofollow`; workers.dev and previews also `X-Robots-Tag: noindex` | [V] |
+| Indexing safeguards | All 62 pages `noindex, nofollow` (60 content URLs and two 404s, since Phase 2D); workers.dev and previews also `X-Robots-Tag: noindex` | [V] |
 | Domains `techpi.eu`, `techpi.gr` | On Cloudflare, Active; `www.techpi.eu` → apex 301; `techpi.gr` → `/el/` 301 | [V] (DNS, HTTP) / [O] (zone status) |
 | Email `info@techpi.eu` | MX, SPF, DKIM, DMARC published; mailbox works | [V] (DNS) / [O] (delivery tests) |
-| Technical SEO in code | Canonical, hreflang, sitemap (48), structured data, robots | [V] |
+| Technical SEO in code | Canonical, hreflang, sitemap (60 since Phase 2D), structured data, robots, canonical 301s | [V] |
 | Security | CSP and headers live on the custom domain, including 404 responses | [V] |
 | Content, legal, editorial | **Not ready**: legal pages, Greek editorial review, rights confirmations open | [V] / [O] |
 | Launch in search | **Not authorised**; blockers in section 6 | — |
@@ -143,7 +150,7 @@ for the legacy sites; their `techpi.eu` "no DNS" finding is **superseded** by th
 | Brand naming | Consistent (TechPi; "TECHPI" as the typographic header name by design). No variants found | [V] |
 | Placeholders, overreaching claims | None found (scan for placeholder text and superlative/guarantee/award/percentage wording, EN and EL) | [V] |
 | External links | Only 8 client websites (case studies) | [V] |
-| **Untranslated Greek lists** (**fixed on `phase-2a-greek-work-lists`, pending merge**) | On `/el/work`, **10 rows show English lists**: the "Τι περιλαμβάνει" highlights of Saloon, Physio, Project4You, Rantevo.gr and the disciplines of the 6 earlier-work projects (e.g. "Online booking", "Graphic design"). Greek translations exist in `src/content/projects.el.ts`, but `toGreek()` in `src/content/projects.ts` (≈ line 771) only applies `highlights`/`disciplines` to projects **without** a case study, and every project now has one. Live on production. Fix F2 | [V] |
+| **Untranslated Greek lists** (**fixed on `phase-2a-greek-work-lists`; merged as PR #20 on 2026-10-13**) | On `/el/work`, **10 rows show English lists**: the "Τι περιλαμβάνει" highlights of Saloon, Physio, Project4You, Rantevo.gr and the disciplines of the 6 earlier-work projects (e.g. "Online booking", "Graphic design"). Greek translations exist in `src/content/projects.el.ts`, but `toGreek()` in `src/content/projects.ts` (≈ line 771) only applies `highlights`/`disciplines` to projects **without** a case study, and every project now has one. Live on production. Fix F2 | [V] |
 | Meta titles/descriptions | All unique; 9 case-study titles are 66–71 characters (may be truncated in results); `/work/saloon` description 179 characters | [V] |
 | Legal links | No Privacy or Cookie link anywhere (pages do not exist yet) | [V] |
 | Image accessibility | Case-study screenshots have descriptive alt text in both languages; decorative thumbnails use empty `alt` | [V] |
@@ -199,7 +206,7 @@ and after (verified then). This statement is historical and does not apply to la
 | The check runs as part of `npm run build` (`"build": "astro build && node scripts/content/validate.mjs"`), so a Greek translation regression fails the build, and with it the Cloudflare build, before deploy | `package.json` | None on the output. Verified on 2026-10-13 with a throwaway branch (deleted afterwards, no PR, nothing deployed): the same code with the old `toGreek()` restored failed its Cloudflare build, while the fixed code passed it, so the Workers Builds build command does run `npm run build`. The dashboard setting itself was not inspected |
 | HTTPS redirect recorded; indexing review (F1 not implemented) | `docs/launch/*`, `docs/production/*` | None |
 
-**Phase 2B (Draft PR, not merged): the legal pages.**
+**Phase 2B (PR #21, merged 2026-10-14): the legal pages.**
 
 | Change | Files | Effect on the generated site |
 |---|---|---|
@@ -208,7 +215,7 @@ and after (verified then). This statement is historical and does not apply to la
 | 301s for the new pages' slash and `.html` variants | `public/_redirects` | 8 rules |
 | Validators | `scripts/seo/validate.mjs`, `scripts/security/validate.mjs`, `scripts/content/validate-legal.mjs` (new, in `npm run build`), `package.json` | None |
 
-**Phase 2D (Draft PR, not merged): Insights, English only.**
+**Phase 2D (PR #22, merged 2026-10-17): Insights, English only.**
 
 | Change | Files | Effect on the generated site |
 |---|---|---|
@@ -219,16 +226,26 @@ and after (verified then). This statement is historical and does not apply to la
 | 301s for the slash and `.html` variants of the eight URLs | `public/_redirects` | 16 rules |
 | Validators | `scripts/seo/validate.mjs`, `scripts/security/validate.mjs` (62 pages), `scripts/content/validate-insights.mjs` (new, in `npm run build`), `package.json` | None |
 
+**Phase 2E (Draft PR, not merged): Search Console wording, case-study redirects, one WCAG sentence.**
+
+| Change | Files | Effect on the generated site |
+|---|---|---|
+| Search Console described as verified (EN and EL, both policies); version date 17 October 2026 | `src/content/legal.ts` | The four legal pages only |
+| Legal validator: exact verified-property statements required; prospective wording, sitemap/indexing/report/Analytics/identification claims rejected; one version date on all four pages | `scripts/content/validate-legal.mjs` | None |
+| Canonical 301s for all 18 case studies, EN and EL (60 new rules; 119 in total) | `public/_redirects` | `_redirects` only |
+| Redirect validator in the build; live redirect check for a running server | `scripts/content/validate-redirects.mjs` (new, in `npm run build`), `scripts/redirects/verify-live.mjs` (new), `package.json` | None |
+| WCAG sentence clarified | `src/content/insights.ts` | That article only |
+
 ---
 
 ## 6. Remaining blockers, ranked
 
 | Rank | Blocker | Why it blocks | Owner / dependency |
 |---|---|---|---|
-| **B1** | Privacy and Cookies pages (EN/EL) | **Implemented on the Phase 2B Draft PR (branch `phase-2b-legal-pages`)**; both GEMI and VAT numbers now staged and approved (L4, checklist P0-14); remaining: owner approval of final wording (no external legal review, by decision), then merge | Owner: review (OWNER_DECISIONS_REQUIRED.md L1, L4–L7), then merge |
+| ~~B1~~ | Privacy and Cookies pages (EN/EL) | **Done:** published with PR #21 (merged 2026-10-14; GEMI and VAT numbers live, verified 2026-10-17). Phase 2E corrects the Search Console sentence (Draft PR) | Owner: review the Phase 2E wording |
 | B2 | HSTS on `techpi.eu` (HTTP → HTTPS **done**: owner-enabled, verified 301) | Without HSTS a first plain-HTTP request can still be intercepted before the redirect; not a launch blocker on its own | Owner: after about a week of HTTPS-only (checklist P2-3) |
-| **B3** | Greek translation bug on `/el/work` (F2) | **Fixed on `phase-2a-greek-work-lists`** (Draft PR); resolved once merged and deployed | Owner: review and merge |
-| **B4** | Native-speaker Greek editorial review (24 Greek content pages now; 26 once the Greek Privacy and Cookies pages exist) | Launch blocker 8 | Owner / reviewer |
+| ~~B3~~ | Greek translation bug on `/el/work` (F2) | **Done:** fixed by PR #20 (merged 2026-10-13); Greek lists verified on production 2026-10-17 | — |
+| **B4** | Native-speaker Greek editorial review of the **26 published Greek pages** (24 content pages and the Greek Privacy and Cookies pages; the English-only Insights pages need none) | Launch blocker 8 | Owner / reviewer |
 | **B5** | Rights confirmations: client screenshots, Logotherapia imagery, third-party logos in screenshots | Launch blockers 10 and the rights checklist | Owner |
 | ~~B6~~ | Analytics decision | **Decided:** Search Console only, no GA4, no Meta Pixel, no trackers | Done |
 | **B7** | Email authentication verified (SPF, DKIM, DMARC pass with alignment) | Deliverability of replies to enquiries | Owner test (checklist P1-3) |
