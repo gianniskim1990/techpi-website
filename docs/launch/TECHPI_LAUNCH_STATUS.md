@@ -6,7 +6,7 @@ only; what Phase 2A changed is listed in section 5.
 **The site is live on `https://techpi.eu` and remains `noindex`. It is not launched in search.**
 
 **Phase 2A update (2026-10-13, branch `phase-2a-greek-work-lists`, PR #20, merged 2026-10-13):** HTTP → HTTPS is now on and verified (B2 reduced to HSTS
-only); the Greek `/el/work` lists are fixed on the branch (F2, pending merge); the indexing hardening F1 was reviewed
+only); the Greek `/el/work` lists are fixed (F2; PR #20 merged on 2026-10-13); the indexing hardening F1 was reviewed
 and deliberately not implemented (section 4).
 
 **Phase 2B update (2026-10-13, branch `phase-2b-legal-pages`, PR #21, merged 2026-10-14 and live):** the four legal pages
@@ -150,7 +150,7 @@ for the legacy sites; their `techpi.eu` "no DNS" finding is **superseded** by th
 | Brand naming | Consistent (TechPi; "TECHPI" as the typographic header name by design). No variants found | [V] |
 | Placeholders, overreaching claims | None found (scan for placeholder text and superlative/guarantee/award/percentage wording, EN and EL) | [V] |
 | External links | Only 8 client websites (case studies) | [V] |
-| **Untranslated Greek lists** (**fixed on `phase-2a-greek-work-lists`, pending merge**) | On `/el/work`, **10 rows show English lists**: the "Τι περιλαμβάνει" highlights of Saloon, Physio, Project4You, Rantevo.gr and the disciplines of the 6 earlier-work projects (e.g. "Online booking", "Graphic design"). Greek translations exist in `src/content/projects.el.ts`, but `toGreek()` in `src/content/projects.ts` (≈ line 771) only applies `highlights`/`disciplines` to projects **without** a case study, and every project now has one. Live on production. Fix F2 | [V] |
+| **Untranslated Greek lists** (**fixed on `phase-2a-greek-work-lists`; merged as PR #20 on 2026-10-13**) | On `/el/work`, **10 rows show English lists**: the "Τι περιλαμβάνει" highlights of Saloon, Physio, Project4You, Rantevo.gr and the disciplines of the 6 earlier-work projects (e.g. "Online booking", "Graphic design"). Greek translations exist in `src/content/projects.el.ts`, but `toGreek()` in `src/content/projects.ts` (≈ line 771) only applies `highlights`/`disciplines` to projects **without** a case study, and every project now has one. Live on production. Fix F2 | [V] |
 | Meta titles/descriptions | All unique; 9 case-study titles are 66–71 characters (may be truncated in results); `/work/saloon` description 179 characters | [V] |
 | Legal links | No Privacy or Cookie link anywhere (pages do not exist yet) | [V] |
 | Image accessibility | Case-study screenshots have descriptive alt text in both languages; decorative thumbnails use empty `alt` | [V] |
@@ -245,7 +245,7 @@ and after (verified then). This statement is historical and does not apply to la
 | ~~B1~~ | Privacy and Cookies pages (EN/EL) | **Done:** published with PR #21 (merged 2026-10-14; GEMI and VAT numbers live, verified 2026-10-17). Phase 2E corrects the Search Console sentence (Draft PR) | Owner: review the Phase 2E wording |
 | B2 | HSTS on `techpi.eu` (HTTP → HTTPS **done**: owner-enabled, verified 301) | Without HSTS a first plain-HTTP request can still be intercepted before the redirect; not a launch blocker on its own | Owner: after about a week of HTTPS-only (checklist P2-3) |
 | ~~B3~~ | Greek translation bug on `/el/work` (F2) | **Done:** fixed by PR #20 (merged 2026-10-13); Greek lists verified on production 2026-10-17 | — |
-| **B4** | Native-speaker Greek editorial review (24 Greek content pages now; 26 once the Greek Privacy and Cookies pages exist) | Launch blocker 8 | Owner / reviewer |
+| **B4** | Native-speaker Greek editorial review of the **26 published Greek pages** (24 content pages and the Greek Privacy and Cookies pages; the English-only Insights pages need none) | Launch blocker 8 | Owner / reviewer |
 | **B5** | Rights confirmations: client screenshots, Logotherapia imagery, third-party logos in screenshots | Launch blockers 10 and the rights checklist | Owner |
 | ~~B6~~ | Analytics decision | **Decided:** Search Console only, no GA4, no Meta Pixel, no trackers | Done |
 | **B7** | Email authentication verified (SPF, DKIM, DMARC pass with alignment) | Deliverability of replies to enquiries | Owner test (checklist P1-3) |
