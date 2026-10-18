@@ -206,7 +206,7 @@ const en: EuCopy = {
       ],
       also: 'We can also technically support projects funded through programmes such as LIFE and Digital Europe.',
       disclaimer:
-        'TechPi is an independent technology company and is not affiliated with or endorsed by these programmes or the European Commission.',
+        'TechPi is an independent technology business and is not affiliated with or endorsed by these programmes or the European Commission.',
     },
     priorities: {
       heading: 'Technical priorities',
@@ -416,7 +416,7 @@ const el: EuCopy = {
       ],
       also: 'Μπορούμε επίσης να υποστηρίξουμε σε τεχνικό επίπεδο έργα που χρηματοδοτούνται από προγράμματα όπως τα LIFE και Digital Europe.',
       disclaimer:
-        'Η TechPi είναι ανεξάρτητη εταιρεία τεχνολογίας και δεν συνδέεται με αυτά τα προγράμματα ή την Ευρωπαϊκή Επιτροπή, ούτε έχει την έγκρισή τους.',
+        'Η TechPi είναι ανεξάρτητη επιχείρηση τεχνολογίας και δεν συνδέεται με αυτά τα προγράμματα ή την Ευρωπαϊκή Επιτροπή, ούτε έχει την έγκρισή τους.',
     },
     priorities: {
       heading: 'Τεχνικές προτεραιότητες',

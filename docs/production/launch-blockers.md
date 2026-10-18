@@ -1,6 +1,6 @@
 # Launch blockers and confirmed facts
 
-Status: current as of 2026-10-13 (Launch readiness phase 1: domains and email connected; see `docs/launch/`). This is the single place that records what is confirmed for public display, what is deliberately deferred, and what still blocks launch. Other documents point here instead of repeating it.
+Status: blocker table current as of 2026-10-18 (Phase 2H); the dated phase notes below are historical records. Live launch status: `docs/launch/TECHPI_LAUNCH_STATUS.md`. First written for launch readiness phase 1 (2026-10-13). This is the single place that records what is confirmed for public display, what is deliberately deferred, and what still blocks launch. Other documents point here instead of repeating it.
 
 The site stays `noindex` until every blocker below that applies is resolved and indexing is switched on deliberately.
 
@@ -17,7 +17,7 @@ The site stays `noindex` until every blocker below that applies is resolved and 
 - The values live in `src/content/site.ts` (email, phone) and `src/content/pages.en.ts` / `pages.el.ts` (labels and location). They appear on the Contact pages only. They are deliberately **not** in the footer, the homepage, page titles or descriptions. Since Phase 4 they are also in the Organization structured data (email, phone, and the town as locality and country only), as the Phase 4 brief specified (`seo.md`, section 5).
 - The Contact lead is kept: "Tell us about the problem you need to solve." / "Πείτε μας ποιο πρόβλημα θέλετε να λύσετε."
 
-Contact facts, registered business address, legal operator identity, and both VAT and GEMI identifiers are owner-approved and staged on the Phase 2B Draft PR. Unconfirmed WhatsApp, social profiles, office hours, map and booking links must not be invented or shown.
+Contact facts, registered business address, legal operator identity, and both VAT and GEMI identifiers are owner-approved and published since PR #21 (2026-10-14). Unconfirmed WhatsApp, social profiles, office hours, map and booking links must not be invented or shown.
 
 ## 2. Must never be displayed
 
@@ -47,8 +47,9 @@ Updated 2026-10-08: EU-funded projects are approved as a **target market and ser
 - **It is not a portfolio.** No specific EU project, programme participation, partner, result, certification or
   compliance is claimed. Horizon Europe, Interreg, Erasmus+, EDIHs and European R&I projects are named as the kinds of
   projects the approach is built for; LIFE and Digital Europe only as examples TechPi can technically support. The
-  page carries: "TechPi is an independent technology company and is not affiliated with or endorsed by these
-  programmes or the European Commission."
+  page carries: "TechPi is an independent technology business and is not affiliated with or endorsed by these
+  programmes or the European Commission." ("business", not "company", since Phase 2H: TechPi is the brand of a sole
+  proprietorship.)
 - **Deliberately softened or left out, for the launch copy review:**
   - Accessibility reads "designed with WCAG 2.2 AA requirements in mind", not a guaranteed baseline. Decide whether
     TechPi commits to WCAG 2.2 AA as a baseline before changing it.
@@ -70,22 +71,22 @@ Each of these must be resolved, or consciously accepted, before indexing is enab
 
 | # | Blocker | Needs | Affects |
 |---|---|---|---|
-| 1 | Legal entity details | **Resolved on Draft PR #21, pending merge/production verification:** Ioannis Kimoundris (Ιωάννης Κιμούντρης), Greek sole proprietorship, Χρ. Μπρωκούμη 30, Ξάνθη. Owner supplied and approved GEMI and VAT/ΑΦΜ identifiers, now set in `registrationFacts` and to be displayed on both Privacy pages. Verify preview and production once approved. Postal code not supplied. | Privacy page and footer legal line |
-| 2 | Privacy and Cookies pages | **Implemented on the Phase 2B Draft PR** (`/privacy`, `/cookies`, `/el/privacy`, `/el/cookies`; footer links on every page). Resolved once the owner approves the wording and the PR is merged. No external legal review, by the owner's decision | Footer links |
+| ~~1~~ | Legal entity details | **Resolved:** published with PR #21 (2026-10-14): Ioannis Kimoundris (Ιωάννης Κιμούντρης), Greek sole proprietorship, Χρ. Μπρωκούμη 30, Ξάνθη; GEMI and VAT numbers on both Privacy pages (verified live 2026-10-18) | Footer, Privacy, Organization schema |
+| ~~2~~ | Privacy and Cookies pages | **Resolved:** published with PR #21; Search Console wording updated with PR #23. No external legal review, by the owner's decision | Footer links, consent handling |
 | 3 | ~~Tracking and analytics decision~~ | **Decided 2026-10-13:** Google Search Console only. No GA4, Meta Pixel, advertising trackers or profiling, so no consent banner | Privacy, cookies |
 | 4 | ~~Self-hosted Commissioner~~ | **Resolved in Phase 3G.2** (below) | |
 | 5 | ~~Final identity and favicon~~ | **Resolved in Phase 3G.2** (below). The flat vector master is no longer a blocker | |
 | 6 | ~~Open Graph metadata, social images and the structured-data logo~~ | **Resolved in Phase 4** (below) | |
 | 7 | ~~English homepage meta description~~ | **Resolved in Phase 4** (below). Like every description, open to the launch copy review | |
-| 8 | Native-speaker Greek editorial read | A reviewer | All Greek pages |
-| 9 | Presentation of TechPi-owned products | A decision | Work page and homepage |
-| 10 | Permission for Logotherapia imagery | Permission before any image with identifiable children is used | The Logotherapia case study |
+| ~~8~~ | Native-speaker Greek editorial read | **Resolved 2026-10-18:** the owner read and approved all 26 Greek pages on `da398aa`; Phase 2H Greek changes pending the owner's review | All Greek pages |
+| ~~9~~ | Presentation of TechPi-owned products | **Decided 2026-10-18:** the five web applications are client projects (Phase 2H) | Work page and homepage |
+| ~~10~~ | Permission for Logotherapia imagery | **Owner attestation 2026-10-18:** permission to publish, and the images on TechPi show no identifiable children | The Logotherapia case study |
 | 11 | EU project case studies (optional) | Approved factual content per project | Would extend the EU Projects page; the service page itself is not blocked |
 | 12 | The training-crawler decision | The owner's decision; then re-verify crawler names and policies and add narrow per-agent rules, if any. The base `robots.txt` (allow all, sitemap line) exists since Phase 4 and needs no change if nothing is blocked | Search and answer-engine visibility |
 | 13 | Confirmed contact method beyond email and phone, if wanted | A decision | Whether a form is needed |
 | 14 | `PUBLIC_ALLOW_INDEXING` unset in Cloudflare | Confirm in the Cloudflare dashboard that the variable is not set for production or previews. **Note (2026-10-13, corrected on review):** Workers Builds supports build variables per trigger (production and preview), so the variable can be set for production only; how this Worker's two triggers are configured has not been inspected, so check both (`docs/launch/TECHPI_LAUNCH_CHECKLIST.md` P1-8). Previews would stay non-indexable through `X-Robots-Tag` in any case. Optional defence in depth: F1 in `docs/launch/TECHPI_LAUNCH_STATUS.md` (reviewed in Phase 2A, not implemented: it depends on `WORKERS_CI_BRANCH` values not yet verified in this Worker's builds). Since Phase 3G.2 it is the only indexing switch: the TemporaryFonts guard, which also failed indexable builds, went with the remote fonts. Set it only for production, only at launch | Every page's `noindex` |
 | 15 | HTTPS and HSTS on `techpi.eu` | **Domain connected and certificate valid (verified 2026-10-13); TLS 1.2+ only.** **Always Use HTTPS enabled by the owner and verified (Phase 2A): plain HTTP returns 301 to HTTPS, path and query kept.** Still open: HSTS (not sent today), without `includeSubDomains` or `preload` at first (`security.md`, section 9) | Transport security of the production domain |
-| 16 | Greek lists on `/el/work` | 10 rows show English highlights/disciplines on the live Greek Work page; fix F2 in `docs/launch/TECHPI_LAUNCH_STATUS.md`. **Fixed on `phase-2a-greek-work-lists` (Draft PR), with the regression check `scripts/content/validate.mjs`; resolved once merged** | Greek Work page |
+| ~~16~~ | Greek lists on `/el/work` | **Resolved:** fixed by PR #20 (2026-10-13), with the regression check `scripts/content/validate.mjs` in `npm run build` | `/el/work` |
 | 17 | Email authentication verified | SPF, DKIM and DMARC records exist for `techpi.eu`; a delivered message proving SPF/DKIM/DMARC **pass with alignment** is still needed (`docs/launch/TECHPI_LAUNCH_CHECKLIST.md` P1-3) | Deliverability of `info@techpi.eu` |
 
 Resolved in Phase 3F: confirmed email, phone and town (section 1).
@@ -93,7 +94,7 @@ Resolved in Phase 3F: confirmed email, phone and town (section 1).
 Launch readiness phase 1 (2026-10-13, `docs/launch/`):
 - **Domains connected (owner).** `techpi.eu` and `techpi.gr` on Cloudflare. `https://techpi.eu` serves the production Worker: all 50 pages byte-identical to the `main` build, all `noindex`. `www.techpi.eu` → apex 301; `techpi.gr` and `www.techpi.gr` → `https://techpi.eu/el/` + path, 301.
 - **Email (owner).** `info@techpi.eu` on the Pointer.gr cPanel server (MX `mail.techpi.eu` 0, `mail2.techpi.eu` 40; SPF, DKIM `default` selector and DMARC `p=none` published). Delivery tested by the owner; authentication alignment not yet verified (blocker 17).
-- **Counts now:** 50 built pages = 48 content URLs (6 page types + 18 case studies, EN and EL) + 2 not-found pages; sitemap 48 URLs. The "18 content pages" and "18 URLs" in the Phase 4 note below were correct when written.
+- **Counts then (2026-10-13; now 62 pages, 60 URLs):** 50 built pages = 48 content URLs (6 page types + 18 case studies, EN and EL) + 2 not-found pages; sitemap 48 URLs. The "18 content pages" and "18 URLs" in the Phase 4 note below were correct when written.
 - **Not inspected:** the Cloudflare, Pointer and cPanel dashboards. Settings are recorded as owner-confirmed or inferred from live behaviour.
 
 Resolved in Phase 5 (`security.md`):

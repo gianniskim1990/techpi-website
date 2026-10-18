@@ -43,7 +43,7 @@ export const compositions: Record<string, Composition> = {
     layout: 'bleed',
     thumb: { x: 0.05, y: 0.14, w: 0.9, h: 0.716 },
     cover: { x: 0, y: 0.06, w: 1, h: 0.62 },
-    main: { caption: { en: 'The website on laptop, tablet and phone', el: 'Η ιστοσελίδα σε υπολογιστή, tablet και κινητό' } },
+    main: { caption: { en: 'The website on laptop, tablet and phone', el: 'Ο ιστότοπος σε υπολογιστή, tablet και κινητό' } },
     detail: {
       index: 0,
       crop: { x: 0.234, y: 0.087, w: 0.526, h: 0.308 },
@@ -57,7 +57,7 @@ export const compositions: Record<string, Composition> = {
     main: {
       crop: { x: 0, y: 0, w: 1, h: 0.47 },
       small: { x: 0.2, y: 0.1, w: 0.56, h: 0.4 },
-      caption: { en: 'Website: services', el: 'Ιστοσελίδα: υπηρεσίες' },
+      caption: { en: 'Website: services', el: 'Ιστότοπος: υπηρεσίες' },
     },
   },
   // Not featured on the homepage: only its Work index thumbnail is used, a 3:2 crop around the heading and search form.

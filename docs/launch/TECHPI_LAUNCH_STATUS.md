@@ -1,6 +1,6 @@
 # TechPi launch status
 
-Status date: **2026-10-13**. Written in Phase 1 (PR #19, branch `launch-readiness-phase-1`, merged as `fe12f39`), and
+Status date: **2026-10-18** (current status: Phase 2G/2H below; earlier dated records kept). First written **2026-10-13**. Written in Phase 1 (PR #19, branch `launch-readiness-phase-1`, merged as `fe12f39`), and
 updated in Phase 2A (PR #20). The Phase 1 audit statements below ("documentation only", "byte-identical") describe PR #19
 only; what Phase 2A changed is listed in section 5.
 **The site is live on `https://techpi.eu` and remains `noindex`. It is not launched in search.**
@@ -26,18 +26,32 @@ now builds **62 pages: 60 content URLs, sitemap 60**, two 404s. Still `noindex`;
 or Change of Address. Details: `docs/content/insights-migration.md`. **Search Console (owner, 2026-10-16):** the
 `techpi.eu` Domain property is verified and historical data has been exported from both legacy properties (B8, P0-10).
 
-**Phase 2E update (2026-10-17, branch `feat/phase-2e-seo-cleanup`, Draft PR, not merged):** (1) the four legal
+**Phase 2E update (2026-10-17, branch `feat/phase-2e-seo-cleanup`, PR #23, merged and live):** (1) the four legal
 pages now say the `techpi.eu` Domain property **is verified** in Search Console, without claiming a submitted sitemap,
 indexing or reports; version date 17 October 2026; (2) canonical 301s for all 18 case studies in both languages (72
 rules; production still answers e.g. `/work/mavie/` with a 307 until merged), checked in the build and against the
 Workers runtime; (3) the WCAG sentence of one Insights article clarified. Counts unchanged (62 pages, 60 URLs);
 still `noindex`; sitemap not submitted; no legacy-domain redirect.
 
-**Phase 2F update (2026-10-18, branch `feat/phase-2f-greek-editorial`, Draft PR, not merged):** editorial audit of
+**Phase 2F update (2026-10-18, branch `feat/phase-2f-greek-editorial`, PR #24, merged and live as `main` `da398aa`):** editorial audit of
 all 26 Greek pages (`GREEK_EDITORIAL_AUDIT.md`): 33 confirmed issues fixed (0 Critical, 9 Important, 24 Polish),
 10 owner decisions recorded and not changed. Greek copy only (11 Greek pages change in the build; no English page,
 fact, claim, legal text, route or redirect). **The audit was AI-assisted; the native-speaker sign-off (B4, P0-8) is
 still required.** Still `noindex`.
+
+**Phase 2G (2026-10-18, read-only assessment of `main` `da398aa`):** production serves exactly that build (all 60
+content pages and the sitemap byte-identical); 1,440 checks, 1,438 pass: the 119 redirect rules (72 case-study), hosts,
+404s, canonical/hreflang, noindex on every page, Open Graph, JSON-LD, no trackers, legal pages, mobile layout and axe at
+390 px. The two non-passes: a line-ending artefact in a `robots.txt` byte comparison, and HSTS not set (recommended,
+P2-3). Recommendation: conditional go, pending the Cloudflare build-trigger check (P1-8) and the owner decisions now
+taken below.
+
+**Phase 2H update (2026-10-18, branch `feat/phase-2h-final-content-portfolio`, Draft PR, not merged):** the owner's
+decisions of 2026-10-18 implemented: the five web applications are client projects (Work page: 12 Client Projects,
+6 Earlier Work; the empty Business Solutions and Our Products groups removed); G1 Greek "website" terminology; G2
+"independent technology business"; G3 Work wording. Recorded as owner attestations: rights to present all 18 projects
+and that the Logotherapia images show no identifiable children; approval of the brand and service claims; the owner's
+sign-off of all 26 Greek pages on `da398aa`. Counts unchanged (60 URLs, 62 pages); still `noindex`.
 
 Confidence legend: **[V] Verified** in this audit (live request, DNS query, build or browser test) · **[O] Owner-confirmed**
 (not independently verifiable from outside) · **[D] Needs dashboard access** (Cloudflare, Pointer, cPanel, Search Console:
@@ -58,7 +72,7 @@ for the legacy sites; their `techpi.eu` "no DNS" finding is **superseded** by th
 | Email `info@techpi.eu` | MX, SPF, DKIM, DMARC published; mailbox works | [V] (DNS) / [O] (delivery tests) |
 | Technical SEO in code | Canonical, hreflang, sitemap (60 since Phase 2D), structured data, robots, canonical 301s | [V] |
 | Security | CSP and headers live on the custom domain, including 404 responses | [V] |
-| Content, legal, editorial | **Not ready**: legal pages, Greek editorial review, rights confirmations open | [V] / [O] |
+| Content, legal, editorial | Legal pages live; Greek pages signed off by the owner (2026-10-18, `da398aa`); rights and claims confirmed by owner attestation (2026-10-18); Phase 2H text pending the owner's review | [V] / [O] |
 | Launch in search | **Not authorised**; blockers in section 6 | — |
 
 ---
@@ -232,7 +246,7 @@ and after (verified then). This statement is historical and does not apply to la
 | 301s for the slash and `.html` variants of the eight URLs | `public/_redirects` | 16 rules |
 | Validators | `scripts/seo/validate.mjs`, `scripts/security/validate.mjs` (62 pages), `scripts/content/validate-insights.mjs` (new, in `npm run build`), `package.json` | None |
 
-**Phase 2E (Draft PR, not merged): Search Console wording, case-study redirects, one WCAG sentence.**
+**Phase 2E (PR #23, merged): Search Console wording, case-study redirects, one WCAG sentence.**
 
 | Change | Files | Effect on the generated site |
 |---|---|---|
@@ -242,12 +256,21 @@ and after (verified then). This statement is historical and does not apply to la
 | Redirect validator in the build; live redirect check for a running server | `scripts/content/validate-redirects.mjs` (new, in `npm run build`), `scripts/redirects/verify-live.mjs` (new), `package.json` | None |
 | WCAG sentence clarified | `src/content/insights.ts` | That article only |
 
-**Phase 2F (Draft PR, not merged): Greek editorial corrections.**
+**Phase 2F (PR #24, merged): Greek editorial corrections.**
 
 | Change | Files | Effect on the generated site |
 |---|---|---|
 | 33 Greek wording fixes: grammar, calques, the approved glossary («Ψηφιακό μάρκετινγκ», «Σχεδιασμός ιστοσελίδων»), «μακροπρόθεσμος», three noun fragments, Greek meta descriptions | `src/content/capabilities.ts` (Greek string), `src/content/eu.ts` (Greek block), `src/content/pages.el.ts`, `src/content/projects.el.ts`, `src/content/seo.ts` (Greek entries) | 11 Greek pages; no English page |
 | Audit report | `docs/launch/GREEK_EDITORIAL_AUDIT.md` (new) | None |
+
+**Phase 2H (Draft PR, not merged): final content and portfolio corrections.**
+
+| Change | Files | Effect on the generated site |
+|---|---|---|
+| Five web applications regrouped as client projects; Business Solutions and Our Products groups and the "Discuss a similar solution" link removed | `src/content/projects.ts`, `src/components/pages/WorkPage.astro`, `src/components/secondary/ProjectRow.astro`, `src/content/pages.en.ts`, `pages.el.ts` | Work pages; "Related projects" and "Next project" on client case studies follow the new group and order; sitemap order (same 60 URLs) |
+| G3 Work wording, Work meta descriptions | `src/content/pages.en.ts`, `pages.el.ts`, `src/content/seo.ts` | Work pages |
+| G2 EU disclaimer | `src/content/eu.ts` | `/eu-projects`, `/el/eu-projects` |
+| G1 «ιστοσελίδα» / «ιστότοπος» | `src/content/capabilities.ts`, `home.el.ts`, `seo.ts`, `projects.el.ts`, `src/components/workCompositions.ts` | Greek homepage, Capabilities, Logotherapia category on Greek pages |
 
 ---
 
@@ -258,8 +281,8 @@ and after (verified then). This statement is historical and does not apply to la
 | ~~B1~~ | Privacy and Cookies pages (EN/EL) | **Done:** published with PR #21 (merged 2026-10-14; GEMI and VAT numbers live, verified 2026-10-17). Phase 2E corrects the Search Console sentence (Draft PR) | Owner: review the Phase 2E wording |
 | B2 | HSTS on `techpi.eu` (HTTP → HTTPS **done**: owner-enabled, verified 301) | Without HSTS a first plain-HTTP request can still be intercepted before the redirect; not a launch blocker on its own | Owner: after about a week of HTTPS-only (checklist P2-3) |
 | ~~B3~~ | Greek translation bug on `/el/work` (F2) | **Done:** fixed by PR #20 (merged 2026-10-13); Greek lists verified on production 2026-10-17 | — |
-| **B4** | Native-speaker Greek editorial review of the **26 published Greek pages** (24 content pages and the Greek Privacy and Cookies pages; the English-only Insights pages need none). **Phase 2F:** AI-assisted audit done and 33 issues fixed on a Draft PR (`GREEK_EDITORIAL_AUDIT.md`); a native-speaker human read and sign-off is still required, plus the 10 owner decisions listed there | Launch blocker 8 | Owner / reviewer |
-| **B5** | Rights confirmations: client screenshots, Logotherapia imagery, third-party logos in screenshots | Launch blockers 10 and the rights checklist | Owner |
+| ~~B4~~ | Native-speaker Greek editorial review of the 26 Greek pages | **Done 2026-10-18:** the owner personally read and approved all 26 Greek pages on `main` `da398aa`. Only the Greek text changed in Phase 2H needs the owner's review (`GREEK_EDITORIAL_AUDIT.md` §6) | Owner |
+| ~~B5~~ | Rights confirmations: client screenshots, Logotherapia imagery, third-party logos in screenshots | **Owner attestation 2026-10-18** (not independently verified written licences) | Owner |
 | ~~B6~~ | Analytics decision | **Decided:** Search Console only, no GA4, no Meta Pixel, no trackers | Done |
 | **B7** | Email authentication verified (SPF, DKIM, DMARC pass with alignment) | Deliverability of replies to enquiries | Owner test (checklist P1-3) |
 | ~~B8~~ | Search Console Domain property for `techpi.eu`; legacy property access; data exports | **Done (owner, 2026-10-16):** Domain property verified; historical data exported from both legacy properties. Sitemap submission and Change of Address remain launch-day / post-launch steps, not done | Owner |

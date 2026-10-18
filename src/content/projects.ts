@@ -62,18 +62,21 @@ export interface CaseStudy {
   gallery?: readonly ProjectImage[];
 }
 
-export const workGroups = ['client', 'solution', 'product', 'earlier'] as const;
+export const workGroups = ['client', 'earlier'] as const;
 export type WorkGroup = (typeof workGroups)[number];
 
 export interface Project {
   /** Stable, Latin, lower case. Locked in docs/production/routes.md. */
   slug: string;
-  /** Work-page grouping: client commissions, adaptable business solutions, or our own products. */
+  /**
+   * Work-page grouping: client projects, or earlier pigiota314 work. Since Phase 2H (owner decision, 2026-10-18) the
+   * five applications formerly shown as business solutions or an own product are client projects.
+   */
   workGroup: WorkGroup;
   name: string;
   category: string;
   summary: string;
-  /** Source-backed, scannable functionality labels shown on the Work index for business solutions only. */
+  /** Source-backed, scannable functionality labels shown on the Work index (the five web applications). */
   highlights?: readonly string[];
   /** Past creative/marketing disciplines, distinct from TechPi's four current technical capabilities. */
   disciplines?: readonly string[];
@@ -271,7 +274,7 @@ export const projects: readonly Project[] = [
   },
   {
     slug: 'level-up-education-app',
-    workGroup: 'product',
+    workGroup: 'client',
     name: 'Level Up Education App',
     category: 'Education management application',
     summary:
@@ -301,7 +304,7 @@ export const projects: readonly Project[] = [
   },
   {
     slug: 'saloon',
-    workGroup: 'solution',
+    workGroup: 'client',
     name: 'Saloon',
     category: 'Booking platform',
     summary:
@@ -337,7 +340,7 @@ export const projects: readonly Project[] = [
   },
   {
     slug: 'physio',
-    workGroup: 'solution',
+    workGroup: 'client',
     name: 'Physio',
     category: 'Appointment management platform',
     summary:
@@ -367,7 +370,7 @@ export const projects: readonly Project[] = [
   },
   {
     slug: 'project4you',
-    workGroup: 'solution',
+    workGroup: 'client',
     name: 'Project4You',
     category: 'CMS platform',
     summary:
@@ -391,6 +394,64 @@ export const projects: readonly Project[] = [
       },
       services: ['Product strategy', 'UX/UI design', 'Web application development', 'CMS architecture'],
       technology: ['React', 'TypeScript', 'Supabase', 'Tailwind CSS'],
+    },
+  },
+  {
+    slug: 'rantevo',
+    workGroup: 'client',
+    name: 'Rantevo.gr',
+    category: 'Multi-sector SaaS booking platform',
+    summary: 'A web-based appointment platform for service businesses, combining business profiles, service listings and customer bookings.',
+    highlights: ['Business profiles', 'Service listings', 'Online appointments', 'Responsive interface'],
+    capabilities: ['digital-products'],
+    featured: false,
+    // The first two of the three screenshots on the source case study: the public booking homepage and the page for
+    // businesses. The third, a signed-in dashboard, shows a personal name and is not used.
+    image: {
+      src: rantevoBookingHome,
+      width: 1549,
+      height: 679,
+      alt: 'The Rantevo.gr homepage: the heading “Book an appointment easily and quickly” and a search form by service, city, date and time.',
+    },
+    source: 'https://pigiota314.eu/case-studies/rantevo',
+    caseStudy: {
+      year: 2026,
+      overview: [
+        'A modern SaaS booking platform for hair salons, beauty centres, physiotherapy clinics and other service professionals.',
+      ],
+      need: [
+        'Many small service businesses still manage appointments by hand, through phone calls, messages and notes. This creates delays, lost time, organisational friction and a limited online presence.',
+      ],
+      built: {
+        intro:
+          'A web-based SaaS booking platform with a clean, responsive interface, professional business pages, structured service listings and end-to-end online booking for customers.',
+      },
+      services: [
+        'SaaS development',
+        'Web application',
+        'UX/UI design',
+        'Booking system',
+        'Digital product strategy',
+      ],
+      technology: ['React', 'TypeScript', 'Supabase', 'Tailwind CSS'],
+      outcome: [
+        'A digital product that supports different types of business, strengthens their online presence and gives professionals and their customers a more organised booking experience.',
+      ],
+      cover: {
+        src: rantevoBookingHome,
+        width: 1549,
+        height: 679,
+        alt: 'The Rantevo.gr homepage: the heading “Book an appointment easily and quickly” and a search form by service, city, date and time.',
+        caption: 'The public booking homepage. The screenshots on this page show the Greek-language interface.',
+      },
+      gallery: [
+        {
+          src: rantevoBusinessPage,
+          width: 1412,
+          height: 1194,
+          alt: 'The Rantevo.gr page for businesses: the heading “Grow your business with Rantevo”, a short description of the platform and four cards describing what it offers.',
+        },
+      ],
     },
   },
   {
@@ -497,64 +558,6 @@ export const projects: readonly Project[] = [
       services: ['E-shop design', 'Web design', 'WooCommerce setup', 'UX/UI'],
       technology: ['WordPress', 'WooCommerce'],
       outcome: ['A more professional online image and a cleaner browsing and purchasing experience.'],
-    },
-  },
-  {
-    slug: 'rantevo',
-    workGroup: 'solution',
-    name: 'Rantevo.gr',
-    category: 'Multi-sector SaaS booking platform',
-    summary: 'A web-based appointment platform for service businesses, combining business profiles, service listings and customer bookings.',
-    highlights: ['Business profiles', 'Service listings', 'Online appointments', 'Responsive interface'],
-    capabilities: ['digital-products'],
-    featured: false,
-    // The first two of the three screenshots on the source case study: the public booking homepage and the page for
-    // businesses. The third, a signed-in dashboard, shows a personal name and is not used.
-    image: {
-      src: rantevoBookingHome,
-      width: 1549,
-      height: 679,
-      alt: 'The Rantevo.gr homepage: the heading “Book an appointment easily and quickly” and a search form by service, city, date and time.',
-    },
-    source: 'https://pigiota314.eu/case-studies/rantevo',
-    caseStudy: {
-      year: 2026,
-      overview: [
-        'A modern SaaS booking platform for hair salons, beauty centres, physiotherapy clinics and other service professionals.',
-      ],
-      need: [
-        'Many small service businesses still manage appointments by hand, through phone calls, messages and notes. This creates delays, lost time, organisational friction and a limited online presence.',
-      ],
-      built: {
-        intro:
-          'A web-based SaaS booking platform with a clean, responsive interface, professional business pages, structured service listings and end-to-end online booking for customers.',
-      },
-      services: [
-        'SaaS development',
-        'Web application',
-        'UX/UI design',
-        'Booking system',
-        'Digital product strategy',
-      ],
-      technology: ['React', 'TypeScript', 'Supabase', 'Tailwind CSS'],
-      outcome: [
-        'A digital product that supports different types of business, strengthens their online presence and gives professionals and their customers a more organised booking experience.',
-      ],
-      cover: {
-        src: rantevoBookingHome,
-        width: 1549,
-        height: 679,
-        alt: 'The Rantevo.gr homepage: the heading “Book an appointment easily and quickly” and a search form by service, city, date and time.',
-        caption: 'The public booking homepage. The screenshots on this page show the Greek-language interface.',
-      },
-      gallery: [
-        {
-          src: rantevoBusinessPage,
-          width: 1412,
-          height: 1194,
-          alt: 'The Rantevo.gr page for businesses: the heading “Grow your business with Rantevo”, a short description of the platform and four cards describing what it offers.',
-        },
-      ],
     },
   },
   {

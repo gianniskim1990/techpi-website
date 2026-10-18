@@ -1,6 +1,6 @@
 # TechPi SEO, social metadata and structured data
 
-Status: implemented in Phase 4 (2026-10-08), on `phase-4-seo-schema`. **The site is still `noindex` on every page.**
+Status: implemented in Phase 4 (2026-10-08) and kept current through Phase 2H (2026-10-18): 60 content URLs, 62 pages. **The site is still `noindex` on every page.**
 This document records what is built and the rules it follows. The planning document `seo-i18n.md` still holds the
 architecture and the locked crawler policy (its section 6.3); where the two differ on a detail, this one is current.
 

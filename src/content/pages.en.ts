@@ -5,26 +5,17 @@
 export const pagesEn = {
   work: {
     linkLabel: 'View case study',
-    lead: 'Client projects, adaptable business solutions, our own products and earlier pigiota314 work.',
+    lead: 'Client projects, each with its own case study, and earlier work by pigiota314.',
     groups: {
       client: {
         heading: 'Client Projects',
-        description: 'Digital work delivered for clients, with selected projects explored in detail.',
-      },
-      solution: {
-        heading: 'Business Solutions',
-        description: 'Adaptable applications designed around the needs of different businesses.',
-      },
-      product: {
-        heading: 'Our Products',
-        description: 'Digital products we develop for our own use and further growth.',
+        description: 'Websites, platforms and web applications delivered for clients, each with its own case study.',
       },
       earlier: {
         heading: 'Earlier Work by pigiota314',
         description: 'Websites, branding, content and digital communication from our wider pigiota314 portfolio, shown separately from TechPi\'s current technology offering.',
       },
     },
-    solutionLink: 'Discuss a similar solution',
     highlightsLabel: 'What it includes',
     disciplinesLabel: 'Disciplines',
     filterLabel: 'Filter the work portfolio',
