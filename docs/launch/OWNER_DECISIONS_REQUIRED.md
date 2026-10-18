@@ -55,6 +55,20 @@ schedules, contracts) through a private channel and record only the approved pub
 | L7 | Cloudflare's dashboard shows Email Address Obfuscation enabled, but live pages (served by the Worker) show no rewriting. If Cloudflare ever began rewriting `mailto:` links, its decode script would be blocked by the site's Content Security Policy. Re-check `/contact` and the legal pages after deploy; turning the feature off is optional | Email links keep working |
 | L8 | **Phase 2E (Draft PR):** read the new Search Console sentence in the four policies (EN and EL) and the version date 17 October 2026 on the preview, then approve the merge | Accurate policies |
 
+### Phase 2F: Greek editorial decisions (Draft PR)
+
+Details, wording and reasons: `GREEK_EDITORIAL_AUDIT.md`, section 4. None of these was changed.
+
+| # | Question | Unblocks |
+|---|---|---|
+| G1 | "Website" in Greek: one term for categories and headings, «ιστότοπος» or «ιστοσελίδα» (both are used today) | Consistent Greek terminology |
+| G2 | EU Projects disclaimer «ανεξάρτητη εταιρεία τεχνολογίας» (EN "independent technology company"): TechPi is a sole proprietorship's brand. Consider «επιχείρηση» / "business" in both languages | Accuracy of the identity wording |
+| G3 | Work page: «με επιλεγμένα έργα παρουσιασμένα αναλυτικά» / "with selected projects explored in detail" now that every project has its own page | Work page copy (both languages) |
+| G4 | Optional legal style edits on the Greek Cookies page (two sentences) | Only with the owner's approval of exact wording |
+| G5 | Native-speaker reviewer: who signs off the Greek pages (P0-8, existing O10) | Launch blocker 8 |
+
+The Level Up Education App ownership question stays O12. «Χτισμένο για να λειτουργεί κάθε μέρα», «Έχετε κάτι που αξίζει να χτιστεί;», «πλάνο» (Saloon) and "AI" in the Capabilities title are recorded as optional (audit O-5, O-6, O-8, O-9).
+
 ### Analytics, search and crawling
 
 | # | Question | Unblocks |

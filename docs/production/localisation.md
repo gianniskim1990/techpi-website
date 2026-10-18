@@ -47,6 +47,15 @@ Slugs are Latin and identical in both languages. Index-only projects have no rou
 | Next project | Επόμενο έργο |
 | Start a project | Ξεκινήστε ένα έργο |
 | AI | τεχνητή νοημοσύνη (written out in running text) |
+| Web design (service) | Σχεδιασμός ιστοσελίδων (Phase 2C) |
+| Digital marketing | Ψηφιακό μάρκετινγκ (Phase 2C; also inside running text since Phase 2F) |
+| Responsive (service label) | Προσαρμογή σε όλες τις οθόνες |
+| Long-term (support, impact, visibility) | μακροπρόθεσμος, -η, -ο (Phase 2F) |
+| EU-funded | με ευρωπαϊκή χρηματοδότηση (Phase 2F; not «ευρωπαϊκά χρηματοδοτούμενα») |
+| Search engines | μηχανές αναζήτησης |
+| Point of contact | σημείο επαφής |
+
+Phase 2F (2026-10-18) audited all 26 Greek pages against this glossary: `docs/launch/GREEK_EDITORIAL_AUDIT.md`.
 
 "Intelligence" is rendered as "Ευφυή συστήματα" rather than a literal "Νοημοσύνη", which reads incomplete on its own in Greek. It matches "ευφυή συστήματα" in the brand statement.
 

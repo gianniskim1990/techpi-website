@@ -7,7 +7,7 @@ import type { PagesCopy } from './pages.en';
 export const pagesEl: PagesCopy = {
   work: {
     linkLabel: 'Δείτε το έργο',
-    lead: 'Έργα πελατών, λύσεις για επιχειρήσεις, δικά μας προϊόντα και παλαιότερες δουλειές της pigiota314.',
+    lead: 'Έργα πελατών, λύσεις για επιχειρήσεις, δικά μας προϊόντα και παλαιότερα έργα της pigiota314.',
     groups: {
       client: {
         heading: 'Έργα πελατών',
@@ -34,10 +34,10 @@ export const pagesEl: PagesCopy = {
   },
   capabilities: {
     heading: 'Τι φτιάχνουμε.',
-    lead: 'Τέσσερις δυνατότητες, που συνδυάζονται γύρω από το πρόβλημα.',
+    lead: 'Τέσσερις δυνατότητες που συνδυάζονται γύρω από το πρόβλημα.',
     covers: 'Τι περιλαμβάνει',
     indexLabel: 'Δυνατότητες',
-    seenIn: 'Σε έργα',
+    seenIn: 'Ενδεικτικά έργα',
   },
   about: {
     heading: 'Η TechPi είναι η εξέλιξη της pigiota314.',
