@@ -33,6 +33,12 @@ rules; production still answers e.g. `/work/mavie/` with a 307 until merged), ch
 Workers runtime; (3) the WCAG sentence of one Insights article clarified. Counts unchanged (62 pages, 60 URLs);
 still `noindex`; sitemap not submitted; no legacy-domain redirect.
 
+**Phase 2F update (2026-10-18, branch `feat/phase-2f-greek-editorial`, Draft PR, not merged):** editorial audit of
+all 26 Greek pages (`GREEK_EDITORIAL_AUDIT.md`): 33 confirmed issues fixed (0 Critical, 9 Important, 24 Polish),
+10 owner decisions recorded and not changed. Greek copy only (11 Greek pages change in the build; no English page,
+fact, claim, legal text, route or redirect). **The audit was AI-assisted; the native-speaker sign-off (B4, P0-8) is
+still required.** Still `noindex`.
+
 Confidence legend: **[V] Verified** in this audit (live request, DNS query, build or browser test) · **[O] Owner-confirmed**
 (not independently verifiable from outside) · **[D] Needs dashboard access** (Cloudflare, Pointer, cPanel, Search Console:
 not inspected) · **[A] Assumption**.
@@ -236,6 +242,13 @@ and after (verified then). This statement is historical and does not apply to la
 | Redirect validator in the build; live redirect check for a running server | `scripts/content/validate-redirects.mjs` (new, in `npm run build`), `scripts/redirects/verify-live.mjs` (new), `package.json` | None |
 | WCAG sentence clarified | `src/content/insights.ts` | That article only |
 
+**Phase 2F (Draft PR, not merged): Greek editorial corrections.**
+
+| Change | Files | Effect on the generated site |
+|---|---|---|
+| 33 Greek wording fixes: grammar, calques, the approved glossary («Ψηφιακό μάρκετινγκ», «Σχεδιασμός ιστοσελίδων»), «μακροπρόθεσμος», three noun fragments, Greek meta descriptions | `src/content/capabilities.ts` (Greek string), `src/content/eu.ts` (Greek block), `src/content/pages.el.ts`, `src/content/projects.el.ts`, `src/content/seo.ts` (Greek entries) | 11 Greek pages; no English page |
+| Audit report | `docs/launch/GREEK_EDITORIAL_AUDIT.md` (new) | None |
+
 ---
 
 ## 6. Remaining blockers, ranked
@@ -245,7 +258,7 @@ and after (verified then). This statement is historical and does not apply to la
 | ~~B1~~ | Privacy and Cookies pages (EN/EL) | **Done:** published with PR #21 (merged 2026-10-14; GEMI and VAT numbers live, verified 2026-10-17). Phase 2E corrects the Search Console sentence (Draft PR) | Owner: review the Phase 2E wording |
 | B2 | HSTS on `techpi.eu` (HTTP → HTTPS **done**: owner-enabled, verified 301) | Without HSTS a first plain-HTTP request can still be intercepted before the redirect; not a launch blocker on its own | Owner: after about a week of HTTPS-only (checklist P2-3) |
 | ~~B3~~ | Greek translation bug on `/el/work` (F2) | **Done:** fixed by PR #20 (merged 2026-10-13); Greek lists verified on production 2026-10-17 | — |
-| **B4** | Native-speaker Greek editorial review of the **26 published Greek pages** (24 content pages and the Greek Privacy and Cookies pages; the English-only Insights pages need none) | Launch blocker 8 | Owner / reviewer |
+| **B4** | Native-speaker Greek editorial review of the **26 published Greek pages** (24 content pages and the Greek Privacy and Cookies pages; the English-only Insights pages need none). **Phase 2F:** AI-assisted audit done and 33 issues fixed on a Draft PR (`GREEK_EDITORIAL_AUDIT.md`); a native-speaker human read and sign-off is still required, plus the 10 owner decisions listed there | Launch blocker 8 | Owner / reviewer |
 | **B5** | Rights confirmations: client screenshots, Logotherapia imagery, third-party logos in screenshots | Launch blockers 10 and the rights checklist | Owner |
 | ~~B6~~ | Analytics decision | **Decided:** Search Console only, no GA4, no Meta Pixel, no trackers | Done |
 | **B7** | Email authentication verified (SPF, DKIM, DMARC pass with alignment) | Deliverability of replies to enquiries | Owner test (checklist P1-3) |
