@@ -54,6 +54,9 @@ Slugs are Latin and identical in both languages. Index-only projects have no rou
 | EU-funded | με ευρωπαϊκή χρηματοδότηση (Phase 2F; not «ευρωπαϊκά χρηματοδοτούμενα») |
 | Search engines | μηχανές αναζήτησης |
 | Point of contact | σημείο επαφής |
+| Website (a service, product or project type) | ιστοσελίδα (Phase 2H, owner decision G1) |
+| Website (a particular site as an entity; technical and legal contexts) | ιστότοπος |
+| Client Projects / Earlier Work by pigiota314 (Work groups) | Έργα πελατών / Παλαιότερα έργα της pigiota314 |
 
 Phase 2F (2026-10-18) audited all 26 Greek pages against this glossary: `docs/launch/GREEK_EDITORIAL_AUDIT.md`.
 

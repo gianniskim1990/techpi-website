@@ -29,7 +29,7 @@ export const pageMeta: Record<Locale, Record<PageKey, PageMeta>> = {
     work: {
       title: 'Work — Digital Products & Platforms | TechPi',
       description:
-        'Explore TechPi client websites and applications, SaaS business solutions, original products and earlier branding and digital communication work by pigiota314.',
+        'Explore TechPi client websites, web applications and SaaS platforms, each with its own case study, and earlier branding and digital communication work by pigiota314.',
     },
     capabilities: {
       title: 'Capabilities — Products, Web & AI | TechPi',
@@ -66,17 +66,17 @@ export const pageMeta: Record<Locale, Record<PageKey, PageMeta>> = {
     home: {
       title: 'TechPi — Ψηφιακά προϊόντα & τεχνολογία',
       description:
-        'Η TechPi φτιάχνει ψηφιακά προϊόντα, ιστότοπους και ευφυή συστήματα: από αποσπασματικά εργαλεία σε συνδεδεμένη τεχνολογία, με τεχνητή νοημοσύνη όπου προσφέρει αξία.',
+        'Η TechPi φτιάχνει ψηφιακά προϊόντα, ιστοσελίδες και ευφυή συστήματα: από αποσπασματικά εργαλεία σε συνδεδεμένη τεχνολογία, με τεχνητή νοημοσύνη όπου προσφέρει αξία.',
     },
     work: {
       title: 'Έργα — Ψηφιακά προϊόντα & πλατφόρμες | TechPi',
       description:
-        'Έργα της TechPi: ιστοσελίδες και εφαρμογές πελατών, λύσεις SaaS, τα δικά της προϊόντα και παλαιότερα έργα branding και ψηφιακής επικοινωνίας της pigiota314.',
+        'Έργα της TechPi: ιστοσελίδες, web εφαρμογές και πλατφόρμες SaaS πελατών, με αναλυτική παρουσίαση για κάθε έργο, και παλαιότερα έργα branding και ψηφιακής επικοινωνίας της pigiota314.',
     },
     capabilities: {
-      title: 'Δυνατότητες — Εφαρμογές, ιστότοποι & AI | TechPi',
+      title: 'Δυνατότητες — Εφαρμογές, ιστοσελίδες & AI | TechPi',
       description:
-        'Τι φτιάχνει η TechPi: ψηφιακά προϊόντα και πλατφόρμες, ιστότοπους, τεχνητή νοημοσύνη και αυτοματισμούς, και ψηφιακή ορατότητα, γύρω από το πρόβλημα που χρειάζεται λύση.',
+        'Τι φτιάχνει η TechPi: ψηφιακά προϊόντα και πλατφόρμες, ιστοσελίδες, τεχνητή νοημοσύνη και αυτοματισμούς, και ψηφιακή ορατότητα, γύρω από το πρόβλημα που χρειάζεται λύση.',
     },
     euProjects: {
       title: 'Ιστοσελίδες & ψηφιακές πλατφόρμες για ευρωπαϊκά έργα | TechPi',

@@ -1,6 +1,6 @@
 # TechPi route architecture
 
-Status: **locked** after the Phase 3 review. Planning only. No routes, redirects or DNS changes are created.
+Status: **locked** after the Phase 3 review; the routes, the 119 canonical redirects and the English-only Insights routes are implemented and live (current as of Phase 2H, 2026-10-18). Legacy-domain redirects and DNS changes are not part of this document's scope yet.
 Date: 2026-10-02 (revised after approval)
 
 ## 1. Routes

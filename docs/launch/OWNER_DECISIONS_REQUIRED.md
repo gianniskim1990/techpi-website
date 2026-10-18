@@ -35,10 +35,10 @@ schedules, contracts) through a private channel and record only the approved pub
 |---|---|---|
 | ✓ O8 | ~~Review and merge the Phase 2A Draft PR~~: merged as PR #20 (2026-10-13) | Done |
 | O9 | Approve fix F1 (optional branch-scoped indexing guard), and check how the production and preview Workers Builds triggers are configured (per-trigger build variables; not inspected yet). Phase 2A: F1 not implemented; if wanted, first record `WORKERS_CI`/`WORKERS_CI_BRANCH` from one production and one preview build | P1-2, P1-8 |
-| O10 | Who is the native Greek editorial reviewer, and by when? Scope: 26 Greek pages (24 existing content pages + Greek Privacy and Cookies) | P0-8 |
-| O11 | Rights confirmations (rights checklist in `TECHPI_LAUNCH_CHECKLIST.md`): client screenshots, Logotherapia imagery, client naming and links | P0-9 |
-| O12 | Which products are TechPi-owned vs client-owned (Saloon, Physio, Project4You, Rantevo.gr, Level Up Education App); relationship of Rantevo.gr and Saloon | Launch blocker 9; product presentation |
-| O13 | Approve final wording of company and service claims (EU Projects programmes, Intelligence capability, About) | Launch |
+| ✓ O10 | ~~Native Greek reviewer~~: **the owner** read and approved all 26 Greek pages on `main` `da398aa` (2026-10-18). Phase 2H Greek changes: owner review on the Draft PR | P0-8 |
+| ✓ O11 | Rights: **owner attestation 2026-10-18**: permission to present all 18 projects publicly (client names, images, screenshots, embedded logos, external links); the Logotherapia images on TechPi show no identifiable children. Not independently verified written licences | Done |
+| ✓ O12 | Product ownership: **decided 2026-10-18**: Level Up Education App, Saloon, Physio, Project4You and Rantevo.gr are **client projects**, not TechPi-owned products. Implemented in Phase 2H (Work page: 12 Client Projects, 6 Earlier Work). Client names for these five are not shown: none is confirmed (the legacy portfolio named Level Up Education, Pigiota314 and rantevo.gr) | Done |
+| ✓ O13 | Claims: **approved 2026-10-18**: "TechPi is the evolution of pigiota314"; the six Earlier Work projects and their attribution; AI & Intelligence as a core service; the EU Projects technical capabilities (white-label work, rapid commencement, parallel projects, WCAG 2.2 AA as a design target). No proprietary AI models, guaranteed results, certified accessibility or programme affiliation is claimed | Done |
 | O14 | Contact method beyond email and phone (a form?) | Launch blocker 13; would change Privacy and CSP |
 | O15 | Optional: shorten 9 case-study titles over 65 characters | SEO polish |
 
@@ -53,21 +53,21 @@ schedules, contracts) through a private channel and record only the approved pub
 | L5 | Pointer.gr is named by its brand name only; its legal entity name was not supplied. Add it only if you want it shown | Precision |
 | L6 | Legal bases are stated as Article 6(1)(b), (c) and (f) GDPR, with no consent-based processing. This is the standard reading for this kind of site, but it has not been reviewed by a lawyer (your decision) | Awareness |
 | L7 | Cloudflare's dashboard shows Email Address Obfuscation enabled, but live pages (served by the Worker) show no rewriting. If Cloudflare ever began rewriting `mailto:` links, its decode script would be blocked by the site's Content Security Policy. Re-check `/contact` and the legal pages after deploy; turning the feature off is optional | Email links keep working |
-| L8 | **Phase 2E (Draft PR):** read the new Search Console sentence in the four policies (EN and EL) and the version date 17 October 2026 on the preview, then approve the merge | Accurate policies |
+| ✓ L8 | Phase 2E Search Console sentence and the 17 October 2026 version date: merged by the owner (PR #23) and live; the Greek versions are covered by the owner's Greek sign-off | Done |
 
-### Phase 2F: Greek editorial decisions (Draft PR)
+### Phase 2F: Greek editorial decisions (decided 2026-10-18)
 
 Details, wording and reasons: `GREEK_EDITORIAL_AUDIT.md`, section 4. None of these was changed.
 
 | # | Question | Unblocks |
 |---|---|---|
-| G1 | "Website" in Greek: one term for categories and headings, «ιστότοπος» or «ιστοσελίδα» (both are used today) | Consistent Greek terminology |
-| G2 | EU Projects disclaimer «ανεξάρτητη εταιρεία τεχνολογίας» (EN "independent technology company"): TechPi is a sole proprietorship's brand. Consider «επιχείρηση» / "business" in both languages | Accuracy of the identity wording |
-| G3 | Work page: «με επιλεγμένα έργα παρουσιασμένα αναλυτικά» / "with selected projects explored in detail" now that every project has its own page | Work page copy (both languages) |
-| G4 | Optional legal style edits on the Greek Cookies page (two sentences) | Only with the owner's approval of exact wording |
-| G5 | Native-speaker reviewer: who signs off the Greek pages (P0-8, existing O10) | Launch blocker 8 |
+| ✓ G1 | "Website" in Greek: **decided 2026-10-18**: «ιστοσελίδα» for websites as a service, product or project type; «ιστότοπος» for a particular website as an entity (technical and legal contexts). Applied in Phase 2H | Done |
+| ✓ G2 | EU Projects disclaimer: **decided 2026-10-18**: "independent technology business" / «ανεξάρτητη επιχείρηση τεχνολογίας» (TechPi is the brand of a Greek sole proprietorship). Non-affiliation wording unchanged. Applied in Phase 2H | Done |
+| ✓ G3 | Work page wording: **decided 2026-10-18**: every project has its own case study; the "selected projects" wording replaced in both languages in Phase 2H | Done |
+| ✓ G4 | Optional Greek Cookies style edits: **declined 2026-10-18**; the legal text stays as published | Done |
+| ✓ G5 | Greek sign-off: **the owner** personally read and approved all 26 Greek pages on `main` `da398aa` (2026-10-18). Phase 2H Greek changes need the owner's review | Done (Phase 2H text pending) |
 
-The Level Up Education App ownership question stays O12. «Χτισμένο για να λειτουργεί κάθε μέρα», «Έχετε κάτι που αξίζει να χτιστεί;», «πλάνο» (Saloon) and "AI" in the Capabilities title are recorded as optional (audit O-5, O-6, O-8, O-9).
+The application-ownership question O12 is decided (client projects). «Χτισμένο για να λειτουργεί κάθε μέρα», «Έχετε κάτι που αξίζει να χτιστεί;», «πλάνο» (Saloon) and "AI" in the Capabilities title are recorded as optional (audit O-5, O-6, O-8, O-9).
 
 ### Analytics, search and crawling
 

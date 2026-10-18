@@ -1,13 +1,13 @@
 # Greek editorial audit (Phase 2F)
 
-Date: **2026-10-18**. Base: `main` at `1ca478b`. Branch `feat/phase-2f-greek-editorial` (Draft PR, not merged).
+Date: **2026-10-18**. Base: `main` at `1ca478b`. Branch `feat/phase-2f-greek-editorial`, merged as PR #24 (`main` `da398aa`).
 Scope: all **26 published Greek pages**, read from the built output (`dist/el/**`): visible text, buttons,
 navigation, cards, footers, image alt text, accessible labels, `<title>`, meta descriptions and Open Graph text.
 Each Greek page was compared with its English counterpart and with the shared project facts (`src/content/projects.ts`).
 The 8 English-only Insights pages are out of scope (no Greek version exists).
 
 **Who did this.** This audit was carried out by Claude (an AI model), not by a native-speaking human editor. It does
-**not** replace the native-speaker sign-off required by launch blocker 8 / checklist P0-8, which stays open.
+**not** replace the native-speaker sign-off required by launch blocker 8 / checklist P0-8. **That sign-off was given on 2026-10-18 (section 6).**
 
 Severity: **Critical** (wrong meaning, a false or risky claim, broken UI) · **Important** (clearly unnatural or
 ungrammatical Greek, ambiguity, terminology that breaks the approved glossary) · **Polish** (more natural or more
@@ -123,3 +123,28 @@ Erasmus+, LIFE, Digital Europe) in their official English form.
 ## 5. Testing
 
 Recorded in `TECHPI_LAUNCH_STATUS.md` (Phase 2F) and in the Draft PR.
+
+## 6. Owner sign-off and Phase 2H changes (2026-10-18)
+
+**Sign-off.** The owner personally read and approved all 26 Greek pages as published from `main` at `da398aa` (after
+the corrections in section 3). This is a human editorial sign-off by the owner; it is recorded as the owner stated it.
+
+**Owner decisions on section 4.** O-1/G1: «ιστοσελίδα» for websites as a service, product or project type, «ιστότοπος»
+for a particular website as an entity. O-2/O12: the five web applications are client projects. O-3/G3: the "selected
+projects" wording replaced. O-4/G2: «ανεξάρτητη επιχείρηση τεχνολογίας». O-7/G4: declined (legal text unchanged).
+O-5, O-6, O-8, O-9: kept as they are. O-10: rights confirmed by owner attestation.
+
+**Greek text changed in Phase 2H, for the owner's review** (everything else is as signed off):
+
+| Page(s) | Before | After |
+|---|---|---|
+| `/el/work` | «Έργα πελατών, λύσεις για επιχειρήσεις, δικά μας προϊόντα και παλαιότερα έργα της pigiota314.» | «Έργα πελατών, το καθένα με αναλυτική παρουσίαση, και παλαιότερα έργα της pigiota314.» |
+| `/el/work` | «Ψηφιακές λύσεις που υλοποιήσαμε για επιχειρήσεις, με επιλεγμένα έργα παρουσιασμένα αναλυτικά.» | «Ιστοσελίδες, πλατφόρμες και web εφαρμογές που υλοποιήσαμε για πελάτες, με αναλυτική παρουσίαση για κάθε έργο.» |
+| `/el/work` | Groups «Λύσεις για επιχειρήσεις» and «Δικά μας προϊόντα», and the link «Συζητήστε μια αντίστοιχη λύση» | Removed (their five projects are now under «Έργα πελατών») |
+| `/el/work` (meta) | «Έργα της TechPi: ιστοσελίδες και εφαρμογές πελατών, λύσεις SaaS, τα δικά της προϊόντα και παλαιότερα έργα…» | «Έργα της TechPi: ιστοσελίδες, web εφαρμογές και πλατφόρμες SaaS πελατών, με αναλυτική παρουσίαση για κάθε έργο, και παλαιότερα έργα…» |
+| `/el/eu-projects` | «Η TechPi είναι ανεξάρτητη εταιρεία τεχνολογίας…» | «Η TechPi είναι ανεξάρτητη επιχείρηση τεχνολογίας…» |
+| `/el/`, `/el/capabilities` | «Εταιρικοί ιστότοποι και ηλεκτρονικά καταστήματα…» | «Εταιρικές ιστοσελίδες και ηλεκτρονικά καταστήματα…» |
+| `/el/` (hero map label and its accessible description) | «Ιστότοποι»; «…συστήματα: ιστότοποι, παραγγελίες…» | «Ιστοσελίδες»; «…συστήματα: ιστοσελίδες, παραγγελίες…» |
+| `/el/` (selected-work captions) | «Η ιστοσελίδα σε υπολογιστή, tablet και κινητό»; «Ιστοσελίδα: υπηρεσίες» | «Ο ιστότοπος σε υπολογιστή, tablet και κινητό»; «Ιστότοπος: υπηρεσίες» |
+| `/el/` (meta), `/el/capabilities` (title, meta) | «ιστότοπους»; «Εφαρμογές, ιστότοποι & AI» | «ιστοσελίδες»; «Εφαρμογές, ιστοσελίδες & AI» |
+| `/el/work/logotherapia-xanthi` and every Greek page listing it | Category «Ιστότοπος κέντρου θεραπείας»; «Ανασχεδιασμένος ιστότοπος…, οργανωμένος…» | «Ιστοσελίδα κέντρου θεραπείας»; «Ανασχεδιασμένη ιστοσελίδα…, οργανωμένη…» |

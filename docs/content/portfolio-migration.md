@@ -1,5 +1,11 @@
 # Portfolio migration: pigiota314 → TechPi
 
+> **2026-10-18 update (Phase 2H, owner decision).** The Work page now has two groups: **12 Client Projects** and
+> **6 Earlier Work by pigiota314**. Level Up Education App, Saloon, Physio, Project4You and Rantevo.gr, formerly shown
+> as Business Solutions or Our Products, are client projects. All 18 have their own case study in both languages; slugs
+> and URLs are unchanged. Client names for those five are not shown (none is confirmed). The sections below are
+> historical records.
+
 > **2026-10-10 update — expanded Work catalogue.** The inventory and seven-row recommendations below
 > document the original Phase 3C.2 migration, not the current launch candidate. The owner approved
 > showcasing all 18 distinct listings from https://pigiota314.eu/case-studies on the TechPi Work page:
