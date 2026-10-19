@@ -181,7 +181,7 @@ function inline(text: string): Part[] {
     grid-column: 1 / span 7;
     margin-top: clamp(24px, 2.6vw, 36px);
     font-size: var(--text-lead);
-    line-height: 1.45;
+    line-height: 1.42;
     color: var(--sec-c);
   }
   .facts {
@@ -224,14 +224,14 @@ function inline(text: string): Part[] {
   }
   .body p {
     margin-top: 16px;
-    font-size: 1.125rem;
+    font-size: var(--text-body);
     line-height: 1.65;
   }
   .points {
     margin-top: 20px;
   }
   .points li {
-    font-size: 1.0625rem;
+    font-size: var(--text-body);
     line-height: 1.5;
   }
   .note {
@@ -275,7 +275,7 @@ function inline(text: string): Part[] {
     text-decoration: none;
   }
   .r-title {
-    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    font-size: var(--text-heading);
     font-weight: var(--weight-display);
     line-height: 1.25;
     transition: color var(--duration-fast) var(--ease-state);
@@ -375,9 +375,6 @@ function inline(text: string): Part[] {
     .related,
     .invite {
       display: block;
-    }
-    .body p {
-      font-size: 1.0625rem;
     }
     .related-list a {
       display: block;

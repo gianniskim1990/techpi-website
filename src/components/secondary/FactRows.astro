@@ -89,7 +89,9 @@ const isAction = (href: string) => href.startsWith('mailto:') || href.startsWith
   }
   .facts-strip dd {
     margin-top: 6px;
-    font-size: 1rem;
+    font-size: var(--text-body);
+    /* A website address has no break opportunities; let it wrap inside its column on a phone. */
+    overflow-wrap: anywhere;
   }
 
   /* Large: the value is the point. */
