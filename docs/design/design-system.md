@@ -145,22 +145,48 @@ Corrections to Phase 1: it described PF Grand Gothik as "a Greek foundry in Athe
 
 ## 3. Type scale
 
-Fluid between a 360 px and a 1600 px viewport. Ratio roughly 1.33 on text sizes, larger steps for display.
+The implemented scale (`src/styles/tokens.css`), consolidated in Phase 2I (2026-10-19). One token per visual role; a
+component picks the role, never a size of its own. Fluid sizes are `clamp()` values; the pixel columns are what the
+browser computes at those widths (1rem = 16px).
 
-| Token | Mobile | Desktop | Use |
-|---|---|---|---|
-| display-xl | 44 px | 152 px | Hero statement, contact statement |
-| display-l | 36 px | 104 px | Section statements |
-| display-m | 30 px | 64 px | Case-study titles, capability names |
-| heading | 24 px | 36 px | Sub-headings |
-| lead | 20 px | 26 px | Supporting sentence under a statement |
-| body | 17 px | 18 px | Running text |
-| small | 15 px | 15 px | Captions, facts, footer |
-| label | 14 px | 14 px | Labels, navigation |
+| Token | Role | 320 / 390 | 768 | 1440 | Line height |
+|---|---|---|---|---|---|
+| `--text-display-xxl` | Homepage hero statement only | 48 | 74 | 138 | 0.96 |
+| `--text-display-xl` | Page titles (h1 of every page, case studies included); the homepage's AI and contact statements | 40 | 51 | 95 | 0.98–1 (Greek 1.06) |
+| `--text-display-l` | Major section statements; Insights article titles; case names on the homepage; "next project" | 34 | 42 | 78 | 1.02–1.04 |
+| `--text-display-m` | Section headings (h2); the closing question; a case study's scope list | 28 | 28 | 53 | 1.02–1.08 |
+| `--text-title` | Titles in lists: projects on the Work page, capabilities on the homepage, the About principles | 26 | 26 | 37 | 1.05–1.1 |
+| `--text-heading` | Sub-headings (h2/h3 inside sections and articles); smaller item titles (Earlier Work, related projects and articles) | 22 | 22 | 28 | 1.15–1.2 |
+| `--text-lead` | The sentence that introduces a page, a section or a case study (including its overview) | 18 | 18 | 22 | 1.38–1.42 |
+| `--text-body` | Running text: paragraphs, content lists, descriptions, fact values | 17 | 17 | 17 | 1.5 (long-form reading, Legal and Insights: 1.65) |
+| `--text-small` | Metadata, categories, step labels, attributions, notes, disclaimers, the footer, the header navigation | 15 | 15 | 15 | 1.5 |
+| `--text-label` | Figure captions, numbers, the language switch, compact UI labels | 13 | 13 | 13 | 1.5 |
 
-Greek display text uses the same tokens with a multiplier of about 0.88 on display-xl and display-l, to hold the same number of lines.
+**Rules**
 
-Minimum text size anywhere: 14 px.
+- Equivalent content uses the same token on every page. A paragraph or a list of ordinary content is `--text-body`,
+  whichever page it is on; `--text-small` is for text that supports or describes other content, never for the content
+  itself.
+- Long-form reading (the Legal pages and Insights articles) uses `--text-body` with a looser line height (1.65), not a
+  larger size.
+- Greek display text uses the same tokens with a multiplier of 0.88 (`--greek-display`) on `display-xxl`,
+  `display-xl` and `display-l`, applied in `tokens.css` so every Greek page title and statement follows one rule.
+  Section headings, titles and everything smaller are the same size in both languages.
+- Minimum text size: 13 px (`--text-label`), for captions and labels only. The hero map's end label on phones (11 px)
+  is part of an animated diagram, not text to read.
+
+**Deliberate exceptions** (one-off sizes, kept because they are editorial pieces with a single use):
+
+| Where | Size | Why |
+|---|---|---|
+| Home hero, supporting line (`Hero.astro`, `.support`) | clamp(1.25rem, 1.95vw, 1.75rem); 19 px on phones | Pairs with the hero statement; sized to the hero composition |
+| Home "Selected work" horizon (`SelectedWork.astro`, `h2`) | clamp(4.5rem, 15vw, 15rem), Greek 10.6rem max; 17vw on phones | A full-width typographic horizon, not a heading size |
+| Work page word title (`PageIntro.astro`, `.v-word`) | clamp(4.5rem, 19vw, 17rem), Greek × 0.82 | A one-word title set as an image ("Work" / "Έργα") |
+| Intro animation (`Intro.astro`, `.type`) | clamp(2.75rem, 5vw, 4.75rem) | Part of the intro sequence |
+| Hero transformation map labels (`TransformationMap.astro`) | `--text-label`; end label 11 px on phones | Diagram labels |
+| Brand wordmark in the header and footer (`.site-name`, `.name`) | 1rem, weight 600, uppercase | The TECHPI name, not text |
+| Buttons (`.btn`) | 1rem | UI control |
+| Phone overrides that keep one line or one column on a 320 px screen: Home case titles (clamp(2rem, 9vw, 2.5rem)), Contact page values (clamp(1.5rem, 7vw, 2rem)), EU step numbers (1.5rem) | as listed | Overflow protection |
 
 ## 4. Grid
 

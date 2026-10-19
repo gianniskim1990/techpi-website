@@ -96,12 +96,11 @@ const lines = Array.from({ length: COUNT }, (_, i) => {
     padding: calc(var(--space-section) * 1.15) var(--space-margin) var(--space-section);
   }
   h2 {
-    font-size: clamp(2.375rem, 6.5vw, 6.25rem);
+    font-size: var(--text-display-xl);
     line-height: 1;
     letter-spacing: -0.034em;
   }
   h2:lang(el) {
-    font-size: clamp(2.125rem, 5.4vw, 5.25rem);
     line-height: 1.06;
   }
   h2 .ln {

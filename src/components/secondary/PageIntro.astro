@@ -40,12 +40,11 @@ const { heading, lead, roomBelow = false, variant = 'default' } = Astro.props;
   h1 {
     position: relative;
     grid-column: 1 / span 10;
-    font-size: clamp(2.5rem, 6.6vw, 6rem);
+    font-size: var(--text-display-xl);
     line-height: 1;
     letter-spacing: -0.032em;
   }
   h1:lang(el) {
-    font-size: calc(clamp(2.5rem, 6.6vw, 6rem) * var(--greek-display));
     line-height: 1.06;
   }
   .lead-row {
