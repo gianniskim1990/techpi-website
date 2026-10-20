@@ -14,7 +14,7 @@ const repo = path.resolve(admin, '..');
 const require = createRequire(path.join(repo, 'package.json'));
 const esbuild = require('esbuild');
 const sharp = require('sharp');
-const out = path.join(admin, 'src', 'prototype', 'demo');
+const out = path.join(admin, 'src', 'app', 'demo');
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(path.join(out, 'media'), { recursive: true });
 const git = (...a) => execFileSync('git', a, { cwd: repo, encoding: 'utf8' });

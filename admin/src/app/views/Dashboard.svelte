@@ -62,11 +62,11 @@
       <dl class="facts">
         <div><dt>Latest change</dt><dd>{latest.message}</dd></div>
         <div><dt>Version</dt><dd><code>{latest.sha}</code></dd></div>
-        <div><dt>How publishing works</dt><dd>Every save is a private draft. Publishing rebuilds the site and goes live in about 2–3 minutes, only if all checks pass.</dd></div>
+        <div><dt>How publishing works</dt><dd>Every save is a draft on GitHub, not on the live site. The repository is public, so drafts are visible on GitHub. Publishing (not built yet) will rebuild the site and go live only if all checks pass.</dd></div>
       </dl>
       <p class="pending">
         <Icon name="info" size={16} />
-        <span>In this prototype publishing is not connected, so the status above is a snapshot.</span>
+        <span>Publishing is not connected, so the status above is a snapshot. Saving drafts to GitHub works for <a href="#/test-content">Test content</a> only.</span>
       </p>
     </div>
   </section>

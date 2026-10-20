@@ -6,11 +6,16 @@
   import ContentList from './views/ContentList.svelte';
   import Editor from './views/Editor.svelte';
   import Planned from './views/Planned.svelte';
+  import TestContentList from './views/TestContentList.svelte';
+  import DraftEditor from './views/DraftEditor.svelte';
   import { route, parts } from './lib/router.svelte.js';
   import { counts } from './lib/store.svelte.js';
+  import { session, loadSession } from './lib/session.svelte.js';
 
+  loadSession();
   const nav = [
     { section: '', label: 'Dashboard', icon: 'dashboard' },
+    { section: 'test-content', label: 'Test content', icon: 'branch', live: true },
     { section: 'pages', label: 'Website pages', icon: 'pages', count: () => counts().pages },
     { section: 'case-studies', label: 'Case studies', icon: 'portfolio', count: () => counts().caseStudies },
     { section: 'articles', label: 'Articles', icon: 'articles', count: () => counts().articles },
@@ -36,7 +41,7 @@
             <a href="#/{item.section}" aria-current={current.section === item.section ? 'page' : undefined}>
               <Icon name={item.icon} />
               <span>{item.label}</span>
-              {#if item.count}<span class="count">{item.count()}</span>{/if}
+              {#if item.live}<span class="live" title="Connected to GitHub">Live</span>{:else if item.count}<span class="count" title="Read-only snapshot">{item.count()}</span>{/if}
             </a>
           </li>
         {/each}
@@ -47,8 +52,13 @@
         <Icon name="globe" size={16} /><span>techpi.eu</span><Icon name="external" size={14} />
       </a>
       <div class="session">
-        <span class="avatar" aria-hidden="true">P</span>
-        <div><strong>Prototype session</strong><span>Sign-in arrives with the connected admin</span></div>
+        {#if session.data}
+          <span class="avatar" aria-hidden="true">{session.data.email.slice(0, 1).toUpperCase()}</span>
+          <div><strong class="email" title={session.data.email}>{session.data.email}</strong><span>Signed in with Cloudflare Access</span></div>
+        {:else}
+          <span class="avatar" aria-hidden="true">?</span>
+          <div><strong>{session.loading ? 'Checking sign-in…' : 'Not connected'}</strong><span>{session.loading ? '' : 'Only the snapshot sections work'}</span></div>
+        {/if}
       </div>
     </div>
   </aside>
@@ -58,8 +68,18 @@
   <div class="main">
     <div class="notice" role="note">
       <Icon name="info" size={15} />
-      <span><strong>Design prototype.</strong> Demo data from a read-only snapshot of the live site. Nothing is saved to GitHub or published.</span>
+      {#if current.section === 'test-content'}
+        <span><strong>Connected.</strong> Saves go to a GitHub draft branch and draft pull request. Nothing is published or merged from here.</span>
+      {:else}
+        <span><strong>Snapshot, not connected.</strong> Case studies, articles and pages are a read-only copy of the live site; edits here stay in this tab. Only “Test content” is connected.</span>
+      {/if}
     </div>
+    {#if session.data && !session.data.github.configured}
+      <div class="notice bad" role="alert">
+        <Icon name="alert" size={15} />
+        <span><strong>GitHub is not connected yet.</strong> Missing settings: {session.data.github.missing.join(', ')}. See docs/admin/A1.md.</span>
+      </div>
+    {/if}
         <header class="topbar">
       <button class="btn btn-ghost menu" type="button" aria-label="Open menu" aria-expanded={menuOpen} onclick={() => (menuOpen = true)}><Icon name="menu" /></button>
       <span class="crumb">{nav.find((n) => n.section === current.section)?.label ?? 'Dashboard'}</span>
@@ -67,6 +87,10 @@
     <main>
       {#if current.section === ''}
         <Dashboard />
+      {:else if current.section === 'test-content' && current.slug}
+        {#key route.path}<DraftEditor slug={current.slug} />{/key}
+      {:else if current.section === 'test-content'}
+        <TestContentList />
       {:else if (current.section === 'case-studies' || current.section === 'articles') && current.slug}
         {#key route.path}<Editor type={current.section} slug={current.slug} />{/key}
       {:else if current.section === 'case-studies' || current.section === 'articles'}
@@ -86,6 +110,10 @@
     background: var(--warn-soft); color: var(--warn); font-size: var(--text-sm); border-bottom: 1px solid #efd9ae;
   }
   .notice strong { font-weight: 600; }
+  .notice.bad { background: var(--danger-soft, #fbe9e7); color: var(--danger); border-bottom-color: #e7b4ae; }
+  .live { margin-left: auto; font-size: var(--text-xs); font-weight: 600; color: var(--ink); background: var(--cyan); padding: 0 6px; border-radius: 4px; }
+  .email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 190px; }
+  .session div { min-width: 0; }
   .shell { display: grid; grid-template-columns: var(--sidebar) minmax(0, 1fr); min-height: 100vh; }
   .sidebar {
     position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; background: var(--ink); color: var(--fog);

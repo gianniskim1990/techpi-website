@@ -63,7 +63,7 @@ test('unconfigured admin fails closed, even with a valid Access sign-in', async 
   }
 });
 
-test('write methods are refused even for the administrator (no write endpoints)', async () => {
+test('write methods are refused even for the administrator outside the API (writes exist only under /api, see api.test.mjs)', async () => {
   for (const method of ['POST', 'PUT', 'PATCH', 'DELETE']) {
     const res = await worker.fetch(get(method), env(), access(ADMIN));
     assert.equal(res.status, 405, method);

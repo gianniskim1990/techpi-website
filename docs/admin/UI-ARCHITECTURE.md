@@ -20,7 +20,7 @@ its internals would break with every update. It stays useful as the M0 proof tha
 
 ## 3. Recommended architecture
 
-A **custom TechPi admin** (the prototype in `admin/src/prototype`, Svelte 5 and TipTap) on the **same Git-backed
+A **custom TechPi admin** (`admin/src/app`, formerly the prototype in `admin/src/prototype`; Svelte 5 and TipTap) on the **same Git-backed
 model** M0 proved, with one change: Git operations move from the browser to the admin Worker.
 
 | Part | Choice |
