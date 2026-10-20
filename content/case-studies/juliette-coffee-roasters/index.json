@@ -1,0 +1,64 @@
+{
+  "facts": {
+    "slug": "juliette-coffee-roasters",
+    "name": "Juliette Coffee Roasters",
+    "client": "Juliette Coffee Roasters",
+    "year": 2026,
+    "workGroup": "earlier",
+    "featured": false,
+    "order": 16,
+    "capabilities": [],
+    "source": "https://pigiota314.eu/case-studies/juliette-coffee-roasters"
+  },
+  "images": {},
+  "en": {
+    "category": "Coffee brand digital communication",
+    "summary": "Social media content, digital marketing and search visibility support for a coffee brand.",
+    "disciplines": [
+      "Social media",
+      "SEO support",
+      "Content strategy"
+    ],
+    "overview": [
+      "Digital marketing and social media support for a coffee brand, focused on imagery, content and online visibility."
+    ],
+    "need": [
+      "The brand needed consistent online communication, and content that captures its identity and its coffee experience."
+    ],
+    "builtIntro": "A content direction, a social media presence and SEO support aimed at better visibility.",
+    "services": [
+      "Social media management",
+      "SEO support",
+      "Content strategy",
+      "Digital marketing"
+    ],
+    "outcome": [
+      "Stronger recognition and a more consistent online presence."
+    ]
+  },
+  "el": {
+    "category": "Ψηφιακή επικοινωνία εταιρείας καφέ",
+    "summary": "Περιεχόμενο social media, ψηφιακή επικοινωνία και υποστήριξη SEO για ένα brand καφέ.",
+    "disciplines": [
+      "Social media",
+      "Υποστήριξη SEO",
+      "Στρατηγική περιεχομένου"
+    ],
+    "overview": [
+      "Υποστήριξη ψηφιακού μάρκετινγκ και social media για ένα brand καφέ, με έμφαση στην εικόνα, το περιεχόμενο και την προβολή στο διαδίκτυο."
+    ],
+    "need": [
+      "Το brand χρειαζόταν συνεπή επικοινωνία στο διαδίκτυο και περιεχόμενο που αποδίδει την ταυτότητά του και την εμπειρία του καφέ του."
+    ],
+    "builtIntro": "Κατεύθυνση περιεχομένου, παρουσία στα social media και υποστήριξη SEO με στόχο καλύτερη προβολή.",
+    "services": [
+      "Διαχείριση social media",
+      "Υποστήριξη SEO",
+      "Στρατηγική περιεχομένου",
+      "Ψηφιακό μάρκετινγκ"
+    ],
+    "outcome": [
+      "Μεγαλύτερη αναγνωρισιμότητα και πιο συνεπής παρουσία στο διαδίκτυο."
+    ]
+  }
+}

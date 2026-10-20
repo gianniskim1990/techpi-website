@@ -1,0 +1,81 @@
+{
+  "facts": {
+    "slug": "saloon",
+    "name": "Saloon",
+    "year": 2026,
+    "workGroup": "client",
+    "featured": false,
+    "order": 5,
+    "capabilities": [
+      "digital-products"
+    ],
+    "source": "https://pigiota314.gr/case-studies/saloon/"
+  },
+  "images": {},
+  "en": {
+    "category": "Booking platform",
+    "summary": "An online appointment and client management platform for salons and beauty businesses, combining customer-facing bookings with an organised daily schedule and administration area.",
+    "highlights": [
+      "Online appointments",
+      "Calendar and schedule",
+      "Client management",
+      "Mobile-friendly interface"
+    ],
+    "overview": [
+      "A modern web app for online appointments at beauty businesses, with a public booking page, a client dashboard and features that depend on the plan."
+    ],
+    "need": [
+      "Beauty businesses need a simple, professional way to accept online appointments, organise their clients and reduce day-to-day coordination by phone or message."
+    ],
+    "builtIntro": "A SaaS platform with a responsive interface, a public booking page and a management dashboard for clients and services, with features that can grow with each business’s plan.",
+    "services": [
+      "UX/UI design",
+      "Web application development",
+      "SaaS strategy",
+      "Booking system",
+      "Client dashboard"
+    ],
+    "technology": [
+      "React",
+      "TypeScript",
+      "Supabase",
+      "Tailwind CSS"
+    ],
+    "outcome": [
+      "A more organised, professional online presence for beauty businesses, with easier appointment management and a better experience for their clients."
+    ]
+  },
+  "el": {
+    "category": "Πλατφόρμα κρατήσεων",
+    "summary": "Πλατφόρμα online ραντεβού και διαχείρισης πελατών για κομμωτήρια και επιχειρήσεις ομορφιάς, με δυνατότητα κρατήσεων, οργανωμένο πρόγραμμα και περιβάλλον διαχείρισης.",
+    "highlights": [
+      "Online ραντεβού",
+      "Ημερολόγιο και πρόγραμμα",
+      "Διαχείριση πελατών",
+      "Χρήση από κινητό"
+    ],
+    "overview": [
+      "Σύγχρονη web εφαρμογή για online ραντεβού σε επιχειρήσεις ομορφιάς, με δημόσια σελίδα κρατήσεων, πίνακα διαχείρισης πελατών και λειτουργίες ανάλογα με το πλάνο."
+    ],
+    "need": [
+      "Οι επιχειρήσεις ομορφιάς χρειάζονται έναν απλό, επαγγελματικό τρόπο να δέχονται online ραντεβού, να οργανώνουν τους πελάτες τους και να περιορίζουν τον καθημερινό συντονισμό με τηλεφωνήματα ή μηνύματα."
+    ],
+    "builtIntro": "Πλατφόρμα SaaS με διεπαφή που προσαρμόζεται σε όλες τις οθόνες, δημόσια σελίδα κρατήσεων και πίνακα διαχείρισης για πελάτες και υπηρεσίες, με λειτουργίες που μπορούν να αναπτύσσονται ανάλογα με το πλάνο κάθε επιχείρησης.",
+    "services": [
+      "Σχεδιασμός UX/UI",
+      "Ανάπτυξη web εφαρμογής",
+      "Στρατηγική SaaS",
+      "Σύστημα κρατήσεων",
+      "Πίνακας διαχείρισης πελατών"
+    ],
+    "technology": [
+      "React",
+      "TypeScript",
+      "Supabase",
+      "Tailwind CSS"
+    ],
+    "outcome": [
+      "Πιο οργανωμένη και επαγγελματική παρουσία για τις επιχειρήσεις ομορφιάς, με ευκολότερη διαχείριση ραντεβού και καλύτερη εμπειρία για τους πελάτες τους."
+    ]
+  }
+}

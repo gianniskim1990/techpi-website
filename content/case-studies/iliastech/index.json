@@ -1,0 +1,63 @@
+{
+  "facts": {
+    "slug": "iliastech",
+    "name": "iliastech",
+    "client": "iliastech",
+    "year": 2026,
+    "liveUrl": "https://www.iliastech.gr/",
+    "workGroup": "client",
+    "featured": false,
+    "order": 10,
+    "capabilities": [
+      "web-experiences"
+    ],
+    "source": "https://pigiota314.eu/case-studies/iliastech"
+  },
+  "images": {},
+  "en": {
+    "category": "Corporate website",
+    "summary": "A responsive corporate website with structured content and a clear presentation of services offered by a technology company.",
+    "overview": [
+      "A modern corporate website with a clear presentation of services and a professional digital image."
+    ],
+    "need": [
+      "The main need was to present the company’s services clearly and to build a professional image online."
+    ],
+    "builtIntro": "A corporate website with structured content, a clean interface and a responsive experience.",
+    "services": [
+      "Web design",
+      "Corporate website",
+      "Content structure",
+      "Responsive design"
+    ],
+    "technology": [
+      "WordPress"
+    ],
+    "outcome": [
+      "A stronger professional image and a better ability to present services online."
+    ]
+  },
+  "el": {
+    "category": "Εταιρική ιστοσελίδα",
+    "summary": "Εταιρική ιστοσελίδα με προσαρμογή σε όλες τις οθόνες, οργανωμένο περιεχόμενο και σαφή παρουσίαση υπηρεσιών τεχνολογίας.",
+    "overview": [
+      "Σύγχρονη εταιρική ιστοσελίδα με σαφή παρουσίαση των υπηρεσιών και επαγγελματική ψηφιακή εικόνα."
+    ],
+    "need": [
+      "Η βασική ανάγκη ήταν η σαφής παρουσίαση των υπηρεσιών της εταιρείας και μια επαγγελματική εικόνα στο διαδίκτυο."
+    ],
+    "builtIntro": "Εταιρική ιστοσελίδα με δομημένο περιεχόμενο, καθαρή διεπαφή και εμπειρία που προσαρμόζεται σε όλες τις οθόνες.",
+    "services": [
+      "Σχεδιασμός ιστοσελίδων",
+      "Εταιρική ιστοσελίδα",
+      "Δομή περιεχομένου",
+      "Προσαρμογή σε όλες τις οθόνες"
+    ],
+    "technology": [
+      "WordPress"
+    ],
+    "outcome": [
+      "Ισχυρότερη επαγγελματική εικόνα και καλύτερη δυνατότητα παρουσίασης των υπηρεσιών στο διαδίκτυο."
+    ]
+  }
+}

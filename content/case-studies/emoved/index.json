@@ -1,0 +1,68 @@
+{
+  "facts": {
+    "slug": "emoved",
+    "name": "Emoved",
+    "client": "Emoved",
+    "year": 2025,
+    "workGroup": "earlier",
+    "featured": false,
+    "order": 18,
+    "capabilities": [],
+    "source": "https://pigiota314.eu/case-studies/emoved"
+  },
+  "images": {},
+  "en": {
+    "category": "Branding & graphic design",
+    "summary": "Graphic assets and visual identity support for a clear and consistent professional brand image.",
+    "disciplines": [
+      "Brand communication",
+      "Graphic design",
+      "Visual identity support"
+    ],
+    "overview": [
+      "A graphic design project focused on clean visual communication and a professional brand image."
+    ],
+    "need": [
+      "The project called for clearer, more consistent and more professional visual communication."
+    ],
+    "builtIntro": "Design assets and visual materials created to support a cohesive brand.",
+    "services": [
+      "Graphic design",
+      "Brand communication",
+      "Visual identity support"
+    ],
+    "technology": [
+      "Adobe Creative Suite"
+    ],
+    "outcome": [
+      "A more organised and professional visual presence for the brand."
+    ]
+  },
+  "el": {
+    "category": "Branding και γραφιστικός σχεδιασμός",
+    "summary": "Δημιουργία γραφιστικού υλικού και υποστήριξη οπτικής ταυτότητας για επαγγελματική και συνεπή εικόνα του brand.",
+    "disciplines": [
+      "Επικοινωνία brand",
+      "Γραφιστικός σχεδιασμός",
+      "Υποστήριξη οπτικής ταυτότητας"
+    ],
+    "overview": [
+      "Έργο γραφιστικού σχεδιασμού με έμφαση στην καθαρή οπτική επικοινωνία και την επαγγελματική εικόνα του brand."
+    ],
+    "need": [
+      "Το έργο αφορούσε πιο σαφή, συνεπή και επαγγελματική οπτική επικοινωνία."
+    ],
+    "builtIntro": "Γραφιστικό και οπτικό υλικό σχεδιασμένο για να στηρίξει τη συνοχή του brand.",
+    "services": [
+      "Γραφιστικός σχεδιασμός",
+      "Επικοινωνία brand",
+      "Υποστήριξη οπτικής ταυτότητας"
+    ],
+    "technology": [
+      "Adobe Creative Suite"
+    ],
+    "outcome": [
+      "Πιο οργανωμένη και επαγγελματική οπτική παρουσία για το brand."
+    ]
+  }
+}
