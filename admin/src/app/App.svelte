@@ -9,6 +9,7 @@
   import TestContentList from './views/TestContentList.svelte';
   import DraftEditor from './views/DraftEditor.svelte';
   import CaseStudyEditor from './views/CaseStudyEditor.svelte';
+  import InsightEditor from './views/InsightEditor.svelte';
   import { route, parts } from './lib/router.svelte.js';
   import { counts } from './lib/store.svelte.js';
   import { session, loadSession } from './lib/session.svelte.js';
@@ -28,6 +29,8 @@
   const current = $derived(parts());
   // Case studies connected to GitHub (from the Worker); every other one is the read-only snapshot.
   const connectedCase = $derived(current.section === 'case-studies' && current.slug && session.data?.connected?.caseStudies?.includes(current.slug));
+  const connectedArticle = $derived(current.section === 'articles' && current.slug && session.data?.connected?.insights?.includes(current.slug));
+  const connectedSection = $derived((current.section === 'case-studies' && session.data?.connected?.caseStudies?.length) || (current.section === 'articles' && session.data?.connected?.insights?.length));
   $effect(() => { route.path; menuOpen = false; });
 </script>
 
@@ -71,10 +74,10 @@
   <div class="main">
     <div class="notice" role="note">
       <Icon name="info" size={15} />
-      {#if current.section === 'test-content' || connectedCase || (current.section === 'case-studies' && session.data?.connected?.caseStudies?.length)}
+      {#if current.section === 'test-content' || connectedCase || connectedArticle || connectedSection}
         <span><strong>Connected.</strong> Saves go to a GitHub draft branch and draft pull request. Nothing is published or merged from here.</span>
       {:else}
-        <span><strong>Snapshot, not connected.</strong> Articles and pages are a read-only copy of the live site; edits here stay in this tab. Test content and all 18 case studies are connected.</span>
+        <span><strong>Snapshot, not connected.</strong> Website pages are a read-only copy of the live site. Test content, the 18 case studies and the 7 Insights articles are connected.</span>
       {/if}
     </div>
     {#if session.data && !session.data.github.configured}
@@ -96,7 +99,9 @@
         <TestContentList />
       {:else if connectedCase}
         {#key route.path}<CaseStudyEditor slug={current.slug} />{/key}
-      {:else if current.section === 'case-studies' && current.slug && session.loading}
+      {:else if connectedArticle}
+        {#key route.path}<InsightEditor slug={current.slug} />{/key}
+      {:else if (current.section === 'case-studies' || current.section === 'articles') && current.slug && session.loading}
         <p class="hint">Checking the connection…</p>
       {:else if (current.section === 'case-studies' || current.section === 'articles') && current.slug}
         {#key route.path}<Editor type={current.section} slug={current.slug} />{/key}

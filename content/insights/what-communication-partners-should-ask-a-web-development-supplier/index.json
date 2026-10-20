@@ -1,0 +1,40 @@
+{
+  "facts": {
+    "slug": "what-communication-partners-should-ask-a-web-development-supplier",
+    "order": 6,
+    "published": "2025-04-22",
+    "publishedText": "22 April 2025",
+    "source": "https://pigiota314.eu/insights/what-communication-partners-should-ask-a-web-development-supplier"
+  },
+  "en": {
+    "category": "Communication partners",
+    "title": "What communication partners should ask a web development supplier",
+    "lead": "A short list of questions that quickly separates a generic web supplier from one that can support EU project work.",
+    "sections": [
+      {
+        "heading": "Process and communication",
+        "list": [
+          "How do they handle change requests during the project lifecycle?",
+          "Who is the actual point of contact?",
+          "How quickly can they respond when a deliverable goes live?"
+        ]
+      },
+      {
+        "heading": "Architecture and accessibility",
+        "list": [
+          "What is their approach to information architecture, accessibility and long-term maintenance?",
+          "Can they describe the content model they would propose for deliverables, news and events?"
+        ]
+      }
+    ],
+    "related": [
+      "preparing-a-website-brief-during-the-proposal-stage",
+      "accessibility-considerations-for-project-websites",
+      "how-to-structure-deliverables-and-publications"
+    ],
+    "meta": {
+      "title": "What communication partners should ask a web supplier | TechPi",
+      "description": "Questions for communication partners choosing a web development supplier for EU project work: change requests, contact, response times, architecture and accessibility."
+    }
+  }
+}

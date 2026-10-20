@@ -97,7 +97,9 @@ public-funded project websites." The Phase 2D migration kept the second sentence
   `InsightPage.astro`. Routes: `src/pages/insights.astro`, `src/pages/insights/[slug].astro`.
 - English-only mechanism: `docs/production/routes.md`, section 4.1.
 - Structured data: `docs/production/seo.md`, section 5.
-- Validation: `scripts/content/validate-insights.mjs` (in `npm run build`), and `scripts/seo/validate.mjs`.
+- Validation: `scripts/content/validate-insights.mjs` (in `npm run build`), and `scripts/seo/validate.mjs`. Since Task M2 the
+  validator pins slugs, order, dates and the number of sections, and checks headings structurally instead of by wording
+  (docs/admin/M2.md).
 
 ## 7. Post-migration clarification (Phase 2E, 2026-10-17)
 
