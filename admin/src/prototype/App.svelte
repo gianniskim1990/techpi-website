@@ -1,0 +1,130 @@
+<script>
+  import symbol from './techpi-symbol-white.png';
+  import Icon from './components/Icon.svelte';
+  import Toasts from './components/Toasts.svelte';
+  import Dashboard from './views/Dashboard.svelte';
+  import ContentList from './views/ContentList.svelte';
+  import Editor from './views/Editor.svelte';
+  import Planned from './views/Planned.svelte';
+  import { route, parts } from './lib/router.svelte.js';
+  import { counts } from './lib/store.svelte.js';
+
+  const nav = [
+    { section: '', label: 'Dashboard', icon: 'dashboard' },
+    { section: 'pages', label: 'Website pages', icon: 'pages', count: () => counts().pages },
+    { section: 'case-studies', label: 'Case studies', icon: 'portfolio', count: () => counts().caseStudies },
+    { section: 'articles', label: 'Articles', icon: 'articles', count: () => counts().articles },
+    { section: 'media', label: 'Media library', icon: 'media' },
+    { section: 'seo', label: 'SEO', icon: 'seo' },
+    { section: 'settings', label: 'Settings', icon: 'settings' },
+  ];
+  let menuOpen = $state(false);
+  const current = $derived(parts());
+  $effect(() => { route.path; menuOpen = false; });
+</script>
+
+<div class="shell">
+  <aside class="sidebar" class:open={menuOpen} aria-label="Admin">
+    <a class="brand" href="#/">
+      <img src={symbol} alt="" width="28" height="28" />
+      <span class="word">TECHPI</span><span class="role">Admin</span>
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        {#each nav as item}
+          <li>
+            <a href="#/{item.section}" aria-current={current.section === item.section ? 'page' : undefined}>
+              <Icon name={item.icon} />
+              <span>{item.label}</span>
+              {#if item.count}<span class="count">{item.count()}</span>{/if}
+            </a>
+          </li>
+        {/each}
+      </ul>
+    </nav>
+    <div class="foot">
+      <a class="site" href="https://techpi.eu" target="_blank" rel="noopener">
+        <Icon name="globe" size={16} /><span>techpi.eu</span><Icon name="external" size={14} />
+      </a>
+      <div class="session">
+        <span class="avatar" aria-hidden="true">P</span>
+        <div><strong>Prototype session</strong><span>Sign-in arrives with the connected admin</span></div>
+      </div>
+    </div>
+  </aside>
+
+  {#if menuOpen}<button class="scrim" aria-label="Close menu" onclick={() => (menuOpen = false)}></button>{/if}
+
+  <div class="main">
+    <div class="notice" role="note">
+      <Icon name="info" size={15} />
+      <span><strong>Design prototype.</strong> Demo data from a read-only snapshot of the live site. Nothing is saved to GitHub or published.</span>
+    </div>
+        <header class="topbar">
+      <button class="btn btn-ghost menu" type="button" aria-label="Open menu" aria-expanded={menuOpen} onclick={() => (menuOpen = true)}><Icon name="menu" /></button>
+      <span class="crumb">{nav.find((n) => n.section === current.section)?.label ?? 'Dashboard'}</span>
+    </header>
+    <main>
+      {#if current.section === ''}
+        <Dashboard />
+      {:else if (current.section === 'case-studies' || current.section === 'articles') && current.slug}
+        {#key route.path}<Editor type={current.section} slug={current.slug} />{/key}
+      {:else if current.section === 'case-studies' || current.section === 'articles'}
+        {#key current.section}<ContentList type={current.section} />{/key}
+      {:else}
+        <Planned section={current.section} />
+      {/if}
+    </main>
+  </div>
+</div>
+
+<Toasts />
+
+<style>
+  .notice {
+    display: flex; align-items: center; justify-content: center; gap: 8px; padding: 7px 16px;
+    background: var(--warn-soft); color: var(--warn); font-size: var(--text-sm); border-bottom: 1px solid #efd9ae;
+  }
+  .notice strong { font-weight: 600; }
+  .shell { display: grid; grid-template-columns: var(--sidebar) minmax(0, 1fr); min-height: 100vh; }
+  .sidebar {
+    position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; background: var(--ink); color: var(--fog);
+    padding: 18px 14px; border-right: 1px solid var(--ink-raised);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 22px; color: var(--sheet); text-decoration: none; }
+  .brand img { display: block; }
+  .word { font-weight: 600; letter-spacing: 0.14em; font-size: var(--text-md); }
+  .role { font-size: var(--text-sm); color: var(--fog); padding-left: 10px; border-left: 1px solid var(--ink-line); }
+  nav ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  nav a {
+    position: relative; display: flex; align-items: center; gap: 12px; padding: 9px 10px; border-radius: var(--radius);
+    color: var(--fog); text-decoration: none; font-weight: 500; transition: background-color 150ms var(--ease), color 150ms var(--ease);
+  }
+  nav a:hover { background: var(--ink-raised); color: var(--sheet); }
+  nav a[aria-current='page'] { background: var(--ink-raised); color: var(--sheet); }
+  nav a[aria-current='page']::before { content: ''; position: absolute; left: -14px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0; background: var(--cyan); }
+  nav a:focus-visible, .brand:focus-visible, .site:focus-visible { outline-color: var(--cyan); }
+  .count { margin-left: auto; font-size: var(--text-xs); color: var(--fog); font-variant-numeric: tabular-nums; }
+  .foot { margin-top: auto; display: grid; gap: 12px; padding-top: 16px; border-top: 1px solid var(--ink-line); }
+  .site { display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: var(--fog); text-decoration: none; font-size: var(--text-sm); border-radius: var(--radius); }
+  .site:hover { color: var(--sheet); background: var(--ink-raised); }
+  .session { display: flex; align-items: center; gap: 10px; padding: 4px 8px; font-size: var(--text-xs); }
+  .session div { display: grid; }
+  .session strong { color: var(--sheet); font-size: var(--text-sm); font-weight: 500; }
+  .avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--ink-raised); color: var(--sheet); font-weight: 600; border: 1px solid var(--ink-line); }
+  .main { min-width: 0; }
+  .topbar { display: none; }
+  main { padding: 32px clamp(16px, 3vw, 40px) 64px; max-width: 1280px; }
+  .scrim { display: none; }
+
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: minmax(0, 1fr); }
+    .sidebar { position: fixed; z-index: 40; left: 0; top: 0; width: min(280px, 86vw); transform: translateX(-100%); transition: transform 220ms var(--ease); }
+    .sidebar.open { transform: none; }
+    .scrim { display: block; position: fixed; inset: 0; z-index: 30; background: rgb(8 14 30 / 0.45); border: 0; }
+    .topbar { display: flex; align-items: center; gap: 8px; position: sticky; top: 0; z-index: 20; padding: 8px 12px; background: var(--sheet); border-bottom: 1px solid var(--rule-soft); }
+    .crumb { font-weight: 600; }
+    main { padding-top: 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .sidebar { transition: none; } }
+</style>

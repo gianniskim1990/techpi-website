@@ -1,0 +1,1011 @@
+{
+  "notice": "DEMO SNAPSHOT for the admin UI prototype. Read from the repository; not connected; nothing is saved.",
+  "source": "origin/main @ 4bf2201",
+  "generated": "2026-10-20T07:55:55.350Z",
+  "caseStudies": [
+    {
+      "slug": "rocketeer",
+      "order": 1,
+      "group": "client",
+      "featured": true,
+      "capabilities": [
+        "digital-products"
+      ],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": "rocketeer-admin-dashboard.webp",
+      "imageAlt": {
+        "en": "The Rocketeer administration dashboard: a side menu, summary counts for pending and active requests, businesses and drivers, and a list of recent requests.",
+        "el": "Ο πίνακας ελέγχου διαχείρισης του Rocketeer: πλαϊνό μενού, συνοπτικοί αριθμοί για εκκρεμή και ενεργά αιτήματα, επιχειρήσεις και οδηγούς, και λίστα με τα πρόσφατα αιτήματα."
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/rocketeer",
+        "el": "https://techpi.eu/el/work/rocketeer"
+      },
+      "text": {
+        "en": {
+          "name": "Rocketeer",
+          "category": "Delivery operations platform",
+          "summary": "A custom web application that organises delivery requests, drivers and assignments in one place.",
+          "overview": [
+            "Rocketeer Dispatch is a custom web application for running a delivery service. It brings partner businesses, the administrator and drivers into one digital environment, where requests are created, assigned and followed through to delivery."
+          ]
+        },
+        "el": {
+          "name": "Rocketeer",
+          "category": "Πλατφόρμα διαχείρισης διανομών",
+          "summary": "Web εφαρμογή που οργανώνει σε ένα σημείο αιτήματα διανομής, οδηγούς και αναθέσεις.",
+          "overview": [
+            "Το Rocketeer Dispatch είναι μια ειδικά σχεδιασμένη web εφαρμογή για τη λειτουργία μιας υπηρεσίας διανομών. Φέρνει τις συνεργαζόμενες επιχειρήσεις, τον διαχειριστή και τους οδηγούς σε ένα ενιαίο ψηφιακό περιβάλλον, όπου τα αιτήματα δημιουργούνται, ανατίθενται και παρακολουθούνται μέχρι την παράδοση."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "armans",
+      "order": 2,
+      "group": "client",
+      "featured": true,
+      "capabilities": [
+        "digital-products",
+        "web-experiences"
+      ],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": "armans-devices.webp",
+      "imageAlt": {
+        "en": "The Arman’s Ethnic Street Food website shown on a laptop, a tablet and a phone.",
+        "el": "Ο ιστότοπος του Arman’s Ethnic Street Food σε laptop, tablet και κινητό."
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/armans",
+        "el": "https://techpi.eu/el/work/armans"
+      },
+      "text": {
+        "en": {
+          "name": "Arman’s Ethnic Street Food",
+          "category": "Direct ordering platform",
+          "summary": "A platform that lets the restaurant take orders directly from its customers.",
+          "overview": [
+            "A custom online ordering platform for Arman’s Ethnic Street Food. Customers browse the digital menu, add items to their basket and complete the order on the restaurant’s own website. A separate management environment lets the business run its products, orders and the overall flow of the system."
+          ]
+        },
+        "el": {
+          "name": "Arman’s Ethnic Street Food",
+          "category": "Πλατφόρμα απευθείας παραγγελιών",
+          "summary": "Πλατφόρμα που επιτρέπει στο εστιατόριο να δέχεται παραγγελίες απευθείας από τους πελάτες του.",
+          "overview": [
+            "Ειδικά σχεδιασμένη πλατφόρμα ηλεκτρονικών παραγγελιών για το Arman’s Ethnic Street Food. Οι πελάτες περιηγούνται στο ψηφιακό μενού, προσθέτουν προϊόντα στο καλάθι και ολοκληρώνουν την παραγγελία στον ιστότοπο του ίδιου του εστιατορίου. Ένα ξεχωριστό περιβάλλον διαχείρισης επιτρέπει στην επιχείρηση να διαχειρίζεται τα προϊόντα, τις παραγγελίες και τη συνολική ροή του συστήματος."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "logotherapia-xanthi",
+      "order": 3,
+      "group": "client",
+      "featured": true,
+      "capabilities": [
+        "web-experiences",
+        "digital-visibility"
+      ],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": "logotherapia-site.webp",
+      "imageAlt": {
+        "en": "The Logotherapia Xanthi website: the site navigation above a section explaining speech therapy and occupational therapy.",
+        "el": "Ο ιστότοπος Logotherapia Xanthi: η πλοήγηση του ιστότοπου πάνω από την ενότητα που εξηγεί τη λογοθεραπεία και την εργοθεραπεία."
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/logotherapia-xanthi",
+        "el": "https://techpi.eu/el/work/logotherapia-xanthi"
+      },
+      "text": {
+        "en": {
+          "name": "Logotherapia Xanthi",
+          "category": "Therapy centre website",
+          "summary": "A redesigned website for a speech and occupational therapy centre in Xanthi, organised so families can find information and get in touch easily.",
+          "overview": [
+            "A redesign of the website of a speech and occupational therapy centre in Xanthi, aiming for a more modern, friendly and usable presence. The design reflects the centre’s human, child-centred character while keeping a clean, professional image.",
+            "Content is organised so parents can easily find the services offered, the conditions treated, the therapy space and how to make contact."
+          ]
+        },
+        "el": {
+          "name": "Logotherapia Xanthi",
+          "category": "Ιστοσελίδα κέντρου θεραπείας",
+          "summary": "Ανασχεδιασμένη ιστοσελίδα για ένα κέντρο λογοθεραπείας και εργοθεραπείας στην Ξάνθη, οργανωμένη ώστε οι οικογένειες να βρίσκουν εύκολα πληροφορίες και να επικοινωνούν.",
+          "overview": [
+            "Ανασχεδιασμός του ιστότοπου ενός κέντρου λογοθεραπείας και εργοθεραπείας στην Ξάνθη, με στόχο μια πιο σύγχρονη, φιλική και εύχρηστη παρουσία. Ο σχεδιασμός αποδίδει τον ανθρώπινο, παιδοκεντρικό χαρακτήρα του κέντρου και διατηρεί μια καθαρή, επαγγελματική εικόνα.",
+            "Το περιεχόμενο οργανώθηκε ώστε οι γονείς να βρίσκουν εύκολα τις υπηρεσίες, τις διαταραχές που αντιμετωπίζονται, τον θεραπευτικό χώρο και τους τρόπους επικοινωνίας."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "level-up-education-app",
+      "order": 4,
+      "group": "client",
+      "featured": false,
+      "capabilities": [
+        "digital-products"
+      ],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": null,
+      "imageAlt": {
+        "en": "",
+        "el": ""
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/level-up-education-app",
+        "el": "https://techpi.eu/el/work/level-up-education-app"
+      },
+      "text": {
+        "en": {
+          "name": "Level Up Education App",
+          "category": "Education management application",
+          "summary": "A web application for managing students, courses and the day-to-day operations of a tutoring centre.",
+          "overview": [
+            "An education web app for managing students, courses and the digital operations of a tutoring centre."
+          ]
+        },
+        "el": {
+          "name": "Level Up Education App",
+          "category": "Εφαρμογή διαχείρισης εκπαίδευσης",
+          "summary": "Web εφαρμογή για τη διαχείριση μαθητών, μαθημάτων και της καθημερινής λειτουργίας ενός φροντιστηρίου.",
+          "overview": [
+            "Εκπαιδευτική web εφαρμογή για τη διαχείριση μαθητών, μαθημάτων και της ψηφιακής λειτουργίας ενός φροντιστηρίου."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "saloon",
+      "order": 5,
+      "group": "client",
+      "featured": false,
+      "capabilities": [
+        "digital-products"
+      ],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": null,
+      "imageAlt": {
+        "en": "",
+        "el": ""
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/saloon",
+        "el": "https://techpi.eu/el/work/saloon"
+      },
+      "text": {
+        "en": {
+          "name": "Saloon",
+          "category": "Booking platform",
+          "summary": "An online appointment and client management platform for salons and beauty businesses, combining customer-facing bookings with an organised daily schedule and administration area.",
+          "overview": [
+            "A modern web app for online appointments at beauty businesses, with a public booking page, a client dashboard and features that depend on the plan."
+          ]
+        },
+        "el": {
+          "name": "Saloon",
+          "category": "Πλατφόρμα κρατήσεων",
+          "summary": "Πλατφόρμα online ραντεβού και διαχείρισης πελατών για κομμωτήρια και επιχειρήσεις ομορφιάς, με δυνατότητα κρατήσεων, οργανωμένο πρόγραμμα και περιβάλλον διαχείρισης.",
+          "overview": [
+            "Σύγχρονη web εφαρμογή για online ραντεβού σε επιχειρήσεις ομορφιάς, με δημόσια σελίδα κρατήσεων, πίνακα διαχείρισης πελατών και λειτουργίες ανάλογα με το πλάνο."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "physio",
+      "order": 6,
+      "group": "client",
+      "featured": false,
+      "capabilities": [
+        "digital-products"
+      ],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": null,
+      "imageAlt": {
+        "en": "",
+        "el": ""
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/physio",
+        "el": "https://techpi.eu/el/work/physio"
+      },
+      "text": {
+        "en": {
+          "name": "Physio",
+          "category": "Appointment management platform",
+          "summary": "A web platform for physiotherapy practices to coordinate appointments, client details and treatment sessions through a clear, responsive interface.",
+          "overview": [
+            "A web application for physiotherapists and clinics, with organised management of appointments, clients and sessions."
+          ]
+        },
+        "el": {
+          "name": "Physio",
+          "category": "Πλατφόρμα διαχείρισης ραντεβού",
+          "summary": "Web πλατφόρμα για φυσικοθεραπευτές και κέντρα φυσικοθεραπείας, με οργάνωση ραντεβού, στοιχείων πελατών και συνεδριών σε ένα εύχρηστο περιβάλλον.",
+          "overview": [
+            "Web εφαρμογή για φυσικοθεραπευτές και κέντρα φυσικοθεραπείας, με οργανωμένη διαχείριση ραντεβού, πελατών και συνεδριών."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "project4you",
+      "order": 7,
+      "group": "client",
+      "featured": false,
+      "capabilities": [
+        "digital-products"
+      ],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": null,
+      "imageAlt": {
+        "en": "",
+        "el": ""
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/project4you",
+        "el": "https://techpi.eu/el/work/project4you"
+      },
+      "text": {
+        "en": {
+          "name": "Project4You",
+          "category": "CMS platform",
+          "summary": "A modular content management platform for building digital invitations and websites, with themes, custom pages and flexible content editing.",
+          "overview": [
+            "A custom web application that combines CMS logic with the ability to create digital invitations and websites through a modern builder."
+          ]
+        },
+        "el": {
+          "name": "Project4You",
+          "category": "Πλατφόρμα CMS",
+          "summary": "Ευέλικτη πλατφόρμα διαχείρισης περιεχομένου για ψηφιακά προσκλητήρια και ιστοσελίδες, με θεματικά σχέδια, προσαρμοσμένες σελίδες και αρθρωτή δομή.",
+          "overview": [
+            "Ειδικά σχεδιασμένη web εφαρμογή που συνδυάζει τη λογική ενός CMS με τη δυνατότητα δημιουργίας ψηφιακών προσκλητηρίων και ιστοσελίδων μέσα από ένα σύγχρονο εργαλείο κατασκευής (builder)."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "rantevo",
+      "order": 8,
+      "group": "client",
+      "featured": false,
+      "capabilities": [
+        "digital-products"
+      ],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": "rantevo-booking-home.webp",
+      "imageAlt": {
+        "en": "The Rantevo.gr homepage: the heading “Book an appointment easily and quickly” and a search form by service, city, date and time.",
+        "el": "Η αρχική σελίδα του Rantevo.gr: ο τίτλος «Κλείσε ραντεβού εύκολα & γρήγορα» και φόρμα αναζήτησης ανά υπηρεσία, πόλη, ημερομηνία και ώρα."
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/rantevo",
+        "el": "https://techpi.eu/el/work/rantevo"
+      },
+      "text": {
+        "en": {
+          "name": "Rantevo.gr",
+          "category": "Multi-sector SaaS booking platform",
+          "summary": "A web-based appointment platform for service businesses, combining business profiles, service listings and customer bookings.",
+          "overview": [
+            "A modern SaaS booking platform for hair salons, beauty centres, physiotherapy clinics and other service professionals."
+          ]
+        },
+        "el": {
+          "name": "Rantevo.gr",
+          "category": "Πλατφόρμα SaaS online ραντεβού",
+          "summary": "Πλατφόρμα online ραντεβού για επιχειρήσεις υπηρεσιών, με επαγγελματικά προφίλ, καταλόγους υπηρεσιών και δυνατότητα κράτησης από τον πελάτη.",
+          "overview": [
+            "Σύγχρονη πλατφόρμα SaaS για online κρατήσεις, για κομμωτήρια, κέντρα αισθητικής, φυσικοθεραπευτήρια και άλλους επαγγελματίες υπηρεσιών."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "mavie",
+      "order": 9,
+      "group": "client",
+      "featured": false,
+      "capabilities": [
+        "web-experiences"
+      ],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": null,
+      "imageAlt": {
+        "en": "",
+        "el": ""
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/mavie",
+        "el": "https://techpi.eu/el/work/mavie"
+      },
+      "text": {
+        "en": {
+          "name": "Mavie",
+          "category": "Website rebranding",
+          "summary": "A website rebranding and visual refresh with a more modern aesthetic, a cleaner structure and a more cohesive brand presentation.",
+          "overview": [
+            "A digital image upgrade with a more modern aesthetic, a cleaner structure and a refreshed feel for the brand."
+          ]
+        },
+        "el": {
+          "name": "Mavie",
+          "category": "Ανανέωση ιστοσελίδας (rebranding)",
+          "summary": "Ανανέωση ιστοσελίδας (rebranding) με πιο σύγχρονη αισθητική, πιο καθαρή δομή και πιο συνεπή παρουσίαση του brand.",
+          "overview": [
+            "Αναβάθμιση της ψηφιακής εικόνας με πιο σύγχρονη αισθητική, πιο καθαρή δομή και ανανεωμένο ύφος για το brand."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "iliastech",
+      "order": 10,
+      "group": "client",
+      "featured": false,
+      "capabilities": [
+        "web-experiences"
+      ],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": null,
+      "imageAlt": {
+        "en": "",
+        "el": ""
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/iliastech",
+        "el": "https://techpi.eu/el/work/iliastech"
+      },
+      "text": {
+        "en": {
+          "name": "iliastech",
+          "category": "Corporate website",
+          "summary": "A responsive corporate website with structured content and a clear presentation of services offered by a technology company.",
+          "overview": [
+            "A modern corporate website with a clear presentation of services and a professional digital image."
+          ]
+        },
+        "el": {
+          "name": "iliastech",
+          "category": "Εταιρική ιστοσελίδα",
+          "summary": "Εταιρική ιστοσελίδα με προσαρμογή σε όλες τις οθόνες, οργανωμένο περιεχόμενο και σαφή παρουσίαση υπηρεσιών τεχνολογίας.",
+          "overview": [
+            "Σύγχρονη εταιρική ιστοσελίδα με σαφή παρουσίαση των υπηρεσιών και επαγγελματική ψηφιακή εικόνα."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "alexandra-apartment",
+      "order": 11,
+      "group": "client",
+      "featured": false,
+      "capabilities": [
+        "web-experiences",
+        "digital-visibility"
+      ],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": null,
+      "imageAlt": {
+        "en": "",
+        "el": ""
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/alexandra-apartment",
+        "el": "https://techpi.eu/el/work/alexandra-apartment"
+      },
+      "text": {
+        "en": {
+          "name": "Alexandra Apartment",
+          "category": "Hospitality website",
+          "summary": "A hospitality website combining property imagery, clear information and an approach to local search visibility.",
+          "overview": [
+            "A clean, modern online presence for a tourist accommodation, focused on imagery and trust."
+          ]
+        },
+        "el": {
+          "name": "Alexandra Apartment",
+          "category": "Ιστοσελίδα τουριστικού καταλύματος",
+          "summary": "Ιστοσελίδα καταλύματος με έμφαση στο οπτικό υλικό, την καθαρή πληροφόρηση και τη βελτίωση της τοπικής παρουσίας στις αναζητήσεις.",
+          "overview": [
+            "Καθαρή, σύγχρονη ψηφιακή παρουσία για ένα τουριστικό κατάλυμα, με έμφαση στην εικόνα και την αξιοπιστία."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "blackjack-streetwear",
+      "order": 12,
+      "group": "client",
+      "featured": false,
+      "capabilities": [
+        "web-experiences"
+      ],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": null,
+      "imageAlt": {
+        "en": "",
+        "el": ""
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/blackjack-streetwear",
+        "el": "https://techpi.eu/el/work/blackjack-streetwear"
+      },
+      "text": {
+        "en": {
+          "name": "Blackjack Streetwear",
+          "category": "E-commerce website",
+          "summary": "An online store built on WooCommerce, designed around clear product presentation, the mobile experience and a streetwear aesthetic.",
+          "overview": [
+            "A modern e-commerce experience for a fashion brand, with clean product presentation and a streetwear aesthetic."
+          ]
+        },
+        "el": {
+          "name": "Blackjack Streetwear",
+          "category": "Ηλεκτρονικό κατάστημα",
+          "summary": "Ηλεκτρονικό κατάστημα σε WooCommerce, με έμφαση στην παρουσίαση των προϊόντων, στην εμπειρία από το κινητό και σε streetwear αισθητική.",
+          "overview": [
+            "Σύγχρονη εμπειρία ηλεκτρονικού καταστήματος για ένα brand μόδας, με καθαρή παρουσίαση προϊόντων και streetwear αισθητική."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "level-up-education",
+      "order": 13,
+      "group": "earlier",
+      "featured": false,
+      "capabilities": [],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": null,
+      "imageAlt": {
+        "en": "",
+        "el": ""
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/level-up-education",
+        "el": "https://techpi.eu/el/work/level-up-education"
+      },
+      "text": {
+        "en": {
+          "name": "Level Up Education",
+          "category": "Education website & digital communication",
+          "summary": "A coordinated digital presence for an education brand, including its website, SEO content and social media communication.",
+          "overview": [
+            "A complete digital presence for an education brand, covering its website, SEO, social media and content."
+          ]
+        },
+        "el": {
+          "name": "Level Up Education",
+          "category": "Εκπαιδευτική ιστοσελίδα και ψηφιακή επικοινωνία",
+          "summary": "Ολοκληρωμένη ψηφιακή παρουσία εκπαιδευτικής επιχείρησης, με ιστοσελίδα, περιεχόμενο SEO και επικοινωνία στα social media.",
+          "overview": [
+            "Ολοκληρωμένη ψηφιακή παρουσία για ένα εκπαιδευτικό brand, με ιστοσελίδα, SEO, social media και περιεχόμενο."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "itsallaboutxanthi",
+      "order": 14,
+      "group": "earlier",
+      "featured": false,
+      "capabilities": [],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": null,
+      "imageAlt": {
+        "en": "",
+        "el": ""
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/itsallaboutxanthi",
+        "el": "https://techpi.eu/el/work/itsallaboutxanthi"
+      },
+      "text": {
+        "en": {
+          "name": "Itsallaboutxanthi",
+          "category": "Local platform & digital communication",
+          "summary": "Website work, social media content and graphic design for a local information platform and its digital presence.",
+          "overview": [
+            "A complete digital presence covering the website, social media, graphic design and digital marketing support."
+          ]
+        },
+        "el": {
+          "name": "Itsallaboutxanthi",
+          "category": "Τοπική πλατφόρμα και ψηφιακή επικοινωνία",
+          "summary": "Ιστοσελίδα, περιεχόμενο για social media και γραφιστικός σχεδιασμός για τη συνολική παρουσία μιας τοπικής ενημερωτικής πλατφόρμας.",
+          "overview": [
+            "Ολοκληρωμένη ψηφιακή παρουσία με ιστοσελίδα, social media, γραφιστικό σχεδιασμό και υποστήριξη ψηφιακού μάρκετινγκ."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "local-xanthi",
+      "order": 15,
+      "group": "earlier",
+      "featured": false,
+      "capabilities": [],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": null,
+      "imageAlt": {
+        "en": "",
+        "el": ""
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/local-xanthi",
+        "el": "https://techpi.eu/el/work/local-xanthi"
+      },
+      "text": {
+        "en": {
+          "name": "Local Xanthi",
+          "category": "Local social media & digital marketing",
+          "summary": "Social media content and digital marketing communications aimed at building a consistent presence for a local audience.",
+          "overview": [
+            "Social media and digital marketing campaigns with local targeting, and content designed to increase visibility."
+          ]
+        },
+        "el": {
+          "name": "Local Xanthi",
+          "category": "Τοπική ψηφιακή επικοινωνία",
+          "summary": "Περιεχόμενο social media και ψηφιακή επικοινωνία με στόχο μια συνεπή παρουσία για το τοπικό κοινό.",
+          "overview": [
+            "Καμπάνιες social media και ψηφιακού μάρκετινγκ με τοπική στόχευση και περιεχόμενο σχεδιασμένο για μεγαλύτερη προβολή."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "juliette-coffee-roasters",
+      "order": 16,
+      "group": "earlier",
+      "featured": false,
+      "capabilities": [],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": null,
+      "imageAlt": {
+        "en": "",
+        "el": ""
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/juliette-coffee-roasters",
+        "el": "https://techpi.eu/el/work/juliette-coffee-roasters"
+      },
+      "text": {
+        "en": {
+          "name": "Juliette Coffee Roasters",
+          "category": "Coffee brand digital communication",
+          "summary": "Social media content, digital marketing and search visibility support for a coffee brand.",
+          "overview": [
+            "Digital marketing and social media support for a coffee brand, focused on imagery, content and online visibility."
+          ]
+        },
+        "el": {
+          "name": "Juliette Coffee Roasters",
+          "category": "Ψηφιακή επικοινωνία εταιρείας καφέ",
+          "summary": "Περιεχόμενο social media, ψηφιακή επικοινωνία και υποστήριξη SEO για ένα brand καφέ.",
+          "overview": [
+            "Υποστήριξη ψηφιακού μάρκετινγκ και social media για ένα brand καφέ, με έμφαση στην εικόνα, το περιεχόμενο και την προβολή στο διαδίκτυο."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "apox-fc",
+      "order": 17,
+      "group": "earlier",
+      "featured": false,
+      "capabilities": [],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": null,
+      "imageAlt": {
+        "en": "",
+        "el": ""
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/apox-fc",
+        "el": "https://techpi.eu/el/work/apox-fc"
+      },
+      "text": {
+        "en": {
+          "name": "Apox FC",
+          "category": "Sports brand content & design",
+          "summary": "Graphic design and social media content supporting consistent communication with a sports audience.",
+          "overview": [
+            "Content, creative assets and digital marketing support for a sports brand with a strong community presence."
+          ]
+        },
+        "el": {
+          "name": "Apox FC",
+          "category": "Περιεχόμενο και γραφιστική αθλητικής ομάδας",
+          "summary": "Γραφιστικά και περιεχόμενο social media για συνεπή επικοινωνία με το κοινό μιας αθλητικής ομάδας.",
+          "overview": [
+            "Περιεχόμενο, δημιουργικό υλικό και υποστήριξη ψηφιακού μάρκετινγκ για ένα αθλητικό brand με ισχυρή παρουσία στην κοινότητά του."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "emoved",
+      "order": 18,
+      "group": "earlier",
+      "featured": false,
+      "capabilities": [],
+      "hasCaseStudy": true,
+      "hasGreek": true,
+      "image": null,
+      "imageAlt": {
+        "en": "",
+        "el": ""
+      },
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/work/emoved",
+        "el": "https://techpi.eu/el/work/emoved"
+      },
+      "text": {
+        "en": {
+          "name": "Emoved",
+          "category": "Branding & graphic design",
+          "summary": "Graphic assets and visual identity support for a clear and consistent professional brand image.",
+          "overview": [
+            "A graphic design project focused on clean visual communication and a professional brand image."
+          ]
+        },
+        "el": {
+          "name": "Emoved",
+          "category": "Branding και γραφιστικός σχεδιασμός",
+          "summary": "Δημιουργία γραφιστικού υλικού και υποστήριξη οπτικής ταυτότητας για επαγγελματική και συνεπή εικόνα του brand.",
+          "overview": [
+            "Έργο γραφιστικού σχεδιασμού με έμφαση στην καθαρή οπτική επικοινωνία και την επαγγελματική εικόνα του brand."
+          ]
+        }
+      }
+    }
+  ],
+  "articles": [
+    {
+      "slug": "what-every-eu-project-website-should-include",
+      "title": "What every EU-funded project website should include",
+      "category": "EU project websites",
+      "published": "2025-09-12",
+      "lead": "A practical checklist for project coordinators and communication partners, from identity and partner pages to deliverables, news and long-term dissemination.",
+      "hasGreek": false,
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/insights/what-every-eu-project-website-should-include"
+      },
+      "seo": {
+        "title": "What every EU-funded project website should include | TechPi",
+        "description": "A practical checklist for EU project coordinators and communication partners: identity, partners, work packages, deliverables, news and long-term dissemination."
+      }
+    },
+    {
+      "slug": "common-mistakes-in-horizon-europe-project-websites",
+      "title": "Common mistakes in Horizon Europe project websites",
+      "category": "EU project websites",
+      "published": "2025-08-21",
+      "lead": "Three recurring patterns in Horizon Europe project websites, and how to avoid them.",
+      "hasGreek": false,
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/insights/common-mistakes-in-horizon-europe-project-websites"
+      },
+      "seo": {
+        "title": "Common mistakes in Horizon Europe project websites | TechPi",
+        "description": "Three recurring mistakes in Horizon Europe project websites: one-off launch builds, overloaded homepages and hidden deliverables, and how to avoid each of them."
+      }
+    },
+    {
+      "slug": "how-to-structure-deliverables-and-publications",
+      "title": "How to structure deliverables and publications",
+      "category": "Information architecture",
+      "published": "2025-07-18",
+      "lead": "A scalable content model for organising deliverables, publications and outputs that grows naturally with the project.",
+      "hasGreek": false,
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/insights/how-to-structure-deliverables-and-publications"
+      },
+      "seo": {
+        "title": "How to structure deliverables and publications | TechPi",
+        "description": "A scalable content model for EU project deliverables, publications and outputs: the fields to define first, and filters that help visitors browse the library."
+      }
+    },
+    {
+      "slug": "accessibility-considerations-for-project-websites",
+      "title": "Accessibility considerations for project websites",
+      "category": "Accessibility",
+      "published": "2025-06-09",
+      "lead": "What WCAG 2.2 AA means in practice for EU project websites, and where teams most often fall short.",
+      "hasGreek": false,
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/insights/accessibility-considerations-for-project-websites"
+      },
+      "seo": {
+        "title": "Accessibility considerations for project websites | TechPi",
+        "description": "What WCAG 2.2 AA means in practice for EU project websites, and the problems teams most often miss: contrast, focus states, inaccessible PDFs and keyboard forms."
+      }
+    },
+    {
+      "slug": "preparing-a-website-brief-during-the-proposal-stage",
+      "title": "Preparing a website brief during the proposal stage",
+      "category": "Proposals",
+      "published": "2025-05-14",
+      "lead": "What to write into the proposal so that the project website can be planned, budgeted and built without surprises.",
+      "hasGreek": false,
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/insights/preparing-a-website-brief-during-the-proposal-stage"
+      },
+      "seo": {
+        "title": "Preparing a website brief during the proposal stage | TechPi",
+        "description": "What to write into an EU project proposal so the project website can be planned, budgeted and built without surprises: describe the actions it must support."
+      }
+    },
+    {
+      "slug": "what-communication-partners-should-ask-a-web-development-supplier",
+      "title": "What communication partners should ask a web development supplier",
+      "category": "Communication partners",
+      "published": "2025-04-22",
+      "lead": "A short list of questions that quickly separates a generic web supplier from one that can support EU project work.",
+      "hasGreek": false,
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/insights/what-communication-partners-should-ask-a-web-development-supplier"
+      },
+      "seo": {
+        "title": "What communication partners should ask a web supplier | TechPi",
+        "description": "Questions for communication partners choosing a web development supplier for EU project work: change requests, contact, response times, architecture and accessibility."
+      }
+    },
+    {
+      "slug": "how-analytics-can-support-dissemination-reporting",
+      "title": "How analytics can support dissemination reporting",
+      "category": "Analytics",
+      "published": "2025-03-30",
+      "lead": "Using web analytics to produce credible, useful evidence for communication and dissemination KPIs.",
+      "hasGreek": false,
+      "status": "published",
+      "url": {
+        "en": "https://techpi.eu/insights/how-analytics-can-support-dissemination-reporting"
+      },
+      "seo": {
+        "title": "How analytics can support dissemination reporting | TechPi",
+        "description": "Using web analytics to produce credible evidence for EU project communication and dissemination KPIs, tied to the objectives set out in the proposal."
+      }
+    }
+  ],
+  "pages": [
+    {
+      "key": "home",
+      "name": "Home",
+      "url": {
+        "en": "https://techpi.eu/",
+        "el": "https://techpi.eu/el/"
+      },
+      "status": "published"
+    },
+    {
+      "key": "work",
+      "name": "Work",
+      "url": {
+        "en": "https://techpi.eu/work",
+        "el": "https://techpi.eu/el/work"
+      },
+      "status": "published"
+    },
+    {
+      "key": "capabilities",
+      "name": "Capabilities",
+      "url": {
+        "en": "https://techpi.eu/capabilities",
+        "el": "https://techpi.eu/el/capabilities"
+      },
+      "status": "published"
+    },
+    {
+      "key": "euProjects",
+      "name": "EU Projects",
+      "url": {
+        "en": "https://techpi.eu/eu-projects",
+        "el": "https://techpi.eu/el/eu-projects"
+      },
+      "status": "published"
+    },
+    {
+      "key": "about",
+      "name": "About",
+      "url": {
+        "en": "https://techpi.eu/about",
+        "el": "https://techpi.eu/el/about"
+      },
+      "status": "published"
+    },
+    {
+      "key": "contact",
+      "name": "Contact",
+      "url": {
+        "en": "https://techpi.eu/contact",
+        "el": "https://techpi.eu/el/contact"
+      },
+      "status": "published"
+    },
+    {
+      "key": "privacy",
+      "name": "Privacy Policy",
+      "url": {
+        "en": "https://techpi.eu/privacy",
+        "el": "https://techpi.eu/el/privacy"
+      },
+      "status": "published"
+    },
+    {
+      "key": "cookies",
+      "name": "Cookies Policy",
+      "url": {
+        "en": "https://techpi.eu/cookies",
+        "el": "https://techpi.eu/el/cookies"
+      },
+      "status": "published"
+    }
+  ],
+  "media": [
+    {
+      "file": "rocketeer-admin-dashboard.webp",
+      "original": "src/assets/projects/rocketeer-admin-dashboard.png",
+      "width": 2612,
+      "height": 980,
+      "bytes": 68968,
+      "thumb": {
+        "width": 480,
+        "height": 180
+      }
+    },
+    {
+      "file": "rocketeer-sign-in.webp",
+      "original": "src/assets/projects/rocketeer-sign-in.png",
+      "width": 1018,
+      "height": 850,
+      "bytes": 118729,
+      "thumb": {
+        "width": 480,
+        "height": 401
+      }
+    },
+    {
+      "file": "armans-devices.webp",
+      "original": "src/assets/projects/armans-devices.png",
+      "width": 940,
+      "height": 788,
+      "bytes": 563706,
+      "thumb": {
+        "width": 480,
+        "height": 402
+      }
+    },
+    {
+      "file": "armans-admin.webp",
+      "original": "src/assets/projects/armans-admin.png",
+      "width": 1711,
+      "height": 1265,
+      "bytes": 168780,
+      "thumb": {
+        "width": 480,
+        "height": 355
+      }
+    },
+    {
+      "file": "logotherapia-site.webp",
+      "original": "src/assets/projects/logotherapia-site.jpg",
+      "width": 2880,
+      "height": 1800,
+      "bytes": 402424,
+      "thumb": {
+        "width": 480,
+        "height": 300
+      }
+    },
+    {
+      "file": "rantevo-booking-home.webp",
+      "original": "src/assets/projects/rantevo-booking-home.png",
+      "width": 1549,
+      "height": 679,
+      "bytes": 160568,
+      "thumb": {
+        "width": 480,
+        "height": 210
+      }
+    },
+    {
+      "file": "rantevo-business-page.webp",
+      "original": "src/assets/projects/rantevo-business-page.png",
+      "width": 1412,
+      "height": 1194,
+      "bytes": 206763,
+      "thumb": {
+        "width": 480,
+        "height": 406
+      }
+    }
+  ],
+  "history": [
+    {
+      "sha": "4bf2201",
+      "date": "2026-10-19T10:13:59+03:00",
+      "message": "Phase 2I: site-wide typography consistency (#26)"
+    },
+    {
+      "sha": "cd185c3",
+      "date": "2026-10-18T22:30:05+03:00",
+      "message": "Phase 2H: final content and portfolio corrections (#25)"
+    },
+    {
+      "sha": "da398aa",
+      "date": "2026-10-18T21:00:21+03:00",
+      "message": "Phase 2F: Greek editorial audit and safe corrections"
+    },
+    {
+      "sha": "1ca478b",
+      "date": "2026-10-17T20:40:19+03:00",
+      "message": "Phase 2E: SEO and launch cleanup"
+    },
+    {
+      "sha": "2f6cb47",
+      "date": "2026-10-17T16:19:15+03:00",
+      "message": "Phase 2D: migrate seven English Insights articles"
+    },
+    {
+      "sha": "6239593",
+      "date": "2026-10-14T11:27:07+03:00",
+      "message": "Phase 2B: bilingual Privacy and Cookies policies"
+    },
+    {
+      "sha": "a13128c",
+      "date": "2026-10-13T14:57:51+03:00",
+      "message": "Fix Greek Work page localization and gate build on locale validation (#20)"
+    },
+    {
+      "sha": "fe12f39",
+      "date": "2026-10-13T14:29:35+03:00",
+      "message": "Document TechPi launch readiness and infrastructure (#19)"
+    }
+  ]
+}
