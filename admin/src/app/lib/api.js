@@ -40,5 +40,8 @@ export const api = {
   session: () => request('GET', 'session'),
   listDemo: () => request('GET', 'm0-demo'),
   getDemo: (slug) => request('GET', `m0-demo/${encodeURIComponent(slug)}`),
+  listCaseStudies: () => request('GET', 'case-studies'),
+  getCaseStudy: (slug) => request('GET', `case-studies/${encodeURIComponent(slug)}`),
+  saveCaseStudyDraft: (slug, content, expectedSha) => request('POST', `case-studies/${encodeURIComponent(slug)}/draft`, { content, expectedSha }),
   saveDemoDraft: (slug, content, expectedSha) => request('POST', `m0-demo/${encodeURIComponent(slug)}/draft`, { content, expectedSha }),
 };

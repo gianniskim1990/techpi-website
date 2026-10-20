@@ -66,7 +66,7 @@
       </dl>
       <p class="pending">
         <Icon name="info" size={16} />
-        <span>Publishing is not connected, so the status above is a snapshot. Saving drafts to GitHub works for <a href="#/test-content">Test content</a> only.</span>
+        <span>Publishing is not connected, so the status above is a snapshot. Saving drafts to GitHub works for <a href="#/test-content">Test content</a> and the <a href="#/case-studies/rocketeer">Rocketeer case study</a> only.</span>
       </p>
     </div>
   </section>

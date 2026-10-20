@@ -16,11 +16,14 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const kill = (p) => { try { process.platform === 'win32' ? execSync(`taskkill /pid ${p.pid} /T /F`, { stdio: 'ignore' }) : p.kill('SIGTERM'); } catch {} };
 const serve = process.argv.includes('--serve');
 
-const BASE = 'feat/techpi-admin-m0';
+const BASE = 'feat/techpi-admin-m1a-rocketeer';
+const CS_FILE = 'content/case-studies/rocketeer/index.json';
 const FILE = 'content/m0-demo/m0-sample-article/index.json';
-const sample = fs.readFileSync(path.join(root, '..', FILE), 'utf8');
+const read = (rel) => fs.readFileSync(path.join(root, '..', rel), 'utf8').replace(/\r\n/g, '\n');
+const sample = read(FILE);
+const csSample = read(CS_FILE);
 const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
-const gh = createMockGitHub({ publicKey, branches: { main: { 'README.md': 'main' }, [BASE]: { [FILE]: sample } } });
+const gh = createMockGitHub({ publicKey, branches: { main: { 'README.md': 'main' }, [BASE]: { [FILE]: sample, [CS_FILE]: csSample } } });
 const MOCK_PORT = 8920;
 const mockServer = await gh.listen(MOCK_PORT);
 const configs = writeConfigs({ github: { apiBase: `http://127.0.0.1:${MOCK_PORT}`, appId: gh.appId, installationId: gh.installationId, privateKey: privateKey.export({ type: 'pkcs1', format: 'pem' }) } });
@@ -77,7 +80,29 @@ for (const c of serve ? configs.filter((x) => x.name === 'admin') : configs) {
     const stale = await save(entry.sha);
     check(`admin: stale save -> ${stale.status}`, stale.status === 409);
     check('admin: main and the base branch unchanged', gh.fileOn('main', 'README.md') === 'main' && gh.fileOn(BASE, FILE) === sample);
-    check('admin: every write went to the draft branch', gh.state.writes.every((w) => w.branch === 'cms/m0-demo/m0-sample-article'), `${gh.state.writes.length} writes`);
+    check('admin: every write went to the draft branch', gh.state.writes.every((w) => w.branch.startsWith('cms/')), `${gh.state.writes.length} writes`);
+    // Task M1A: the Rocketeer case study
+    const csList = await (await fetch(`${origin}/api/case-studies`, { headers: api })).json();
+    check('admin: case-study list contains only Rocketeer', csList.entries?.length === 1 && csList.entries[0].slug === 'rocketeer', JSON.stringify(csList).slice(0, 120));
+    const other = await fetch(`${origin}/api/case-studies/armans`, { headers: api });
+    check(`admin: another case study is refused -> ${other.status}`, other.status === 404);
+    const cs = await (await fetch(`${origin}/api/case-studies/rocketeer`, { headers: api })).json();
+    const csEdit = { en: structuredClone(cs.content.en), el: structuredClone(cs.content.el) };
+    csEdit.en.summary = 'A custom web application that organises delivery requests, drivers and assignments in one place. Edited end to end.';
+    csEdit.el.summary = 'Web εφαρμογή που οργανώνει σε ένα σημείο αιτήματα διανομής, οδηγούς και αναθέσεις. Δοκιμή.';
+    const csSave = (content, expectedSha) => fetch(`${origin}/api/case-studies/rocketeer/draft`, { method: 'POST', headers: { ...api, Origin: origin, 'Content-Type': 'application/json' }, body: JSON.stringify({ content, expectedSha }) });
+    const c1 = await csSave(csEdit, cs.sha); const cd1 = await c1.json();
+    check(`admin: Rocketeer save -> ${c1.status}, draft PR #${cd1.draft?.number} into ${gh.state.prs.at(-1)?.base.ref}`, c1.status === 200 && cd1.draft?.branch === 'cms/case-studies/rocketeer' && gh.state.prs.at(-1)?.base.ref === BASE);
+    csEdit.en.category = 'Delivery operations platform (edited)';
+    csEdit.el.category = 'Πλατφόρμα διαχείρισης διανομών (δοκιμή)';
+    const c2 = await csSave(csEdit, cd1.sha); const cd2 = await c2.json();
+    check(`admin: second Rocketeer save updates PR #${cd2.draft?.number}`, c2.status === 200 && cd2.draft?.number === cd1.draft?.number && gh.state.prs.length === 2);
+    const cStale = await csSave(csEdit, cs.sha);
+    check(`admin: stale Rocketeer save -> ${cStale.status}`, cStale.status === 409);
+    const savedDoc = JSON.parse(gh.fileOn('cms/case-studies/rocketeer', CS_FILE));
+    const baseDoc = JSON.parse(csSample);
+    check('admin: Rocketeer facts and images unchanged by the save', JSON.stringify(savedDoc.facts) === JSON.stringify(baseDoc.facts) && JSON.stringify(savedDoc.images) === JSON.stringify(baseDoc.images));
+    check('admin: main and the base still unchanged after Rocketeer saves', gh.fileOn('main', 'README.md') === 'main' && gh.fileOn(BASE, CS_FILE) === csSample);
     check('admin: Worker log has no credentials', !/ghs_|PRIVATE KEY|Bearer /.test(log));
   }
   kill(proc);

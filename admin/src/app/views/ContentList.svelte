@@ -3,6 +3,7 @@
   import StatusBadge from '../components/StatusBadge.svelte';
   import { store, entriesOf, createDraft } from '../lib/store.svelte.js';
   import { navigate } from '../lib/router.svelte.js';
+  import { session } from '../lib/session.svelte.js';
 
   let { type } = $props();
   const isCase = type === 'case-studies';
@@ -35,6 +36,7 @@
   const filtered = $derived(q || status !== 'all' || group !== 'all' || language !== 'all');
   const reset = () => { q = ''; status = 'all'; group = 'all'; language = 'all'; };
   const day = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  const connected = (e) => isCase && Boolean(session.data?.connected?.caseStudies?.includes(e.slug));
   const open = (e) => navigate(`/${type}/${e.slug}`);
 </script>
 
@@ -44,6 +46,7 @@
     <p class="sub">
       {#if isCase}The portfolio on /work, in the order shown on the site. Featured projects also appear on the homepage.
       {:else}Insights articles. English only; a Greek version can be added per article.{/if}
+      {#if isCase} Only <strong>Rocketeer</strong> is connected to GitHub so far; the others are a read-only snapshot.{/if}
     </p>
   </div>
   <button class="btn btn-primary" type="button" onclick={() => navigate(`/${type}/${createDraft(type)}`)}>
@@ -104,7 +107,7 @@
                 {/if}
                 <div class="tt">
                   <a href="#/{type}/{e.slug}" onclick={(ev) => ev.stopPropagation()}>{e.saved.en.title || 'Untitled'}</a>
-                  <span class="slug">/{isCase ? 'work' : 'insights'}/{e.slug}{#if e.featured}<span class="feat" title="Featured on the homepage"><Icon name="star" size={13} />Featured</span>{/if}</span>
+                  <span class="slug">/{isCase ? 'work' : 'insights'}/{e.slug}{#if connected(e)}<span class="conn" title="Connected to GitHub: edits are saved as a draft pull request"><Icon name="branch" size={12} />Connected</span>{/if}{#if e.featured}<span class="feat" title="Featured on the homepage"><Icon name="star" size={13} />Featured</span>{/if}</span>
                 </div>
               </div>
             </td>
@@ -151,6 +154,7 @@
   .tt a { color: var(--ink); font-weight: 500; text-decoration: none; }
   .tt a:hover { color: var(--blue); text-decoration: underline; }
   .slug { color: var(--slate); font-size: var(--text-sm); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .conn { display: inline-flex; align-items: center; gap: 3px; padding: 0 7px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); font-size: var(--text-xs); font-weight: 600; }
   .feat { display: inline-flex; align-items: center; gap: 3px; color: var(--blue); font-size: var(--text-xs); font-weight: 600; }
   .chip { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: var(--text-xs); font-weight: 600; border: 1px dashed var(--rule); color: var(--fog); }
   .chip.on { border: 1px solid var(--rule); color: var(--graphite); background: var(--white); }
