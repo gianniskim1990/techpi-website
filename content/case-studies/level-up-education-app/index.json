@@ -1,0 +1,68 @@
+{
+  "facts": {
+    "slug": "level-up-education-app",
+    "name": "Level Up Education App",
+    "year": 2026,
+    "liveUrl": "https://app.levelupeducation.gr/",
+    "workGroup": "client",
+    "featured": false,
+    "order": 4,
+    "capabilities": [
+      "digital-products"
+    ],
+    "source": "https://pigiota314.gr/case-studies/level-up-education-app/"
+  },
+  "images": {},
+  "en": {
+    "category": "Education management application",
+    "summary": "A web application for managing students, courses and the day-to-day operations of a tutoring centre.",
+    "overview": [
+      "An education web app for managing students, courses and the digital operations of a tutoring centre."
+    ],
+    "need": [
+      "The day-to-day management of students, classes, absences and communication needed a more organised digital environment."
+    ],
+    "builtIntro": "A custom application with user roles, student and class management, and features that can evolve with the centre’s needs.",
+    "services": [
+      "UX/UI design",
+      "Web application development",
+      "Student management",
+      "Education platform"
+    ],
+    "technology": [
+      "React",
+      "TypeScript",
+      "Supabase",
+      "Tailwind CSS"
+    ],
+    "outcome": [
+      "Better internal organisation for the tutoring centre, and room to add further digital capabilities."
+    ]
+  },
+  "el": {
+    "category": "Εφαρμογή διαχείρισης εκπαίδευσης",
+    "summary": "Web εφαρμογή για τη διαχείριση μαθητών, μαθημάτων και της καθημερινής λειτουργίας ενός φροντιστηρίου.",
+    "overview": [
+      "Εκπαιδευτική web εφαρμογή για τη διαχείριση μαθητών, μαθημάτων και της ψηφιακής λειτουργίας ενός φροντιστηρίου."
+    ],
+    "need": [
+      "Η καθημερινή διαχείριση μαθητών, τμημάτων, απουσιών και επικοινωνίας χρειαζόταν ένα πιο οργανωμένο ψηφιακό περιβάλλον."
+    ],
+    "builtIntro": "Ειδικά σχεδιασμένη εφαρμογή με ρόλους χρηστών, διαχείριση μαθητών και τμημάτων, και λειτουργίες που μπορούν να εξελίσσονται μαζί με τις ανάγκες του φροντιστηρίου.",
+    "services": [
+      "Σχεδιασμός UX/UI",
+      "Ανάπτυξη web εφαρμογής",
+      "Διαχείριση μαθητών",
+      "Εκπαιδευτική πλατφόρμα"
+    ],
+    "technology": [
+      "React",
+      "TypeScript",
+      "Supabase",
+      "Tailwind CSS"
+    ],
+    "outcome": [
+      "Καλύτερη εσωτερική οργάνωση για το φροντιστήριο και περιθώριο για νέες ψηφιακές δυνατότητες."
+    ]
+  }
+}

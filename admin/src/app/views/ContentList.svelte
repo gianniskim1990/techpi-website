@@ -1,9 +1,11 @@
 <script>
+  import { untrack } from 'svelte';
   import Icon from '../components/Icon.svelte';
   import StatusBadge from '../components/StatusBadge.svelte';
   import { store, entriesOf, createDraft } from '../lib/store.svelte.js';
   import { navigate } from '../lib/router.svelte.js';
   import { session } from '../lib/session.svelte.js';
+  import { caseStudies, loadCaseStudies, draftOf } from '../lib/case-studies.svelte.js';
 
   let { type } = $props();
   const isCase = type === 'case-studies';
@@ -20,7 +22,7 @@
     let list = entriesOf(type).filter((e) => {
       const t = e.saved.en;
       if (term && ![t.title, t.category, e.slug].some((v) => v?.toLowerCase().includes(term))) return false;
-      if (status !== 'all' && e.status !== status) return false;
+      if (status !== 'all' && statusOf(e) !== status) return false;
       if (isCase && group !== 'all' && e.group !== group) return false;
       if (language === 'missing-el' && e.hasGreek) return false;
       if (language === 'has-el' && !e.hasGreek) return false;
@@ -37,6 +39,12 @@
   const reset = () => { q = ''; status = 'all'; group = 'all'; language = 'all'; };
   const day = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   const connected = (e) => isCase && Boolean(session.data?.connected?.caseStudies?.includes(e.slug));
+  const anyConnected = $derived(isCase && Boolean(session.data?.connected?.caseStudies?.length));
+  // Refreshed each time the list opens: drafts may have been saved elsewhere (another tab, another person, GitHub).
+  $effect(() => { if (anyConnected) untrack(loadCaseStudies); });
+  /** Connected case studies show their real status on GitHub: an open draft pull request, or the saved version. */
+  const statusOf = (e) => (connected(e) ? (draftOf(e.slug) ? 'changes' : 'published') : e.status);
+  const liveCategory = (e) => (connected(e) ? caseStudies.entries.find((x) => x.slug === e.slug)?.category : null) ?? e.saved.en.category;
   const open = (e) => navigate(`/${type}/${e.slug}`);
 </script>
 
@@ -46,10 +54,10 @@
     <p class="sub">
       {#if isCase}The portfolio on /work, in the order shown on the site. Featured projects also appear on the homepage.
       {:else}Insights articles. English only; a Greek version can be added per article.{/if}
-      {#if isCase} Only <strong>Rocketeer</strong> is connected to GitHub so far; the others are a read-only snapshot.{/if}
+      {#if anyConnected} All {session.data.connected.caseStudies.length} are connected to GitHub: edits are saved as a draft pull request per case study, and the website is not changed.{/if}
     </p>
   </div>
-  <button class="btn btn-primary" type="button" onclick={() => navigate(`/${type}/${createDraft(type)}`)}>
+  <button class="btn btn-primary" type="button" onclick={() => navigate(`/${type}/${createDraft(type)}`)} disabled={anyConnected} title={anyConnected ? 'Adding a new case study is not available yet' : undefined}>
     <Icon name="plus" size={16} />{isCase ? 'New case study' : 'New article'}
   </button>
 </header>
@@ -83,6 +91,7 @@
     </div>
   </div>
 
+  {#if anyConnected && caseStudies.error}<p class="resultcount error-text" role="alert">Draft status could not be loaded: {caseStudies.error}</p>{/if}
   <p class="resultcount" aria-live="polite">{rows.length === total ? `${total} ${isCase ? 'case studies' : 'articles'}` : `${rows.length} of ${total}`}</p>
 
   {#if rows.length}
@@ -111,13 +120,13 @@
                 </div>
               </div>
             </td>
-            <td class="c-cat">{e.saved.en.category || '—'}</td>
+            <td class="c-cat">{liveCategory(e) || '—'}</td>
             <td class="c-group">{isCase ? (e.group === 'client' ? 'Client' : 'Earlier work') : e.published ? day(`${e.published}T00:00:00Z`) : '—'}</td>
             <td class="c-lang">
               <span class="chip on">EN</span>
               <span class="chip" class:on={e.hasGreek} title={e.hasGreek ? 'Greek version exists' : 'No Greek version'}>EL</span>
             </td>
-            <td class="c-status"><StatusBadge status={e.status} /></td>
+            <td class="c-status"><StatusBadge status={statusOf(e)} />{#if connected(e) && draftOf(e.slug)}<a class="pr" href={draftOf(e.slug).url} target="_blank" rel="noopener" onclick={(ev) => ev.stopPropagation()}>PR #{draftOf(e.slug).number}</a>{/if}</td>
             <td class="c-upd">{day(e.updatedAt)}</td>
           </tr>
         {/each}
@@ -154,6 +163,7 @@
   .tt a { color: var(--ink); font-weight: 500; text-decoration: none; }
   .tt a:hover { color: var(--blue); text-decoration: underline; }
   .slug { color: var(--slate); font-size: var(--text-sm); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .pr { display: block; margin-top: 3px; font-size: var(--text-xs); }
   .conn { display: inline-flex; align-items: center; gap: 3px; padding: 0 7px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); font-size: var(--text-xs); font-weight: 600; }
   .feat { display: inline-flex; align-items: center; gap: 3px; color: var(--blue); font-size: var(--text-xs); font-weight: 600; }
   .chip { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: var(--text-xs); font-weight: 600; border: 1px dashed var(--rule); color: var(--fog); }

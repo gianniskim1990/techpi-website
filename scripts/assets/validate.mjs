@@ -45,7 +45,7 @@ const caseStudiesDir = path.join(root, 'content/case-studies');
 if (fs.existsSync(caseStudiesDir)) {
   for (const d of fs.readdirSync(caseStudiesDir)) {
     const doc = JSON.parse(fs.readFileSync(path.join(caseStudiesDir, d, 'index.json'), 'utf8'));
-    for (const im of [doc.images.image, doc.images.cover, ...doc.images.gallery]) {
+    for (const im of [doc.images.image, doc.images.cover, ...(doc.images.gallery ?? [])].filter(Boolean)) {
       const name = managedIds[im.id];
       check(Boolean(name), 'content/case-studies/' + d + ': image id "' + im.id + '" is not in managedImages in projects.ts');
       if (name) uses.push([null, name, String(im.width), String(im.height)]);

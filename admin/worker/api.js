@@ -7,8 +7,8 @@
  *   POST /api/<collection>/<slug>/draft     save the entry as a draft: commit to cms/<collection>/<slug>, open or update one
  *                                           draft pull request into the base branch
  *
- * Collections: `m0-demo` (Task A1, dummy content) and `case-studies` (Task M1A: Rocketeer only; every other case study
- * is refused). The repository, branch names and file paths are decided here, never taken from the request. Saves are
+ * Collections: `m0-demo` (Task A1, dummy content) and `case-studies` (Tasks M1A and M1B: exactly the 18 published case
+ * studies; any other slug is refused). The repository, branch names and file paths are decided here, never taken from the request. Saves are
  * checked against the version the editor loaded (the file's Git blob SHA), so a stale or conflicting edit is refused
  * instead of overwriting newer work. Commit messages and pull requests carry no personal data.
  */
@@ -19,7 +19,7 @@ import * as study from '../shared/case-study-content.js';
 const json = (status, data) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
 const fail = (status, message, extra = {}) => json(status, { error: { message, ...extra } });
 const MAX_BODY = 64 * 1024;
-const DEFAULT_BASE = 'feat/techpi-admin-m1a-rocketeer';
+const DEFAULT_BASE = 'feat/techpi-admin-m1b-all-case-studies';
 const PUBLIC_NOTE = 'This repository is public, so this draft is publicly visible on GitHub.';
 
 /** The branch drafts are based on and pull requests target. Never `main`, and never a draft branch. */
@@ -60,8 +60,8 @@ const COLLECTIONS = {
     branchPrefix: study.CASE_STUDY.branchPrefix,
     path: study.entryPath,
     branch: study.draftBranch,
-    allowed: study.isConnected, // only the case studies connected so far; any other slug is refused
-    notAvailable: 'This case study is not connected to the admin yet.',
+    allowed: study.isConnected, // exactly the 18 published case studies; any other slug is refused
+    notAvailable: 'There is no such case study in the admin.',
     slugs: async () => study.CONNECTED_SLUGS,
     summary: (slug, data) => ({ slug, name: data.facts?.name ?? slug, category: data.en?.category ?? '', summary: data.en?.summary ?? '', hasGreek: Boolean(data.el) }),
     // The file must be valid and must belong to the slug it is stored under.
@@ -71,11 +71,11 @@ const COLLECTIONS = {
     },
     check: (body, current) => {
       // The browser sends only the editable text. The locked facts and images always come from the current file.
-      const v = study.validateEditable(body.content, current.images);
+      const v = study.validateEditable(body.content, current);
       return v.ok ? { ok: true, text: study.serializeDocument(current, v.value), title: `${current.facts.name} case study` } : { ok: false, errors: v.errors };
     },
     prTitle: (slug, title) => `Draft: ${title}`,
-    prBody: 'Draft saved in the TechPi Admin. The text of one case study changes; its facts and images are locked. Not published: merging this pull request into the development branch does not change techpi.eu.',
+    prBody: 'Draft saved in the TechPi Admin. The text of one case study changes; its facts, images and sections are locked. Not published: merging this pull request into the development branch does not change techpi.eu.',
     commit: (slug) => `Draft: update ${slug} case study (TechPi Admin)`,
   },
 };

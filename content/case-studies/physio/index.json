@@ -1,0 +1,79 @@
+{
+  "facts": {
+    "slug": "physio",
+    "name": "Physio",
+    "year": 2026,
+    "workGroup": "client",
+    "featured": false,
+    "order": 6,
+    "capabilities": [
+      "digital-products"
+    ],
+    "source": "https://pigiota314.gr/case-studies/physio/"
+  },
+  "images": {},
+  "en": {
+    "category": "Appointment management platform",
+    "summary": "A web platform for physiotherapy practices to coordinate appointments, client details and treatment sessions through a clear, responsive interface.",
+    "highlights": [
+      "Online booking",
+      "Session scheduling",
+      "Client organisation",
+      "Responsive interface"
+    ],
+    "overview": [
+      "A web application for physiotherapists and clinics, with organised management of appointments, clients and sessions."
+    ],
+    "need": [
+      "Physiotherapists needed a simple system that reduces daily coordination by phone and helps them manage their sessions better."
+    ],
+    "builtIntro": "A responsive platform focused on a clean user experience, easy appointment booking and a professional online image.",
+    "services": [
+      "UX/UI design",
+      "Web application development",
+      "Booking system",
+      "SaaS strategy"
+    ],
+    "technology": [
+      "React",
+      "TypeScript",
+      "Supabase",
+      "Tailwind CSS"
+    ],
+    "outcome": [
+      "More organised day-to-day operations, and a better experience for both the professional and the client."
+    ]
+  },
+  "el": {
+    "category": "Πλατφόρμα διαχείρισης ραντεβού",
+    "summary": "Web πλατφόρμα για φυσικοθεραπευτές και κέντρα φυσικοθεραπείας, με οργάνωση ραντεβού, στοιχείων πελατών και συνεδριών σε ένα εύχρηστο περιβάλλον.",
+    "highlights": [
+      "Online κρατήσεις",
+      "Πρόγραμμα συνεδριών",
+      "Οργάνωση πελατών",
+      "Προσαρμογή σε όλες τις οθόνες"
+    ],
+    "overview": [
+      "Web εφαρμογή για φυσικοθεραπευτές και κέντρα φυσικοθεραπείας, με οργανωμένη διαχείριση ραντεβού, πελατών και συνεδριών."
+    ],
+    "need": [
+      "Οι φυσικοθεραπευτές χρειάζονταν ένα απλό σύστημα που περιορίζει τον καθημερινό τηλεφωνικό συντονισμό και τους βοηθά να οργανώνουν καλύτερα τις συνεδρίες τους."
+    ],
+    "builtIntro": "Πλατφόρμα με διεπαφή που προσαρμόζεται σε όλες τις οθόνες, με έμφαση σε καθαρή εμπειρία χρήσης, εύκολη κράτηση ραντεβού και επαγγελματική εικόνα στο διαδίκτυο.",
+    "services": [
+      "Σχεδιασμός UX/UI",
+      "Ανάπτυξη web εφαρμογής",
+      "Σύστημα κρατήσεων",
+      "Στρατηγική SaaS"
+    ],
+    "technology": [
+      "React",
+      "TypeScript",
+      "Supabase",
+      "Tailwind CSS"
+    ],
+    "outcome": [
+      "Πιο οργανωμένη καθημερινή λειτουργία και καλύτερη εμπειρία τόσο για τον επαγγελματία όσο και για τον πελάτη."
+    ]
+  }
+}

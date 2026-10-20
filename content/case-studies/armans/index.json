@@ -1,0 +1,108 @@
+{
+  "facts": {
+    "slug": "armans",
+    "name": "Arman’s Ethnic Street Food",
+    "client": "Arman’s Ethnic Street Food",
+    "year": 2026,
+    "liveUrl": "https://armanstreetfood.gr/",
+    "workGroup": "client",
+    "featured": true,
+    "order": 2,
+    "capabilities": [
+      "digital-products",
+      "web-experiences"
+    ],
+    "source": "https://pigiota314.gr/case-studies/armans-ethnic-street-food-online-ordering/"
+  },
+  "images": {
+    "image": {
+      "id": "armans-devices",
+      "width": 940,
+      "height": 788
+    },
+    "cover": {
+      "id": "armans-devices",
+      "width": 940,
+      "height": 788
+    },
+    "gallery": [
+      {
+        "id": "armans-admin",
+        "width": 1711,
+        "height": 1265
+      }
+    ]
+  },
+  "en": {
+    "category": "Direct ordering platform",
+    "summary": "A platform that lets the restaurant take orders directly from its customers.",
+    "imageAlt": "The Arman’s Ethnic Street Food website shown on a laptop, a tablet and a phone.",
+    "coverAlt": "The Arman’s Ethnic Street Food website shown on a laptop, a tablet and a phone.",
+    "galleryAlts": [
+      "The management area of the Arman’s website, with four sections: menu, settings, orders and statistics."
+    ],
+    "overview": [
+      "A custom online ordering platform for Arman’s Ethnic Street Food. Customers browse the digital menu, add items to their basket and complete the order on the restaurant’s own website. A separate management environment lets the business run its products, orders and the overall flow of the system."
+    ],
+    "need": [
+      "The restaurant needed its own online ordering channel: easy for customers, and giving the business more control over its digital orders without depending entirely on third-party marketplace platforms.",
+      "The experience had to reflect the brand and keep ordering quick, especially on mobile. Behind it, the business needed one central system for the menu and incoming orders."
+    ],
+    "builtIntro": "One platform that combines the restaurant’s website, digital menu, basket, checkout and order management.",
+    "builtItems": [
+      "An administration dashboard for the menu and for orders",
+      "Support for different payment methods",
+      "A mobile-first build that works across phones, tablets and desktops",
+      "Progressive Web App support, for an app-like experience directly in the browser"
+    ],
+    "technology": [
+      "Custom web application",
+      "Progressive Web App",
+      "Responsive web development",
+      "Online payment integration",
+      "Custom administration dashboard",
+      "Order management system"
+    ],
+    "outcome": [
+      "The restaurant has its own direct channel for online orders.",
+      "Its online presence, menu and ordering sit in one branded experience.",
+      "The business has more control over the menu, the orders and the customer experience."
+    ]
+  },
+  "el": {
+    "category": "Πλατφόρμα απευθείας παραγγελιών",
+    "summary": "Πλατφόρμα που επιτρέπει στο εστιατόριο να δέχεται παραγγελίες απευθείας από τους πελάτες του.",
+    "imageAlt": "Ο ιστότοπος του Arman’s Ethnic Street Food σε laptop, tablet και κινητό.",
+    "coverAlt": "Ο ιστότοπος του Arman’s Ethnic Street Food σε laptop, tablet και κινητό.",
+    "galleryAlts": [
+      "Η περιοχή διαχείρισης του ιστότοπου Arman’s, με τέσσερις ενότητες: μενού, ρυθμίσεις, παραγγελίες και στατιστικά."
+    ],
+    "overview": [
+      "Ειδικά σχεδιασμένη πλατφόρμα ηλεκτρονικών παραγγελιών για το Arman’s Ethnic Street Food. Οι πελάτες περιηγούνται στο ψηφιακό μενού, προσθέτουν προϊόντα στο καλάθι και ολοκληρώνουν την παραγγελία στον ιστότοπο του ίδιου του εστιατορίου. Ένα ξεχωριστό περιβάλλον διαχείρισης επιτρέπει στην επιχείρηση να διαχειρίζεται τα προϊόντα, τις παραγγελίες και τη συνολική ροή του συστήματος."
+    ],
+    "need": [
+      "Το εστιατόριο χρειαζόταν το δικό του κανάλι ηλεκτρονικών παραγγελιών: εύκολο για τους πελάτες και με περισσότερο έλεγχο για την επιχείρηση στις ψηφιακές παραγγελίες της, χωρίς να εξαρτάται αποκλειστικά από τρίτες πλατφόρμες παραγγελιών.",
+      "Η εμπειρία έπρεπε να εκφράζει την ταυτότητα του καταστήματος και να κρατά την παραγγελία γρήγορη, ειδικά στο κινητό. Πίσω από αυτήν, η επιχείρηση χρειαζόταν ένα κεντρικό σύστημα για το μενού και τις εισερχόμενες παραγγελίες."
+    ],
+    "builtIntro": "Μία πλατφόρμα που συνδυάζει τον ιστότοπο του εστιατορίου, το ψηφιακό μενού, το καλάθι, την ολοκλήρωση της παραγγελίας και τη διαχείριση των παραγγελιών.",
+    "builtItems": [
+      "Πίνακας διαχείρισης για το μενού και τις παραγγελίες",
+      "Υποστήριξη διαφορετικών τρόπων πληρωμής",
+      "Ανάπτυξη με προτεραιότητα στο κινητό, που λειτουργεί σε κινητά, tablet και υπολογιστές",
+      "Υποστήριξη Progressive Web App, για εμπειρία παρόμοια με εφαρμογή απευθείας στο πρόγραμμα περιήγησης"
+    ],
+    "technology": [
+      "Ειδικά σχεδιασμένη web εφαρμογή",
+      "Progressive Web App",
+      "Responsive ανάπτυξη",
+      "Ενσωμάτωση ηλεκτρονικών πληρωμών",
+      "Ειδικά σχεδιασμένος πίνακας διαχείρισης",
+      "Σύστημα διαχείρισης παραγγελιών"
+    ],
+    "outcome": [
+      "Το εστιατόριο έχει το δικό του απευθείας κανάλι για ηλεκτρονικές παραγγελίες.",
+      "Η ψηφιακή παρουσία, το μενού και οι παραγγελίες συνδέονται σε μία ενιαία εμπειρία με την ταυτότητα του καταστήματος.",
+      "Η επιχείρηση έχει περισσότερο έλεγχο στο μενού, στις παραγγελίες και στην εμπειρία του πελάτη."
+    ]
+  }
+}

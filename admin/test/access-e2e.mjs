@@ -9,6 +9,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { writeConfigs } from './make-wrangler-configs.mjs';
 import { createMockGitHub } from './support/mock-github.mjs';
+import { CONNECTED_SLUGS } from '../shared/case-study-content.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const wrangler = path.join(root, 'node_modules', 'wrangler', 'bin', 'wrangler.js');
@@ -16,14 +17,15 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const kill = (p) => { try { process.platform === 'win32' ? execSync(`taskkill /pid ${p.pid} /T /F`, { stdio: 'ignore' }) : p.kill('SIGTERM'); } catch {} };
 const serve = process.argv.includes('--serve');
 
-const BASE = 'feat/techpi-admin-m1a-rocketeer';
+const BASE = 'feat/techpi-admin-m1b-all-case-studies';
 const CS_FILE = 'content/case-studies/rocketeer/index.json';
 const FILE = 'content/m0-demo/m0-sample-article/index.json';
 const read = (rel) => fs.readFileSync(path.join(root, '..', rel), 'utf8').replace(/\r\n/g, '\n');
 const sample = read(FILE);
 const csSample = read(CS_FILE);
+const csFiles = Object.fromEntries(CONNECTED_SLUGS.map((slug) => [`content/case-studies/${slug}/index.json`, read(`content/case-studies/${slug}/index.json`)]));
 const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
-const gh = createMockGitHub({ publicKey, branches: { main: { 'README.md': 'main' }, [BASE]: { [FILE]: sample, [CS_FILE]: csSample } } });
+const gh = createMockGitHub({ publicKey, branches: { main: { 'README.md': 'main' }, [BASE]: { [FILE]: sample, ...csFiles } } });
 const MOCK_PORT = 8920;
 const mockServer = await gh.listen(MOCK_PORT);
 const configs = writeConfigs({ github: { apiBase: `http://127.0.0.1:${MOCK_PORT}`, appId: gh.appId, installationId: gh.installationId, privateKey: privateKey.export({ type: 'pkcs1', format: 'pem' }) } });
@@ -83,9 +85,9 @@ for (const c of serve ? configs.filter((x) => x.name === 'admin') : configs) {
     check('admin: every write went to the draft branch', gh.state.writes.every((w) => w.branch.startsWith('cms/')), `${gh.state.writes.length} writes`);
     // Task M1A: the Rocketeer case study
     const csList = await (await fetch(`${origin}/api/case-studies`, { headers: api })).json();
-    check('admin: case-study list contains only Rocketeer', csList.entries?.length === 1 && csList.entries[0].slug === 'rocketeer', JSON.stringify(csList).slice(0, 120));
-    const other = await fetch(`${origin}/api/case-studies/armans`, { headers: api });
-    check(`admin: another case study is refused -> ${other.status}`, other.status === 404);
+    check(`admin: case-study list has all 18 in order (${csList.entries?.length})`, JSON.stringify(csList.entries?.map((e) => e.slug)) === JSON.stringify(CONNECTED_SLUGS));
+    const other = await fetch(`${origin}/api/case-studies/new-project`, { headers: api });
+    check(`admin: a slug outside the 18 is refused -> ${other.status}`, other.status === 404);
     const cs = await (await fetch(`${origin}/api/case-studies/rocketeer`, { headers: api })).json();
     const csEdit = { en: structuredClone(cs.content.en), el: structuredClone(cs.content.el) };
     csEdit.en.summary = 'A custom web application that organises delivery requests, drivers and assignments in one place. Edited end to end.';
@@ -102,7 +104,16 @@ for (const c of serve ? configs.filter((x) => x.name === 'admin') : configs) {
     const savedDoc = JSON.parse(gh.fileOn('cms/case-studies/rocketeer', CS_FILE));
     const baseDoc = JSON.parse(csSample);
     check('admin: Rocketeer facts and images unchanged by the save', JSON.stringify(savedDoc.facts) === JSON.stringify(baseDoc.facts) && JSON.stringify(savedDoc.images) === JSON.stringify(baseDoc.images));
-    check('admin: main and the base still unchanged after Rocketeer saves', gh.fileOn('main', 'README.md') === 'main' && gh.fileOn(BASE, CS_FILE) === csSample);
+    // A differently shaped case study gets its own branch and PR, and Rocketeer's draft is not touched.
+    const lg = await (await fetch(`${origin}/api/case-studies/logotherapia-xanthi`, { headers: api })).json();
+    const lgEdit = { en: structuredClone(lg.content.en), el: structuredClone(lg.content.el) };
+    lgEdit.en.coverCaption = 'Edited caption, end to end.';
+    lgEdit.el.coverCaption = 'Νέα λεζάντα, δοκιμή.';
+    const l1 = await fetch(`${origin}/api/case-studies/logotherapia-xanthi/draft`, { method: 'POST', headers: { ...api, Origin: origin, 'Content-Type': 'application/json' }, body: JSON.stringify({ content: lgEdit, expectedSha: lg.sha }) });
+    const ld1 = await l1.json();
+    check(`admin: Logotherapia save -> ${l1.status}, its own PR #${ld1.draft?.number}`, l1.status === 200 && ld1.draft?.branch === 'cms/case-studies/logotherapia-xanthi' && ld1.draft.number !== cd1.draft?.number && gh.state.prs.length === 3);
+    check('admin: case studies are isolated (each branch has only its own change)', gh.fileOn('cms/case-studies/logotherapia-xanthi', CS_FILE) === csSample && JSON.parse(gh.fileOn('cms/case-studies/rocketeer', 'content/case-studies/logotherapia-xanthi/index.json')).en.coverCaption === JSON.parse(csFiles['content/case-studies/logotherapia-xanthi/index.json']).en.coverCaption);
+    check('admin: main and the base still unchanged after Rocketeer saves', gh.fileOn('main', 'README.md') === 'main' && Object.entries(csFiles).every(([f, t]) => gh.fileOn(BASE, f) === t));
     check('admin: Worker log has no credentials', !/ghs_|PRIVATE KEY|Bearer /.test(log));
   }
   kill(proc);

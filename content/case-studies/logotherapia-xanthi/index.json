@@ -1,0 +1,84 @@
+{
+  "facts": {
+    "slug": "logotherapia-xanthi",
+    "name": "Logotherapia Xanthi",
+    "client": "Speech and Occupational Therapy Centre, Xanthi",
+    "clientEl": "Κέντρο Λογοθεραπείας & Εργοθεραπείας, Ξάνθη",
+    "year": 2026,
+    "liveUrl": "https://logotherapia-xanthi.gr/",
+    "workGroup": "client",
+    "featured": true,
+    "order": 3,
+    "capabilities": [
+      "web-experiences",
+      "digital-visibility"
+    ],
+    "source": "https://pigiota314.gr/case-studies/logotherapia-xanthi-website-redesign/"
+  },
+  "images": {
+    "image": {
+      "id": "logotherapia-site",
+      "width": 2880,
+      "height": 1800
+    },
+    "cover": {
+      "id": "logotherapia-site",
+      "width": 2880,
+      "height": 1800
+    }
+  },
+  "en": {
+    "category": "Therapy centre website",
+    "summary": "A redesigned website for a speech and occupational therapy centre in Xanthi, organised so families can find information and get in touch easily.",
+    "imageAlt": "The Logotherapia Xanthi website: the site navigation above a section explaining speech therapy and occupational therapy.",
+    "coverAlt": "The Logotherapia Xanthi website: the site navigation above a section explaining speech therapy and occupational therapy.",
+    "coverCaption": "A capture of the live website.",
+    "overview": [
+      "A redesign of the website of a speech and occupational therapy centre in Xanthi, aiming for a more modern, friendly and usable presence. The design reflects the centre’s human, child-centred character while keeping a clean, professional image.",
+      "Content is organised so parents can easily find the services offered, the conditions treated, the therapy space and how to make contact."
+    ],
+    "need": [
+      "The existing site needed renewing to present the centre’s services and approach more clearly. The main challenge was to organise a wide range of information simply for parents, without the site feeling cold or overly clinical.",
+      "It also needed modern navigation that works on every device and leads visitors quickly to the information and contact details they need."
+    ],
+    "builtItems": [
+      "A clear information architecture, with separate sections for services, conditions, the therapy space, insurance funds and contact",
+      "A design with soft colours, readable typography, photography of the therapy environment and clear calls to action for an assessment or appointment",
+      "A responsive layout for phones, tablets and desktops",
+      "A content structure that helps both visitors and search engines understand the centre’s services"
+    ],
+    "technology": [
+      "WordPress",
+      "Responsive design",
+      "On-page SEO",
+      "Performance optimisation"
+    ]
+  },
+  "el": {
+    "category": "Ιστοσελίδα κέντρου θεραπείας",
+    "summary": "Ανασχεδιασμένη ιστοσελίδα για ένα κέντρο λογοθεραπείας και εργοθεραπείας στην Ξάνθη, οργανωμένη ώστε οι οικογένειες να βρίσκουν εύκολα πληροφορίες και να επικοινωνούν.",
+    "imageAlt": "Ο ιστότοπος Logotherapia Xanthi: η πλοήγηση του ιστότοπου πάνω από την ενότητα που εξηγεί τη λογοθεραπεία και την εργοθεραπεία.",
+    "coverAlt": "Ο ιστότοπος Logotherapia Xanthi: η πλοήγηση του ιστότοπου πάνω από την ενότητα που εξηγεί τη λογοθεραπεία και την εργοθεραπεία.",
+    "coverCaption": "Στιγμιότυπο από τον ιστότοπο σε λειτουργία.",
+    "overview": [
+      "Ανασχεδιασμός του ιστότοπου ενός κέντρου λογοθεραπείας και εργοθεραπείας στην Ξάνθη, με στόχο μια πιο σύγχρονη, φιλική και εύχρηστη παρουσία. Ο σχεδιασμός αποδίδει τον ανθρώπινο, παιδοκεντρικό χαρακτήρα του κέντρου και διατηρεί μια καθαρή, επαγγελματική εικόνα.",
+      "Το περιεχόμενο οργανώθηκε ώστε οι γονείς να βρίσκουν εύκολα τις υπηρεσίες, τις διαταραχές που αντιμετωπίζονται, τον θεραπευτικό χώρο και τους τρόπους επικοινωνίας."
+    ],
+    "need": [
+      "Ο υπάρχων ιστότοπος χρειαζόταν ανανέωση, ώστε να παρουσιάζει πιο καθαρά τις υπηρεσίες και τη φιλοσοφία του κέντρου. Η βασική πρόκληση ήταν να οργανωθεί ένα μεγάλο εύρος πληροφοριών με απλό τρόπο για τους γονείς, χωρίς ο ιστότοπος να γίνει ψυχρός ή υπερβολικά κλινικός.",
+      "Χρειαζόταν επίσης σύγχρονη πλοήγηση, που λειτουργεί σε κάθε συσκευή και οδηγεί γρήγορα τον επισκέπτη στις πληροφορίες και στα στοιχεία επικοινωνίας που χρειάζεται."
+    ],
+    "builtItems": [
+      "Καθαρή αρχιτεκτονική πληροφοριών, με ξεχωριστές ενότητες για τις υπηρεσίες, τις διαταραχές, τον θεραπευτικό χώρο, τα ασφαλιστικά ταμεία και την επικοινωνία",
+      "Σχεδιασμός με απαλά χρώματα, ευανάγνωστη τυπογραφία, φωτογραφίες του θεραπευτικού χώρου και σαφείς προσκλήσεις για αξιολόγηση ή ραντεβού",
+      "Διάταξη που προσαρμόζεται σε κινητά, tablet και υπολογιστές",
+      "Δομή περιεχομένου που βοηθά τόσο τους επισκέπτες όσο και τις μηχανές αναζήτησης να κατανοούν τις υπηρεσίες του κέντρου"
+    ],
+    "technology": [
+      "WordPress",
+      "Responsive σχεδιασμός",
+      "On-page SEO",
+      "Βελτιστοποίηση απόδοσης"
+    ]
+  }
+}

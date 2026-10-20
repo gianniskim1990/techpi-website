@@ -1,0 +1,72 @@
+{
+  "facts": {
+    "slug": "itsallaboutxanthi",
+    "name": "Itsallaboutxanthi",
+    "client": "Itsallaboutxanthi",
+    "year": 2025,
+    "workGroup": "earlier",
+    "featured": false,
+    "order": 14,
+    "capabilities": [],
+    "source": "https://pigiota314.eu/case-studies/itsallaboutxanthi"
+  },
+  "images": {},
+  "en": {
+    "category": "Local platform & digital communication",
+    "summary": "Website work, social media content and graphic design for a local information platform and its digital presence.",
+    "disciplines": [
+      "Web design",
+      "Social media",
+      "Graphic design",
+      "Digital marketing"
+    ],
+    "overview": [
+      "A complete digital presence covering the website, social media, graphic design and digital marketing support."
+    ],
+    "need": [
+      "The project needed a unified image across its website, social media and creative assets, to improve recognition."
+    ],
+    "builtIntro": "Support across web design, social media content, graphics and digital marketing activities.",
+    "services": [
+      "Web design",
+      "Social media management",
+      "Graphic design",
+      "Digital marketing"
+    ],
+    "technology": [
+      "WordPress"
+    ],
+    "outcome": [
+      "A more consistent, recognisable presence that fits its local visibility goals."
+    ]
+  },
+  "el": {
+    "category": "Τοπική πλατφόρμα και ψηφιακή επικοινωνία",
+    "summary": "Ιστοσελίδα, περιεχόμενο για social media και γραφιστικός σχεδιασμός για τη συνολική παρουσία μιας τοπικής ενημερωτικής πλατφόρμας.",
+    "disciplines": [
+      "Σχεδιασμός ιστοσελίδων",
+      "Social media",
+      "Γραφιστικός σχεδιασμός",
+      "Ψηφιακό μάρκετινγκ"
+    ],
+    "overview": [
+      "Ολοκληρωμένη ψηφιακή παρουσία με ιστοσελίδα, social media, γραφιστικό σχεδιασμό και υποστήριξη ψηφιακού μάρκετινγκ."
+    ],
+    "need": [
+      "Το έργο χρειαζόταν ενιαία εικόνα σε ιστοσελίδα, social media και δημιουργικό υλικό, ώστε να γίνει πιο αναγνωρίσιμο."
+    ],
+    "builtIntro": "Υποστήριξη σε σχεδιασμό ιστοσελίδων, περιεχόμενο για social media, γραφιστικά και ενέργειες ψηφιακού μάρκετινγκ.",
+    "services": [
+      "Σχεδιασμός ιστοσελίδων",
+      "Διαχείριση social media",
+      "Γραφιστικός σχεδιασμός",
+      "Ψηφιακό μάρκετινγκ"
+    ],
+    "technology": [
+      "WordPress"
+    ],
+    "outcome": [
+      "Πιο συνεπής και αναγνωρίσιμη παρουσία, σύμφωνη με τους στόχους τοπικής προβολής."
+    ]
+  }
+}

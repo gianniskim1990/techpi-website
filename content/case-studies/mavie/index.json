@@ -1,0 +1,63 @@
+{
+  "facts": {
+    "slug": "mavie",
+    "name": "Mavie",
+    "client": "Mavie",
+    "year": 2025,
+    "liveUrl": "https://www.mavie.gr/",
+    "workGroup": "client",
+    "featured": false,
+    "order": 9,
+    "capabilities": [
+      "web-experiences"
+    ],
+    "source": "https://pigiota314.eu/case-studies/mavie-website-rebranding"
+  },
+  "images": {},
+  "en": {
+    "category": "Website rebranding",
+    "summary": "A website rebranding and visual refresh with a more modern aesthetic, a cleaner structure and a more cohesive brand presentation.",
+    "overview": [
+      "A digital image upgrade with a more modern aesthetic, a cleaner structure and a refreshed feel for the brand."
+    ],
+    "need": [
+      "The existing image needed a refresh, to feel more professional and more modern."
+    ],
+    "builtIntro": "A new visual direction with a cleaner interface, an improved structure and a more contemporary brand feel.",
+    "services": [
+      "Web design",
+      "Rebranding",
+      "Graphic design",
+      "UX/UI"
+    ],
+    "technology": [
+      "WordPress"
+    ],
+    "outcome": [
+      "An improved visual identity and a stronger perceived value of the brand online."
+    ]
+  },
+  "el": {
+    "category": "Ανανέωση ιστοσελίδας (rebranding)",
+    "summary": "Ανανέωση ιστοσελίδας (rebranding) με πιο σύγχρονη αισθητική, πιο καθαρή δομή και πιο συνεπή παρουσίαση του brand.",
+    "overview": [
+      "Αναβάθμιση της ψηφιακής εικόνας με πιο σύγχρονη αισθητική, πιο καθαρή δομή και ανανεωμένο ύφος για το brand."
+    ],
+    "need": [
+      "Η υπάρχουσα εικόνα χρειαζόταν ανανέωση, ώστε να φαίνεται πιο επαγγελματική και πιο σύγχρονη."
+    ],
+    "builtIntro": "Νέα οπτική κατεύθυνση με πιο καθαρή διεπαφή, βελτιωμένη δομή και πιο σύγχρονο ύφος για το brand.",
+    "services": [
+      "Σχεδιασμός ιστοσελίδων",
+      "Rebranding",
+      "Γραφιστικός σχεδιασμός",
+      "UX/UI"
+    ],
+    "technology": [
+      "WordPress"
+    ],
+    "outcome": [
+      "Βελτιωμένη οπτική ταυτότητα και ενισχυμένη αντιληπτή αξία του brand στο διαδίκτυο."
+    ]
+  }
+}

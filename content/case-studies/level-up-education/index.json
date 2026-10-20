@@ -1,0 +1,83 @@
+{
+  "facts": {
+    "slug": "level-up-education",
+    "name": "Level Up Education",
+    "client": "Level Up Education",
+    "year": 2026,
+    "liveUrl": "https://www.levelupeducation.gr/",
+    "workGroup": "earlier",
+    "featured": false,
+    "order": 13,
+    "capabilities": [],
+    "source": "https://pigiota314.eu/case-studies/level-up-education"
+  },
+  "images": {},
+  "en": {
+    "category": "Education website & digital communication",
+    "summary": "A coordinated digital presence for an education brand, including its website, SEO content and social media communication.",
+    "disciplines": [
+      "Web design",
+      "SEO",
+      "Content strategy",
+      "Social media"
+    ],
+    "overview": [
+      "A complete digital presence for an education brand, covering its website, SEO, social media and content."
+    ],
+    "need": [
+      "Building a professional online presence that inspires trust in students, parents and adult learners."
+    ],
+    "builtIntro": "A website with a clear structure, SEO-driven content, social media campaigns and ongoing communication support.",
+    "services": [
+      "Web design",
+      "SEO",
+      "Content strategy",
+      "Social media management",
+      "Digital marketing"
+    ],
+    "technology": [
+      "WordPress",
+      "WPBakery",
+      "Yoast SEO",
+      "Meta Ads",
+      "Google Analytics 4"
+    ],
+    "outcome": [
+      "A stronger local image, a better social media presence and more organised content for the brand’s services and activities."
+    ]
+  },
+  "el": {
+    "category": "Εκπαιδευτική ιστοσελίδα και ψηφιακή επικοινωνία",
+    "summary": "Ολοκληρωμένη ψηφιακή παρουσία εκπαιδευτικής επιχείρησης, με ιστοσελίδα, περιεχόμενο SEO και επικοινωνία στα social media.",
+    "disciplines": [
+      "Σχεδιασμός ιστοσελίδων",
+      "SEO",
+      "Στρατηγική περιεχομένου",
+      "Social media"
+    ],
+    "overview": [
+      "Ολοκληρωμένη ψηφιακή παρουσία για ένα εκπαιδευτικό brand, με ιστοσελίδα, SEO, social media και περιεχόμενο."
+    ],
+    "need": [
+      "Στόχος ήταν η δημιουργία μιας επαγγελματικής παρουσίας στο διαδίκτυο που εμπνέει εμπιστοσύνη σε μαθητές, γονείς και ενήλικες εκπαιδευόμενους."
+    ],
+    "builtIntro": "Ιστοσελίδα με σαφή δομή, περιεχόμενο με βάση το SEO, καμπάνιες στα social media και συνεχή υποστήριξη επικοινωνίας.",
+    "services": [
+      "Σχεδιασμός ιστοσελίδων",
+      "SEO",
+      "Στρατηγική περιεχομένου",
+      "Διαχείριση social media",
+      "Ψηφιακό μάρκετινγκ"
+    ],
+    "technology": [
+      "WordPress",
+      "WPBakery",
+      "Yoast SEO",
+      "Meta Ads",
+      "Google Analytics 4"
+    ],
+    "outcome": [
+      "Ισχυρότερη τοπική εικόνα, καλύτερη παρουσία στα social media και πιο οργανωμένο περιεχόμενο για τις υπηρεσίες και τις δράσεις του brand."
+    ]
+  }
+}
