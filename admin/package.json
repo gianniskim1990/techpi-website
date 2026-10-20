@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:m0": "vite --mode m0",
     "build": "vite build",
     "test": "node --test \"test/**/*.test.mjs\"",
     "worker:dev": "wrangler dev"
