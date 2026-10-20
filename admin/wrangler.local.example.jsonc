@@ -21,6 +21,6 @@
     "GITHUB_APP_ID": "",
     "GITHUB_APP_INSTALLATION_ID": "",
     // Drafts are based on, and pull requests target, this branch. `main` is refused by the Worker.
-    "CONTENT_BASE_BRANCH": "feat/techpi-admin-m0"
+    "CONTENT_BASE_BRANCH": "feat/techpi-admin-m1a-rocketeer"
   }
 }

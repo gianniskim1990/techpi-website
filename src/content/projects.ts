@@ -2,6 +2,8 @@ import type { ImageMetadata } from 'astro';
 import type { Locale } from '../i18n/locales';
 import type { CapabilityId } from './capabilities';
 import { projectsEl } from './projects.el';
+import { projectFrom, type ManagedCaseStudy } from './case-study-loader';
+import rocketeerContent from '../../content/case-studies/rocketeer/index.json';
 import armansAdmin from '../assets/projects/armans-admin.png';
 import armansDevices from '../assets/projects/armans-devices.png';
 import logotherapiaSite from '../assets/projects/logotherapia-site.jpg';
@@ -93,74 +95,18 @@ export interface Project {
 
 const src = 'https://pigiota314.gr/case-studies/';
 
+/**
+ * The images of admin-managed case studies, by the id used in their content file (content/case-studies/<slug>/).
+ * Their declared sizes live in that file and are checked against these files by scripts/assets/validate.mjs.
+ */
+const managedImages = {
+  'rocketeer-admin-dashboard': rocketeerAdmin,
+  'rocketeer-sign-in': rocketeerSignIn,
+};
+
 export const projects: readonly Project[] = [
-  {
-    slug: 'rocketeer',
-    workGroup: 'client',
-    name: 'Rocketeer',
-    category: 'Delivery operations platform',
-    summary: 'A custom web application that organises delivery requests, drivers and assignments in one place.',
-    capabilities: ['digital-products'],
-    featured: true,
-    source: `${src}rocketeer-custom-web-application/`,
-    image: {
-      src: rocketeerAdmin,
-      width: 2612,
-      height: 980,
-      alt: 'The Rocketeer administration dashboard: a side menu, summary counts for pending and active requests, businesses and drivers, and a list of recent requests.',
-    },
-    caseStudy: {
-      client: 'Rocketeer',
-      year: 2026,
-      liveUrl: 'https://rocketeer.gr/',
-      overview: [
-        'Rocketeer Dispatch is a custom web application for running a delivery service. It brings partner businesses, the administrator and drivers into one digital environment, where requests are created, assigned and followed through to delivery.',
-      ],
-      need: [
-        'Three groups needed different things from the same system. Partner businesses needed a simple way to submit delivery or shift requests. Drivers needed a clear view of their current and upcoming assignments and of the status of each request. The administrator needed full oversight of requests, drivers, businesses, assignments and key financial figures.',
-        'All of it had to be fast and simple to use in real operating conditions, where decisions are made on the spot.',
-      ],
-      built: {
-        items: [
-          'Role-based dashboards for administrators, businesses and drivers, each showing only what that role needs',
-          'An admin panel for managing businesses, drivers, requests and assignments',
-          'A business panel for creating delivery or shift requests',
-          'A driver panel showing active and upcoming assignments',
-          'Manual driver assignment, so the administrator keeps control',
-          'A request flow that keeps new requests manageable even when no driver is immediately available',
-          'A mobile-friendly interface for everyday use by drivers and businesses',
-        ],
-      },
-      technology: [
-        'React',
-        'TypeScript',
-        'Tailwind CSS',
-        'Supabase, including Supabase Auth',
-        'Leaflet and OpenStreetMap',
-      ],
-      outcome: [
-        'Businesses, drivers and requests are managed in one place.',
-        'Active and upcoming assignments are clearer.',
-        'Less need for constant coordination by phone or message.',
-        'Easier everyday use on mobile devices for drivers and businesses.',
-        'A base that can be extended with further features.',
-      ],
-      cover: {
-        src: rocketeerAdmin,
-        width: 2612,
-        height: 980,
-        alt: 'The Rocketeer administration dashboard: a side menu, summary counts for pending and active requests, businesses and drivers, and a list of recent requests.',
-      },
-      gallery: [
-        {
-          src: rocketeerSignIn,
-          width: 1018,
-          height: 850,
-          alt: 'The Rocketeer sign-in screen, with the Rocketeer logo above an email and password form.',
-        },
-      ],
-    },
-  },
+  // Managed in the admin: content/case-studies/rocketeer/index.json (text in both languages; facts and images locked).
+  projectFrom(rocketeerContent as unknown as ManagedCaseStudy, managedImages),
   {
     slug: 'armans',
     workGroup: 'client',
@@ -724,6 +670,11 @@ export const projects: readonly Project[] = [
     },
   },
 ];
+
+const managed = rocketeerContent as unknown as ManagedCaseStudy;
+if (projects[managed.facts.order - 1]?.slug !== managed.facts.slug) {
+  throw new Error(`Display order of "${managed.facts.slug}" in its content file (${managed.facts.order}) does not match its position in projects.ts`);
+}
 
 /** The portfolio in a language. English is the source; Greek takes its editorial text from projects.el.ts. */
 export function projectsIn(locale: Locale): readonly Project[] {

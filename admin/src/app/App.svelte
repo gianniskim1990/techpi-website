@@ -8,6 +8,7 @@
   import Planned from './views/Planned.svelte';
   import TestContentList from './views/TestContentList.svelte';
   import DraftEditor from './views/DraftEditor.svelte';
+  import CaseStudyEditor from './views/CaseStudyEditor.svelte';
   import { route, parts } from './lib/router.svelte.js';
   import { counts } from './lib/store.svelte.js';
   import { session, loadSession } from './lib/session.svelte.js';
@@ -25,6 +26,8 @@
   ];
   let menuOpen = $state(false);
   const current = $derived(parts());
+  // Case studies connected to GitHub (from the Worker); every other one is the read-only snapshot.
+  const connectedCase = $derived(current.section === 'case-studies' && current.slug && session.data?.connected?.caseStudies?.includes(current.slug));
   $effect(() => { route.path; menuOpen = false; });
 </script>
 
@@ -68,10 +71,10 @@
   <div class="main">
     <div class="notice" role="note">
       <Icon name="info" size={15} />
-      {#if current.section === 'test-content'}
+      {#if current.section === 'test-content' || connectedCase}
         <span><strong>Connected.</strong> Saves go to a GitHub draft branch and draft pull request. Nothing is published or merged from here.</span>
       {:else}
-        <span><strong>Snapshot, not connected.</strong> Case studies, articles and pages are a read-only copy of the live site; edits here stay in this tab. Only “Test content” is connected.</span>
+        <span><strong>Snapshot, not connected.</strong> Case studies, articles and pages are a read-only copy of the live site; edits here stay in this tab. Only “Test content” and the Rocketeer case study are connected.</span>
       {/if}
     </div>
     {#if session.data && !session.data.github.configured}
@@ -91,6 +94,10 @@
         {#key route.path}<DraftEditor slug={current.slug} />{/key}
       {:else if current.section === 'test-content'}
         <TestContentList />
+      {:else if connectedCase}
+        {#key route.path}<CaseStudyEditor slug={current.slug} />{/key}
+      {:else if current.section === 'case-studies' && current.slug && session.loading}
+        <p class="hint">Checking the connection…</p>
       {:else if (current.section === 'case-studies' || current.section === 'articles') && current.slug}
         {#key route.path}<Editor type={current.section} slug={current.slug} />{/key}
       {:else if current.section === 'case-studies' || current.section === 'articles'}
