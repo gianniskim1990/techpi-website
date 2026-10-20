@@ -8,3 +8,10 @@ dist/
 .dev.vars
 *.log
 .DS_Store
+
+# Admin (M0): its own dependencies and build output, and local-only test files
+admin/node_modules/
+admin/dist/
+admin/dist-demo/
+admin/.wrangler/
+admin/test/.wrangler-e2e/

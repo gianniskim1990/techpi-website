@@ -1,0 +1,23 @@
+{
+  "name": "techpi-admin",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TechPi admin panel (M0 proof of concept). Separate from the public website: its own dependencies, build and Worker.",
+  "engines": {
+    "node": "^24.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "node --test \"test/**/*.test.mjs\"",
+    "worker:dev": "wrangler dev"
+  },
+  "dependencies": {
+    "@sveltia/cms": "0.229.0"
+  },
+  "devDependencies": {
+    "vite": "8.3.2",
+    "wrangler": "4.147.0"
+  }
+}
