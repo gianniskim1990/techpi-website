@@ -81,7 +81,8 @@ export function checkText(value, { min = 1, max, links = false } = {}) {
     if (!INTERNAL_PATHS.includes(href)) return `“${href}” is not a page of this website.`;
   }
   const rest = v.replace(LINK, '');
-  if (/\[|\]\(/.test(rest)) return links ? 'Links must be written as [label](/page).' : 'Brackets used like a link are not supported here.';
+  // Anything left that still looks like a link ("](") is malformed: it would show as raw text.
+  if (/\]\(/.test(rest)) return links ? 'Links must be written as [label](/page).' : 'Links are not supported here; they would appear as plain text.';
   return null;
 }
 

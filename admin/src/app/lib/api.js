@@ -43,5 +43,8 @@ export const api = {
   listCaseStudies: () => request('GET', 'case-studies'),
   getCaseStudy: (slug) => request('GET', `case-studies/${encodeURIComponent(slug)}`),
   saveCaseStudyDraft: (slug, content, expectedSha) => request('POST', `case-studies/${encodeURIComponent(slug)}/draft`, { content, expectedSha }),
+  listInsights: () => request('GET', 'insights'),
+  getInsight: (slug) => request('GET', `insights/${encodeURIComponent(slug)}`),
+  saveInsightDraft: (slug, content, expectedSha) => request('POST', `insights/${encodeURIComponent(slug)}/draft`, { content, expectedSha }),
   saveDemoDraft: (slug, content, expectedSha) => request('POST', `m0-demo/${encodeURIComponent(slug)}/draft`, { content, expectedSha }),
 };

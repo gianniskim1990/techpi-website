@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { writeConfigs } from './make-wrangler-configs.mjs';
 import { createMockGitHub } from './support/mock-github.mjs';
 import { CONNECTED_SLUGS } from '../shared/case-study-content.js';
+import { INSIGHT_SLUGS } from '../shared/insight-content.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const wrangler = path.join(root, 'node_modules', 'wrangler', 'bin', 'wrangler.js');
@@ -17,15 +18,16 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const kill = (p) => { try { process.platform === 'win32' ? execSync(`taskkill /pid ${p.pid} /T /F`, { stdio: 'ignore' }) : p.kill('SIGTERM'); } catch {} };
 const serve = process.argv.includes('--serve');
 
-const BASE = 'feat/techpi-admin-m1b-all-case-studies';
+const BASE = 'feat/techpi-admin-m2-insights';
 const CS_FILE = 'content/case-studies/rocketeer/index.json';
 const FILE = 'content/m0-demo/m0-sample-article/index.json';
 const read = (rel) => fs.readFileSync(path.join(root, '..', rel), 'utf8').replace(/\r\n/g, '\n');
 const sample = read(FILE);
 const csSample = read(CS_FILE);
+const inFiles = Object.fromEntries(INSIGHT_SLUGS.map((slug) => [`content/insights/${slug}/index.json`, read(`content/insights/${slug}/index.json`)]));
 const csFiles = Object.fromEntries(CONNECTED_SLUGS.map((slug) => [`content/case-studies/${slug}/index.json`, read(`content/case-studies/${slug}/index.json`)]));
 const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
-const gh = createMockGitHub({ publicKey, branches: { main: { 'README.md': 'main' }, [BASE]: { [FILE]: sample, ...csFiles } } });
+const gh = createMockGitHub({ publicKey, branches: { main: { 'README.md': 'main' }, [BASE]: { [FILE]: sample, ...csFiles, ...inFiles } } });
 const MOCK_PORT = 8920;
 const mockServer = await gh.listen(MOCK_PORT);
 const configs = writeConfigs({ github: { apiBase: `http://127.0.0.1:${MOCK_PORT}`, appId: gh.appId, installationId: gh.installationId, privateKey: privateKey.export({ type: 'pkcs1', format: 'pem' }) } });
@@ -113,6 +115,30 @@ for (const c of serve ? configs.filter((x) => x.name === 'admin') : configs) {
     const ld1 = await l1.json();
     check(`admin: Logotherapia save -> ${l1.status}, its own PR #${ld1.draft?.number}`, l1.status === 200 && ld1.draft?.branch === 'cms/case-studies/logotherapia-xanthi' && ld1.draft.number !== cd1.draft?.number && gh.state.prs.length === 3);
     check('admin: case studies are isolated (each branch has only its own change)', gh.fileOn('cms/case-studies/logotherapia-xanthi', CS_FILE) === csSample && JSON.parse(gh.fileOn('cms/case-studies/rocketeer', 'content/case-studies/logotherapia-xanthi/index.json')).en.coverCaption === JSON.parse(csFiles['content/case-studies/logotherapia-xanthi/index.json']).en.coverCaption);
+    // Task M2: Insights articles
+    const postDraft = (p, content, expectedSha) => fetch(`${origin}/api/${p}/draft`, { method: 'POST', headers: { ...api, Origin: origin, 'Content-Type': 'application/json' }, body: JSON.stringify({ content, expectedSha }) });
+    const inList = await (await fetch(`${origin}/api/insights`, { headers: api })).json();
+    check(`admin: Insights list has the 7 articles in order (${inList.entries?.length})`, JSON.stringify(inList.entries?.map((e) => e.slug)) === JSON.stringify(INSIGHT_SLUGS));
+    const noArt = await fetch(`${origin}/api/insights/new-article`, { headers: api });
+    check(`admin: an unknown article is refused -> ${noArt.status}`, noArt.status === 404);
+    const NOTE = 'how-analytics-can-support-dissemination-reporting';
+    const art = await (await fetch(`${origin}/api/insights/${NOTE}`, { headers: api })).json();
+    const artEdit = { en: structuredClone(art.content.en) };
+    artEdit.en.note = artEdit.en.note.replace('[Cookies Policy](/cookies)', '[Cookies Policy](/cookies), end to end');
+    const a1 = await postDraft(`insights/${NOTE}`, artEdit, art.sha); const ad1 = await a1.json();
+    check(`admin: article save -> ${a1.status}, draft PR #${ad1.draft?.number} on ${ad1.draft?.branch}`, a1.status === 200 && ad1.draft?.branch === `cms/insights/${NOTE}` && gh.state.prs.at(-1)?.base.ref === BASE);
+    artEdit.en.title += ' (again)';
+    const a2 = await postDraft(`insights/${NOTE}`, artEdit, ad1.sha); const ad2 = await a2.json();
+    check(`admin: second article save updates PR #${ad2.draft?.number}`, a2.status === 200 && ad2.draft?.number === ad1.draft?.number);
+    const aStale = await postDraft(`insights/${NOTE}`, artEdit, art.sha);
+    check(`admin: stale article save -> ${aStale.status}`, aStale.status === 409);
+    const evil = structuredClone(artEdit); evil.en.note = 'See [this](https://evil.example).';
+    const a3 = await postDraft(`insights/${NOTE}`, evil, ad2.sha);
+    check(`admin: an external link is refused -> ${a3.status}`, a3.status === 422);
+    const greek = { ...structuredClone(artEdit), el: artEdit.en };
+    const a4 = await postDraft(`insights/${NOTE}`, greek, ad2.sha);
+    check(`admin: a Greek version is refused -> ${a4.status}`, a4.status === 422);
+    check('admin: Insights base files unchanged, and the article draft holds only its own change', Object.entries(inFiles).every(([f, t]) => gh.fileOn(BASE, f) === t) && gh.fileOn(`cms/insights/${NOTE}`, CS_FILE) === csSample);
     check('admin: main and the base still unchanged after Rocketeer saves', gh.fileOn('main', 'README.md') === 'main' && Object.entries(csFiles).every(([f, t]) => gh.fileOn(BASE, f) === t));
     check('admin: Worker log has no credentials', !/ghs_|PRIVATE KEY|Bearer /.test(log));
   }

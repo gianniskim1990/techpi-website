@@ -6,6 +6,7 @@
   import { navigate } from '../lib/router.svelte.js';
   import { session } from '../lib/session.svelte.js';
   import { caseStudies, loadCaseStudies } from '../lib/case-studies.svelte.js';
+  import { insights, loadInsights } from '../lib/insights.svelte.js';
 
   const c = $derived(counts());
   const drafts = $derived(store.entries.filter((e) => e.status !== 'published'));
@@ -15,9 +16,14 @@
 
   const connected = $derived(Boolean(session.data?.connected?.caseStudies?.length));
   // Refreshed each time the Dashboard opens: drafts may have been saved elsewhere.
+  const articlesConnected = $derived(Boolean(session.data?.connected?.insights?.length));
   $effect(() => { if (connected) untrack(loadCaseStudies); });
+  $effect(() => { if (articlesConnected) untrack(loadInsights); });
   /** Open draft pull requests of connected case studies, from GitHub. */
-  const caseDrafts = $derived(caseStudies.entries.filter((e) => e.draft));
+  const caseDrafts = $derived([
+    ...caseStudies.entries.filter((e) => e.draft).map((e) => ({ ...e, type: 'case-studies', label: e.name, kind: 'Case study' })),
+    ...insights.entries.filter((e) => e.draft).map((e) => ({ ...e, type: 'articles', label: e.title, kind: 'Article' })),
+  ]);
   function newEntry(type) { navigate(`/${type}/${createDraft(type)}`); }
 </script>
 
@@ -27,7 +33,7 @@
     <p class="sub">Everything on techpi.eu, in English and Greek.</p>
   </div>
   <div class="actions">
-    <button class="btn btn-secondary" type="button" onclick={() => newEntry('articles')}><Icon name="plus" size={16} />New article</button>
+    <button class="btn btn-secondary" type="button" onclick={() => newEntry('articles')} disabled={articlesConnected} title={articlesConnected ? 'Adding a new article is not available yet' : undefined}><Icon name="plus" size={16} />New article</button>
     <button class="btn btn-primary" type="button" onclick={() => newEntry('case-studies')} disabled={connected} title={connected ? 'Adding a new case study is not available yet' : undefined}><Icon name="plus" size={16} />New case study</button>
   </div>
 </header>
@@ -74,7 +80,7 @@
       </dl>
       <p class="pending">
         <Icon name="info" size={16} />
-        <span>Publishing is not connected, so the status above is a snapshot. Saving drafts to GitHub works for <a href="#/test-content">Test content</a> and the <a href="#/case-studies">18 case studies</a>.</span>
+        <span>Publishing is not connected, so the status above is a snapshot. Saving drafts to GitHub works for <a href="#/test-content">Test content</a>, the <a href="#/case-studies">18 case studies</a> and the <a href="#/articles">7 Insights articles</a>.</span>
       </p>
     </div>
   </section>
@@ -85,9 +91,9 @@
       <ul class="list">
         {#each caseDrafts as d}
           <li>
-            <a href="#/case-studies/{d.slug}">
-              <span class="name">{d.name}</span>
-              <span class="meta">Case study · draft pull request #{d.draft.number} on GitHub</span>
+            <a href="#/{d.type}/{d.slug}">
+              <span class="name">{d.label}</span>
+              <span class="meta">{d.kind} · draft pull request #{d.draft.number} on GitHub</span>
             </a>
             <StatusBadge status="changes" />
           </li>

@@ -6,6 +6,7 @@
   import { navigate } from '../lib/router.svelte.js';
   import { session } from '../lib/session.svelte.js';
   import { caseStudies, loadCaseStudies, draftOf } from '../lib/case-studies.svelte.js';
+  import { insights, loadInsights, insightDraftOf } from '../lib/insights.svelte.js';
 
   let { type } = $props();
   const isCase = type === 'case-studies';
@@ -38,13 +39,18 @@
   const filtered = $derived(q || status !== 'all' || group !== 'all' || language !== 'all');
   const reset = () => { q = ''; status = 'all'; group = 'all'; language = 'all'; };
   const day = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-  const connected = (e) => isCase && Boolean(session.data?.connected?.caseStudies?.includes(e.slug));
-  const anyConnected = $derived(isCase && Boolean(session.data?.connected?.caseStudies?.length));
+  // Case studies (M1B) and Insights articles (M2) are connected to GitHub; without the Worker both are the snapshot.
+  const connectedSlugs = $derived((isCase ? session.data?.connected?.caseStudies : session.data?.connected?.insights) ?? []);
+  const connected = (e) => connectedSlugs.includes(e.slug);
+  const anyConnected = $derived(connectedSlugs.length > 0);
+  const live = $derived(isCase ? caseStudies : insights);
+  const prOf = (slug) => (isCase ? draftOf(slug) : insightDraftOf(slug));
   // Refreshed each time the list opens: drafts may have been saved elsewhere (another tab, another person, GitHub).
-  $effect(() => { if (anyConnected) untrack(loadCaseStudies); });
+  $effect(() => { if (anyConnected) untrack(isCase ? loadCaseStudies : loadInsights); });
   /** Connected case studies show their real status on GitHub: an open draft pull request, or the saved version. */
-  const statusOf = (e) => (connected(e) ? (draftOf(e.slug) ? 'changes' : 'published') : e.status);
-  const liveCategory = (e) => (connected(e) ? caseStudies.entries.find((x) => x.slug === e.slug)?.category : null) ?? e.saved.en.category;
+  const statusOf = (e) => (connected(e) ? (prOf(e.slug) ? 'changes' : 'published') : e.status);
+  const liveCategory = (e) => (connected(e) ? live.entries.find((x) => x.slug === e.slug)?.category : null) ?? e.saved.en.category;
+  const liveTitle = (e) => (connected(e) ? live.entries.find((x) => x.slug === e.slug)?.[isCase ? 'name' : 'title'] : null) ?? e.saved.en.title;
   const open = (e) => navigate(`/${type}/${e.slug}`);
 </script>
 
@@ -53,11 +59,11 @@
     <h1>{isCase ? 'Case studies' : 'Articles'}</h1>
     <p class="sub">
       {#if isCase}The portfolio on /work, in the order shown on the site. Featured projects also appear on the homepage.
-      {:else}Insights articles. English only; a Greek version can be added per article.{/if}
-      {#if anyConnected} All {session.data.connected.caseStudies.length} are connected to GitHub: edits are saved as a draft pull request per case study, and the website is not changed.{/if}
+      {:else}Insights articles. English only: there is no Greek version of any article.{/if}
+      {#if anyConnected} All {connectedSlugs.length} are connected to GitHub: edits are saved as a draft pull request per {isCase ? 'case study' : 'article'}, and the website is not changed.{/if}
     </p>
   </div>
-  <button class="btn btn-primary" type="button" onclick={() => navigate(`/${type}/${createDraft(type)}`)} disabled={anyConnected} title={anyConnected ? 'Adding a new case study is not available yet' : undefined}>
+  <button class="btn btn-primary" type="button" onclick={() => navigate(`/${type}/${createDraft(type)}`)} disabled={anyConnected} title={anyConnected ? `Adding a new ${isCase ? 'case study' : 'article'} is not available yet` : undefined}>
     <Icon name="plus" size={16} />{isCase ? 'New case study' : 'New article'}
   </button>
 </header>
@@ -91,7 +97,7 @@
     </div>
   </div>
 
-  {#if anyConnected && caseStudies.error}<p class="resultcount error-text" role="alert">Draft status could not be loaded: {caseStudies.error}</p>{/if}
+  {#if anyConnected && live.error}<p class="resultcount error-text" role="alert">Draft status could not be loaded: {live.error}</p>{/if}
   <p class="resultcount" aria-live="polite">{rows.length === total ? `${total} ${isCase ? 'case studies' : 'articles'}` : `${rows.length} of ${total}`}</p>
 
   {#if rows.length}
@@ -115,7 +121,7 @@
                   {#if e.image}<img class="thumb" src={media(e.image)} alt="" width="56" height="36" loading="lazy" />{:else}<span class="thumb none" aria-hidden="true"></span>{/if}
                 {/if}
                 <div class="tt">
-                  <a href="#/{type}/{e.slug}" onclick={(ev) => ev.stopPropagation()}>{e.saved.en.title || 'Untitled'}</a>
+                  <a href="#/{type}/{e.slug}" onclick={(ev) => ev.stopPropagation()}>{liveTitle(e) || 'Untitled'}</a>
                   <span class="slug">/{isCase ? 'work' : 'insights'}/{e.slug}{#if connected(e)}<span class="conn" title="Connected to GitHub: edits are saved as a draft pull request"><Icon name="branch" size={12} />Connected</span>{/if}{#if e.featured}<span class="feat" title="Featured on the homepage"><Icon name="star" size={13} />Featured</span>{/if}</span>
                 </div>
               </div>
@@ -126,7 +132,7 @@
               <span class="chip on">EN</span>
               <span class="chip" class:on={e.hasGreek} title={e.hasGreek ? 'Greek version exists' : 'No Greek version'}>EL</span>
             </td>
-            <td class="c-status"><StatusBadge status={statusOf(e)} />{#if connected(e) && draftOf(e.slug)}<a class="pr" href={draftOf(e.slug).url} target="_blank" rel="noopener" onclick={(ev) => ev.stopPropagation()}>PR #{draftOf(e.slug).number}</a>{/if}</td>
+            <td class="c-status"><StatusBadge status={statusOf(e)} />{#if connected(e) && prOf(e.slug)}<a class="pr" href={prOf(e.slug).url} target="_blank" rel="noopener" onclick={(ev) => ev.stopPropagation()}>PR #{prOf(e.slug).number}</a>{/if}</td>
             <td class="c-upd">{day(e.updatedAt)}</td>
           </tr>
         {/each}

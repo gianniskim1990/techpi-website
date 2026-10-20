@@ -7,19 +7,21 @@
  *   POST /api/<collection>/<slug>/draft     save the entry as a draft: commit to cms/<collection>/<slug>, open or update one
  *                                           draft pull request into the base branch
  *
- * Collections: `m0-demo` (Task A1, dummy content) and `case-studies` (Tasks M1A and M1B: exactly the 18 published case
- * studies; any other slug is refused). The repository, branch names and file paths are decided here, never taken from the request. Saves are
- * checked against the version the editor loaded (the file's Git blob SHA), so a stale or conflicting edit is refused
- * instead of overwriting newer work. Commit messages and pull requests carry no personal data.
+ * Collections: `m0-demo` (Task A1, dummy content), `case-studies` (Tasks M1A and M1B: exactly the 18 published case
+ * studies) and `insights` (Task M2: exactly the 7 existing English articles). Any other slug is refused. The
+ * repository, branch names and file paths are decided here, never taken from the request. Saves are checked against
+ * the version the editor loaded (the file's Git blob SHA), so a stale or conflicting edit is refused instead of
+ * overwriting newer work. Commit messages and pull requests carry no personal data.
  */
 import { REPO, GitHubError, githubConfig, repoRequest } from './github.js';
 import * as demo from '../shared/m0-content.js';
 import * as study from '../shared/case-study-content.js';
+import * as insight from '../shared/insight-content.js';
 
 const json = (status, data) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
 const fail = (status, message, extra = {}) => json(status, { error: { message, ...extra } });
 const MAX_BODY = 64 * 1024;
-const DEFAULT_BASE = 'feat/techpi-admin-m1b-all-case-studies';
+const DEFAULT_BASE = 'feat/techpi-admin-m2-insights';
 const PUBLIC_NOTE = 'This repository is public, so this draft is publicly visible on GitHub.';
 
 /** The branch drafts are based on and pull requests target. Never `main`, and never a draft branch. */
@@ -78,6 +80,28 @@ const COLLECTIONS = {
     prBody: 'Draft saved in the TechPi Admin. The text of one case study changes; its facts, images and sections are locked. Not published: merging this pull request into the development branch does not change techpi.eu.',
     commit: (slug) => `Draft: update ${slug} case study (TechPi Admin)`,
   },
+  [insight.INSIGHT.name]: {
+    folder: insight.INSIGHT.folder,
+    branchPrefix: insight.INSIGHT.branchPrefix,
+    path: insight.entryPath,
+    branch: insight.draftBranch,
+    allowed: insight.isInsight, // exactly the 7 existing articles; any other slug is refused
+    notAvailable: 'There is no such Insights article in the admin.',
+    slugs: async () => insight.INSIGHT_SLUGS,
+    summary: (slug, data) => ({ slug, title: data.en?.title ?? slug, category: data.en?.category ?? '', published: data.facts?.published ?? null, publishedText: data.facts?.publishedText ?? '', hasGreek: false }),
+    parse: (text, slug) => {
+      const doc = parseJson(text);
+      return doc && insight.validateDocument(doc, slug).ok ? doc : null;
+    },
+    check: (body, current) => {
+      // The browser sends only { en }. The slug, position, publication date and source always come from the current file.
+      const v = insight.validateEditable(body.content, current);
+      return v.ok ? { ok: true, text: insight.serializeDocument(current, v.value), title: `Insights: ${v.value.en.title}` } : { ok: false, errors: v.errors };
+    },
+    prTitle: (slug, title) => `Draft: ${title}`,
+    prBody: 'Draft saved in the TechPi Admin. The text of one English Insights article changes; its address, publication date, source and section structure are locked. Not published: merging this pull request into the development branch does not change techpi.eu.',
+    commit: (slug) => `Draft: update ${slug} article (TechPi Admin)`,
+  },
 };
 
 const parseJson = (text) => { try { return JSON.parse(text); } catch { return null; } };
@@ -109,7 +133,7 @@ async function session(env, identity) {
     repository: `${REPO.owner}/${REPO.name}`,
     baseBranch: base,
     github: { configured: cfg.configured && Boolean(base), missing: [...cfg.missing, ...(base ? [] : ['CONTENT_BASE_BRANCH'])] },
-    connected: { caseStudies: study.CONNECTED_SLUGS },
+    connected: { caseStudies: study.CONNECTED_SLUGS, insights: insight.INSIGHT_SLUGS },
     publishing: false,
   });
 }
