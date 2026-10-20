@@ -1,9 +1,9 @@
 <script>
   /**
-   * Connected editor for an admin-managed case study (Task M1A: Rocketeer). Loads through the admin's API, checks the
-   * fields as you type with the same rules the Worker enforces on save, and saves as a draft: a commit on the case
-   * study's draft branch and one draft pull request, which repeated saves update. The facts and images are locked.
-   * Publishing is not part of M1A.
+   * Connected editor for any of the 18 case studies (Tasks M1A and M1B). Loads through the admin's API, checks the fields
+   * as you type with the same rules the Worker enforces on save, and saves as a draft: a commit on the case study's own
+   * draft branch and one draft pull request, which repeated saves update. Case studies have different sections; the
+   * editor shows the ones this case study has. Facts, images and the set of sections are locked. No publishing.
    */
   import Icon from '../components/Icon.svelte';
   import StatusBadge from '../components/StatusBadge.svelte';
@@ -12,10 +12,14 @@
   import ListEditor from '../components/ListEditor.svelte';
   import { api } from '../lib/api.js';
   import { toast } from '../lib/store.svelte.js';
+  import { loadCaseStudies } from '../lib/case-studies.svelte.js';
   import { FIELDS, LOCALES, validateEditable } from '../../../shared/case-study-content.js';
 
   let { slug } = $props();
-  const media = (id) => new URL(`../demo/media/${id}.webp`, import.meta.url).href;
+  // Thumbnails of the project captures (generated for the admin by scripts/make-demo-snapshot.mjs).
+  const thumbs = import.meta.glob('../demo/media/*.webp', { eager: true, query: '?url', import: 'default' });
+  const media = (id) => thumbs[`../demo/media/${id}.webp`] ?? null;
+  const CAPABILITY = { 'digital-products': 'Digital products', 'web-experiences': 'Web experiences', intelligence: 'Intelligence', 'digital-visibility': 'Digital visibility' };
 
   let load = $state({ loading: true, error: null });
   let doc = $state(null); // the full stored document: facts and images are shown, never edited
@@ -53,10 +57,11 @@
   fetchEntry();
 
   const dirty = $derived(form ? JSON.stringify(form) !== baseline : false);
-  const check = $derived(form && doc ? validateEditable(form, doc.images) : { ok: true, errors: {} });
+  const check = $derived(form && doc ? validateEditable(form, doc) : { ok: true, errors: {} });
   const errors = $derived(tried ? { ...check.errors, ...serverErrors } : {});
   const c = $derived(form?.[lang]);
-  const other = $derived(form?.[lang === 'en' ? 'el' : 'en']);
+  /** Whether this case study has a section (its structure is the English file's; Greek has the same). */
+  const has = (k) => doc?.en?.[k] !== undefined;
   const err = (k) => errors[`${lang}.${k}`];
   const listErrors = (k) => {
     const out = { _: errors[`${lang}.${k}`] };
@@ -65,18 +70,31 @@
   };
   const len = (k) => (c?.[k] ?? '').trim().length;
   const langHasErrors = (l) => Object.keys(errors).some((k) => k.startsWith(`${l}.`));
+  const LISTS = [
+    { key: 'highlights', label: 'Highlights', hint: 'Short labels shown on the Work page.', add: 'Add highlight' },
+    { key: 'disciplines', label: 'Disciplines', hint: 'Short labels shown on the Work page.', add: 'Add discipline' },
+  ];
+  const STUDY_LISTS = [
+    { key: 'builtItems', label: 'What was built', add: 'Add item' },
+    { key: 'services', label: 'Services', add: 'Add service' },
+    { key: 'technology', label: 'Technology', add: 'Add technology' },
+    { key: 'outcome', label: 'Outcome', add: 'Add outcome', hint: 'Only outcomes the client has stated, in words.' },
+  ];
+  const LABEL = { highlights: 'Highlights', disciplines: 'Disciplines', overview: 'Overview', need: 'The need', builtItems: 'What was built', services: 'Services', technology: 'Technology', outcome: 'Outcome' };
   // The two languages describe the same page: warn at once when a list has a different number of items.
-  const mismatches = $derived(form ? Object.entries(FIELDS).filter(([k, r]) => r.kind === 'list' && form.en[k].length !== form.el[k].length).map(([k]) => k) : []);
-  const LABEL = { overview: 'Overview', need: 'The need', builtItems: 'What was built', technology: 'Technology', outcome: 'Outcome' };
+  const mismatches = $derived(form ? Object.entries(FIELDS).filter(([k, r]) => r.kind === 'list' && Array.isArray(form.en[k]) && Array.isArray(form.el[k]) && form.en[k].length !== form.el[k].length).map(([k]) => k) : []);
 
   const prefix = $derived(lang === 'el' ? '/el' : '');
   const pageUrl = $derived(`https://techpi.eu${prefix}/work/${slug}`);
-  // The same rule the site uses for the page title (src/content/seo.ts): there are no separate SEO fields for case studies.
+  // The same rules the site uses (src/content/seo.ts, caseStudyMeta): there are no separate SEO fields for case studies.
   const seoTitle = $derived.by(() => {
     if (!c || !doc) return '';
     const full = `${doc.facts.name} — ${c.category} | TechPi`;
     return full.length <= 70 ? full : `${doc.facts.name} | ${lang === 'el' ? 'Έργα' : 'Work'} | TechPi`;
   });
+  const seoDescription = $derived(c && doc ? c.summary + (doc.facts.workGroup === 'earlier' ? (lang === 'el' ? ' Παλαιότερο έργο της pigiota314.' : ' Earlier work by pigiota314.') : '') : '');
+  const hasImages = $derived(Boolean(doc && (doc.images.image || doc.images.cover || doc.images.gallery)));
+  const sameImage = $derived(Boolean(doc?.images.image && doc?.images.cover && doc.images.image.id === doc.images.cover.id));
 
   async function save() {
     tried = true;
@@ -97,6 +115,7 @@
         draft = r.draft;
         source = 'draft';
         toast('success', 'Draft saved to GitHub', `Committed to the draft branch. Draft pull request #${r.draft?.number} is up to date. The website is not changed.`);
+        loadCaseStudies();
       } else {
         toast('info', 'Nothing to save', 'This version is the same as the one on GitHub.');
       }
@@ -117,6 +136,24 @@
     return () => removeEventListener('beforeunload', warn);
   });
 </script>
+
+{#snippet textField(key, label, hint, rows = 0)}
+  <div class="field">
+    <label class="label" for="f-{key}"><span>{label}</span><span class="meta" class:over={len(key) > FIELDS[key].max}>{len(key)}/{FIELDS[key].max}</span></label>
+    {#if rows}
+      <textarea class="textarea" id="f-{key}" {lang} {rows} bind:value={form[lang][key]} aria-invalid={err(key) ? 'true' : undefined}></textarea>
+    {:else}
+      <input class="input" id="f-{key}" {lang} bind:value={form[lang][key]} aria-invalid={err(key) ? 'true' : undefined} />
+    {/if}
+    {#if err(key)}<p class="error-text">{err(key)}</p>{:else if hint}<p class="hint">{hint}</p>{/if}
+  </div>
+{/snippet}
+
+{#snippet listField(l, multiline = false)}
+  <div class="field">
+    {#key lang}<ListEditor bind:items={form[lang][l.key]} label={l.label} id="f-{l.key}" {lang} {multiline} itemMax={FIELDS[l.key].itemMax} min={FIELDS[l.key].min} max={FIELDS[l.key].max} errors={listErrors(l.key)} addLabel={l.add} hint={l.hint ?? ''} />{/key}
+  </div>
+{/snippet}
 
 <nav class="crumbs" aria-label="Breadcrumb">
   <a href="#/case-studies"><Icon name="back" size={16} />Case studies</a>
@@ -151,76 +188,62 @@
       {#if mismatches.length}
         <p class="parity" role="status"><Icon name="alert" size={16} /><span>English and Greek differ in the number of items in: {mismatches.map((k) => LABEL[k]).join(', ')}. Keep them the same to save.</span></p>
       {/if}
+      {#if tried && errors.entry}<p class="error-text" role="alert">{errors.entry}</p>{/if}
+
+      <section class="card" aria-labelledby="listing-h">
+        <div class="card-head"><h2 id="listing-h">Work page and summary</h2></div>
+        <div class="card-body">
+          {@render textField('category', 'Category', 'Shown above the project name and in the page title.')}
+          {@render textField('summary', 'Summary', 'Shown on the Work page and as the page description in search results.', 3)}
+          {#each LISTS.filter((l) => has(l.key)) as l (l.key)}{@render listField(l)}{/each}
+        </div>
+      </section>
 
       <section class="card" aria-labelledby="content-h">
-        <div class="card-head"><h2 id="content-h">Content</h2></div>
+        <div class="card-head"><h2 id="content-h">Case study</h2></div>
         <div class="card-body">
-          <div class="field">
-            <label class="label" for="f-cat"><span>Category</span><span class="meta" class:over={len('category') > FIELDS.category.max}>{len('category')}/{FIELDS.category.max}</span></label>
-            <input class="input" id="f-cat" {lang} bind:value={form[lang].category} aria-invalid={err('category') ? 'true' : undefined} />
-            {#if err('category')}<p class="error-text">{err('category')}</p>{:else}<p class="hint">Shown above the project name and in the page title.</p>{/if}
-          </div>
-          <div class="field">
-            <label class="label" for="f-sum"><span>Summary</span><span class="meta" class:over={len('summary') > FIELDS.summary.max}>{len('summary')}/{FIELDS.summary.max}</span></label>
-            <textarea class="textarea" id="f-sum" {lang} rows="3" bind:value={form[lang].summary} aria-invalid={err('summary') ? 'true' : undefined}></textarea>
-            {#if err('summary')}<p class="error-text">{err('summary')}</p>{:else}<p class="hint">Shown on the Work page and as the page description in search results.</p>{/if}
-          </div>
-          <div class="field">
-            {#key lang}<ListEditor bind:items={form[lang].overview} label="Overview" id="f-overview" {lang} multiline itemMax={FIELDS.overview.itemMax} min={FIELDS.overview.min} max={FIELDS.overview.max} errors={listErrors('overview')} addLabel="Add paragraph" />{/key}
-          </div>
-          <div class="field">
-            {#key lang}<ListEditor bind:items={form[lang].need} label="The need" id="f-need" {lang} multiline itemMax={FIELDS.need.itemMax} min={FIELDS.need.min} max={FIELDS.need.max} errors={listErrors('need')} addLabel="Add paragraph" />{/key}
-          </div>
-          <div class="field">
-            <label class="label" for="f-intro"><span>What was built: introduction (optional)</span><span class="meta">{len('builtIntro')}/{FIELDS.builtIntro.max}</span></label>
-            <input class="input" id="f-intro" {lang} bind:value={form[lang].builtIntro} aria-invalid={err('builtIntro') ? 'true' : undefined} />
-            {#if err('builtIntro')}<p class="error-text">{err('builtIntro')}</p>{:else}<p class="hint">Leave empty in both languages for none. It is shown before the list.</p>{/if}
-          </div>
-          <div class="field">
-            {#key lang}<ListEditor bind:items={form[lang].builtItems} label="What was built" id="f-built" {lang} itemMax={FIELDS.builtItems.itemMax} min={FIELDS.builtItems.min} max={FIELDS.builtItems.max} errors={listErrors('builtItems')} addLabel="Add item" />{/key}
-          </div>
-          <div class="field">
-            {#key lang}<ListEditor bind:items={form[lang].technology} label="Technology" id="f-tech" {lang} itemMax={FIELDS.technology.itemMax} min={FIELDS.technology.min} max={FIELDS.technology.max} errors={listErrors('technology')} addLabel="Add technology" />{/key}
-          </div>
-          <div class="field">
-            {#key lang}<ListEditor bind:items={form[lang].outcome} label="Outcome" id="f-outcome" {lang} itemMax={FIELDS.outcome.itemMax} min={FIELDS.outcome.min} max={FIELDS.outcome.max} errors={listErrors('outcome')} addLabel="Add outcome" hint="Only outcomes the client has stated, in words." />{/key}
-          </div>
+          {@render listField({ key: 'overview', label: 'Overview', add: 'Add paragraph' }, true)}
+          {@render listField({ key: 'need', label: 'The need', add: 'Add paragraph' }, true)}
+          {#if has('builtIntro')}{@render textField('builtIntro', 'What was built: introduction', 'Shown before the list, or on its own when there is no list.', 3)}{/if}
+          {#each STUDY_LISTS.filter((l) => has(l.key)) as l (l.key)}{@render listField(l)}{/each}
+          <p class="hint sections"><Icon name="lock" size={13} />This case study’s sections are fixed: text and the number of items can change, but sections cannot be added or removed here.</p>
         </div>
       </section>
 
       <section class="card" aria-labelledby="img-h">
-        <div class="card-head"><h2 id="img-h">Images</h2><span class="lock"><Icon name="lock" size={14} />Files are locked; alt text is editable</span></div>
-        <div class="card-body images">
-          <div class="shot">
-            <img src={media(doc.images.cover.id)} alt="" loading="lazy" />
-            <p class="hint">Row image and cover: <code>{doc.images.image.id}</code></p>
-          </div>
-          <div class="alts">
-            <div class="field">
-              <label class="label" for="f-ialt"><span>Row image alt text</span><span class="meta">{len('imageAlt')}/{FIELDS.imageAlt.max}</span></label>
-              <textarea class="textarea" id="f-ialt" {lang} rows="3" bind:value={form[lang].imageAlt} aria-invalid={err('imageAlt') ? 'true' : undefined}></textarea>
-              {#if err('imageAlt')}<p class="error-text">{err('imageAlt')}</p>{:else}<p class="hint">Used on the homepage and the Work page.</p>{/if}
-            </div>
-            <div class="field">
-              <label class="label" for="f-calt"><span>Cover alt text</span><span class="meta">{len('coverAlt')}/{FIELDS.coverAlt.max}</span></label>
-              <textarea class="textarea" id="f-calt" {lang} rows="3" bind:value={form[lang].coverAlt} aria-invalid={err('coverAlt') ? 'true' : undefined}></textarea>
-              {#if err('coverAlt')}<p class="error-text">{err('coverAlt')}</p>{/if}
-            </div>
-          </div>
-          {#each doc.images.gallery as g, i}
-            <div class="shot">
-              <img src={media(g.id)} alt="" loading="lazy" />
-              <p class="hint">Gallery image {i + 1}: <code>{g.id}</code></p>
-            </div>
-            <div class="alts">
-              <div class="field">
-                <label class="label" for="f-galt-{i}"><span>Gallery image {i + 1} alt text</span><span class="meta">{(c.galleryAlts[i] ?? '').trim().length}/{FIELDS.galleryAlts.itemMax}</span></label>
-                <textarea class="textarea" id="f-galt-{i}" {lang} rows="3" bind:value={form[lang].galleryAlts[i]} aria-invalid={errors[`${lang}.galleryAlts.${i}`] || err('galleryAlts') ? 'true' : undefined}></textarea>
-                {#if errors[`${lang}.galleryAlts.${i}`] || err('galleryAlts')}<p class="error-text">{errors[`${lang}.galleryAlts.${i}`] ?? err('galleryAlts')}</p>{/if}
+        <div class="card-head"><h2 id="img-h">Images</h2>{#if hasImages}<span class="lock"><Icon name="lock" size={14} />Files are locked; alt text is editable</span>{/if}</div>
+        {#if !hasImages}
+          <div class="card-body"><p class="hint">This case study has no images: its page is led by typography. Adding images arrives with the media library.</p></div>
+        {:else}
+          <div class="card-body images">
+            {#if doc.images.image || doc.images.cover}
+              {@const shown = doc.images.cover ?? doc.images.image}
+              <div class="shot">
+                {#if media(shown.id)}<img src={media(shown.id)} alt="" loading="lazy" />{/if}
+                <p class="hint">{sameImage ? 'Row image and cover' : doc.images.cover ? 'Cover' : 'Row image'}: <code>{shown.id}</code></p>
+                {#if doc.images.image && doc.images.cover && !sameImage}<p class="hint">Row image: <code>{doc.images.image.id}</code></p>{/if}
               </div>
-            </div>
-          {/each}
-        </div>
+              <div class="alts">
+                {#if doc.images.image}{@render textField('imageAlt', 'Row image alt text', 'Used on the homepage and the Work page.', 3)}{/if}
+                {#if doc.images.cover}{@render textField('coverAlt', 'Cover alt text', '', 3)}{/if}
+                {#if has('coverCaption')}{@render textField('coverCaption', 'Cover caption', 'Shown under the cover image.', 2)}{/if}
+              </div>
+            {/if}
+            {#each doc.images.gallery ?? [] as g, i}
+              <div class="shot">
+                {#if media(g.id)}<img src={media(g.id)} alt="" loading="lazy" />{/if}
+                <p class="hint">Gallery image {i + 1}: <code>{g.id}</code></p>
+              </div>
+              <div class="alts">
+                <div class="field">
+                  <label class="label" for="f-galt-{i}"><span>Gallery image {i + 1} alt text</span><span class="meta">{(c.galleryAlts[i] ?? '').trim().length}/{FIELDS.galleryAlts.itemMax}</span></label>
+                  <textarea class="textarea" id="f-galt-{i}" {lang} rows="3" bind:value={form[lang].galleryAlts[i]} aria-invalid={errors[`${lang}.galleryAlts.${i}`] || err('galleryAlts') ? 'true' : undefined}></textarea>
+                  {#if errors[`${lang}.galleryAlts.${i}`] || err('galleryAlts')}<p class="error-text">{errors[`${lang}.galleryAlts.${i}`] ?? err('galleryAlts')}</p>{/if}
+                </div>
+              </div>
+            {/each}
+          </div>
+        {/if}
       </section>
 
       <section class="card" aria-labelledby="seo-h">
@@ -228,14 +251,14 @@
         <div class="card-body seo">
           <dl class="seo-facts">
             <div><dt>Page title</dt><dd>{seoTitle}</dd></div>
-            <div><dt>Description</dt><dd>{c.summary}</dd></div>
+            <div><dt>Description</dt><dd>{seoDescription}</dd></div>
             <div><dt>Canonical URL</dt><dd>{pageUrl}</dd></div>
             <div><dt>Other language</dt><dd>Linked automatically ({lang === 'en' ? 'Greek' : 'English'} version)</dd></div>
             <div><dt>Sitemap</dt><dd>Included automatically</dd></div>
           </dl>
           <div class="seo-side">
-            <SeoSnippet title={seoTitle} description={c.summary} url={pageUrl} />
-            <p class="hint">The title and description are generated from the project name, category and summary. Case studies have no separate SEO fields, so editing the category or summary above changes them.</p>
+            <SeoSnippet title={seoTitle} description={seoDescription} url={pageUrl} />
+            <p class="hint">The title and description are generated from the project name, category and summary. Case studies have no separate SEO fields, so editing the category or summary changes them.</p>
           </div>
         </div>
       </section>
@@ -262,7 +285,7 @@
             <p><Icon name="branch" size={15} /><code>{draft.branch}</code></p>
             <a class="btn btn-secondary btn-sm" href={draft.url} target="_blank" rel="noopener">Draft pull request #{draft.number}<Icon name="external" size={14} /></a>
           {:else}
-            <p class="hint">No open draft. The first save creates the draft branch and one draft pull request; later saves update it.</p>
+            <p class="hint">No open draft. The first save creates this case study’s draft branch and one draft pull request; later saves update it.</p>
           {/if}
           <p class="hint warn"><Icon name="info" size={15} /><span>This repository is public: saved drafts, their text and their history are visible to anyone on GitHub, even though the website is unchanged.</span></p>
         </div>
@@ -273,12 +296,13 @@
         <div class="card-body">
           <dl class="facts">
             <div><dt>URL</dt><dd><Icon name="lock" size={13} /> /work/{slug}</dd></div>
-            <div><dt>Client</dt><dd>{doc.facts.client}</dd></div>
+            {#if doc.facts.client}<div><dt>Client</dt><dd>{doc.facts.client}{#if doc.facts.clientEl}<br /><span class="dim" lang="el">{doc.facts.clientEl}</span>{/if}</dd></div>{/if}
             <div><dt>Year</dt><dd>{doc.facts.year}</dd></div>
-            <div><dt>Group</dt><dd>{doc.facts.workGroup === 'client' ? 'Client project' : 'Earlier work'}</dd></div>
+            <div><dt>Group</dt><dd>{doc.facts.workGroup === 'client' ? 'Client project' : 'Earlier work by pigiota314'}</dd></div>
             <div><dt>Featured</dt><dd>{doc.facts.featured ? 'Yes, on the homepage' : 'No'}</dd></div>
-            <div><dt>Position</dt><dd>{doc.facts.order} on the Work page</dd></div>
-            <div><dt>Live site</dt><dd><a href={doc.facts.liveUrl} target="_blank" rel="noopener">{doc.facts.liveUrl.replace('https://', '')}</a></dd></div>
+            <div><dt>Position</dt><dd>{doc.facts.order} of 18 on the Work page</dd></div>
+            <div><dt>Capabilities</dt><dd>{doc.facts.capabilities.length ? doc.facts.capabilities.map((x) => CAPABILITY[x] ?? x).join(', ') : 'None'}</dd></div>
+            {#if doc.facts.liveUrl}<div><dt>Live site</dt><dd><a href={doc.facts.liveUrl} target="_blank" rel="noopener">{doc.facts.liveUrl.replace('https://', '')}</a></dd></div>{/if}
           </dl>
           <p class="hint">These are not editable here. Changing an address needs a redirect, which arrives with publishing.</p>
           <a class="live" href="https://techpi.eu/work/{slug}" target="_blank" rel="noopener"><Icon name="external" size={15} />View the live page</a>
@@ -319,18 +343,21 @@
   .langs button[aria-selected='true'] { color: var(--ink); border-bottom-color: var(--blue); }
   .langs button.has-errors::after { content: ''; position: absolute; top: 9px; right: 4px; width: 6px; height: 6px; border-radius: 50%; background: var(--danger); }
   .parity { display: flex; gap: 8px; align-items: flex-start; padding: 10px 14px; border-radius: var(--radius); background: var(--warn-soft); color: var(--warn); font-size: var(--text-sm); }
+  .sections { display: flex; gap: 6px; align-items: flex-start; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--rule-soft); }
   .lock { display: inline-flex; align-items: center; gap: 5px; color: var(--slate); font-size: var(--text-sm); }
   .images { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px 20px; align-items: start; }
   .shot img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--rule-soft); background: var(--rule-soft); }
   .shot .hint { margin-top: 6px; overflow-wrap: anywhere; }
   .alts { display: grid; gap: 14px; }
+  .alts .field + .field { margin-top: 0; }
   .seo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
   .seo-side { display: grid; gap: 10px; }
   .seo-facts, .facts { margin: 0; display: grid; gap: 10px; font-size: var(--text-sm); }
   .seo-facts dt, .facts dt { color: var(--slate); }
   .seo-facts dd, .facts dd { margin: 0; overflow-wrap: anywhere; }
   .facts { margin-bottom: 12px; }
-  .facts div { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 8px; }
+  .facts div { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 8px; }
+  .dim { color: var(--slate); }
   .live { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-size: var(--text-sm); font-weight: 500; text-decoration: none; }
   .rail { position: sticky; top: 20px; display: grid; gap: 16px; }
   .rail-body { display: grid; gap: 10px; }

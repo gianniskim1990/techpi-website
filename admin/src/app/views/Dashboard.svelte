@@ -1,8 +1,11 @@
 <script>
+  import { untrack } from 'svelte';
   import Icon from '../components/Icon.svelte';
   import StatusBadge from '../components/StatusBadge.svelte';
   import { store, counts, createDraft } from '../lib/store.svelte.js';
   import { navigate } from '../lib/router.svelte.js';
+  import { session } from '../lib/session.svelte.js';
+  import { caseStudies, loadCaseStudies } from '../lib/case-studies.svelte.js';
 
   const c = $derived(counts());
   const drafts = $derived(store.entries.filter((e) => e.status !== 'published'));
@@ -10,6 +13,11 @@
   const fmt = (iso) => new Date(iso).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   const day = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
+  const connected = $derived(Boolean(session.data?.connected?.caseStudies?.length));
+  // Refreshed each time the Dashboard opens: drafts may have been saved elsewhere.
+  $effect(() => { if (connected) untrack(loadCaseStudies); });
+  /** Open draft pull requests of connected case studies, from GitHub. */
+  const caseDrafts = $derived(caseStudies.entries.filter((e) => e.draft));
   function newEntry(type) { navigate(`/${type}/${createDraft(type)}`); }
 </script>
 
@@ -20,7 +28,7 @@
   </div>
   <div class="actions">
     <button class="btn btn-secondary" type="button" onclick={() => newEntry('articles')}><Icon name="plus" size={16} />New article</button>
-    <button class="btn btn-primary" type="button" onclick={() => newEntry('case-studies')}><Icon name="plus" size={16} />New case study</button>
+    <button class="btn btn-primary" type="button" onclick={() => newEntry('case-studies')} disabled={connected} title={connected ? 'Adding a new case study is not available yet' : undefined}><Icon name="plus" size={16} />New case study</button>
   </div>
 </header>
 
@@ -40,10 +48,10 @@
     <span class="k-value">{c.articles}</span>
     <span class="k-meta">English only</span>
   </a>
-  <div class="kpi card" class:attention={c.drafts > 0}>
+  <div class="kpi card" class:attention={c.drafts + caseDrafts.length > 0}>
     <span class="k-label"><Icon name="clock" size={16} />Drafts</span>
-    <span class="k-value">{c.drafts}</span>
-    <span class="k-meta">{c.drafts ? 'Waiting to be published' : 'Nothing waiting'}</span>
+    <span class="k-value">{c.drafts + caseDrafts.length}</span>
+    <span class="k-meta">{caseDrafts.length ? `${caseDrafts.length} on GitHub, not published` : c.drafts ? 'Waiting to be published' : 'Nothing waiting'}</span>
   </div>
 </section>
 
@@ -66,13 +74,26 @@
       </dl>
       <p class="pending">
         <Icon name="info" size={16} />
-        <span>Publishing is not connected, so the status above is a snapshot. Saving drafts to GitHub works for <a href="#/test-content">Test content</a> and the <a href="#/case-studies/rocketeer">Rocketeer case study</a> only.</span>
+        <span>Publishing is not connected, so the status above is a snapshot. Saving drafts to GitHub works for <a href="#/test-content">Test content</a> and the <a href="#/case-studies">18 case studies</a>.</span>
       </p>
     </div>
   </section>
 
   <section class="card" aria-labelledby="drafts-h">
     <div class="card-head"><h2 id="drafts-h">Drafts in progress</h2></div>
+    {#if caseDrafts.length}
+      <ul class="list">
+        {#each caseDrafts as d}
+          <li>
+            <a href="#/case-studies/{d.slug}">
+              <span class="name">{d.name}</span>
+              <span class="meta">Case study · draft pull request #{d.draft.number} on GitHub</span>
+            </a>
+            <StatusBadge status="changes" />
+          </li>
+        {/each}
+      </ul>
+    {/if}
     {#if drafts.length}
       <ul class="list">
         {#each drafts as d}
@@ -85,7 +106,7 @@
           </li>
         {/each}
       </ul>
-    {:else}
+    {:else if !caseDrafts.length}
       <div class="empty">
         <p><strong>No drafts.</strong> Everything you see on techpi.eu is published.</p>
         <p class="hint">Start with a new case study or article, or open an existing one to edit it.</p>

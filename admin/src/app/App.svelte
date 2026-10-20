@@ -71,10 +71,10 @@
   <div class="main">
     <div class="notice" role="note">
       <Icon name="info" size={15} />
-      {#if current.section === 'test-content' || connectedCase}
+      {#if current.section === 'test-content' || connectedCase || (current.section === 'case-studies' && session.data?.connected?.caseStudies?.length)}
         <span><strong>Connected.</strong> Saves go to a GitHub draft branch and draft pull request. Nothing is published or merged from here.</span>
       {:else}
-        <span><strong>Snapshot, not connected.</strong> Case studies, articles and pages are a read-only copy of the live site; edits here stay in this tab. Only “Test content” and the Rocketeer case study are connected.</span>
+        <span><strong>Snapshot, not connected.</strong> Articles and pages are a read-only copy of the live site; edits here stay in this tab. Test content and all 18 case studies are connected.</span>
       {/if}
     </div>
     {#if session.data && !session.data.github.configured}
