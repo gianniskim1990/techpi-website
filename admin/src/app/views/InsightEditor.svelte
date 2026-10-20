@@ -68,7 +68,6 @@
     return out;
   };
   const len = (v) => (v ?? '').trim().length;
-  const headingsChanged = $derived(form && doc ? form.sections.some((s, i) => s.heading.trim() !== doc.en.sections[i].heading) : false);
 
   // Related articles: titles from the list; any of the other six, each once, at most four.
   const titleOf = (s) => insights.entries.find((e) => e.slug === s)?.title ?? s;
@@ -193,10 +192,7 @@
           </div>
         </section>
       {/each}
-      <p class="hint sections"><Icon name="lock" size={13} />This article’s structure is fixed: text and the number of paragraphs or list items can change, but sections and their parts cannot be added or removed here.</p>
-      {#if headingsChanged}
-        <p class="parity" role="status"><Icon name="alert" size={16} /><span>A section heading was changed. Headings are also checked by the site’s Insights validator against the original article, so the draft’s preview build will fail until that check is updated (a separate, approved change). The draft itself still saves.</span></p>
-      {/if}
+      <p class="hint sections"><Icon name="lock" size={13} />This article’s structure is fixed: headings and text can change, and so can the number of paragraphs or list items, but sections and their parts cannot be added or removed here. Each section needs its own heading and some text.</p>
 
       {#if form.note !== undefined}
         <section class="card" aria-labelledby="note-h">

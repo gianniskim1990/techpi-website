@@ -225,3 +225,27 @@ test('GitHub failures are friendly and no response contains a credential', async
   const r = await save(LIST_ONLY, edit(l.content, (en) => { en.title += ' check'; }), l.sha);
   assert.ok(!/ghs_|BEGIN (RSA )?PRIVATE KEY|Bearer /.test(r.text + f.text + JSON.stringify(l)));
 });
+
+// ---------- M2 correction: headings are editable ----------
+test('a heading edit saves through the Worker; empty, duplicate and missing-section edits are refused', async () => {
+  const l = await load(MIXED);
+  const r = await save(MIXED, edit(l.content, (en) => { en.sections[0].heading = 'Start from the objectives in the proposal'; en.sections[2].heading = 'Dissemination that lasts beyond the launch'; }), l.sha);
+  assert.equal(r.status, 200, r.text);
+  assert.equal(saved(MIXED).en.sections[0].heading, 'Start from the objectives in the proposal');
+  assert.deepEqual(saved(MIXED).facts, DOC[MIXED].facts);
+  assert.deepEqual(saved(MIXED).en.sections[1], DOC[MIXED].en.sections[1], 'untouched sections unchanged');
+  const writes = gh.state.writes.length;
+  const l2 = await load(MIXED);
+  for (const [fn, field] of [
+    [(en) => { en.sections[1].heading = ''; }, 'en.sections.1.heading'],
+    [(en) => { en.sections[1].heading = en.sections[0].heading; }, 'en.sections.1.heading'],
+    [(en) => { en.sections[1].paragraphs = ['Too short.']; en.sections[1].list = ['x']; en.sections[1].after = ['y']; }, 'en.sections.1.paragraphs'],
+  ]) {
+    const bad = await save(MIXED, edit(l2.content, fn), l2.sha);
+    assert.equal(bad.status, 422);
+    assert.ok(bad.data.error.fields[field], JSON.stringify(bad.data.error.fields));
+  }
+  assert.equal((await save(MIXED, edit(l2.content, (en) => { en.sections.pop(); }), l2.sha)).status, 422);
+  assert.equal(gh.state.writes.length, writes, 'nothing written by the refused saves');
+  assert.equal(gh.fileOn(BASE, fileOf(MIXED)), TEXT[MIXED], 'the base is unchanged');
+});

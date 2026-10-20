@@ -50,6 +50,8 @@ export const RULES = {
   metaDescription: { min: 70, max: 200 },
 };
 const PARTS = ['paragraphs', 'list', 'after'];
+/** Words of body text a section needs under its heading. The site's validator uses the same number on the built page. */
+export const MIN_SECTION_WORDS = 10;
 const FACT_KEYS = ['slug', 'order', 'published', 'publishedText', 'source'];
 const EN_KEYS = ['category', 'title', 'lead', 'sections', 'note', 'related', 'meta'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -140,6 +142,22 @@ export function validateEditable(input, current) {
         });
       }
       return sec;
+    });
+  }
+
+  // Consistency with the site's Insights validator (scripts/content/validate-insights.mjs), which checks the built pages
+  // structurally: headings are distinct within an article, and every section has real text under its heading.
+  if (Array.isArray(out.sections) && out.sections.length === want.sections.length) {
+    const seen = new Map();
+    out.sections.forEach((sec, i) => {
+      if (typeof sec.heading === 'string') {
+        const key = sec.heading.toLowerCase();
+        if (seen.has(key) && !errors[`en.sections.${i}.heading`]) errors[`en.sections.${i}.heading`] = `Section ${seen.get(key) + 1} already has this heading. Each section needs its own.`;
+        else seen.set(key, i);
+      }
+      const words = PARTS.flatMap((p) => (Array.isArray(sec[p]) ? sec[p] : [])).join(' ').split(/\s+/).filter(Boolean).length;
+      const firstPart = PARTS.find((p) => want.sections[i].includes(p));
+      if (firstPart && words < MIN_SECTION_WORDS && !errors[`en.sections.${i}.${firstPart}`]) errors[`en.sections.${i}.${firstPart}`] = `A section needs real text under its heading: at least ${MIN_SECTION_WORDS} words (now ${words}).`;
     });
   }
 
