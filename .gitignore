@@ -15,3 +15,6 @@ admin/dist/
 admin/dist-demo/
 admin/.wrangler/
 admin/test/.wrangler-e2e/
+# Local-only real GitHub App test (docs/admin/A1.md): never commit; the key lives only in admin/.dev.vars
+admin/wrangler.local.jsonc
+*.pem

@@ -13,7 +13,7 @@
 
 <header class="head">
   <h1>{info.title}</h1>
-  <p class="badge"><Icon name="clock" size={14} />Designed, not built in this prototype</p>
+  <p class="badge"><Icon name="clock" size={14} />Designed, not built yet</p>
 </header>
 
 <div class="card body">

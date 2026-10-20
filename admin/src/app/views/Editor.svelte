@@ -48,7 +48,7 @@
     const wasNew = entry.isNew;
     const newSlug = saveDraft(entry, form);
     baseline = JSON.stringify(form);
-    toast('success', 'Draft saved', 'Kept in this prototype session only. Nothing was sent to GitHub.');
+    toast('success', 'Draft saved', 'Kept in this tab only (snapshot section). Nothing was sent to GitHub.');
     if (wasNew) { entry.isNew = false; navigate(`/${type}/${newSlug}`); }
   }
   function discard() {
@@ -203,7 +203,7 @@
             <button class="btn btn-secondary" type="button" disabled aria-describedby="not-connected"><Icon name="eye" size={16} />Preview</button>
             <button class="btn btn-secondary" type="button" disabled aria-describedby="not-connected"><Icon name="upload" size={16} />Publish</button>
           </div>
-          <p class="hint" id="not-connected">Preview and Publish need the connected workflow. Then Preview opens a private copy of the site with this draft, and Publish puts it live after the checks pass.</p>
+          <p class="hint" id="not-connected">This section is a snapshot and is not connected: saving keeps changes in this tab only. Preview and Publish are not built yet. Previews will be unlisted (not indexed) but not private, because the repository is public.</p>
           {#if hasErrors}<p class="error-text">Fix the highlighted fields to save.</p>{/if}
         </div>
       </section>

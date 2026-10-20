@@ -16,8 +16,16 @@
   // Empty on purpose: the Worker refuses every request (503) until the owner sets both at deploy time.
   // ACCESS_AUD = the Access application's audience tag; ADMIN_EMAILS = comma-separated administrator emails.
   // Neither value is committed to this public repository.
+  //
+  // GitHub App (Task A1, docs/admin/A1.md). The App ID and installation ID are not secret but are left empty until
+  // the owner creates and installs the App; the content API answers 503 "not configured" until then.
+  // The private key is NEVER a var: set it with `wrangler secret put GITHUB_APP_PRIVATE_KEY` (or .dev.vars locally,
+  // which is git-ignored). CONTENT_BASE_BRANCH is where drafts are based and pull requests target; `main` is refused.
   "vars": {
     "ACCESS_AUD": "",
-    "ADMIN_EMAILS": ""
+    "ADMIN_EMAILS": "",
+    "GITHUB_APP_ID": "",
+    "GITHUB_APP_INSTALLATION_ID": "",
+    "CONTENT_BASE_BRANCH": "feat/techpi-admin-m0"
   }
 }

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "TechPi admin panel (M0 proof of concept). Separate from the public website: its own dependencies, build and Worker.",
+  "description": "TechPi admin panel (custom admin, Task A1). Separate from the public website: its own dependencies, build and Worker.",
   "engines": {
     "node": "^24.0.0"
   },
@@ -12,6 +12,7 @@
     "dev:m0": "vite --mode m0",
     "build": "vite build",
     "test": "node --test \"test/**/*.test.mjs\"",
+    "test:e2e": "vite build && node test/access-e2e.mjs",
     "worker:dev": "wrangler dev"
   },
   "dependencies": {

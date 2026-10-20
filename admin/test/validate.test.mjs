@@ -1,7 +1,7 @@
-// Unit tests for the admin editor's validation rules (src/prototype/lib/validate.js).
+// Unit tests for the admin editor's validation rules (src/app/lib/validate.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { validate, LIMITS } from '../src/prototype/lib/validate.js';
+import { validate, LIMITS } from '../src/app/lib/validate.js';
 
 const lang = (over = {}) => ({ title: 'Rocketeer', category: 'Platform', summary: 'A custom web application for deliveries.', body: '<p>Text.</p>', imageAlt: '', seoTitle: '', seoDescription: '', ...over });
 const form = (over = {}) => ({ slug: 'rocketeer', image: null, content: { en: lang(), el: null }, ...over });
