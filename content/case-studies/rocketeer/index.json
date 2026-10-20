@@ -34,7 +34,7 @@
   },
   "en": {
     "category": "Delivery operations platform",
-    "summary": "A custom web application that organises delivery requests, drivers and assignments in one place.",
+    "summary": "A custom web application that organises delivery requests, drivers and assignments in one place. Draft test only.",
     "imageAlt": "The Rocketeer administration dashboard: a side menu, summary counts for pending and active requests, businesses and drivers, and a list of recent requests.",
     "coverAlt": "The Rocketeer administration dashboard: a side menu, summary counts for pending and active requests, businesses and drivers, and a list of recent requests.",
     "galleryAlts": [
