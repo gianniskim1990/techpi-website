@@ -1,0 +1,56 @@
+{
+  "facts": {
+    "slug": "what-every-eu-project-website-should-include",
+    "order": 1,
+    "published": "2025-09-12",
+    "publishedText": "12 September 2025",
+    "source": "https://pigiota314.eu/insights/what-every-eu-project-website-should-include"
+  },
+  "en": {
+    "category": "EU project websites",
+    "title": "What every EU-funded project website should include",
+    "lead": "A practical checklist for project coordinators and communication partners, from identity and partner pages to deliverables, news and long-term dissemination.",
+    "sections": [
+      {
+        "heading": "Start from the project’s communication objectives",
+        "paragraphs": [
+          "Most EU-funded projects describe their communication and dissemination objectives in the proposal. A good project website is the operational expression of those objectives, not a separate creative exercise. Begin by mapping every objective to a concrete part of the website: who reads it, what action it supports and how it will be updated.",
+          "This avoids a common pattern: a project website that looks impressive at launch but cannot be sustained or measured during the project lifecycle."
+        ]
+      },
+      {
+        "heading": "The structural minimum",
+        "paragraphs": [
+          "Every EU project website should clearly present:"
+        ],
+        "list": [
+          "The project identity and abstract",
+          "The consortium and partners",
+          "The work packages and objectives",
+          "The news and events stream",
+          "The deliverables and publications library",
+          "The results and impact pages",
+          "A contact route for stakeholders"
+        ],
+        "after": [
+          "These are not decorative sections. Each one has a specific audience and reporting purpose, so the information architecture should be designed around them before any visual design begins."
+        ]
+      },
+      {
+        "heading": "Long-term dissemination, not just launch",
+        "paragraphs": [
+          "Communication partners often inherit project websites that were optimised for launch and ignore the long tail of the project. A sustainable site assumes regular updates, planned content milestones and clear ownership for each section."
+        ]
+      }
+    ],
+    "related": [
+      "common-mistakes-in-horizon-europe-project-websites",
+      "how-to-structure-deliverables-and-publications",
+      "preparing-a-website-brief-during-the-proposal-stage"
+    ],
+    "meta": {
+      "title": "What every EU-funded project website should include | TechPi",
+      "description": "A practical checklist for EU project coordinators and communication partners: identity, partners, work packages, deliverables, news and long-term dissemination."
+    }
+  }
+}

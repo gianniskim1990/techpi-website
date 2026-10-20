@@ -1,0 +1,36 @@
+{
+  "facts": {
+    "slug": "preparing-a-website-brief-during-the-proposal-stage",
+    "order": 5,
+    "published": "2025-05-14",
+    "publishedText": "14 May 2025",
+    "source": "https://pigiota314.eu/insights/preparing-a-website-brief-during-the-proposal-stage"
+  },
+  "en": {
+    "category": "Proposals",
+    "title": "Preparing a website brief during the proposal stage",
+    "lead": "What to write into the proposal so that the project website can be planned, budgeted and built without surprises.",
+    "sections": [
+      {
+        "heading": "Describe the website as a working tool",
+        "paragraphs": [
+          "Describe what the website needs to do, not just what it should contain. Listing the actions it supports leads to a more accurate scope and budget:"
+        ],
+        "list": [
+          "Share news",
+          "Host deliverables",
+          "Register for events",
+          "Communicate results"
+        ]
+      }
+    ],
+    "related": [
+      "what-every-eu-project-website-should-include",
+      "what-communication-partners-should-ask-a-web-development-supplier"
+    ],
+    "meta": {
+      "title": "Preparing a website brief during the proposal stage | TechPi",
+      "description": "What to write into an EU project proposal so the project website can be planned, budgeted and built without surprises: describe the actions it must support."
+    }
+  }
+}

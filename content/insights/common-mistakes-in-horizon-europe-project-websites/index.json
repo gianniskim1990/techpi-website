@@ -1,0 +1,42 @@
+{
+  "facts": {
+    "slug": "common-mistakes-in-horizon-europe-project-websites",
+    "order": 2,
+    "published": "2025-08-21",
+    "publishedText": "21 August 2025",
+    "source": "https://pigiota314.eu/insights/common-mistakes-in-horizon-europe-project-websites"
+  },
+  "en": {
+    "category": "EU project websites",
+    "title": "Common mistakes in Horizon Europe project websites",
+    "lead": "Three recurring patterns in Horizon Europe project websites, and how to avoid them.",
+    "sections": [
+      {
+        "heading": "Treating the website as a one-off deliverable",
+        "paragraphs": [
+          "When a project website is treated as a launch deliverable rather than a living tool, it ages quickly. The most common consequence is a structure that cannot absorb new deliverables, results or events without manual intervention from a developer."
+        ]
+      },
+      {
+        "heading": "Overloaded homepages",
+        "paragraphs": [
+          "Project homepages often try to communicate every aspect of the project at once. A clearer approach is to use the homepage to orient visitors (who this is, what it does, where to go next) and let dedicated pages carry the depth."
+        ]
+      },
+      {
+        "heading": "Hidden deliverables and publications",
+        "paragraphs": [
+          "Deliverables and publications are often a primary reason visitors arrive on a project website. They should be easy to find, well structured and consistently presented across the project lifecycle."
+        ]
+      }
+    ],
+    "related": [
+      "what-every-eu-project-website-should-include",
+      "how-to-structure-deliverables-and-publications"
+    ],
+    "meta": {
+      "title": "Common mistakes in Horizon Europe project websites | TechPi",
+      "description": "Three recurring mistakes in Horizon Europe project websites: one-off launch builds, overloaded homepages and hidden deliverables, and how to avoid each of them."
+    }
+  }
+}

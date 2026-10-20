@@ -1,0 +1,49 @@
+{
+  "facts": {
+    "slug": "how-to-structure-deliverables-and-publications",
+    "order": 3,
+    "published": "2025-07-18",
+    "publishedText": "18 July 2025",
+    "source": "https://pigiota314.eu/insights/how-to-structure-deliverables-and-publications"
+  },
+  "en": {
+    "category": "Information architecture",
+    "title": "How to structure deliverables and publications",
+    "lead": "A scalable content model for organising deliverables, publications and outputs that grows naturally with the project.",
+    "sections": [
+      {
+        "heading": "Start with the content model",
+        "paragraphs": [
+          "Define the fields that every deliverable and publication needs before designing any page:"
+        ],
+        "list": [
+          "Title",
+          "Work package",
+          "Type",
+          "Date",
+          "Authors",
+          "Partners",
+          "Abstract",
+          "File"
+        ],
+        "after": [
+          "A consistent content model is what allows filtering, listing and reuse across the site to work."
+        ]
+      },
+      {
+        "heading": "Design for browsing, not just searching",
+        "paragraphs": [
+          "Most visitors do not arrive knowing exactly what they want. Provide clear filters by work package, type and year, and surface the most recent and most downloaded items."
+        ]
+      }
+    ],
+    "related": [
+      "what-every-eu-project-website-should-include",
+      "common-mistakes-in-horizon-europe-project-websites"
+    ],
+    "meta": {
+      "title": "How to structure deliverables and publications | TechPi",
+      "description": "A scalable content model for EU project deliverables, publications and outputs: the fields to define first, and filters that help visitors browse the library."
+    }
+  }
+}
