@@ -240,6 +240,41 @@ test('cancelled sign-in, GitHub errors and revoked tokens fail closed', async ()
   assert.equal((await signIn()).res.status, 303);
 });
 
+test('revocation: non-success HTTP responses are reported by status only, never block sign-in, and never log credentials', async () => {
+  const logged = [];
+  const original = console.error;
+  console.error = (...a) => logged.push(a.join(' '));
+  try {
+    for (const status of [401, 403, 422, 500, 503]) {
+      logged.length = 0;
+      gh.failNext(/^DELETE \/applications\//, status);
+      const { res } = await signIn();
+      assert.equal(res.status, 303, `sign-in still succeeds on revoke ${status}`);
+      assert.ok(cookieValue(res, SESSION_COOKIE), `session issued on revoke ${status}`);
+      const report = logged.filter((l) => l.includes('could not be revoked'));
+      assert.equal(report.length, 1, `reported once on ${status}`);
+      assert.ok(report[0].includes(`HTTP ${status}`), report[0]);
+      assert.ok(!leaks(logged.join('\n')), 'no token, secret or code in the log');
+    }
+    // 204 (revoked) and 404 (already gone) are not failures; a network error is reported without a status.
+    for (const status of [404]) {
+      logged.length = 0;
+      gh.failNext(/^DELETE \/applications\//, status);
+      assert.equal((await signIn()).res.status, 303);
+      assert.ok(!logged.some((l) => l.includes('could not be revoked')), `no report on ${status}`);
+    }
+    logged.length = 0;
+    assert.equal((await signIn()).res.status, 303);
+    assert.ok(!logged.some((l) => l.includes('could not be revoked')), 'no report on 204');
+    gh.failNetworkNext(/^DELETE \/applications\//);
+    assert.equal((await signIn()).res.status, 303);
+    assert.ok(logged.some((l) => /could not be revoked \(it expires/.test(l)), 'network failure reported');
+    assert.ok(!leaks(logged.join('\n')));
+  } finally {
+    console.error = original;
+  }
+});
+
 test('logout: same-origin POST clears both cookies; GET and cross-site logout are refused', async () => {
   const session = cookieValue((await signIn()).res, SESSION_COOKIE);
   const cookie = `${SESSION_COOKIE}=${session}`;

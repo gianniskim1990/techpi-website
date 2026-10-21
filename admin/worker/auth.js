@@ -128,11 +128,13 @@ async function githubUser(env, token) {
 async function revoke(env, token) {
   const { clientId } = authConfig(env);
   try {
-    await fetch(`${apiBase(env)}/applications/${encodeURIComponent(clientId)}/token`, {
+    const res = await fetch(`${apiBase(env)}/applications/${encodeURIComponent(clientId)}/token`, {
       method: 'DELETE',
       headers: { ...UA, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json', Authorization: `Basic ${btoa(`${clientId}:${env.GITHUB_OAUTH_CLIENT_SECRET}`)}` },
       body: JSON.stringify({ access_token: token }),
     });
+    // GitHub answers 204 when the token was revoked (404 means it is already gone). Anything else is reported, by status only.
+    if (res.status !== 204 && res.status !== 404) console.error(`auth: the GitHub user token could not be revoked (HTTP ${res.status}; it expires on its own)`);
   } catch {
     console.error('auth: the GitHub user token could not be revoked (it expires on its own)');
   }
