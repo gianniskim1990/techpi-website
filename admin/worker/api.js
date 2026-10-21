@@ -8,20 +8,21 @@
  *                                           draft pull request into the base branch
  *
  * Collections: `m0-demo` (Task A1, dummy content), `case-studies` (Tasks M1A and M1B: exactly the 18 published case
- * studies) and `insights` (Task M2: exactly the 7 existing English articles). Any other slug is refused. The
- * repository, branch names and file paths are decided here, never taken from the request. Saves are checked against
- * the version the editor loaded (the file's Git blob SHA), so a stale or conflicting edit is refused instead of
- * overwriting newer work. Commit messages and pull requests carry no personal data.
+ * studies), `insights` (Task M2: exactly the 7 existing English articles) and `pages` (Task M3: exactly the 8 website
+ * pages). Any other slug is refused. The repository, branch names and file paths are decided here, never taken from
+ * the request. Saves are checked against the version the editor loaded (the file's Git blob SHA), so a stale or
+ * conflicting edit is refused instead of overwriting newer work. Commit messages and pull requests carry no personal data.
  */
 import { REPO, GitHubError, githubConfig, repoRequest } from './github.js';
 import * as demo from '../shared/m0-content.js';
 import * as study from '../shared/case-study-content.js';
 import * as insight from '../shared/insight-content.js';
+import * as page from '../shared/page-content.js';
 
 const json = (status, data) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
 const fail = (status, message, extra = {}) => json(status, { error: { message, ...extra } });
 const MAX_BODY = 64 * 1024;
-const DEFAULT_BASE = 'feat/techpi-admin-m2-insights';
+const DEFAULT_BASE = 'feat/techpi-admin-m3-website-pages';
 const PUBLIC_NOTE = 'This repository is public, so this draft is publicly visible on GitHub.';
 
 /** The branch drafts are based on and pull requests target. Never `main`, and never a draft branch. */
@@ -102,6 +103,29 @@ const COLLECTIONS = {
     prBody: 'Draft saved in the TechPi Admin. The text of one English Insights article changes; its address, publication date, source and section structure are locked. Not published: merging this pull request into the development branch does not change techpi.eu.',
     commit: (slug) => `Draft: update ${slug} article (TechPi Admin)`,
   },
+  [page.PAGE.name]: {
+    folder: page.PAGE.folder,
+    branchPrefix: page.PAGE.branchPrefix,
+    path: page.entryPath,
+    branch: page.draftBranch,
+    allowed: page.isPage, // exactly the 8 existing pages; any other key is refused
+    notAvailable: 'There is no such page in the admin.',
+    slugs: async () => page.PAGE_KEYS,
+    summary: (key, data) => ({ slug: key, name: page.pageInfo(key)?.name ?? key, kind: data.facts?.kind ?? 'page', paths: data.facts?.paths ?? null, title: data.en?.seo?.title ?? '', hasGreek: Boolean(data.el) }),
+    parse: (text, key) => {
+      const doc = parseJson(text);
+      return doc && page.validateDocument(doc, key).ok ? doc : null;
+    },
+    check: (body, current, key) => {
+      // The browser sends only { en, el }. Facts (URLs, legal version date) always come from the current file.
+      const v = page.validateEditable(body.content, current, key);
+      return v.ok ? { ok: true, text: page.serializeDocument(current, v.value), title: `${page.pageInfo(key)?.name ?? key} page` } : { ok: false, errors: v.errors };
+    },
+    prTitle: (key, title) => `Draft: ${title}`,
+    prBody: 'Draft saved in the TechPi Admin. The English and Greek copy of one website page changes; its address, structure and facts are locked. Not published: merging this pull request into the development branch does not change techpi.eu.',
+    prBodyLegal: 'Draft saved in the TechPi Admin. The English and Greek text of one legal page changes; its section anchors, version date, references to site facts and protected statements are locked. A technically valid change is not a legally approved one: this policy change needs the owner’s review before it is merged. Not published: merging this pull request into the development branch does not change techpi.eu.',
+    commit: (key) => `Draft: update ${key} page (TechPi Admin)`,
+  },
 };
 
 const parseJson = (text) => { try { return JSON.parse(text); } catch { return null; } };
@@ -133,7 +157,7 @@ async function session(env, identity) {
     repository: `${REPO.owner}/${REPO.name}`,
     baseBranch: base,
     github: { configured: cfg.configured && Boolean(base), missing: [...cfg.missing, ...(base ? [] : ['CONTENT_BASE_BRANCH'])] },
-    connected: { caseStudies: study.CONNECTED_SLUGS, insights: insight.INSIGHT_SLUGS },
+    connected: { caseStudies: study.CONNECTED_SLUGS, insights: insight.INSIGHT_SLUGS, pages: page.PAGE_KEYS },
     publishing: false,
   });
 }
@@ -185,7 +209,7 @@ async function saveDraft(env, base, col, slug, request) {
   const currentDoc = col.parse(current.text, slug);
   if (!currentDoc) return fail(502, 'This entry’s file is not valid, so it cannot be saved over.');
 
-  const checked = col.check(body, currentDoc);
+  const checked = col.check(body, currentDoc, slug);
   if (!checked.ok) return fail(422, 'Some fields need attention.', { fields: checked.errors });
   const text = checked.text;
   if (text === current.text) {
@@ -211,7 +235,7 @@ async function saveDraft(env, base, col, slug, request) {
   let draft = pr;
   if (!draft && commit) {
     const created = await repoRequest(env, 'POST', '/pulls', {
-      body: { title: col.prTitle(slug, checked.title).slice(0, 200), head: branch, base, draft: true, body: `${col.prBody}\n\n${PUBLIC_NOTE}` },
+      body: { title: col.prTitle(slug, checked.title).slice(0, 200), head: branch, base, draft: true, body: `${(page.isLegal(slug) && col.prBodyLegal) || col.prBody}\n\n${PUBLIC_NOTE}` },
       expect: [422],
     });
     draft = created.status === 422 ? await openDraftPr(env, base, branch) : { number: created.data.number, url: created.data.html_url, draft: Boolean(created.data.draft) };
