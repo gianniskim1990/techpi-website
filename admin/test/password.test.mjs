@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import worker from '../worker/index.js';
 import {
-  ADMIN_EMAIL, LIMITS, LoginLimiter, MAX_ITERATIONS, MIN_ITERATIONS, makeVerifier, parseVerifier, passwordConfig, verifyPassword,
+  ADMIN_EMAIL, LIMITS, MIN_PASSWORD_LENGTH, LoginLimiter, MAX_ITERATIONS, MIN_ITERATIONS, makeVerifier, parseVerifier, passwordConfig, verifyPassword,
 } from '../worker/password.js';
 import { seal, SESSION_COOKIE, SESSION_TTL } from '../worker/session.js';
 import fs from 'node:fs';
@@ -81,11 +81,14 @@ test('verifier: salted PBKDF2-SHA256, unique per run, verified in constant time;
   }
 });
 
-test('setup rules: short, repetitive or guessable passwords are refused', () => {
-  for (const p of ['short', 'a'.repeat(20), 'abcabcabcabcabcabc', 'my-techpi-admin-2026!', 'MyPassword-Is-Long-1']) assert.ok(weakness(p), p);
-  assert.equal(weakness(PASSWORD), null);
-  assert.ok(weakness('x'.repeat(257) + 'abcdefgh'));
+test('setup rules: 8 to 256 characters, at least 5 different, and nothing guessable from the site or the word password', () => {
+  assert.equal(MIN_PASSWORD_LENGTH, 8);
+  // Refused: too short (7 or fewer), too few different characters, containing "techpi" or "password", too long.
+  for (const p of ['', 'short', 'Abc1234', 'abcde12', 'a'.repeat(20), 'aaaaaaaa', 'abababab', 'abcabcabcabcabcabc', 'abcdabcd', 'my-techpi-admin-2026!', 'MyPassword-Is-Long-1', 'PASSWORD1', 'x'.repeat(257) + 'abcdefgh']) assert.ok(weakness(p), JSON.stringify(p));
+  // Accepted: a valid 8-character password is not rejected for having repeated characters.
+  for (const p of ['Abcd1234', 'k7#Rm9!q', 'aabbcc12', 'abcde123', 'xyxyx123', PASSWORD, 'z'.repeat(100) + 'abcd']) assert.equal(weakness(p), null, JSON.stringify(p));
 });
+
 
 // ---------- signing in ----------
 test('the right email and password: a session for info@techpi.eu only, with the hardened cookie, and the API works', async () => {

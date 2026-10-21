@@ -334,8 +334,8 @@ the plan (Cloudflare dashboard → Workers & Pages → Plans) before activating:
 
 **Setup (owner only; the password is never shown, sent, logged or put in the command history).** In `admin/`, in
 **Windows PowerShell 5.1, PowerShell 7 or Windows Terminal** (an interactive console; Git Bash's mintty is refused). The
-password is typed twice at a hidden prompt, never as an argument. Rules: 16 to 256 characters, at least 8 different
-characters, not containing "techpi" or "password"; a password-manager passphrase is recommended.
+password is typed twice at a hidden prompt, never as an argument. Rules: 8 to 256 characters, at least 5 different
+characters, not containing "techpi" or "password"; a long random password from a password manager is still recommended.
 - Local test: `node scripts/set-admin-password.mjs` writes `ADMIN_PASSWORD_HASH` to the git-ignored `.dev.vars`. The
   owner's git-ignored `wrangler.local.jsonc` also needs the `durable_objects` and `migrations` entries from
   `wrangler.local.example.jsonc` (`node scripts/check-local-config.mjs` checks both).
@@ -379,3 +379,9 @@ migration has run, Cloudflare may refuse a version that does not export that cla
 - No second factor for the password sign-in (GitHub sign-in has the account's own 2FA).
 - Client IP comes from Cloudflare's `CF-Connecting-IP`; behind shared networks several people share one budget.
 - Rate-limiter records are small and are reused; they are not purged on a schedule.
+- **Minimum password length is 8** (owner's decision; it was 16). Online guessing is limited to 5 attempts per client per
+  15 minutes and 20 per hour, which makes even a short password hard to guess over the network. The risk is an
+  **offline** attack if the Worker secret `ADMIN_PASSWORD_HASH` ever leaked: an 8-character password with 20 000
+  iterations would then fall quickly. The change only affects passwords set from now on; the existing verifier is not
+  changed. A longer, random password (for example from a password manager) is still strongly recommended, and the
+  rules (at least 5 different characters, no "techpi", no "password") are checked only when the password is set.

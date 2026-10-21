@@ -20,7 +20,9 @@
 import { b64url, randomToken, sameString, seal, cookie, clearCookie, SESSION_COOKIE, OAUTH_COOKIE, SESSION_TTL } from './session.js';
 
 export const ADMIN_EMAIL = 'info@techpi.eu';
-export const MIN_PASSWORD_LENGTH = 16;
+export const MIN_PASSWORD_LENGTH = 8;
+/** Fewest different characters a new password must contain (so "aaaaaaaa" and "abababab" are refused). */
+export const MIN_DISTINCT_CHARACTERS = 5;
 export const MAX_PASSWORD_LENGTH = 256;
 /** Cloudflare Workers refuse PBKDF2 above 100 000 iterations; below 10 000 is too weak. */
 export const MAX_ITERATIONS = 100000;
