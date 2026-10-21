@@ -7,29 +7,39 @@
  *   POST /api/<collection>/<slug>/draft     save the entry as a draft: commit to cms/<collection>/<slug>, open or update one
  *                                           draft pull request into the base branch
  *
- * Collections: `m0-demo` (Task A1, dummy content), `case-studies` (Tasks M1A and M1B: exactly the 18 published case
- * studies), `insights` (Task M2: exactly the 7 existing English articles) and `pages` (Task M3: exactly the 8 website
- * pages). Any other slug is refused. The repository, branch names and file paths are decided here, never taken from
- * the request. Saves are checked against the version the editor loaded (the file's Git blob SHA), so a stale or
- * conflicting edit is refused instead of overwriting newer work. Commit messages and pull requests carry no personal data.
+ * Collections: `case-studies` (the 18 published case studies), `insights` (the 7 English articles) and `pages` (the 8
+ * website pages); `m0-demo` (Task A1 test content) exists only in development with ENABLE_TEST_CONTENT=true. Any other
+ * slug is refused. The repository, base branch, draft branch names and file paths are decided here and in config.js,
+ * never taken from the request. The base branch is `main` only in production mode (config.js).
+ *
+ * Writes (Task M4): every write goes through assertDraftBranch, so only `cms/<collection>/<slug>` branches are ever
+ * created, reset or committed to; never `main`, never the base. A draft branch is reused while its draft pull request
+ * into the base is open. A leftover branch is reset to the base only when it is exactly the head of a closed pull request
+ * (a finished test or draft); an open pull request for another base, or commits no closed pull request accounts for,
+ * block the save instead. Saves are checked against the version the editor loaded (the file's Git blob SHA), so a stale
+ * or conflicting edit is refused instead of overwriting newer work. There is no publish, merge or delete endpoint:
+ * publishing is the owner's review and merge of the pull request on GitHub. Commits and PRs carry no personal data.
  */
 import { REPO, GitHubError, githubConfig, repoRequest } from './github.js';
 import * as demo from '../shared/m0-content.js';
 import * as study from '../shared/case-study-content.js';
 import * as insight from '../shared/insight-content.js';
 import * as page from '../shared/page-content.js';
+import { contentConfig } from './config.js';
 
 const json = (status, data) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
 const fail = (status, message, extra = {}) => json(status, { error: { message, ...extra } });
 const MAX_BODY = 64 * 1024;
-const DEFAULT_BASE = 'feat/techpi-admin-m3-website-pages';
 const PUBLIC_NOTE = 'This repository is public, so this draft is publicly visible on GitHub.';
+const REVIEW_NOTE = 'Saving in the admin is not publishing. To publish: review the changes in this pull request, wait for the required checks to pass, mark it ready for review and merge it. The website is rebuilt from the base branch after the merge.';
 
-/** The branch drafts are based on and pull requests target. Never `main`, and never a draft branch. */
-export function baseBranch(env) {
-  const b = String(env.CONTENT_BASE_BRANCH ?? '').trim() || DEFAULT_BASE;
-  if (b === 'main' || b.startsWith('cms/') || !/^[A-Za-z0-9._/-]{1,100}$/.test(b) || b.includes('..')) return null;
-  return b;
+/** The branch a save may write to: a `cms/<collection>/<slug>` draft branch, never the base and never `main`. */
+const DRAFT_BRANCH = /^cms\/(?:case-studies|insights|pages|m0-demo)\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
+export class WriteRefused extends Error {}
+/** Every write goes through this guard: no Worker code path can write to `main` or to the base branch. */
+export function assertDraftBranch(branch, base) {
+  if (!DRAFT_BRANCH.test(branch) || branch === base || branch === 'main') throw new WriteRefused(`Refused to write to "${branch}".`);
+  return branch;
 }
 
 /**
@@ -66,7 +76,7 @@ const COLLECTIONS = {
     allowed: study.isConnected, // exactly the 18 published case studies; any other slug is refused
     notAvailable: 'There is no such case study in the admin.',
     slugs: async () => study.CONNECTED_SLUGS,
-    summary: (slug, data) => ({ slug, name: data.facts?.name ?? slug, category: data.en?.category ?? '', summary: data.en?.summary ?? '', hasGreek: Boolean(data.el) }),
+    summary: (slug, data) => ({ slug, name: data.facts?.name ?? slug, category: data.en?.category ?? '', summary: data.en?.summary ?? '', hasGreek: Boolean(data.el), workGroup: data.facts?.workGroup ?? null, featured: Boolean(data.facts?.featured), order: data.facts?.order ?? null }),
     // The file must be valid and must belong to the slug it is stored under.
     parse: (text, slug) => {
       const doc = parseJson(text);
@@ -149,16 +159,24 @@ async function openDraftPr(env, base, branch) {
   return pr ? { number: pr.number, url: pr.html_url, draft: Boolean(pr.draft) } : null;
 }
 
+/** All pull requests (any state, any base) whose head is this draft branch. */
+async function prsForBranch(env, branch) {
+  const r = await repoRequest(env, 'GET', `/pulls?${qs({ state: 'all', head: `${REPO.owner}:${branch}`, per_page: '100' })}`);
+  return (r.data || []).filter((p) => p.head?.ref === branch && sameRepo(p));
+}
+
 async function session(env, identity) {
-  const cfg = githubConfig(env);
-  const base = baseBranch(env);
+  const gh = githubConfig(env);
+  const cfg = contentConfig(env);
   return json(200, {
     email: identity.email,
     repository: `${REPO.owner}/${REPO.name}`,
-    baseBranch: base,
-    github: { configured: cfg.configured && Boolean(base), missing: [...cfg.missing, ...(base ? [] : ['CONTENT_BASE_BRANCH'])] },
-    connected: { caseStudies: study.CONNECTED_SLUGS, insights: insight.INSIGHT_SLUGS, pages: page.PAGE_KEYS },
-    publishing: false,
+    mode: cfg.mode,
+    baseBranch: cfg.base,
+    github: { configured: gh.configured && cfg.ok, missing: gh.missing, problems: cfg.problems },
+    connected: { caseStudies: study.CONNECTED_SLUGS, insights: insight.INSIGHT_SLUGS, pages: page.PAGE_KEYS, testContent: cfg.testContent },
+    // Publishing is manual: the owner reviews and merges each draft pull request on GitHub. There is no merge endpoint.
+    publishing: 'github',
   });
 }
 
@@ -167,25 +185,37 @@ async function listEntries(env, base, col) {
   const prs = await repoRequest(env, 'GET', `/pulls?${qs({ state: 'open', base, per_page: '100' })}`);
   const drafts = new Map((prs.data || []).filter((p) => p.head?.ref?.startsWith(col.branchPrefix) && sameRepo(p)).map((p) => [p.head.ref.slice(col.branchPrefix.length), { number: p.number, url: p.html_url, draft: Boolean(p.draft) }]));
   const entries = [];
+  let missing = 0;
   for (const slug of slugs) {
     const file = await readFile(env, col.path(slug), base);
-    const data = file && col.parse(file.text, slug);
+    if (!file) { missing++; continue; }
+    const data = col.parse(file.text, slug);
     if (!data) continue;
     entries.push({ ...col.summary(slug, data), draft: drafts.get(slug) ?? null });
   }
+  // A base branch without any of the collection's files is a configuration mistake (for example main before the admin
+  // content has been merged into it): say so instead of showing an empty list.
+  if (slugs.length && missing === slugs.length) return fail(503, `The content files are not on ${base} yet. The admin must not be pointed at a branch before its content has been merged there.`);
   return json(200, { baseBranch: base, entries });
 }
 
 async function getEntry(env, base, col, slug) {
   const branch = col.branch(slug);
   const pr = await openDraftPr(env, base, branch);
-  const branchExists = pr ? Boolean(await refSha(env, branch)) : false;
-  const ref = pr && branchExists ? branch : base;
+  const branchSha = await refSha(env, branch);
+  const ref = pr && branchSha ? branch : base;
   const file = await readFile(env, col.path(slug), ref);
   if (!file) return fail(404, col.notAvailable);
   const content = col.parse(file.text, slug);
   if (!content) return fail(502, 'This entry’s file is not valid. It was not loaded.');
-  return json(200, { slug, content, sha: file.sha, source: ref === base ? 'published' : 'draft', baseBranch: base, draft: pr ? { branch, ...pr } : null });
+  // A draft branch that belongs to an open pull request for another base (for example an old development PR) is never
+  // reused or reset; the editor is told before anything is typed.
+  let elsewhere = null;
+  if (!pr && branchSha) {
+    const other = (await prsForBranch(env, branch)).find((p) => p.state === 'open');
+    if (other) elsewhere = { number: other.number, url: other.html_url, base: other.base?.ref ?? null };
+  }
+  return json(200, { slug, content, sha: file.sha, source: ref === base ? 'published' : 'draft', baseBranch: base, draft: pr ? { branch, ...pr } : null, elsewhere });
 }
 
 async function saveDraft(env, base, col, slug, request) {
@@ -216,16 +246,29 @@ async function saveDraft(env, base, col, slug, request) {
     return json(200, { slug, sha: current.sha, changed: false, commit: null, baseBranch: base, draft: pr ? { branch, ...pr } : null });
   }
 
+  assertDraftBranch(branch, base);
   if (!onDraft) {
     const baseSha = await refSha(env, base);
     if (!baseSha) return fail(503, 'The content base branch does not exist.');
-    if (branchSha) await repoRequest(env, 'PATCH', `/git/refs/heads/${branch}`, { body: { sha: baseSha, force: true } });
-    else await repoRequest(env, 'POST', '/git/refs', { body: { ref: `refs/heads/${branch}`, sha: baseSha } });
+    if (branchSha) {
+      // A leftover branch is reset only when it is exactly the head of a closed pull request (a finished or abandoned
+      // draft). An open pull request for another base, or commits that no closed pull request accounts for, are never
+      // overwritten: the save is refused and nothing changes.
+      const prs = await prsForBranch(env, branch);
+      const open = prs.find((p) => p.state === 'open');
+      if (open) return fail(409, `This entry already has an open draft pull request (#${open.number}) for another base branch (${open.base?.ref ?? 'unknown'}). Close or merge it on GitHub first. Nothing was saved.`, { blocked: true, pr: { number: open.number, url: open.html_url } });
+      if (!prs.some((p) => p.state === 'closed' && p.head?.sha === branchSha)) {
+        return fail(409, `The draft branch ${branch} holds work that is not part of a closed pull request. It was not overwritten and nothing was saved. Review or delete that branch on GitHub, then save again.`, { blocked: true });
+      }
+      await repoRequest(env, 'PATCH', `/git/refs/heads/${assertDraftBranch(branch, base)}`, { body: { sha: baseSha, force: true } });
+    } else {
+      await repoRequest(env, 'POST', '/git/refs', { body: { ref: `refs/heads/${assertDraftBranch(branch, base)}`, sha: baseSha } });
+    }
     branchSha = baseSha;
   }
 
   const put = await repoRequest(env, 'PUT', `/contents/${path}`, {
-    body: { message: col.commit(slug), content: b64encode(text), sha: current.sha, branch },
+    body: { message: col.commit(slug), content: b64encode(text), sha: current.sha, branch: assertDraftBranch(branch, base) },
     expect: [409],
   });
   if (put.status === 409) return fail(409, 'This entry changed since you opened it. Reload to see the latest version, then make your change again.', { conflict: true });
@@ -235,7 +278,7 @@ async function saveDraft(env, base, col, slug, request) {
   let draft = pr;
   if (!draft && commit) {
     const created = await repoRequest(env, 'POST', '/pulls', {
-      body: { title: col.prTitle(slug, checked.title).slice(0, 200), head: branch, base, draft: true, body: `${(page.isLegal(slug) && col.prBodyLegal) || col.prBody}\n\n${PUBLIC_NOTE}` },
+      body: { title: col.prTitle(slug, checked.title).slice(0, 200), head: assertDraftBranch(branch, base), base, draft: true, body: `${(page.isLegal(slug) && col.prBodyLegal) || col.prBody}\n\n${REVIEW_NOTE}\n\n${PUBLIC_NOTE}` },
       expect: [422],
     });
     draft = created.status === 422 ? await openDraftPr(env, base, branch) : { number: created.data.number, url: created.data.html_url, draft: Boolean(created.data.draft) };
@@ -249,10 +292,12 @@ export async function handleApi(request, env, identity) {
   const parts = url.pathname.replace(/\/+$/, '').split('/').slice(2); // after /api
   try {
     if (parts[0] === 'session' && parts.length === 1) return request.method === 'GET' ? await session(env, identity) : fail(405, 'Method not allowed.');
+    const cfg = contentConfig(env);
     const col = Object.hasOwn(COLLECTIONS, parts[0]) ? COLLECTIONS[parts[0]] : null;
-    if (!col) return fail(404, 'Not found.');
-    const base = baseBranch(env);
-    if (!base) return fail(503, 'The content base branch is not configured, or is not allowed in this version (never main).');
+    // The M0 test collection exists only in development, and only when explicitly enabled.
+    if (!col || (parts[0] === demo.COLLECTION.name && !cfg.testContent)) return fail(404, 'Not found.');
+    if (!cfg.ok) return fail(503, `The content branch is not configured: ${cfg.problems.join(' ')}`);
+    const base = cfg.base;
     if (!githubConfig(env).configured) return fail(503, `The GitHub connection is not configured (${githubConfig(env).missing.join(', ')}).`);
     if (parts.length === 1) return request.method === 'GET' ? await listEntries(env, base, col) : fail(405, 'Method not allowed.');
     const slug = parts[1];
@@ -262,6 +307,10 @@ export async function handleApi(request, env, identity) {
     if (parts.length === 3 && parts[2] === 'draft') return request.method === 'POST' ? await saveDraft(env, base, col, slug, request) : fail(405, 'Method not allowed.');
     return fail(404, 'Not found.');
   } catch (err) {
+    if (err instanceof WriteRefused) {
+      console.error('admin api: write refused by the draft-branch guard');
+      return fail(403, 'This save would write outside a draft branch, so it was refused. Nothing was saved.');
+    }
     if (err instanceof GitHubError) {
       if (err.detail) console.error(`github error: ${err.detail}`); // method, path and status only; never headers or tokens
       return fail(err.status, err.userMessage);

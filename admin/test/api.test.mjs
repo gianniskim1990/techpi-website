@@ -19,7 +19,7 @@ const PEM_PKCS1 = privateKey.export({ type: 'pkcs1', format: 'pem' });
 let gh;
 const env = (over = {}) => ({
   ACCESS_AUD: AUD, ADMIN_EMAILS: ADMIN, GITHUB_APP_ID: '123456', GITHUB_APP_INSTALLATION_ID: '7890', GITHUB_APP_PRIVATE_KEY: PEM_PKCS1,
-  CONTENT_BASE_BRANCH: BASE, ASSETS: { fetch: async () => new Response('app') }, ...over,
+  CONTENT_BASE_BRANCH: BASE, ENABLE_TEST_CONTENT: 'true', ASSETS: { fetch: async () => new Response('app') }, ...over,
 });
 const ctxFor = (email = ADMIN, aud = AUD) => ({ access: { aud, getIdentity: async () => ({ email }) } });
 const bodies = [];
@@ -48,7 +48,8 @@ test('session: identity comes from Cloudflare Access only; client-sent values ar
   assert.equal(r.data.email, ADMIN);
   assert.equal(r.data.repository, 'gianniskim1990/techpi-website');
   assert.equal(r.data.github.configured, true);
-  assert.equal(r.data.publishing, false);
+  assert.equal(r.data.publishing, 'github', 'publishing is manual, on GitHub');
+  assert.equal(r.data.mode, 'development');
 });
 
 test('API refuses missing Access, wrong audience and non-allowlisted users, before contacting GitHub', async () => {
@@ -221,8 +222,9 @@ test('an unchanged save does nothing: no branch, no commit, no pull request', as
   assert.equal(gh.state.writes.length, 0);
 });
 
-test('a leftover draft branch without an open pull request starts over from the base version', async () => {
+test('a leftover branch at the head of a closed pull request starts over from the base version', async () => {
   gh.state.branches['cms/m0-demo/m0-sample-article'] = { head: 'f'.repeat(40), files: new Map([[FILE, 'stale leftover']]) };
+  gh.addPr({ head: 'cms/m0-demo/m0-sample-article', base: BASE, state: 'closed' });
   const loaded = await call('GET', '/api/m0-demo/m0-sample-article');
   assert.equal(loaded.data.source, 'published');
   const c = structuredClone(loaded.data.content);
@@ -231,6 +233,18 @@ test('a leftover draft branch without an open pull request starts over from the 
   assert.equal(r.status, 200, JSON.stringify(r.data));
   assert.ok(gh.state.writes.some((w) => w.method === 'PATCH'));
   assert.ok(gh.fileOn('cms/m0-demo/m0-sample-article', FILE).includes('Fresh draft after a closed one'));
+});
+
+test('a leftover branch holding work no closed pull request accounts for is never overwritten', async () => {
+  gh.state.branches['cms/m0-demo/m0-sample-article'] = { head: 'e'.repeat(40), files: new Map([[FILE, 'unexpected work']]) };
+  const loaded = await call('GET', '/api/m0-demo/m0-sample-article');
+  const c = structuredClone(loaded.data.content);
+  c.en.title = 'An edit that must not destroy other work';
+  const r = await call('POST', '/api/m0-demo/m0-sample-article/draft', { body: { content: c, expectedSha: loaded.data.sha } });
+  assert.equal(r.status, 409);
+  assert.equal(r.data.error.blocked, true);
+  assert.equal(gh.fileOn('cms/m0-demo/m0-sample-article', FILE), 'unexpected work', 'the branch is untouched');
+  assert.equal(gh.state.writes.length, 0);
 });
 
 // ---------- server-side scope ----------

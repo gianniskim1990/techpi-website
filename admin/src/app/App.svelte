@@ -3,9 +3,7 @@
   import Icon from './components/Icon.svelte';
   import Toasts from './components/Toasts.svelte';
   import Dashboard from './views/Dashboard.svelte';
-  import ContentList from './views/ContentList.svelte';
-  import Editor from './views/Editor.svelte';
-  import Planned from './views/Planned.svelte';
+  import EntryList from './views/EntryList.svelte';
   import TestContentList from './views/TestContentList.svelte';
   import DraftEditor from './views/DraftEditor.svelte';
   import CaseStudyEditor from './views/CaseStudyEditor.svelte';
@@ -13,28 +11,22 @@
   import PagesList from './views/PagesList.svelte';
   import PageEditor from './views/PageEditor.svelte';
   import { route, parts } from './lib/router.svelte.js';
-  import { counts } from './lib/store.svelte.js';
   import { session, loadSession } from './lib/session.svelte.js';
 
   loadSession();
-  const nav = [
+  const connected = $derived(session.data?.connected ?? null);
+  // Only what works is in the menu. Counts are the items the admin manages (from the Worker), not a snapshot.
+  const nav = $derived([
     { section: '', label: 'Dashboard', icon: 'dashboard' },
-    { section: 'test-content', label: 'Test content', icon: 'branch', live: true },
-    { section: 'pages', label: 'Website pages', icon: 'pages', count: () => counts().pages },
-    { section: 'case-studies', label: 'Case studies', icon: 'portfolio', count: () => counts().caseStudies },
-    { section: 'articles', label: 'Articles', icon: 'articles', count: () => counts().articles },
-    { section: 'media', label: 'Media library', icon: 'media' },
-    { section: 'seo', label: 'SEO', icon: 'seo' },
-    { section: 'settings', label: 'Settings', icon: 'settings' },
-  ];
+    { section: 'pages', label: 'Website pages', icon: 'pages', count: connected?.pages?.length },
+    { section: 'case-studies', label: 'Case studies', icon: 'portfolio', count: connected?.caseStudies?.length },
+    { section: 'articles', label: 'Articles', icon: 'articles', count: connected?.insights?.length },
+    ...(connected?.testContent ? [{ section: 'test-content', label: 'Test content', icon: 'branch', test: true }] : []),
+  ]);
   let menuOpen = $state(false);
   const current = $derived(parts());
-  // Case studies connected to GitHub (from the Worker); every other one is the read-only snapshot.
-  const connectedCase = $derived(current.section === 'case-studies' && current.slug && session.data?.connected?.caseStudies?.includes(current.slug));
-  const connectedArticle = $derived(current.section === 'articles' && current.slug && session.data?.connected?.insights?.includes(current.slug));
-  const pagesConnected = $derived(Boolean(session.data?.connected?.pages?.length));
-  const connectedPage = $derived(current.section === 'pages' && current.slug && session.data?.connected?.pages?.includes(current.slug));
-  const connectedSection = $derived((current.section === 'case-studies' && session.data?.connected?.caseStudies?.length) || (current.section === 'articles' && session.data?.connected?.insights?.length) || (current.section === 'pages' && pagesConnected));
+  const allowed = (list, slug) => Boolean(list?.includes(slug));
+  const mode = $derived(session.data?.mode ?? null);
   $effect(() => { route.path; menuOpen = false; });
 </script>
 
@@ -46,12 +38,12 @@
     </a>
     <nav aria-label="Main">
       <ul>
-        {#each nav as item}
+        {#each nav as item (item.section)}
           <li>
             <a href="#/{item.section}" aria-current={current.section === item.section ? 'page' : undefined}>
               <Icon name={item.icon} />
               <span>{item.label}</span>
-              {#if item.live}<span class="live" title="Connected to GitHub">Live</span>{:else if item.count}<span class="count" title="Read-only snapshot">{item.count()}</span>{/if}
+              {#if item.test}<span class="live" title="Development only">Test</span>{:else if item.count}<span class="count" title="Items managed in the admin">{item.count}</span>{/if}
             </a>
           </li>
         {/each}
@@ -67,7 +59,7 @@
           <div><strong class="email" title={session.data.email}>{session.data.email}</strong><span>Signed in with Cloudflare Access</span></div>
         {:else}
           <span class="avatar" aria-hidden="true">?</span>
-          <div><strong>{session.loading ? 'Checking sign-in…' : 'Not connected'}</strong><span>{session.loading ? '' : 'Only the snapshot sections work'}</span></div>
+          <div><strong>{session.loading ? 'Checking sign-in…' : 'Not signed in'}</strong><span>{session.loading ? '' : 'Reload to sign in again'}</span></div>
         {/if}
       </div>
     </div>
@@ -76,49 +68,55 @@
   {#if menuOpen}<button class="scrim" aria-label="Close menu" onclick={() => (menuOpen = false)}></button>{/if}
 
   <div class="main">
-    <div class="notice" role="note">
-      <Icon name="info" size={15} />
-      {#if current.section === 'test-content' || connectedCase || connectedArticle || connectedSection}
-        <span><strong>Connected.</strong> Saves go to a GitHub draft branch and draft pull request. Nothing is published or merged from here.</span>
-      {:else}
-        <span><strong>Not connected here.</strong> Test content, the 8 website pages, the 18 case studies and the 7 Insights articles are connected; the media library, SEO overview and settings are not built yet.</span>
-      {/if}
-    </div>
+    {#if mode === 'development' && session.data?.baseBranch}
+      <div class="notice" role="note">
+        <Icon name="info" size={15} />
+        <span><strong>Development content.</strong> Reading from <code>{session.data.baseBranch}</code>; drafts target that branch, not the live website.</span>
+      </div>
+    {/if}
     {#if session.data && !session.data.github.configured}
       <div class="notice bad" role="alert">
         <Icon name="alert" size={15} />
-        <span><strong>GitHub is not connected yet.</strong> Missing settings: {session.data.github.missing.join(', ')}. See docs/admin/A1.md.</span>
+        <span><strong>Content is not available.</strong> {[...session.data.github.missing.map((m) => `${m} is not set.`), ...(session.data.github.problems ?? [])].join(' ')}</span>
       </div>
     {/if}
-        <header class="topbar">
+            <header class="topbar">
       <button class="btn btn-ghost menu" type="button" aria-label="Open menu" aria-expanded={menuOpen} onclick={() => (menuOpen = true)}><Icon name="menu" /></button>
       <span class="crumb">{nav.find((n) => n.section === current.section)?.label ?? 'Dashboard'}</span>
     </header>
     <main>
-      {#if current.section === ''}
+      {#if session.loading && !session.data}
+        <p class="hint">Checking your sign-in…</p>
+      {:else if !session.data}
+        <div class="card state" role="alert">
+          <h1>The admin could not load</h1>
+          <p>{session.error ?? 'Your session may have ended.'} Reload the page to sign in again.</p>
+          <button class="btn btn-secondary btn-sm" type="button" onclick={loadSession}>Try again</button>
+        </div>
+      {:else if current.section === ''}
         <Dashboard />
-      {:else if current.section === 'test-content' && current.slug}
-        {#key route.path}<DraftEditor slug={current.slug} />{/key}
-      {:else if current.section === 'test-content'}
-        <TestContentList />
-      {:else if connectedCase}
-        {#key route.path}<CaseStudyEditor slug={current.slug} />{/key}
-      {:else if connectedArticle}
-        {#key route.path}<InsightEditor slug={current.slug} />{/key}
-      {:else if connectedPage}
-        {#key route.path}<PageEditor pageKey={current.slug} />{/key}
-      {:else if current.section === 'pages' && pagesConnected && !current.slug}
+      {:else if current.section === 'pages' && !current.slug}
         <PagesList />
-      {:else if current.section === 'pages' && session.loading}
-        <p class="hint">Checking the connection…</p>
-      {:else if (current.section === 'case-studies' || current.section === 'articles') && current.slug && session.loading}
-        <p class="hint">Checking the connection…</p>
-      {:else if (current.section === 'case-studies' || current.section === 'articles') && current.slug}
-        {#key route.path}<Editor type={current.section} slug={current.slug} />{/key}
-      {:else if current.section === 'case-studies' || current.section === 'articles'}
-        {#key current.section}<ContentList type={current.section} />{/key}
+      {:else if current.section === 'pages' && allowed(connected.pages, current.slug)}
+        {#key route.path}<PageEditor pageKey={current.slug} />{/key}
+      {:else if current.section === 'case-studies' && !current.slug}
+        {#key current.section}<EntryList type="case-studies" />{/key}
+      {:else if current.section === 'case-studies' && allowed(connected.caseStudies, current.slug)}
+        {#key route.path}<CaseStudyEditor slug={current.slug} />{/key}
+      {:else if current.section === 'articles' && !current.slug}
+        {#key current.section}<EntryList type="articles" />{/key}
+      {:else if current.section === 'articles' && allowed(connected.insights, current.slug)}
+        {#key route.path}<InsightEditor slug={current.slug} />{/key}
+      {:else if current.section === 'test-content' && connected.testContent && current.slug}
+        {#key route.path}<DraftEditor slug={current.slug} />{/key}
+      {:else if current.section === 'test-content' && connected.testContent}
+        <TestContentList />
       {:else}
-        <Planned section={current.section} />
+        <div class="card state">
+          <h1>Not found</h1>
+          <p>This part of the admin does not exist.</p>
+          <a class="btn btn-secondary btn-sm" href="#/">Back to the dashboard</a>
+        </div>
       {/if}
     </main>
   </div>
@@ -132,6 +130,8 @@
     background: var(--warn-soft); color: var(--warn); font-size: var(--text-sm); border-bottom: 1px solid #efd9ae;
   }
   .notice strong { font-weight: 600; }
+  .notice code { font-size: var(--text-xs); background: rgb(255 255 255 / 0.5); padding: 0 4px; border-radius: 3px; }
+  .state { padding: 24px; display: grid; gap: 12px; justify-items: start; max-width: 640px; }
   .notice.bad { background: var(--danger-soft, #fbe9e7); color: var(--danger); border-bottom-color: #e7b4ae; }
   .live { margin-left: auto; font-size: var(--text-xs); font-weight: 600; color: var(--ink); background: var(--cyan); padding: 0 6px; border-radius: 4px; }
   .email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 190px; }

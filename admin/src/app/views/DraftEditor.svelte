@@ -5,6 +5,7 @@
    * request, which repeated saves update. Publishing is not part of Task A1.
    */
   import Icon from '../components/Icon.svelte';
+  import PublishPanel from '../components/PublishPanel.svelte';
   import StatusBadge from '../components/StatusBadge.svelte';
   import SeoSnippet from '../components/SeoSnippet.svelte';
   import Dialog from '../components/Dialog.svelte';
@@ -193,8 +194,7 @@
             <button class="btn btn-primary" type="button" onclick={save} disabled={!dirty || saving} aria-busy={saving}>{saving ? 'Saving to GitHub…' : 'Save draft'}</button>
             {#if dirty && !saving}<button class="btn btn-ghost" type="button" onclick={discard}>Discard changes</button>{/if}
           </div>
-          <button class="btn btn-secondary" type="button" disabled aria-describedby="no-publish"><Icon name="upload" size={16} />Publish</button>
-          <p class="hint" id="no-publish">Publishing is not available yet. A saved draft is reviewed and merged on GitHub as a separate, deliberate step.</p>
+          <PublishPanel {draft} />
           {#if saveError}<p class="error-text" role="alert">{saveError}</p>{/if}
           {#if tried && !check.ok}<p class="error-text">Fix the highlighted fields to save.</p>{/if}
         </div>

@@ -6,6 +6,7 @@
    * editor shows the ones this case study has. Facts, images and the set of sections are locked. No publishing.
    */
   import Icon from '../components/Icon.svelte';
+  import PublishPanel from '../components/PublishPanel.svelte';
   import StatusBadge from '../components/StatusBadge.svelte';
   import SeoSnippet from '../components/SeoSnippet.svelte';
   import Dialog from '../components/Dialog.svelte';
@@ -16,9 +17,9 @@
   import { FIELDS, LOCALES, validateEditable } from '../../../shared/case-study-content.js';
 
   let { slug } = $props();
-  // Thumbnails of the project captures (generated for the admin by scripts/make-demo-snapshot.mjs).
-  const thumbs = import.meta.glob('../demo/media/*.webp', { eager: true, query: '?url', import: 'default' });
-  const media = (id) => thumbs[`../demo/media/${id}.webp`] ?? null;
+  // Thumbnails of the project captures (480 px WebP copies of src/assets/projects, made for the admin).
+  const thumbs = import.meta.glob('../thumbs/*.webp', { eager: true, query: '?url', import: 'default' });
+  const media = (id) => thumbs[`../thumbs/${id}.webp`] ?? null;
   const CAPABILITY = { 'digital-products': 'Digital products', 'web-experiences': 'Web experiences', intelligence: 'Intelligence', 'digital-visibility': 'Digital visibility' };
 
   let load = $state({ loading: true, error: null });
@@ -28,6 +29,7 @@
   let sha = $state(null);
   let source = $state('published');
   let draft = $state(null);
+  let elsewhere = $state(null); // an open draft PR for this item that targets another branch
   let lang = $state('en');
   let tried = $state(false);
   let saving = $state(false);
@@ -46,6 +48,7 @@
       sha = r.sha;
       source = r.source;
       draft = r.draft;
+      elsewhere = r.elsewhere ?? null;
       tried = false;
       serverErrors = {};
       saveError = null;
@@ -177,6 +180,10 @@
     </div>
   </header>
 
+  {#if elsewhere}
+    <p class="blocked" role="alert"><Icon name="alert" size={16} /><span>This item already has an open draft pull request (<a href={elsewhere.url} target="_blank" rel="noopener">#{elsewhere.number}</a>) for another branch ({elsewhere.base}). Saving is blocked until it is closed or merged on GitHub, so nothing is overwritten.</span></p>
+  {/if}
+
   <div class="layout">
     <div class="col">
       <div class="langs" role="tablist" aria-label="Language">
@@ -271,8 +278,7 @@
             <button class="btn btn-primary" type="button" onclick={save} disabled={!dirty || saving} aria-busy={saving}>{saving ? 'Saving to GitHub…' : 'Save draft'}</button>
             {#if dirty && !saving}<button class="btn btn-ghost" type="button" onclick={discard}>Discard changes</button>{/if}
           </div>
-          <button class="btn btn-secondary" type="button" disabled aria-describedby="no-publish"><Icon name="upload" size={16} />Publish</button>
-          <p class="hint" id="no-publish">Publishing is not available yet. A saved draft does not change techpi.eu: it is reviewed and merged on GitHub as a separate, deliberate step.</p>
+          <PublishPanel {draft} />
           {#if saveError}<p class="error-text" role="alert">{saveError}</p>{/if}
           {#if tried && !check.ok}<p class="error-text">Fix the highlighted fields to save.</p>{/if}
         </div>
@@ -327,6 +333,7 @@
 {/if}
 
 <style>
+  .blocked { display: flex; gap: 8px; align-items: flex-start; margin: 0 0 16px; padding: 10px 14px; border-radius: var(--radius); background: var(--danger-soft, #fbe9e7); color: var(--danger); font-size: var(--text-sm); }
   .crumbs a { display: inline-flex; align-items: center; gap: 4px; color: var(--slate); text-decoration: none; font-size: var(--text-sm); font-weight: 500; }
   .crumbs a:hover { color: var(--blue); }
   .loading { margin-top: 16px; }

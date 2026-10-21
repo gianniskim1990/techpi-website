@@ -3,24 +3,16 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "TechPi admin panel (custom admin, Task A1). Separate from the public website: its own dependencies, build and Worker.",
+  "description": "TechPi Admin: the custom content admin for techpi.eu. Separate from the public website: its own dependencies, build and Worker.",
   "engines": {
     "node": "^24.0.0"
   },
   "scripts": {
     "dev": "vite",
-    "dev:m0": "vite --mode m0",
     "build": "vite build",
     "test": "node --test --test-concurrency=1 \"test/**/*.test.mjs\"",
     "test:e2e": "vite build && node test/access-e2e.mjs",
     "worker:dev": "wrangler dev"
-  },
-  "dependencies": {
-    "@sveltia/cms": "0.229.0",
-    "@tiptap/core": "3.31.4",
-    "@tiptap/extension-link": "3.31.4",
-    "@tiptap/pm": "3.31.4",
-    "@tiptap/starter-kit": "3.31.4"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "7.3.1",

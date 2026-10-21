@@ -1,5 +1,7 @@
 {
-  // TechPi admin (M0). NOT deployed: deploying needs the owner's approval and Access set up first (docs/admin/M0.md).
+  // TechPi Admin. NOT deployed. This committed configuration stays in development mode against the M4 branch: it must
+  // not point at main before the consolidated admin release has been merged there. The production values are in
+  // wrangler.production.example.jsonc and are applied at go-live (docs/admin/M4-GO-LIVE.md, step F), with approval.
   "name": "techpi-admin",
   "main": "worker/index.js",
   "compatibility_date": "2026-10-02",
@@ -10,22 +12,20 @@
     "run_worker_first": true,
     "not_found_handling": "single-page-application"
   },
-  // No public workers.dev hostname and no preview URLs: the admin is reachable only on its Access-protected domain.
+  // No public workers.dev hostname and no preview URLs: the admin is reachable only on its Access-protected hostname.
   "workers_dev": false,
   "preview_urls": false,
-  // Empty on purpose: the Worker refuses every request (503) until the owner sets both at deploy time.
-  // ACCESS_AUD = the Access application's audience tag; ADMIN_EMAILS = comma-separated administrator emails.
-  // Neither value is committed to this public repository.
-  //
-  // GitHub App (Task A1, docs/admin/A1.md). The App ID and installation ID are not secret but are left empty until
-  // the owner creates and installs the App; the content API answers 503 "not configured" until then.
-  // The private key is NEVER a var: set it with `wrangler secret put GITHUB_APP_PRIVATE_KEY` (or .dev.vars locally,
-  // which is git-ignored). CONTENT_BASE_BRANCH is where drafts are based and pull requests target; `main` is refused.
+  // Empty on purpose: the Worker refuses every request (503) until the owner sets them.
+  // ACCESS_AUD = the Access application's audience tag; ADMIN_EMAILS = comma-separated administrator emails;
+  // GITHUB_APP_ID and GITHUB_APP_INSTALLATION_ID = the GitHub App (not secret, but set only with the deployment).
+  // The private key is NEVER a var: `wrangler secret put GITHUB_APP_PRIVATE_KEY` (or .dev.vars locally, git-ignored).
+  // CONTENT_MODE / CONTENT_BASE_BRANCH: see worker/config.js. main is accepted only with CONTENT_MODE=production.
   "vars": {
     "ACCESS_AUD": "",
     "ADMIN_EMAILS": "",
     "GITHUB_APP_ID": "",
     "GITHUB_APP_INSTALLATION_ID": "",
-    "CONTENT_BASE_BRANCH": "feat/techpi-admin-m3-website-pages"
+    "CONTENT_MODE": "development",
+    "CONTENT_BASE_BRANCH": "feat/techpi-admin-m4-production-readiness"
   }
 }

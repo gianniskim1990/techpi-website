@@ -19,11 +19,12 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const kill = (p) => { try { process.platform === 'win32' ? execSync(`taskkill /pid ${p.pid} /T /F`, { stdio: 'ignore' }) : p.kill('SIGTERM'); } catch {} };
 const serve = process.argv.includes('--serve');
 
-const BASE = 'feat/techpi-admin-m3-website-pages';
+const BASE = 'feat/techpi-admin-m4-production-readiness';
 const CS_FILE = 'content/case-studies/rocketeer/index.json';
 const FILE = 'content/m0-demo/m0-sample-article/index.json';
 const read = (rel) => fs.readFileSync(path.join(root, '..', rel), 'utf8').replace(/\r\n/g, '\n');
-const sample = read(FILE);
+// The M0 test collection's sample (the dummy file itself is no longer in the repository; Task M4).
+const sample = JSON.stringify({ en: { title: 'M0 sample article for the admin proof of concept', summary: 'Dummy content used only to test the TechPi admin.', body: 'Placeholder text for the admin test.' } }, null, 2) + '\n';
 const csSample = read(CS_FILE);
 const pgFiles = Object.fromEntries(PAGE_KEYS.map((key) => [`content/pages/${key}/index.json`, read(`content/pages/${key}/index.json`)]));
 const inFiles = Object.fromEntries(INSIGHT_SLUGS.map((slug) => [`content/insights/${slug}/index.json`, read(`content/insights/${slug}/index.json`)]));

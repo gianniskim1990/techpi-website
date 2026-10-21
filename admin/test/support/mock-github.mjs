@@ -69,6 +69,7 @@ export function createMockGitHub({ publicKey, appId = '123456', installationId =
     }
     if (rest === '/git/refs' && method === 'POST') {
       const name = body.ref.replace(/^refs\/heads\//, '');
+      if (name === 'main') return json(422, { message: 'Protected branch' });
       if (state.branches[name]) return json(422, { message: 'Reference already exists' });
       const from = Object.values(state.branches).find((b) => b.head === body.sha);
       if (!from) return json(422, { message: 'Object does not exist' });
@@ -110,7 +111,11 @@ export function createMockGitHub({ publicKey, appId = '123456', installationId =
     if (rest === '/pulls' && method === 'GET') {
       const head = u.searchParams.get('head');
       const base = u.searchParams.get('base');
-      const list = state.prs.filter((p) => p.state === 'open' && (!base || p.base.ref === base) && (!head || `${OWNER}:${p.head.ref}` === head));
+      const want = u.searchParams.get('state') || 'open';
+      const list = state.prs
+        .filter((p) => (want === 'all' || p.state === want) && (!base || p.base.ref === base) && (!head || `${OWNER}:${p.head.ref}` === head))
+        // Like GitHub: an open PR's head SHA follows its branch; a closed PR keeps the SHA it was closed at.
+        .map((p) => ({ ...p, head: { ...p.head, sha: p.state === 'open' ? state.branches[p.head.ref]?.head ?? null : p.closedSha } }));
       return json(200, list);
     }
     if (rest === '/pulls' && method === 'POST') {
@@ -138,6 +143,14 @@ export function createMockGitHub({ publicKey, appId = '123456', installationId =
     failNext: (match, status) => state.failures.push({ match, status }),
     failNetworkNext: (match) => state.failures.push({ match, network: true }),
     /** Writes a file on a branch directly (simulates someone else changing it). */
+    /** Closes a pull request (as the owner would on GitHub); its head SHA is frozen at the branch's current head. */
+    closePr: (number) => { const p = state.prs.find((x) => x.number === number); p.state = 'closed'; p.closedSha = state.branches[p.head.ref]?.head ?? null; },
+    /** Adds a pull request created outside the admin (for example an old development draft). */
+    addPr: ({ head, base, state: st = 'open' }) => {
+      const number = 100 + state.prs.length;
+      state.prs.push({ number, state: st, draft: true, title: 'external', body: '', html_url: `https://github.com/${OWNER}/${REPO}/pull/${number}`, head: { ref: head, repo: { full_name: `${OWNER}/${REPO}` } }, base: { ref: base }, closedSha: st === 'closed' ? state.branches[head]?.head ?? null : undefined });
+      return number;
+    },
     externalEdit: (branch, file, text) => { const b = state.branches[branch]; b.files.set(file, text); b.head = commitSha(); },
     fileOn: (branch, file) => state.branches[branch]?.files.get(file),
     /** Serves the mock over HTTP on 127.0.0.1 (for wrangler dev end-to-end tests). */

@@ -1,196 +1,135 @@
 <script>
+  /**
+   * The overview, from live data only (Task M4): what the admin manages on the content branch, the draft pull requests
+   * that are open, and how publishing works. No deployment date, version or history is shown: the admin does not know
+   * them, and GitHub and Cloudflare are the place to see them.
+   */
   import { untrack } from 'svelte';
   import Icon from '../components/Icon.svelte';
-  import StatusBadge from '../components/StatusBadge.svelte';
-  import { store, counts, createDraft } from '../lib/store.svelte.js';
-  import { navigate } from '../lib/router.svelte.js';
   import { session } from '../lib/session.svelte.js';
   import { caseStudies, loadCaseStudies } from '../lib/case-studies.svelte.js';
   import { insights, loadInsights } from '../lib/insights.svelte.js';
   import { pages, loadPages } from '../lib/pages.svelte.js';
 
-  const c = $derived(counts());
-  const drafts = $derived(store.entries.filter((e) => e.status !== 'published'));
-  const latest = store.history[0];
-  const fmt = (iso) => new Date(iso).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-  const day = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  // Refreshed each time the Dashboard opens: drafts may have been saved, merged or closed elsewhere.
+  $effect(() => { untrack(() => { loadPages(); loadCaseStudies(); loadInsights(); }); });
 
-  const connected = $derived(Boolean(session.data?.connected?.caseStudies?.length));
-  // Refreshed each time the Dashboard opens: drafts may have been saved elsewhere.
-  const articlesConnected = $derived(Boolean(session.data?.connected?.insights?.length));
-  $effect(() => { if (connected) untrack(loadCaseStudies); });
-  $effect(() => { if (articlesConnected) untrack(loadInsights); });
-  const pagesConnected = $derived(Boolean(session.data?.connected?.pages?.length));
-  $effect(() => { if (pagesConnected) untrack(loadPages); });
-  /** Open draft pull requests of connected case studies, from GitHub. */
-  const caseDrafts = $derived([
-    ...caseStudies.entries.filter((e) => e.draft).map((e) => ({ ...e, type: 'case-studies', label: e.name, kind: 'Case study' })),
-    ...insights.entries.filter((e) => e.draft).map((e) => ({ ...e, type: 'articles', label: e.title, kind: 'Article' })),
-    ...pages.entries.filter((e) => e.draft).map((e) => ({ ...e, type: 'pages', label: e.name, kind: 'Website page' })),
+  const base = $derived(session.data?.baseBranch ?? null);
+  const production = $derived(session.data?.mode === 'production');
+  const COLLECTIONS = $derived([
+    { key: 'pages', label: 'Website pages', icon: 'pages', href: '#/pages', store: pages, expected: session.data?.connected?.pages?.length ?? 0, title: (e) => e.name, meta: 'English and Greek' },
+    { key: 'case-studies', label: 'Case studies', icon: 'portfolio', href: '#/case-studies', store: caseStudies, expected: session.data?.connected?.caseStudies?.length ?? 0, title: (e) => e.name, meta: 'English and Greek' },
+    { key: 'articles', label: 'Articles', icon: 'articles', href: '#/articles', store: insights, expected: session.data?.connected?.insights?.length ?? 0, title: (e) => e.title, meta: 'English only' },
   ]);
-  function newEntry(type) { navigate(`/${type}/${createDraft(type)}`); }
+  const drafts = $derived(COLLECTIONS.flatMap((c) => c.store.entries.filter((e) => e.draft).map((e) => ({ ...e, kind: c.label, title: c.title(e), href: `${c.href}/${e.slug}` }))));
+  const loading = $derived(COLLECTIONS.some((c) => c.store.loading && !c.store.loaded));
+  const errors = $derived(COLLECTIONS.filter((c) => c.store.error));
 </script>
 
 <header class="head">
-  <div>
-    <h1>Website overview</h1>
-    <p class="sub">Everything on techpi.eu, in English and Greek.</p>
-  </div>
-  <div class="actions">
-    <button class="btn btn-secondary" type="button" onclick={() => newEntry('articles')} disabled={articlesConnected} title={articlesConnected ? 'Adding a new article is not available yet' : undefined}><Icon name="plus" size={16} />New article</button>
-    <button class="btn btn-primary" type="button" onclick={() => newEntry('case-studies')} disabled={connected} title={connected ? 'Adding a new case study is not available yet' : undefined}><Icon name="plus" size={16} />New case study</button>
-  </div>
+  <h1>Overview</h1>
+  <p class="sub">The content of techpi.eu that this admin manages, and the drafts waiting for review.</p>
 </header>
 
-<section class="kpis" aria-label="Content">
-  <a class="kpi card" href="#/pages">
-    <span class="k-label"><Icon name="pages" size={16} />Website pages</span>
-    <span class="k-value">{c.pages}</span>
-    <span class="k-meta">English and Greek</span>
-  </a>
-  <a class="kpi card" href="#/case-studies">
-    <span class="k-label"><Icon name="portfolio" size={16} />Case studies</span>
-    <span class="k-value">{c.caseStudies}</span>
-    <span class="k-meta">{c.client} client · {c.earlier} earlier work · {c.featured} featured</span>
-  </a>
-  <a class="kpi card" href="#/articles">
-    <span class="k-label"><Icon name="articles" size={16} />Articles</span>
-    <span class="k-value">{c.articles}</span>
-    <span class="k-meta">English only</span>
-  </a>
-  <div class="kpi card" class:attention={c.drafts + caseDrafts.length > 0}>
-    <span class="k-label"><Icon name="clock" size={16} />Drafts</span>
-    <span class="k-value">{c.drafts + caseDrafts.length}</span>
-    <span class="k-meta">{caseDrafts.length ? `${caseDrafts.length} on GitHub, not published` : c.drafts ? 'Waiting to be published' : 'Nothing waiting'}</span>
+<section class="source card" aria-labelledby="src-h">
+  <div class="card-body">
+    <h2 id="src-h" class="visually-hidden">Content source</h2>
+    {#if production}
+      <p><Icon name="globe" size={16} /><span><strong>Published content: <code>main</code></strong>, the branch techpi.eu is built from. Saving creates a draft on GitHub; nothing changes on the website until a draft is reviewed and merged.</span></p>
+    {:else if base}
+      <p class="dev"><Icon name="info" size={16} /><span><strong>Development content: <code>{base}</code>.</strong> This is not the live website. Drafts target this branch.</span></p>
+    {:else}
+      <p class="dev"><Icon name="alert" size={16} /><span><strong>No content branch is configured.</strong> The content cannot be loaded.</span></p>
+    {/if}
   </div>
 </section>
 
+<section class="kpis" aria-label="Content">
+  {#each COLLECTIONS as c (c.key)}
+    {@const open = c.store.entries.filter((e) => e.draft).length}
+    <a class="kpi card" href={c.href}>
+      <span class="k-label"><Icon name={c.icon} size={16} />{c.label}</span>
+      <span class="k-value">{c.store.loaded ? c.store.entries.length : '…'}</span>
+      <span class="k-meta">
+        {#if c.store.loaded && c.store.entries.length !== c.expected}<span class="warn">{c.expected - c.store.entries.length} of {c.expected} could not be read</span>
+        {:else if c.store.loaded}{c.meta} · {open ? `${open} open ${open === 1 ? 'draft' : 'drafts'}` : 'no open drafts'}
+        {:else}Loading from GitHub…{/if}
+      </span>
+    </a>
+  {/each}
+</section>
+
+{#if errors.length}
+  <div class="card errors" role="alert">
+    {#each errors as c (c.key)}<p><Icon name="alert" size={15} /><span>{c.label}: {c.store.error}</span></p>{/each}
+  </div>
+{/if}
+
 <div class="grid">
-  <section class="card publish" aria-labelledby="pub-h">
-    <div class="card-head"><h2 id="pub-h">Publishing</h2></div>
-    <div class="card-body">
-      <div class="live">
-        <span class="pulse" aria-hidden="true"></span>
-        <div>
-          <strong>techpi.eu is live</strong>
-          <span>Last published {day(latest.date)}</span>
-        </div>
-        <a class="btn btn-secondary btn-sm" href="https://techpi.eu" target="_blank" rel="noopener">Open site<Icon name="external" size={14} /></a>
-      </div>
-      <dl class="facts">
-        <div><dt>Latest change</dt><dd>{latest.message}</dd></div>
-        <div><dt>Version</dt><dd><code>{latest.sha}</code></dd></div>
-        <div><dt>How publishing works</dt><dd>Every save is a draft on GitHub, not on the live site. The repository is public, so drafts are visible on GitHub. Publishing (not built yet) will rebuild the site and go live only if all checks pass.</dd></div>
-      </dl>
-      <p class="pending">
-        <Icon name="info" size={16} />
-        <span>Publishing is not connected, so the status above is a snapshot. Saving drafts to GitHub works for <a href="#/test-content">Test content</a>, the <a href="#/pages">8 website pages</a>, the <a href="#/case-studies">18 case studies</a> and the <a href="#/articles">7 Insights articles</a>.</span>
-      </p>
-    </div>
-  </section>
-
   <section class="card" aria-labelledby="drafts-h">
-    <div class="card-head"><h2 id="drafts-h">Drafts in progress</h2></div>
-    {#if caseDrafts.length}
+    <div class="card-head"><h2 id="drafts-h">Open drafts</h2><span class="meta">{drafts.length}</span></div>
+    {#if loading}
+      <p class="empty hint">Loading from GitHub…</p>
+    {:else if drafts.length}
       <ul class="list">
-        {#each caseDrafts as d}
+        {#each drafts as d (d.href)}
           <li>
-            <a href="#/{d.type}/{d.slug}">
-              <span class="name">{d.label}</span>
-              <span class="meta">{d.kind} · draft pull request #{d.draft.number} on GitHub</span>
+            <a class="name-link" href={d.href}>
+              <span class="name">{d.title}</span>
+              <span class="meta">{d.kind} · draft pull request #{d.draft.number}</span>
             </a>
-            <StatusBadge status="changes" />
+            <a class="btn btn-secondary btn-sm" href={d.draft.url} target="_blank" rel="noopener">Review &amp; publish on GitHub<Icon name="external" size={14} /></a>
           </li>
         {/each}
       </ul>
-    {/if}
-    {#if drafts.length}
-      <ul class="list">
-        {#each drafts as d}
-          <li>
-            <a href="#/{d.type}/{d.slug}">
-              <span class="name">{d.saved.en.title || 'Untitled'}</span>
-              <span class="meta">{d.type === 'articles' ? 'Article' : 'Case study'} · {fmt(d.updatedAt)}</span>
-            </a>
-            <StatusBadge status={d.status} />
-          </li>
-        {/each}
-      </ul>
-    {:else if !caseDrafts.length}
+    {:else}
       <div class="empty">
-        <p><strong>No drafts.</strong> Everything you see on techpi.eu is published.</p>
-        <p class="hint">Start with a new case study or article, or open an existing one to edit it.</p>
+        <p><strong>No open drafts.</strong> Everything shown in the admin is what is on {base ? `the content branch` : 'GitHub'}.</p>
       </div>
     {/if}
   </section>
 
-  <section class="card activity" aria-labelledby="act-h">
-    <div class="card-head"><h2 id="act-h">Recent activity</h2></div>
-    <ol class="timeline">
-      {#each store.activity as a}
-        <li class="you"><span class="when">{fmt(a.at)}</span><a href="#/{a.type}/{a.slug}">{a.text}</a></li>
-      {/each}
-      {#each store.history as h}
-        <li><span class="when">{day(h.date)}</span><span>{h.message}</span></li>
-      {/each}
+  <section class="card how" aria-labelledby="how-h">
+    <div class="card-head"><h2 id="how-h">How publishing works</h2></div>
+    <ol class="card-body steps">
+      <li><strong>Save a draft.</strong> The admin commits your change to its own draft branch and opens, or updates, one draft pull request. Saving is not publishing.</li>
+      <li><strong>Review on GitHub.</strong> Open the pull request with “Review &amp; publish on GitHub”, check the changes and the preview build.</li>
+      <li><strong>Checks pass.</strong> The required website build check must succeed before the pull request can be merged.</li>
+      <li><strong>Merge to publish.</strong> The owner marks the pull request ready and merges it into <code>{production ? 'main' : (base ?? 'the content branch')}</code>.{#if production} Cloudflare then builds and deploys the website from <code>main</code>.{/if}</li>
     </ol>
-  </section>
-
-  <section class="card quick" aria-labelledby="q-h">
-    <div class="card-head"><h2 id="q-h">Quick actions</h2></div>
-    <div class="q-grid">
-      <a href="#/case-studies"><Icon name="portfolio" /><span><strong>Edit a case study</strong><span>18 projects, English and Greek</span></span></a>
-      <a href="#/articles"><Icon name="articles" /><span><strong>Edit an article</strong><span>7 Insights articles</span></span></a>
-      <a href="#/pages"><Icon name="pages" /><span><strong>Edit a page</strong><span>Home, About, Contact and more</span></span></a>
-      <a href="#/media"><Icon name="media" /><span><strong>Media library</strong><span>Images and alt text</span></span></a>
-    </div>
+    <p class="card-body note hint">The admin never merges or deploys anything itself. The repository is public, so drafts are visible on GitHub.</p>
   </section>
 </div>
 
 <style>
-  .head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+  .head { margin-bottom: 20px; }
   .sub { color: var(--slate); margin-top: 4px; font-size: var(--text-md); }
-  .actions { display: flex; gap: 10px; flex-wrap: wrap; }
-  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .source { margin-bottom: 16px; }
+  .source p { display: flex; gap: 10px; align-items: flex-start; }
+  .source .dev { color: var(--warn); }
+  code { font-size: var(--text-sm); background: var(--rule-soft); padding: 1px 6px; border-radius: 4px; }
+  .kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
   .kpi { display: grid; gap: 4px; padding: 18px 20px; text-decoration: none; color: inherit; transition: border-color 150ms var(--ease); }
-  a.kpi:hover { border-color: var(--rule); }
+  .kpi:hover { border-color: var(--rule); }
   .k-label { display: flex; align-items: center; gap: 8px; color: var(--slate); font-size: var(--text-sm); font-weight: 500; }
   .k-value { font-size: 2rem; font-weight: 500; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
   .k-meta { color: var(--slate); font-size: var(--text-sm); }
-  .kpi.attention .k-value { color: var(--warn); }
-  .grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 16px; align-items: start; }
-  .live { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: var(--radius); background: var(--ok-soft); }
-  .live > div { display: grid; flex: 1; }
-  .live strong { color: var(--ok); font-weight: 600; }
-  .live span { color: var(--graphite); font-size: var(--text-sm); }
-  .pulse { width: 10px; height: 10px; border-radius: 50%; background: #2f9e64; box-shadow: 0 0 0 4px rgb(47 158 100 / 0.18); }
-  .facts { margin: 16px 0 0; display: grid; gap: 12px; }
-  .facts div { display: grid; grid-template-columns: 140px 1fr; gap: 12px; }
-  .facts dt { color: var(--slate); font-size: var(--text-sm); }
-  .facts dd { margin: 0; }
-  code { font-size: var(--text-sm); background: var(--rule-soft); padding: 1px 6px; border-radius: 4px; }
-  .pending { display: flex; gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--rule-soft); color: var(--slate); font-size: var(--text-sm); }
+  .warn { color: var(--danger); }
+  .errors { padding: 14px 20px; margin-bottom: 16px; color: var(--danger); display: grid; gap: 6px; }
+  .errors p { display: flex; gap: 8px; align-items: flex-start; font-size: var(--text-sm); }
+  .grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+  .card-head .meta { color: var(--slate); font-size: var(--text-sm); font-variant-numeric: tabular-nums; }
   .list { list-style: none; margin: 0; padding: 6px 0; }
-  .list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 20px; }
+  .list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 20px; flex-wrap: wrap; }
   .list li + li { border-top: 1px solid var(--rule-soft); }
-  .list a { display: grid; text-decoration: none; color: inherit; min-width: 0; }
-  .list a:hover .name { color: var(--blue); }
+  .name-link { display: grid; text-decoration: none; color: inherit; min-width: 0; flex: 1 1 220px; }
+  .name-link:hover .name { color: var(--blue); }
   .name { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .meta { color: var(--slate); font-size: var(--text-sm); }
-  .empty { padding: 20px; display: grid; gap: 6px; }
-  .timeline { list-style: none; margin: 0; padding: 8px 20px 16px; max-height: 340px; overflow: auto; }
-  .timeline li { display: grid; gap: 2px; padding: 9px 0 9px 18px; position: relative; border-left: 1px solid var(--rule); }
-  .timeline li::before { content: ''; position: absolute; left: -4px; top: 15px; width: 7px; height: 7px; border-radius: 50%; background: var(--rule); }
-  .timeline li.you::before { background: var(--blue); }
-  .when { color: var(--slate); font-size: var(--text-xs); }
-  .timeline a { color: var(--ink); font-weight: 500; text-decoration: none; }
-  .timeline a:hover { color: var(--blue); }
-  .q-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--rule-soft); border-radius: 0 0 var(--radius-lg) var(--radius-lg); overflow: hidden; }
-  .q-grid a { display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; background: var(--sheet); color: var(--blue); text-decoration: none; }
-  .q-grid a:hover { background: var(--white); }
-  .q-grid span { display: grid; }
-  .q-grid strong { color: var(--ink); font-weight: 600; }
-  .q-grid span span { color: var(--slate); font-size: var(--text-sm); }
-  @media (max-width: 1100px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grid { grid-template-columns: minmax(0, 1fr); } }
-  @media (max-width: 520px) { .kpis { grid-template-columns: minmax(0, 1fr); } .q-grid { grid-template-columns: minmax(0, 1fr); } .facts div { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+  .list .meta { color: var(--slate); font-size: var(--text-sm); }
+  .empty { padding: 20px; }
+  .steps { margin: 0; padding-left: 40px; display: grid; gap: 10px; font-size: var(--text-sm); color: var(--graphite); }
+  .steps strong { color: var(--ink); }
+  .note { padding-top: 0; }
+  @media (max-width: 1100px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 760px) { .kpis { grid-template-columns: minmax(0, 1fr); } }
 </style>
