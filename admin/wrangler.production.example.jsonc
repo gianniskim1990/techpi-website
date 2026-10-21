@@ -20,6 +20,10 @@
   // The proposed hostname. Adding this route as a Custom Domain makes Cloudflare create the DNS record for it on deploy,
   // so it is part of the separately approved deployment, not of this pull request.
   "routes": [{ "pattern": "admin.techpi.eu", "custom_domain": true }],
+  // Counts password sign-in attempts (worker/password.js): one SQLite-backed Durable Object, free on the Workers Free
+  // plan. Used only when ADMIN_PASSWORD_HASH is set; GitHub sign-in does not need it.
+  "durable_objects": { "bindings": [{ "name": "LOGIN_LIMITER", "class_name": "LoginLimiter" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["LoginLimiter"] }],
   "vars": {
     // The GitHub App's Client ID (GitHub, Settings, Developer settings, GitHub Apps, the app, General). Not secret.
     "GITHUB_OAUTH_CLIENT_ID": "",
@@ -35,4 +39,6 @@
   //   npx wrangler secret put GITHUB_OAUTH_CLIENT_SECRET
   //   npx wrangler secret put SESSION_SECRET
   //   npx wrangler secret put GITHUB_APP_PRIVATE_KEY
+  // Optional, enables email and password sign-in (made privately by scripts/set-admin-password.mjs, see its header):
+  //   ADMIN_PASSWORD_HASH
 }

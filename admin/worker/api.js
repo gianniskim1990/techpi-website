@@ -170,7 +170,7 @@ async function session(env, identity) {
   const cfg = contentConfig(env);
   return json(200, {
     login: identity.login,
-    signedInWith: 'github',
+    signedInWith: identity.method ?? 'github',
     repository: `${REPO.owner}/${REPO.name}`,
     mode: cfg.mode,
     baseBranch: cfg.base,

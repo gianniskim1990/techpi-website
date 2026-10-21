@@ -11,6 +11,8 @@
  *                        GitHub's authenticated /user endpoint, and only ADMIN_GITHUB_USER_ID (the numeric ID) gets a
  *                        session. The GitHub user token is then revoked: the admin never keeps or sends it anywhere.
  *   POST /auth/logout    clears the session (same-origin requests only).
+ *   POST /auth/password  email and password sign-in for the single administrator, when enabled (password.js, AUTH-P1).
+ *                        GitHub sign-in stays available beside it.
  *
  * The session cookie (__Host-techpi_session) is HMAC-signed (session.js), HttpOnly, Secure, SameSite=Lax, host-only,
  * and expires 8 hours after sign-in. Every request re-checks its signature, expiry and that its user ID is the
@@ -20,6 +22,7 @@
  * redirect_uri match, client secret required).
  */
 import { authConfig, isProduction, oauthBase } from './config.js';
+import { ADMIN_EMAIL, passwordConfig, passwordLogin, verifierTag } from './password.js';
 import { apiBase } from './github.js';
 import {
   SESSION_COOKIE, OAUTH_COOKIE, SESSION_TTL, OAUTH_TTL, seal, open, readCookie, cookie, clearCookie, randomToken, pkceChallenge, sameString,
@@ -40,8 +43,14 @@ export async function sessionIdentity(request, env) {
   const cfg = authConfig(env);
   if (!cfg.ok) return null;
   const data = await open(env.SESSION_SECRET, 'session', readCookie(request, SESSION_COOKIE));
-  if (!data || String(data.uid) !== cfg.userId || typeof data.sid !== 'string') return null;
-  return { uid: cfg.userId, login: typeof data.login === 'string' ? data.login : '' };
+  if (!data || typeof data.sid !== 'string') return null;
+  if (data.m === 'password') {
+    // A password session is valid only while password sign-in is enabled with the same verifier (password.js).
+    if (!passwordConfig(env).enabled || data.login !== ADMIN_EMAIL || !sameString(data.pv, await verifierTag(env))) return null;
+    return { uid: null, login: ADMIN_EMAIL, method: 'password' };
+  }
+  if (String(data.uid) !== cfg.userId) return null;
+  return { uid: cfg.userId, login: typeof data.login === 'string' ? data.login : '', method: 'github' };
 }
 
 /**
@@ -64,8 +73,20 @@ export function checkSameOrigin(request) {
 
 // ---------- the sign-in page ----------
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-/** The minimal sign-in page: no script, no external resource, no reflected input (messages are fixed strings). */
-export function signInPage(status, message = '') {
+/**
+ * The minimal sign-in page: no script, no external resource, no reflected input (messages are fixed strings). With
+ * `env` and password sign-in enabled, it shows the email and password form above the GitHub option.
+ */
+export function signInPage(status, message = '', env = null) {
+  const password = Boolean(env && passwordConfig(env).enabled);
+  const form = password
+    ? `<form method="post" action="/auth/password">
+<label for="email">Email</label><input id="email" name="email" type="email" autocomplete="username" required maxlength="254">
+<label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required maxlength="256">
+<button type="submit">Sign in</button>
+</form>
+<p class="or">or</p>`
+    : '';
   const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow"><title>Sign in · TechPi Admin</title>
@@ -78,11 +99,18 @@ h1{font-size:22px;font-weight:500;margin:24px 0 8px}p{margin:0 0 20px;color:#3d4
 .msg{padding:10px 12px;border-radius:8px;background:#fbe9e7;color:#9b2c20;font-size:14px}
 a.btn{display:flex;justify-content:center;align-items:center;gap:8px;padding:11px 16px;border-radius:8px;background:#0841c8;color:#fff;font-weight:600;text-decoration:none}
 a.btn:hover{background:#06349f}a.btn:focus-visible{outline:3px solid #6fd3f2;outline-offset:2px}
+form{display:grid;gap:6px}label{font-size:14px;font-weight:500;color:#3d4655}
+input{font:inherit;padding:10px 12px;border:1px solid #cfc9bd;border-radius:8px;background:#fff;color:#0b1220;margin-bottom:8px}
+input:focus-visible,button:focus-visible{outline:3px solid #6fd3f2;outline-offset:1px}
+button{font:inherit;font-weight:600;padding:11px 16px;border:0;border-radius:8px;background:#0841c8;color:#fff;cursor:pointer}
+button:hover{background:#06349f}.or{text-align:center;margin:16px 0 12px;color:#5b6475;font-size:14px}
+${password ? 'a.btn{background:#fff;color:#0b1220;border:1px solid #cfc9bd}a.btn:hover{background:#f4f2ee}' : ''}
 </style></head>
 <body><main>
 <div class="brand">TECHPI<span>Admin</span></div>
 <h1>Sign in</h1>
-${message ? `<p class="msg" role="alert">${esc(message)}</p>` : '<p>Only the owner’s GitHub account can sign in.</p>'}
+${message ? `<p class="msg" role="alert">${esc(message)}</p>` : `<p>Only the owner can sign in${password ? '' : ' with their GitHub account'}.</p>`}
+${form}
 <a class="btn" href="/auth/login">Sign in with GitHub</a>
 </main></body></html>`;
   return new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
@@ -174,7 +202,7 @@ async function callback(request, env) {
   const url = new URL(request.url);
   // The round-trip cookie is single use: it is cleared on every outcome, so a replayed callback can never succeed.
   const done = [clearCookie(OAUTH_COOKIE)];
-  const fail = (status, message) => withCookies(signInPage(status, message), done);
+  const fail = (status, message) => withCookies(signInPage(status, message, env), done);
   if (url.searchParams.get('error')) return fail(403, 'Sign-in was cancelled on GitHub.');
   const code = url.searchParams.get('code') ?? '';
   const state = url.searchParams.get('state') ?? '';
@@ -211,6 +239,7 @@ export async function handleAuth(request, env) {
   const path = new URL(request.url).pathname;
   if (path === '/auth/login') return request.method === 'GET' ? login(request, env) : new Response('Method not allowed.', { status: 405 });
   if (path === '/auth/callback') return request.method === 'GET' ? callback(request, env) : new Response('Method not allowed.', { status: 405 });
+  if (path === '/auth/password') return passwordLogin(request, env, (status, message) => signInPage(status, message, env));
   if (path === '/auth/logout') {
     if (request.method !== 'POST') return new Response('Method not allowed.', { status: 405 });
     const refused = checkSameOrigin(request);

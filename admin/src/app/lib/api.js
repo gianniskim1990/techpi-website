@@ -28,10 +28,10 @@ async function request(method, path, body) {
   let data = null;
   try { data = await res.json(); } catch {}
   if (!res.ok) {
-    const message = data?.error?.message ?? (res.status === 401 ? 'Your session has ended. Sign in with GitHub again.' : `Unexpected response (${res.status}).`);
+    const message = data?.error?.message ?? (res.status === 401 ? 'Your session has ended. Sign in again.' : `Unexpected response (${res.status}).`);
     throw new ApiError(res.status, message, data?.error ?? {});
   }
-  if (data === null) throw new ApiError(res.status, 'Your session may have ended. Sign in with GitHub again.');
+  if (data === null) throw new ApiError(res.status, 'Your session may have ended. Sign in again.');
   return data;
 }
 

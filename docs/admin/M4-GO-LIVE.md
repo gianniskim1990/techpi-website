@@ -283,3 +283,75 @@ accounts by numeric ID, GitHub errors and revoked tokens, cookie attributes, log
 host and secrets); the workerd end-to-end signs in through the real redirects against the mock GitHub, runs the whole
 draft workflow, signs out, and checks another account, no session, an unconfigured admin and a production configuration
 on localhost.
+
+## 8. AUTH-P1: email and password sign-in for the single administrator
+
+Status: **in the code, not activated.** It is enabled only when the Worker secret `ADMIN_PASSWORD_HASH` is set; until
+then the admin behaves exactly as before (GitHub sign-in only). GitHub sign-in stays available beside it as the fallback
+until the password sign-in has passed production verification; removing GitHub sign-in is a separate, later change.
+
+**What it is** ([admin/worker/password.js](../../admin/worker/password.js)):
+- One account: `info@techpi.eu`. No registration, no other users, no user management, no password reset (a lost password
+  is replaced by running the setup command again; GitHub sign-in remains the way in meanwhile).
+- The sign-in page shows an email and password form (no script; it posts only to `/auth/password` on the same origin;
+  the CSP is `form-action 'self'`). The form is refused unless its `Origin` is the admin's own and Fetch Metadata is
+  same-origin; it must be a URL-encoded form of at most 4 KB.
+- The password is never stored. `ADMIN_PASSWORD_HASH` is a salted PBKDF2-SHA256 verifier
+  (`pbkdf2-sha256$100000$<16-byte salt>$<32-byte hash>`); verification is constant time, and a wrong email takes the same
+  path as a wrong password (same message, password still checked).
+- A successful sign-in issues the same hardened session cookie as GitHub sign-in (`__Host-`, HttpOnly, Secure,
+  SameSite=Lax, 8 hours), bound to the current verifier: setting a new password ends every password session; rotating
+  `SESSION_SECRET` ends all sessions. Logout, the API's same-origin checks and the `cms/*`-only write rules are unchanged.
+- **Brute-force protection:** every attempt is counted **before** the password is checked by one SQLite-backed Durable
+  Object (`LoginLimiter`, binding `LOGIN_LIMITER`): at most **5 attempts per client IP per 15 minutes** and **20 in total
+  per hour**; a successful sign-in clears that client's count. The count is exact across Worker instances and Cloudflare
+  locations and survives restarts. Client IPs are stored only as truncated SHA-256 hashes. If the limiter is unavailable
+  the password sign-in is refused (503); a malformed `ADMIN_PASSWORD_HASH`, or the secret without the binding, stops the
+  whole admin (503), as for every other setting.
+
+**Rate-limiting options considered (nothing has been provisioned):**
+
+| Option | Cost | Assessment |
+|---|---|---|
+| **Durable Object (chosen)** | Free on Workers Free (SQLite-backed Durable Objects: 100 000 requests/day, 5 GB storage); included in Workers Paid. A sign-in uses 1 to 2 requests. | Strongly consistent, shared everywhere, exact limits. Creating it is part of the next approved deploy (the `migrations` entry). |
+| Workers Rate Limiting binding | Free | Counts per Cloudflare location and only over 10 or 60 seconds: too short and too local for password guessing. |
+| Workers KV counter | Free tier: 1 000 writes/day | Eventually consistent (parallel guesses slip through) and an attacker could use up the daily write quota. |
+| WAF rate-limiting rule on `/auth/password` | Free plan: 1 rule, 10-second window | Useful as an extra layer, but a zone setting outside this repository; not needed. |
+| In-memory counter | Free | Per isolate only: rejected, as required. |
+
+**CPU time: check before activating.** PBKDF2 at 100 000 iterations (the Workers maximum) takes about 35 ms of CPU on a
+desktop. On the **Workers Free plan the CPU limit is 10 ms per request**; a sign-in may then fail with error 1102. Check
+the plan (Cloudflare dashboard → Workers & Pages → Plans) before activating:
+- **Workers Paid:** nothing to do (30 s limit).
+- **Workers Free:** the verifier's iteration count is part of the secret, so it can be lowered without a code change;
+  run the setup command with `--iterations=20000` (about 7 ms), which is weaker against an
+  offline attack on a leaked secret but still salted and protected by the rate limit; the password rules (16+ characters)
+  then matter most. Or accept GitHub sign-in only.
+
+**Setup (owner only; the password is never shown, sent or logged).** In `admin/`, in an interactive terminal:
+- Local test: `node scripts/set-admin-password.mjs` writes `ADMIN_PASSWORD_HASH` to the git-ignored `.dev.vars`. The
+  owner's git-ignored `wrangler.local.jsonc` also needs the `durable_objects` and `migrations` entries from
+  `wrangler.local.example.jsonc` (`node scripts/check-local-config.mjs` checks both).
+- Production (**separately approved**): first add the same two entries to the git-ignored production configuration, then
+  ```bash
+  node scripts/set-admin-password.mjs --stdout | npx.cmd wrangler secret put ADMIN_PASSWORD_HASH --config wrangler.production.local.jsonc
+  ```
+  then deploy the new code (`npx.cmd wrangler deploy --config wrangler.production.local.jsonc`; this creates the
+  `LoginLimiter` Durable Object). Password rules: 16 to 256 characters, at least 8 different characters, not containing
+  "techpi" or "password"; a password manager-generated passphrase is recommended.
+
+**Production verification:** the sign-in page shows the form and GitHub; a wrong password shows "The email or password is
+incorrect."; the right one opens the Dashboard with "info@techpi.eu, Signed in with email"; Sign out returns to the
+sign-in page and `/api/session` answers 401; six wrong attempts in a row answer "Too many sign-in attempts" (wait 15
+minutes, or use GitHub sign-in).
+
+**Rollback:** `npx.cmd wrangler secret delete ADMIN_PASSWORD_HASH --config wrangler.production.local.jsonc` disables the
+password sign-in at once and ends password sessions; GitHub sign-in is unaffected. A full rollback is
+`npx.cmd wrangler rollback`.
+
+**Limitations:**
+- Anyone can deliberately exhaust the 20-per-hour total and block the password sign-in for up to an hour (a lock-out,
+  not a way in). GitHub sign-in is the fallback for that hour; this is why it stays until a decision is made.
+- No second factor for the password sign-in (GitHub sign-in has the account's own 2FA).
+- Client IP comes from Cloudflare's `CF-Connecting-IP`; behind shared networks several people share one budget.
+- Rate-limiter records are small and are reused; they are not purged on a schedule.

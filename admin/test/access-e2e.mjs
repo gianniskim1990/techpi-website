@@ -5,10 +5,12 @@
 import { spawn, execSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { writeConfigs } from './make-wrangler-configs.mjs';
 import { createMockGitHub, MOCK_OAUTH } from './support/mock-github.mjs';
+import { makeVerifier, MIN_ITERATIONS } from '../worker/password.js';
 import { CONNECTED_SLUGS } from '../shared/case-study-content.js';
 import { INSIGHT_SLUGS } from '../shared/insight-content.js';
 import { PAGE_KEYS } from '../shared/page-content.js';
@@ -33,14 +35,17 @@ const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', { modulusLen
 const gh = createMockGitHub({ publicKey, branches: { main: { 'README.md': 'main' }, [BASE]: { [FILE]: sample, ...csFiles, ...inFiles, ...pgFiles } } });
 const MOCK_PORT = 8920;
 const mockServer = await gh.listen(MOCK_PORT);
-const configs = writeConfigs({ github: { apiBase: `http://127.0.0.1:${MOCK_PORT}`, appId: gh.appId, installationId: gh.installationId, privateKey: privateKey.export({ type: 'pkcs1', format: 'pem' }) } });
+const TEST_PASSWORD = 'e2e only: a long test password 9';
+const configs = writeConfigs({ passwordHash: await makeVerifier(TEST_PASSWORD, MIN_ITERATIONS), github: { apiBase: `http://127.0.0.1:${MOCK_PORT}`, appId: gh.appId, installationId: gh.installationId, privateKey: privateKey.export({ type: 'pkcs1', format: 'pem' }) } });
 
 let failures = 0;
 const lines = [];
 const check = (name, ok, detail) => { if (!ok) failures++; lines.push(`${ok ? 'PASS' : 'FAIL'} ${name}${detail ? `  (${detail})` : ''}`); };
 
 for (const c of serve ? configs.filter((x) => x.name === 'owner') : configs) {
-  const proc = spawn(process.execPath, [wrangler, 'dev', '--config', c.file, '--log-level', 'error'], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] });
+  // Fresh local storage for every run, so the sign-in rate limiter starts from zero (and nothing is kept afterwards).
+  const persist = fs.mkdtempSync(path.join(os.tmpdir(), `techpi-admin-e2e-${c.name}-`));
+  const proc = spawn(process.execPath, [wrangler, 'dev', '--config', c.file, '--log-level', 'error', '--persist-to', persist], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] });
   let log = '';
   proc.stdout.on('data', (d) => (log += d));
   proc.stderr.on('data', (d) => (log += d));
@@ -197,8 +202,32 @@ for (const c of serve ? configs.filter((x) => x.name === 'owner') : configs) {
     check('admin: the GitHub user tokens were revoked', [...gh.state.userTokens.values()].every((t) => t.revoked));
     check('admin: Worker log has no credentials', !/ghs_|ghu_|PRIVATE KEY|Bearer |mock-client-secret|test-session-secret/.test(log));
   }
+  if (c.password) {
+    // Email and password sign-in through the real form endpoint and the local Durable Object.
+    const post = (fields, headers = {}) => fetch(`${origin}/auth/password`, { method: 'POST', redirect: 'manual', headers: { 'Content-Type': 'application/x-www-form-urlencoded', Origin: origin, 'Sec-Fetch-Site': 'same-origin', ...headers }, body: new URLSearchParams(fields).toString() });
+    const page = await (await fetch(`${origin}/`)).text();
+    check('password: the sign-in page has the email and password form and GitHub', page.includes('action="/auth/password"') && /Sign in with GitHub/.test(page));
+    const ok = await post({ email: 'info@techpi.eu', password: TEST_PASSWORD });
+    const sess = ok.headers.getSetCookie().find((x) => x.startsWith('__Host-techpi_session=') && !x.includes('Max-Age=0'))?.split(';')[0];
+    check(`password: right email and password -> ${ok.status}, session cookie`, ok.status === 303 && Boolean(sess));
+    const me = await fetch(`${origin}/api/session`, { headers: { 'X-TechPi-Admin': '1', Cookie: sess ?? '' } });
+    const meData = me.ok ? await me.json() : {};
+    check(`password: /api/session -> ${me.status} as info@techpi.eu`, me.status === 200 && meData.login === 'info@techpi.eu' && meData.signedInWith === 'password');
+    const pages = await fetch(`${origin}/api/pages`, { headers: { 'X-TechPi-Admin': '1', Cookie: sess ?? '' } });
+    check(`password: content API readable -> ${pages.status}`, pages.status === 200);
+    const csrf = await post({ email: 'info@techpi.eu', password: TEST_PASSWORD }, { Origin: 'https://evil.example' });
+    check(`password: cross-origin form -> ${csrf.status}`, csrf.status === 403);
+    const out = await fetch(`${origin}/auth/logout`, { method: 'POST', headers: { 'X-TechPi-Admin': '1', 'Content-Type': 'application/json', Origin: origin, Cookie: sess ?? '' }, body: '{}' });
+    check(`password: logout -> ${out.status}`, out.status === 200 && out.headers.getSetCookie().some((x) => x.startsWith('__Host-techpi_session=;')));
+    const statuses = [];
+    for (let i = 0; i < 5; i++) statuses.push((await post({ email: 'info@techpi.eu', password: `wrong password ${i} for the e2e` })).status);
+    const blocked = await post({ email: 'info@techpi.eu', password: TEST_PASSWORD });
+    check(`password: 5 wrong -> ${statuses.join(',')}, then the right one -> ${blocked.status} (Retry-After ${blocked.headers.get('retry-after')})`, statuses.every((s) => s === 401) && blocked.status === 429 && Number(blocked.headers.get('retry-after')) > 0);
+    check('password: Worker log has no password or verifier', !log.includes(TEST_PASSWORD) && !log.includes('pbkdf2-sha256'));
+  }
   kill(proc);
   await sleep(1500);
+  fs.rmSync(persist, { recursive: true, force: true });
 }
 mockServer.close();
 console.log(lines.join('\n'));

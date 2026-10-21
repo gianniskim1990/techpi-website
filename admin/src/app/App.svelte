@@ -56,11 +56,11 @@
       <div class="session">
         {#if session.data}
           <span class="avatar" aria-hidden="true">{(session.data.login || '?').slice(0, 1).toUpperCase()}</span>
-          <div><strong class="email" title={session.data.login}>{session.data.login}</strong><span>Signed in with GitHub</span></div>
+          <div><strong class="email" title={session.data.login}>{session.data.login}</strong><span>{session.data.signedInWith === 'password' ? 'Signed in with email' : 'Signed in with GitHub'}</span></div>
           <button class="signout" type="button" onclick={signOut}>Sign out</button>
         {:else}
           <span class="avatar" aria-hidden="true">?</span>
-          <div><strong>{session.loading ? 'Checking sign-in…' : 'Not signed in'}</strong>{#if !session.loading}<a href="/auth/login">Sign in with GitHub</a>{/if}</div>
+          <div><strong>{session.loading ? 'Checking sign-in…' : 'Not signed in'}</strong>{#if !session.loading}<a href="/">Sign in</a>{/if}</div>
         {/if}
       </div>
     </div>
@@ -93,7 +93,7 @@
           <h1>The admin could not load</h1>
           <p>{session.error ?? 'Your session may have ended.'}</p>
           <div class="actions">
-            <a class="btn btn-primary btn-sm" href="/auth/login">Sign in with GitHub</a>
+            <a class="btn btn-primary btn-sm" href="/">Sign in</a>
             <button class="btn btn-secondary btn-sm" type="button" onclick={loadSession}>Try again</button>
           </div>
         </div>

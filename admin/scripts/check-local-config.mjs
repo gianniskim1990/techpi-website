@@ -8,6 +8,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { githubConfig, importPrivateKey, repoRequest, GitHubError } from '../worker/github.js';
 import { authConfig, contentConfig } from '../worker/config.js';
+import { parseVerifier } from '../worker/password.js';
 
 const admin = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const results = [];
@@ -36,7 +37,7 @@ if (!check('.dev.vars exists', fs.existsSync(devVars), 'Create it with the comma
 
 const cfg = JSON.parse(stripComments(fs.readFileSync(localCfg, 'utf8')));
 const vars = readVars(devVars);
-const SECRETS = ['GITHUB_APP_PRIVATE_KEY', 'GITHUB_OAUTH_CLIENT_SECRET', 'SESSION_SECRET'];
+const SECRETS = ['GITHUB_APP_PRIVATE_KEY', 'GITHUB_OAUTH_CLIENT_SECRET', 'SESSION_SECRET', 'ADMIN_PASSWORD_HASH'];
 check('.dev.vars contains only the secrets', Object.keys(vars).every((k) => SECRETS.includes(k)), `Keep other settings in wrangler.local.jsonc. Allowed: ${SECRETS.join(', ')}.`);
 const localText = fs.readFileSync(localCfg, 'utf8');
 check('wrangler.local.jsonc has no secret', !/PRIVATE KEY/.test(localText) && !SECRETS.some((k) => k in (cfg.vars ?? {})), 'Remove secrets from wrangler.local.jsonc; they belong only in .dev.vars.');
@@ -50,6 +51,10 @@ try { await importPrivateKey(env.GITHUB_APP_PRIVATE_KEY ?? ''); keyOk = true; } 
 check('private key can be loaded for signing', keyOk, 'The file may be truncated or not the GitHub App key. Recreate .dev.vars.');
 const auth = authConfig(env);
 check('GitHub sign-in is configured (client ID, client secret, numeric owner user ID, session secret)', auth.ok, `${auth.problems.join(' ')} See docs/admin/M4-GO-LIVE.md, step E.`);
+if (env.ADMIN_PASSWORD_HASH) {
+  check('password sign-in verifier is valid (scripts/set-admin-password.mjs)', parseVerifier(env.ADMIN_PASSWORD_HASH) !== null, 'Run node scripts/set-admin-password.mjs again.');
+  check('the LOGIN_LIMITER Durable Object is configured for password sign-in', (cfg.durable_objects?.bindings ?? []).some((b) => b.name === 'LOGIN_LIMITER' && b.class_name === 'LoginLimiter'), 'Copy the durable_objects and migrations entries from wrangler.local.example.jsonc.');
+}
 check('sign-in uses github.com (no local OAuth override)', !env.GITHUB_OAUTH_BASE && !env.GITHUB_API_BASE, 'Remove GITHUB_OAUTH_BASE and GITHUB_API_BASE: they are for the automated tests only.');
 const content = contentConfig(env);
 check('content mode and base branch are valid (main only in production mode)', content.ok, content.problems.join(' '));

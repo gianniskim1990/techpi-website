@@ -15,12 +15,16 @@
   // No public workers.dev hostname and no preview URLs: the admin is reachable only on its own hostname.
   "workers_dev": false,
   "preview_urls": false,
+  // Counts password sign-in attempts (worker/password.js): one SQLite-backed Durable Object, free on the Workers Free
+  // plan. Used only when ADMIN_PASSWORD_HASH is set; GitHub sign-in does not need it.
+  "durable_objects": { "bindings": [{ "name": "LOGIN_LIMITER", "class_name": "LoginLimiter" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["LoginLimiter"] }],
   // Empty on purpose: the Worker refuses every request (503) until the owner sets them.
   // GITHUB_OAUTH_CLIENT_ID = the GitHub App's Client ID (used for "Sign in with GitHub");
   // ADMIN_GITHUB_USER_ID = the owner's numeric GitHub user ID, the only account allowed in;
   // GITHUB_APP_ID and GITHUB_APP_INSTALLATION_ID = the GitHub App (not secret, but set only with the deployment).
   // Secrets are NEVER vars: `wrangler secret put` GITHUB_OAUTH_CLIENT_SECRET, SESSION_SECRET and GITHUB_APP_PRIVATE_KEY
-  // (or .dev.vars locally, git-ignored).
+  // (or .dev.vars locally, git-ignored). Optional secret ADMIN_PASSWORD_HASH enables email and password sign-in.
   // CONTENT_MODE / CONTENT_BASE_BRANCH: see worker/config.js. main is accepted only with CONTENT_MODE=production.
   "vars": {
     "GITHUB_OAUTH_CLIENT_ID": "",
