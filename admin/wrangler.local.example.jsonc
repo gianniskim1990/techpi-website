@@ -1,10 +1,12 @@
 {
-  // LOCAL-ONLY template for the first real GitHub App test (docs/admin/A1.md, section 6).
+  // LOCAL-ONLY template for testing against the real GitHub App (docs/admin/A1.md, section 6).
   // Copy to wrangler.local.jsonc (git-ignored), then run: npm run build && npx wrangler dev --config wrangler.local.jsonc
-  // Never deploy with this file: it simulates Cloudflare Access and is meant for `wrangler dev` on 127.0.0.1 only.
+  // Never deploy with this file: it is meant for `wrangler dev` on 127.0.0.1 only.
   //
-  // The GitHub App private key is NOT in this file. It goes only in .dev.vars (git-ignored, next to this file) as
-  // GITHUB_APP_PRIVATE_KEY, which Wrangler loads for local development.
+  // Secrets are NOT in this file. They go only in .dev.vars (git-ignored, next to this file), which Wrangler loads for
+  // local development: GITHUB_APP_PRIVATE_KEY, GITHUB_OAUTH_CLIENT_SECRET and SESSION_SECRET.
+  // Signing in locally needs http://127.0.0.1:8787/auth/callback among the GitHub App's callback URLs (an owner-only
+  // GitHub App setting; docs/admin/M4-GO-LIVE.md, step E).
   "name": "techpi-admin-local",
   "main": "worker/index.js",
   "compatibility_date": "2026-10-02",
@@ -12,12 +14,10 @@
   "workers_dev": false,
   "preview_urls": false,
   "dev": { "ip": "127.0.0.1", "port": 8787 },
-  // Wrangler's documented Access simulation: every local request arrives as this identity (reserved .test domain).
-  "access": { "dev": { "aud": "local-test-aud", "identity": { "email": "admin@example.test" } } },
   "vars": {
-    "ACCESS_AUD": "local-test-aud",
-    "ADMIN_EMAILS": "admin@example.test",
     // Not secret, but set only locally until deployment is approved.
+    "GITHUB_OAUTH_CLIENT_ID": "",
+    "ADMIN_GITHUB_USER_ID": "",
     "GITHUB_APP_ID": "",
     "GITHUB_APP_INSTALLATION_ID": "",
     // Drafts are based on, and pull requests target, this branch. `main` is refused by the Worker.

@@ -9,7 +9,14 @@ const REPO = 'techpi-website';
 const gitSha = (text) => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\0${text}`).digest('hex');
 const commitSha = () => crypto.randomBytes(20).toString('hex');
 
-export function createMockGitHub({ publicKey, appId = '123456', installationId = '7890', branches = {} }) {
+/**
+ * `oauth`: the GitHub App's OAuth client as the mock knows it, and the GitHub account that "signs in" at the authorize
+ * page (Task AUTH-G1). Change `state.oauthUser` to sign in as someone else, or set `state.oauthDeny` to simulate the
+ * user cancelling on GitHub.
+ */
+export const MOCK_OAUTH = { clientId: 'Iv1.mockclient0001', clientSecret: 'mock-client-secret-0123456789abcdef', user: { id: 4242001, login: 'techpi-owner' } };
+
+export function createMockGitHub({ publicKey, appId = '123456', installationId = '7890', branches = {}, oauth = MOCK_OAUTH }) {
   const state = {
     branches: {}, // name -> { head, files: Map(path -> text) }
     prs: [],
@@ -18,6 +25,11 @@ export function createMockGitHub({ publicKey, appId = '123456', installationId =
     writes: [], // { method, path, branch }
     failures: [], // queued { match: RegExp, status } or { match, network: true }
     tokenRequests: 0,
+    oauthUser: { ...oauth.user },
+    oauthDeny: false,
+    oauthCodes: new Map(), // code -> { challenge, redirectUri, user, used }
+    userTokens: new Map(), // ghu_ token -> { user, revoked }
+    oauthLog: [], // { step, ok, reason }
   };
   for (const [name, files] of Object.entries(branches)) state.branches[name] = { head: commitSha(), files: new Map(Object.entries(files)) };
 
@@ -54,6 +66,52 @@ export function createMockGitHub({ publicKey, appId = '123456', installationId =
       const expiresAt = Date.now() + 60 * 60 * 1000;
       state.tokens.set(token, { expiresAt });
       return json(201, { token, expires_at: new Date(expiresAt).toISOString(), permissions: body.permissions, repository_selection: 'selected' });
+    }
+
+    // ---------- OAuth web application flow of a GitHub App (github.com and api.github.com endpoints) ----------
+    if (path === '/login/oauth/authorize' && method === 'GET') {
+      const p = u.searchParams;
+      const redirectUri = p.get('redirect_uri');
+      const back = new URL(redirectUri);
+      if (p.get('client_id') !== oauth.clientId || p.get('code_challenge_method') !== 'S256' || !p.get('code_challenge') || !p.get('state')) {
+        state.oauthLog.push({ step: 'authorize', ok: false, reason: 'bad request' });
+        return json(400, { message: 'invalid authorize request' });
+      }
+      if (state.oauthDeny) back.searchParams.set('error', 'access_denied');
+      else {
+        const code = crypto.randomBytes(10).toString('hex');
+        state.oauthCodes.set(code, { challenge: p.get('code_challenge'), redirectUri, user: { ...state.oauthUser }, used: false });
+        back.searchParams.set('code', code);
+      }
+      back.searchParams.set('state', p.get('state'));
+      state.oauthLog.push({ step: 'authorize', ok: true });
+      return new Response(null, { status: 302, headers: { Location: back.toString() } });
+    }
+    if (path === '/login/oauth/access_token' && method === 'POST') {
+      const fail = (reason) => { state.oauthLog.push({ step: 'token', ok: false, reason }); return json(200, { error: reason }); };
+      if (body?.client_id !== oauth.clientId || body?.client_secret !== oauth.clientSecret) return fail('incorrect_client_credentials');
+      const grant = state.oauthCodes.get(body.code);
+      if (!grant || grant.used) return fail('bad_verification_code');
+      grant.used = true; // single use, like GitHub
+      if (body.redirect_uri !== grant.redirectUri) return fail('redirect_uri_mismatch');
+      const challenge = crypto.createHash('sha256').update(String(body.code_verifier ?? '')).digest('base64url');
+      if (challenge !== grant.challenge) return fail('bad_verification_code (PKCE)');
+      const token = `ghu_mock_${crypto.randomBytes(8).toString('hex')}`;
+      state.userTokens.set(token, { user: grant.user, revoked: false });
+      state.oauthLog.push({ step: 'token', ok: true });
+      return json(200, { access_token: token, token_type: 'bearer', expires_in: 28800 });
+    }
+    if (path === '/user' && method === 'GET') {
+      const t = state.userTokens.get((headers.authorization || '').replace(/^Bearer /, ''));
+      if (!t || t.revoked) return json(401, { message: 'Bad credentials' });
+      return json(200, { id: t.user.id, login: t.user.login, type: 'User' });
+    }
+    if (path === `/applications/${oauth.clientId}/token` && method === 'DELETE') {
+      if (headers.authorization !== `Basic ${Buffer.from(`${oauth.clientId}:${oauth.clientSecret}`).toString('base64')}`) return json(401, { message: 'Requires authentication' });
+      const t = state.userTokens.get(body?.access_token);
+      if (t) t.revoked = true;
+      state.oauthLog.push({ step: 'revoke', ok: Boolean(t) });
+      return new Response(null, { status: 204 });
     }
 
     const prefix = `/repos/${OWNER}/${REPO}`;
@@ -161,7 +219,7 @@ export function createMockGitHub({ publicKey, appId = '123456', installationId =
         req.on('end', async () => {
           try {
             const r = await handle(req.method, `http://127.0.0.1:${port}${req.url}`, req.headers, data || null);
-            res.writeHead(r.status, { 'Content-Type': 'application/json' });
+            res.writeHead(r.status, { 'Content-Type': 'application/json', ...Object.fromEntries(r.headers) });
             res.end(await r.text());
           } catch { res.destroy(); }
         });

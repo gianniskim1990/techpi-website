@@ -1,11 +1,11 @@
 {
   // PRODUCTION TEMPLATE for the TechPi Admin. Not active and not deployed. Applied at go-live only, after the owner has
-  // approved it, the consolidated release is merged into main, and Cloudflare Access protects the hostname
+  // approved it, the consolidated release is merged into main, and the GitHub sign-in is configured
   // (docs/admin/M4-GO-LIVE.md, steps E to G). Copy these values into wrangler.jsonc, or deploy with
   // `npx wrangler deploy --config wrangler.production.example.jsonc` once the empty values are filled in.
   //
-  // Never add an `access.dev` block here: Access is real in production. Never set GITHUB_API_BASE or
-  // ENABLE_TEST_CONTENT: the Worker refuses to serve anything if either is present in production mode.
+  // Never set GITHUB_API_BASE, GITHUB_OAUTH_BASE or ENABLE_TEST_CONTENT: the Worker refuses to serve anything if any of
+  // them is present in production mode.
   "name": "techpi-admin",
   "main": "worker/index.js",
   "compatibility_date": "2026-10-02",
@@ -21,16 +21,18 @@
   // so it is part of the separately approved deployment, not of this pull request.
   "routes": [{ "pattern": "admin.techpi.eu", "custom_domain": true }],
   "vars": {
-    // From the Cloudflare Access application protecting admin.techpi.eu (Zero Trust, Access, Applications): its
-    // Application Audience (AUD) tag.
-    "ACCESS_AUD": "",
-    // The owner's sign-in email, as Access reports it. Comma-separated if more administrators are approved later.
-    "ADMIN_EMAILS": "",
+    // The GitHub App's Client ID (GitHub, Settings, Developer settings, GitHub Apps, the app, General). Not secret.
+    "GITHUB_OAUTH_CLIENT_ID": "",
+    // The owner's numeric GitHub user ID: the only account that can sign in. Not the username or email.
+    "ADMIN_GITHUB_USER_ID": "",
     "GITHUB_APP_ID": "",
     "GITHUB_APP_INSTALLATION_ID": "",
     "CONTENT_MODE": "production",
     "CONTENT_BASE_BRANCH": "main",
     "ADMIN_HOSTNAME": "admin.techpi.eu"
   }
-  // Secret, uploaded separately: npx wrangler secret put GITHUB_APP_PRIVATE_KEY --config wrangler.production.example.jsonc
+  // Secrets, uploaded separately (never committed), each with --config wrangler.production.example.jsonc:
+  //   npx wrangler secret put GITHUB_OAUTH_CLIENT_SECRET
+  //   npx wrangler secret put SESSION_SECRET
+  //   npx wrangler secret put GITHUB_APP_PRIVATE_KEY
 }

@@ -1,7 +1,7 @@
 /**
  * Admin API: read and draft-save the content the admin manages. Nothing here can write to `main` or merge.
  *
- *   GET  /api/session                       who is signed in (from Cloudflare Access) and whether GitHub is configured
+ *   GET  /api/session                       who is signed in (the GitHub session) and whether GitHub is configured
  *   GET  /api/<collection>                  the collection's entries on the content base branch, with their open drafts
  *   GET  /api/<collection>/<slug>           one entry: its draft version if a draft is open, otherwise the base version
  *   POST /api/<collection>/<slug>/draft     save the entry as a draft: commit to cms/<collection>/<slug>, open or update one
@@ -169,7 +169,8 @@ async function session(env, identity) {
   const gh = githubConfig(env);
   const cfg = contentConfig(env);
   return json(200, {
-    email: identity.email,
+    login: identity.login,
+    signedInWith: 'github',
     repository: `${REPO.owner}/${REPO.name}`,
     mode: cfg.mode,
     baseBranch: cfg.base,

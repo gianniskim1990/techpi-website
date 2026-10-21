@@ -1,13 +1,13 @@
 // Preflight for the local real-GitHub test (docs/admin/A1.md, section 6). Run in admin/:
 //   node scripts/check-local-config.mjs            offline checks only
 //   node scripts/check-local-config.mjs --github   also a READ-ONLY GitHub check (token + read the demo file; no writes)
-// It never prints, logs or copies the private key: it reports only whether each check passed.
+// It never prints, logs or copies the private key or any other secret: it reports only whether each check passed.
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { githubConfig, importPrivateKey, repoRequest, GitHubError } from '../worker/github.js';
-import { contentConfig } from '../worker/config.js';
+import { authConfig, contentConfig } from '../worker/config.js';
 
 const admin = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const results = [];
@@ -36,8 +36,11 @@ if (!check('.dev.vars exists', fs.existsSync(devVars), 'Create it with the comma
 
 const cfg = JSON.parse(stripComments(fs.readFileSync(localCfg, 'utf8')));
 const vars = readVars(devVars);
-check('.dev.vars contains only GITHUB_APP_PRIVATE_KEY', Object.keys(vars).length === 1 && 'GITHUB_APP_PRIVATE_KEY' in vars, 'Keep other settings in wrangler.local.jsonc.');
-check('wrangler.local.jsonc has no private key', !/PRIVATE KEY/.test(fs.readFileSync(localCfg, 'utf8')), 'Remove the key from wrangler.local.jsonc; it belongs only in .dev.vars.');
+const SECRETS = ['GITHUB_APP_PRIVATE_KEY', 'GITHUB_OAUTH_CLIENT_SECRET', 'SESSION_SECRET'];
+check('.dev.vars contains only the secrets', Object.keys(vars).every((k) => SECRETS.includes(k)), `Keep other settings in wrangler.local.jsonc. Allowed: ${SECRETS.join(', ')}.`);
+const localText = fs.readFileSync(localCfg, 'utf8');
+check('wrangler.local.jsonc has no secret', !/PRIVATE KEY/.test(localText) && !SECRETS.some((k) => k in (cfg.vars ?? {})), 'Remove secrets from wrangler.local.jsonc; they belong only in .dev.vars.');
+check('wrangler.local.jsonc has no Access simulation', !('access' in cfg), 'Remove the "access" block: sign-in is now with GitHub.');
 const env = { ...cfg.vars, ...vars };
 const gh = githubConfig(env);
 check('GitHub App ID and installation ID are set', !gh.missing.includes('GITHUB_APP_ID') && !gh.missing.includes('GITHUB_APP_INSTALLATION_ID'), 'Fill both in wrangler.local.jsonc.');
@@ -45,7 +48,9 @@ check('private key looks like a PEM key', !gh.missing.includes('GITHUB_APP_PRIVA
 let keyOk = false;
 try { await importPrivateKey(env.GITHUB_APP_PRIVATE_KEY ?? ''); keyOk = true; } catch {}
 check('private key can be loaded for signing', keyOk, 'The file may be truncated or not the GitHub App key. Recreate .dev.vars.');
-check('Access simulation is configured', Boolean(cfg.access?.dev?.identity?.email) && cfg.access.dev.aud === env.ACCESS_AUD && env.ADMIN_EMAILS?.split(',').map((s) => s.trim()).includes(cfg.access.dev.identity.email));
+const auth = authConfig(env);
+check('GitHub sign-in is configured (client ID, client secret, numeric owner user ID, session secret)', auth.ok, `${auth.problems.join(' ')} See docs/admin/M4-GO-LIVE.md, step E.`);
+check('sign-in uses github.com (no local OAuth override)', !env.GITHUB_OAUTH_BASE && !env.GITHUB_API_BASE, 'Remove GITHUB_OAUTH_BASE and GITHUB_API_BASE: they are for the automated tests only.');
 const content = contentConfig(env);
 check('content mode and base branch are valid (main only in production mode)', content.ok, content.problems.join(' '));
 check('local testing uses development mode', content.mode === 'development', 'Production mode only serves the admin hostname over HTTPS; use CONTENT_MODE=development locally.');

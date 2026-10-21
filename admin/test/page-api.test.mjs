@@ -10,12 +10,11 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import worker from '../worker/index.js';
 import { resetTokenCache } from '../worker/github.js';
+import { authEnv, ctxFor, SESSION_SECRET, sessionCookie } from './support/auth.mjs';
 import { createMockGitHub, gitSha } from './support/mock-github.mjs';
 import { editableOf, PAGE_KEYS, PAGES, PATHS } from '../shared/page-content.js';
 
 const ORIGIN = 'https://admin.example.test';
-const AUD = 'test-aud-0001';
-const ADMIN = 'admin@example.test';
 const BASE = 'feat/techpi-admin-m3-website-pages';
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const fileOf = (key) => `content/pages/${key}/index.json`;
@@ -31,12 +30,13 @@ const PEM = privateKey.export({ type: 'pkcs1', format: 'pem' });
 
 let gh;
 const env = (over = {}) => ({
-  ACCESS_AUD: AUD, ADMIN_EMAILS: ADMIN, GITHUB_APP_ID: '123456', GITHUB_APP_INSTALLATION_ID: '7890', GITHUB_APP_PRIVATE_KEY: PEM,
+  ...authEnv, GITHUB_APP_ID: '123456', GITHUB_APP_INSTALLATION_ID: '7890', GITHUB_APP_PRIVATE_KEY: PEM,
   CONTENT_BASE_BRANCH: BASE, ASSETS: { fetch: async () => new Response('app') }, ...over,
 });
-const ctxFor = (email = ADMIN, aud = AUD) => ({ access: { aud, getIdentity: async () => ({ email }) } });
 async function call(method, p, { body, headers = {}, ctx = ctxFor(), e = env() } = {}) {
   const h = { 'X-TechPi-Admin': '1', 'Sec-Fetch-Site': 'same-origin', ...(method === 'GET' ? {} : { Origin: ORIGIN, 'Content-Type': 'application/json' }), ...headers };
+  const sessionHeader = await sessionCookie(ctx, { secret: e.SESSION_SECRET || SESSION_SECRET });
+  if (sessionHeader && !h.Cookie) h.Cookie = sessionHeader;
   const res = await worker.fetch(new Request(ORIGIN + p, { method, headers: h, body: body === undefined ? undefined : typeof body === 'string' ? body : JSON.stringify(body) }), e, ctx);
   const text = await res.text();
   let data = null;
@@ -197,9 +197,9 @@ test('only the 8 pages exist; everything else is refused before GitHub is asked;
 
 test('authorisation and same-origin checks apply to every page', async () => {
   for (const key of ['home', 'privacy']) {
-    for (const ctx of [{}, ctxFor(ADMIN, 'other-app'), ctxFor('intruder@example.test')]) {
-      assert.equal((await call('GET', `/api/pages/${key}`, { ctx })).status, 403);
-      assert.equal((await call('POST', `/api/pages/${key}/draft`, { ctx, body: { content: editableOf(DOC[key]), expectedSha: gitSha(TEXT[key]) } })).status, 403);
+    for (const ctx of [{}, ctxFor('owner', 'forged'), ctxFor('intruder')]) {
+      assert.equal((await call('GET', `/api/pages/${key}`, { ctx })).status, 401);
+      assert.equal((await call('POST', `/api/pages/${key}/draft`, { ctx, body: { content: editableOf(DOC[key]), expectedSha: gitSha(TEXT[key]) } })).status, 401);
     }
     assert.equal((await call('POST', `/api/pages/${key}/draft`, { headers: { Origin: 'https://evil.example' }, body: { content: editableOf(DOC[key]), expectedSha: gitSha(TEXT[key]) } })).status, 403);
   }
