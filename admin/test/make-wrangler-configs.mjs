@@ -13,6 +13,8 @@ export const cases = [
   { name: 'owner', port: 8911, signIn: { as: 'owner', expect: 303 }, vars: authEnv, expect: 200 },
   { name: 'other-account', port: 8912, signIn: { as: 'other', expect: 403 }, vars: authEnv, expect: 401 },
   { name: 'no-session', port: 8913, signIn: null, vars: authEnv, expect: 401 },
+  // Email and password sign-in (Task AUTH-P1) with the real LoginLimiter Durable Object in the local runtime.
+  { name: 'password', port: 8917, signIn: null, password: true, vars: authEnv, expect: 401 },
   { name: 'unconfigured', port: 8915, signIn: null, vars: { ...authEnv, ADMIN_GITHUB_USER_ID: '', SESSION_SECRET: '' }, expect: 503 },
   // A production configuration served anywhere but its own HTTPS hostname (here: local wrangler dev) serves nothing,
   // not even the sign-in: no workers.dev, preview or local exposure (Task M4).
@@ -24,7 +26,8 @@ export const cases = [
 ];
 
 /** `github`: { apiBase, appId, installationId, privateKey } for the mock, or omitted to leave GitHub unconfigured. */
-export function writeConfigs({ assetsDir = '../dist', github } = {}) {
+/** `passwordHash`: the test verifier for the password case (made by the caller). */
+export function writeConfigs({ assetsDir = '../dist', github, passwordHash } = {}) {
   const dir = path.join(here, '.wrangler-e2e');
   fs.mkdirSync(dir, { recursive: true });
   const gh = github
@@ -38,7 +41,9 @@ export function writeConfigs({ assetsDir = '../dist', github } = {}) {
       assets: { directory: path.posix.join('..', assetsDir), binding: 'ASSETS', run_worker_first: true, not_found_handling: 'single-page-application' },
       workers_dev: false,
       preview_urls: false,
-      vars: { ...c.vars, ...gh, ...(c.override ?? {}) },
+      durable_objects: { bindings: [{ name: 'LOGIN_LIMITER', class_name: 'LoginLimiter' }] },
+      migrations: [{ tag: 'v1', new_sqlite_classes: ['LoginLimiter'] }],
+      vars: { ...c.vars, ...gh, ...(c.password && passwordHash ? { ADMIN_PASSWORD_HASH: passwordHash } : {}), ...(c.override ?? {}) },
       dev: { port: c.port, ip: '127.0.0.1' },
     };
     const file = path.join(dir, `wrangler.${c.name}.json`);

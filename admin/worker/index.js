@@ -3,9 +3,10 @@
  *   1. production mode only (config.js): the request is for the configured admin hostname over HTTPS, and no
  *      local-test setting is present. Otherwise nothing is served (503): no workers.dev, preview or local exposure.
  *   2. the sign-in configuration (config.js) is complete. Otherwise nothing is served (503): fail closed.
- *   3. /auth/login, /auth/callback, /auth/logout (auth.js): the GitHub sign-in flow, the only unauthenticated endpoints.
- *   4. a valid session for the one allowed GitHub user ID (auth.js). Without it: the sign-in page for page requests,
- *      401 for the API and for static files. There is no bypass for static assets or the API.
+ *   3. /auth/login, /auth/callback, /auth/logout, /auth/password (auth.js, password.js): GitHub and, when enabled,
+ *      email and password sign-in; the only unauthenticated endpoints.
+ *   4. a valid session: the one allowed GitHub user ID, or the administrator's password (auth.js). Without it: the
+ *      sign-in page for page requests, 401 for the API and for static files. There is no bypass for static assets or the API.
  * API requests must also pass the same-origin checks (auth.js) and are handled by api.js; everything else is a static
  * file of the admin app (GET/HEAD only).
  *
@@ -15,6 +16,9 @@
 import { checkSameOrigin, handleAuth, sessionIdentity, signInPage } from './auth.js';
 import { handleApi } from './api.js';
 import { authConfig, productionProblems } from './config.js';
+
+// The Durable Object class that counts password sign-in attempts (password.js) must be exported by the main module.
+export { LoginLimiter } from './password.js';
 
 const CSP = [
   "default-src 'none'",
@@ -26,7 +30,8 @@ const CSP = [
   "connect-src 'self'",
   "object-src 'none'",
   "base-uri 'none'",
-  "form-action 'none'",
+  // The sign-in page posts its email and password form to this origin only (/auth/password).
+  "form-action 'self'",
   "frame-ancestors 'none'",
 ].join('; ');
 
@@ -70,13 +75,15 @@ export default {
       console.error(`admin: sign-in is not configured (${auth.problems.length} problem(s))`);
       return deny(503, 'The admin is not configured.', isApi);
     }
+    // A password sign-in problem (a malformed ADMIN_PASSWORD_HASH, or the secret without the LOGIN_LIMITER binding)
+    // disables only the password sign-in (password.js); GitHub sign-in keeps working.
     const authResponse = await handleAuth(request, env);
     if (authResponse) return withSecurityHeaders(authResponse);
     const identity = await sessionIdentity(request, env);
     if (!identity) {
-      if (isApi) return withSecurityHeaders(new Response(JSON.stringify({ error: { message: 'Sign in with GitHub to continue.', signIn: '/auth/login' } }), { status: 401, headers: { 'Content-Type': 'application/json; charset=utf-8' } }));
+      if (isApi) return withSecurityHeaders(new Response(JSON.stringify({ error: { message: 'Sign in to continue.', signIn: '/' } }), { status: 401, headers: { 'Content-Type': 'application/json; charset=utf-8' } }));
       const looksLikePage = (request.method === 'GET' || request.method === 'HEAD') && !/\.[a-z0-9]{1,8}$/i.test(path);
-      return withSecurityHeaders(looksLikePage ? signInPage(401) : new Response('Sign in with GitHub to continue.', { status: 401, headers: { 'Content-Type': 'text/plain; charset=utf-8' } }));
+      return withSecurityHeaders(looksLikePage ? signInPage(401, '', env) : new Response('Sign in to continue.', { status: 401, headers: { 'Content-Type': 'text/plain; charset=utf-8' } }));
     }
     if (isApi) {
       const refused = checkSameOrigin(request);

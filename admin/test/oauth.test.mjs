@@ -298,7 +298,7 @@ test('expired sessions are refused for pages, static files and the API', async (
   assert.equal((await get('/assets/index.js', { cookie })).status, 401);
   const api = await get('/api/session', { cookie, headers: { 'X-TechPi-Admin': '1' } });
   assert.equal(api.status, 401);
-  assert.equal((await api.json()).error.signIn, '/auth/login');
+  assert.equal((await api.json()).error.signIn, '/');
 });
 
 test('only the sign-in endpoints are public: other /auth paths, the API and drafts need a session', async () => {

@@ -14,6 +14,10 @@
   "workers_dev": false,
   "preview_urls": false,
   "dev": { "ip": "127.0.0.1", "port": 8787 },
+  // Counts password sign-in attempts (worker/password.js): one SQLite-backed Durable Object, free on the Workers Free
+  // plan. Used only when ADMIN_PASSWORD_HASH is set; GitHub sign-in does not need it.
+  "durable_objects": { "bindings": [{ "name": "LOGIN_LIMITER", "class_name": "LoginLimiter" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["LoginLimiter"] }],
   "vars": {
     // Not secret, but set only locally until deployment is approved.
     "GITHUB_OAUTH_CLIENT_ID": "",
