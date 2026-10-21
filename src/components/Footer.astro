@@ -1,7 +1,7 @@
 ---
 import { getDictionary } from '../i18n';
 import type { Locale } from '../i18n/locales';
-import { operatorFacts } from '../content/site';
+import { contactFacts, operatorFacts } from '../content/site';
 import { insightsCopy } from '../content/insights';
 import { insightsLocale, insightsPath, legalPages, navPages, pathFor, type LanguageFallback, type PageKey, type Translations } from '../i18n/routes';
 import LanguageSwitch from './LanguageSwitch.astro';
@@ -25,13 +25,19 @@ const items = navPages;
 const insights = locale === insightsLocale ? { href: insightsPath(), label: insightsCopy.back } : undefined;
 ---
 
-{/* Minimal. Only what is justified: name, navigation, language, and a quiet legal line: who operates TechPi and the
-     two policies. Contact details live on the Contact page, and the street address on the Privacy page, not here. */}
+{/* Minimal. Only what is justified: name, the three approved contact facts (email, phone, town: src/content/site.ts,
+     owner-approved 2026-10-07), navigation, language, and a quiet legal line: who operates TechPi and the two
+     policies. The street address stays on the Privacy page, not here. */}
 <footer class="site-footer s-ink" id="footer" tabindex="-1">
   <div class="top">
     <div class="brand">
       <span class="name">{t.site.name}</span>
       {t.footer.note && <p>{t.footer.note}</p>}
+      <address class="contact" aria-label={t.nav.contact}>
+        <a href={`mailto:${contactFacts.email}`}>{contactFacts.email}</a>
+        <a class="phone" href={`tel:${contactFacts.phoneDial}`}>{contactFacts.phoneDisplay}</a>
+        <span>{operatorFacts.town[locale]}</span>
+      </address>
     </div>
     <nav aria-label={t.footer.label}>
       <ul>
@@ -102,6 +108,31 @@ const insights = locale === insightsLocale ? { href: insightsPath(), label: insi
     letter-spacing: 0.09em;
     font-size: 1rem;
     margin-bottom: 10px;
+  }
+  /* The contact facts: one quiet column under the name. Links look like the legal links; the town is plain text. */
+  .contact {
+    display: grid;
+    justify-items: start;
+    margin-top: 18px;
+    font-style: normal;
+  }
+  .contact a,
+  .contact span {
+    padding: 6px 0;
+  }
+  .contact a {
+    color: var(--color-paper);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--line);
+    transition: text-decoration-color var(--duration-fast) var(--ease-state);
+  }
+  .contact a:hover {
+    text-decoration-color: currentColor;
+  }
+  .contact .phone {
+    white-space: nowrap;
   }
   nav {
     grid-column: 7 / span 3;

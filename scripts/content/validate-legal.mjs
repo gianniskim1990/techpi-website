@@ -124,6 +124,12 @@ for (const f of htmlFiles) {
   for (const target of el ? ['/el/privacy', '/el/cookies'] : ['/privacy', '/cookies']) {
     check(foot.includes(`href="${target}"`), `${f}: footer has no link to ${target}`);
   }
+  // The footer's contact block: the approved email (mailto), phone (tel) and town, in the page's language.
+  const contact = (foot.match(/<address[^>]*>[\s\S]*?<\/address>/) || [''])[0];
+  check(contact.includes('href="mailto:info@techpi.eu"') && text(contact).includes('info@techpi.eu'), `${f}: footer contact has no mailto:info@techpi.eu link`);
+  check(contact.includes('href="tel:+306975946984"') && text(contact).includes('+30 697 594 6984'), `${f}: footer contact has no tel:+306975946984 link showing +30 697 594 6984`);
+  check(text(contact).includes(el ? 'Ξάνθη, Ελλάδα' : 'Xanthi, Greece'), `${f}: footer contact does not show the town in ${el ? 'Greek' : 'English'}`);
+  check(/aria-label="[^"]+"/.test(contact), `${f}: footer contact has no accessible name`);
   const isPrivacy = f === 'privacy.html' || f === 'el/privacy.html';
   if (!isPrivacy) for (const s of STREETS) check(!html.includes(s), `${f}: street address "${s}" outside the Privacy page`);
 }
@@ -133,4 +139,4 @@ if (failures.length) {
   console.log(`\nLegal page validation: ${checks} checks, ${failures.length} failures.`);
   process.exit(1);
 }
-console.log(`Legal page validation: ${checks} checks, 0 failures (4 legal pages; footer links on ${htmlFiles.length} pages).`);
+console.log(`Legal page validation: ${checks} checks, 0 failures (4 legal pages; footer links and contact on ${htmlFiles.length} pages).`);
