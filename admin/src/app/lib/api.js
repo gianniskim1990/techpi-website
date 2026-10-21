@@ -1,6 +1,6 @@
 /**
  * Client for the admin Worker's API (worker/api.js). The admin only ever talks to its own origin: no GitHub URL, token
- * or repository name is sent from here; the Worker decides all of that from Cloudflare Access and its own settings.
+ * or repository name is sent from here; the Worker decides all of that from the signed-in session and its own settings.
  * The custom header marks the request as the admin's own; the Worker refuses API calls without it.
  */
 export class ApiError extends Error {
@@ -28,11 +28,10 @@ async function request(method, path, body) {
   let data = null;
   try { data = await res.json(); } catch {}
   if (!res.ok) {
-    // Cloudflare Access may answer an expired session with a sign-in page instead of JSON.
-    const message = data?.error?.message ?? (res.status === 401 || res.status === 403 ? 'Your session has ended. Reload the page to sign in again.' : `Unexpected response (${res.status}).`);
+    const message = data?.error?.message ?? (res.status === 401 ? 'Your session has ended. Sign in with GitHub again.' : `Unexpected response (${res.status}).`);
     throw new ApiError(res.status, message, data?.error ?? {});
   }
-  if (data === null) throw new ApiError(res.status, 'Your session may have ended. Reload the page to sign in again.');
+  if (data === null) throw new ApiError(res.status, 'Your session may have ended. Sign in with GitHub again.');
   return data;
 }
 

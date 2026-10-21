@@ -12,17 +12,19 @@
     "run_worker_first": true,
     "not_found_handling": "single-page-application"
   },
-  // No public workers.dev hostname and no preview URLs: the admin is reachable only on its Access-protected hostname.
+  // No public workers.dev hostname and no preview URLs: the admin is reachable only on its own hostname.
   "workers_dev": false,
   "preview_urls": false,
   // Empty on purpose: the Worker refuses every request (503) until the owner sets them.
-  // ACCESS_AUD = the Access application's audience tag; ADMIN_EMAILS = comma-separated administrator emails;
+  // GITHUB_OAUTH_CLIENT_ID = the GitHub App's Client ID (used for "Sign in with GitHub");
+  // ADMIN_GITHUB_USER_ID = the owner's numeric GitHub user ID, the only account allowed in;
   // GITHUB_APP_ID and GITHUB_APP_INSTALLATION_ID = the GitHub App (not secret, but set only with the deployment).
-  // The private key is NEVER a var: `wrangler secret put GITHUB_APP_PRIVATE_KEY` (or .dev.vars locally, git-ignored).
+  // Secrets are NEVER vars: `wrangler secret put` GITHUB_OAUTH_CLIENT_SECRET, SESSION_SECRET and GITHUB_APP_PRIVATE_KEY
+  // (or .dev.vars locally, git-ignored).
   // CONTENT_MODE / CONTENT_BASE_BRANCH: see worker/config.js. main is accepted only with CONTENT_MODE=production.
   "vars": {
-    "ACCESS_AUD": "",
-    "ADMIN_EMAILS": "",
+    "GITHUB_OAUTH_CLIENT_ID": "",
+    "ADMIN_GITHUB_USER_ID": "",
     "GITHUB_APP_ID": "",
     "GITHUB_APP_INSTALLATION_ID": "",
     "CONTENT_MODE": "development",

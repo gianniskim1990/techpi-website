@@ -5,11 +5,10 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import worker from '../worker/index.js';
 import { resetTokenCache } from '../worker/github.js';
+import { authEnv, ctxFor, SESSION_SECRET, sessionCookie } from './support/auth.mjs';
 import { createMockGitHub, gitSha } from './support/mock-github.mjs';
 
 const ORIGIN = 'https://admin.example.test';
-const AUD = 'test-aud-0001';
-const ADMIN = 'admin@example.test';
 const BASE = 'feat/techpi-admin-m0';
 const FILE = 'content/m0-demo/m0-sample-article/index.json';
 const SAMPLE = JSON.stringify({ en: { title: 'M0 sample article for the admin proof of concept', summary: 'Dummy content.', body: 'Placeholder.' } }, null, 2) + '\n';
@@ -18,14 +17,15 @@ const PEM_PKCS1 = privateKey.export({ type: 'pkcs1', format: 'pem' });
 
 let gh;
 const env = (over = {}) => ({
-  ACCESS_AUD: AUD, ADMIN_EMAILS: ADMIN, GITHUB_APP_ID: '123456', GITHUB_APP_INSTALLATION_ID: '7890', GITHUB_APP_PRIVATE_KEY: PEM_PKCS1,
+  ...authEnv, GITHUB_APP_ID: '123456', GITHUB_APP_INSTALLATION_ID: '7890', GITHUB_APP_PRIVATE_KEY: PEM_PKCS1,
   CONTENT_BASE_BRANCH: BASE, ENABLE_TEST_CONTENT: 'true', ASSETS: { fetch: async () => new Response('app') }, ...over,
 });
-const ctxFor = (email = ADMIN, aud = AUD) => ({ access: { aud, getIdentity: async () => ({ email }) } });
 const bodies = [];
 async function call(method, path, { body, headers = {}, ctx = ctxFor(), e = env() } = {}) {
   const h = { 'X-TechPi-Admin': '1', 'Sec-Fetch-Site': 'same-origin', ...(method === 'GET' ? {} : { Origin: ORIGIN, 'Content-Type': 'application/json' }), ...headers };
   for (const [k, v] of Object.entries(h)) if (v === null) delete h[k];
+  const sessionHeader = await sessionCookie(ctx, { secret: e.SESSION_SECRET || SESSION_SECRET });
+  if (sessionHeader && !h.Cookie) h.Cookie = sessionHeader;
   const res = await worker.fetch(new Request(ORIGIN + path, { method, headers: h, body: body === undefined ? undefined : typeof body === 'string' ? body : JSON.stringify(body) }), e, ctx);
   const text = await res.text();
   bodies.push(text);
@@ -42,28 +42,30 @@ beforeEach(() => {
 });
 
 // ---------- authorisation ----------
-test('session: identity comes from Cloudflare Access only; client-sent values are ignored', async () => {
-  const r = await call('GET', '/api/session', { headers: { 'X-Email': 'evil@example.test', 'Cf-Access-Authenticated-User-Email': 'evil@example.test' } });
+test('session: identity comes from the signed GitHub session only; client-sent values are ignored', async () => {
+  const r = await call('GET', '/api/session', { headers: { 'X-Email': 'evil@example.test', 'Cf-Access-Authenticated-User-Email': 'evil@example.test', 'X-GitHub-User': 'someone-else' } });
   assert.equal(r.status, 200);
-  assert.equal(r.data.email, ADMIN);
+  assert.equal(r.data.login, 'techpi-owner');
+  assert.equal(r.data.signedInWith, 'github');
+  assert.ok(!('email' in r.data));
   assert.equal(r.data.repository, 'gianniskim1990/techpi-website');
   assert.equal(r.data.github.configured, true);
   assert.equal(r.data.publishing, 'github', 'publishing is manual, on GitHub');
   assert.equal(r.data.mode, 'development');
 });
 
-test('API refuses missing Access, wrong audience and non-allowlisted users, before contacting GitHub', async () => {
-  for (const ctx of [{}, ctxFor(ADMIN, 'other-app'), ctxFor('intruder@example.test')]) {
+test('API refuses a missing session, a forged session and other GitHub users, before contacting GitHub', async () => {
+  for (const ctx of [{}, ctxFor('owner', 'forged'), ctxFor('intruder')]) {
     for (const [m, p] of [['GET', '/api/session'], ['GET', '/api/m0-demo'], ['POST', '/api/m0-demo/m0-sample-article/draft']]) {
       const r = await call(m, p, { ctx, body: m === 'POST' ? { content: {}, expectedSha: gitSha(SAMPLE) } : undefined });
-      assert.equal(r.status, 403, `${m} ${p}`);
+      assert.equal(r.status, 401, `${m} ${p}`);
     }
   }
   assert.equal(githubRequests(), 0);
 });
 
 test('unconfigured admin fails closed on the API too', async () => {
-  const r = await call('GET', '/api/m0-demo', { e: env({ ACCESS_AUD: '' }) });
+  const r = await call('GET', '/api/m0-demo', { e: env({ SESSION_SECRET: '' }) });
   assert.equal(r.status, 503);
   assert.equal(githubRequests(), 0);
 });

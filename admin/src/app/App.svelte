@@ -11,7 +11,7 @@
   import PagesList from './views/PagesList.svelte';
   import PageEditor from './views/PageEditor.svelte';
   import { route, parts } from './lib/router.svelte.js';
-  import { session, loadSession } from './lib/session.svelte.js';
+  import { session, loadSession, signOut } from './lib/session.svelte.js';
 
   loadSession();
   const connected = $derived(session.data?.connected ?? null);
@@ -55,11 +55,12 @@
       </a>
       <div class="session">
         {#if session.data}
-          <span class="avatar" aria-hidden="true">{session.data.email.slice(0, 1).toUpperCase()}</span>
-          <div><strong class="email" title={session.data.email}>{session.data.email}</strong><span>Signed in with Cloudflare Access</span></div>
+          <span class="avatar" aria-hidden="true">{(session.data.login || '?').slice(0, 1).toUpperCase()}</span>
+          <div><strong class="email" title={session.data.login}>{session.data.login}</strong><span>Signed in with GitHub</span></div>
+          <button class="signout" type="button" onclick={signOut}>Sign out</button>
         {:else}
           <span class="avatar" aria-hidden="true">?</span>
-          <div><strong>{session.loading ? 'Checking sign-in…' : 'Not signed in'}</strong><span>{session.loading ? '' : 'Reload to sign in again'}</span></div>
+          <div><strong>{session.loading ? 'Checking sign-in…' : 'Not signed in'}</strong>{#if !session.loading}<a href="/auth/login">Sign in with GitHub</a>{/if}</div>
         {/if}
       </div>
     </div>
@@ -90,8 +91,11 @@
       {:else if !session.data}
         <div class="card state" role="alert">
           <h1>The admin could not load</h1>
-          <p>{session.error ?? 'Your session may have ended.'} Reload the page to sign in again.</p>
-          <button class="btn btn-secondary btn-sm" type="button" onclick={loadSession}>Try again</button>
+          <p>{session.error ?? 'Your session may have ended.'}</p>
+          <div class="actions">
+            <a class="btn btn-primary btn-sm" href="/auth/login">Sign in with GitHub</a>
+            <button class="btn btn-secondary btn-sm" type="button" onclick={loadSession}>Try again</button>
+          </div>
         </div>
       {:else if current.section === ''}
         <Dashboard />
@@ -136,6 +140,11 @@
   .live { margin-left: auto; font-size: var(--text-xs); font-weight: 600; color: var(--ink); background: var(--cyan); padding: 0 6px; border-radius: 4px; }
   .email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 190px; }
   .session div { min-width: 0; }
+  .session a { color: var(--cyan); font-size: var(--text-xs); }
+  .signout { flex: none; white-space: nowrap; margin-left: auto; padding: 4px 8px; border: 1px solid var(--ink-line); border-radius: var(--radius); background: none; color: var(--fog); font: inherit; font-size: var(--text-xs); cursor: pointer; }
+  .signout:hover { color: var(--sheet); background: var(--ink-raised); }
+  .signout:focus-visible { outline-color: var(--cyan); }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
   .shell { display: grid; grid-template-columns: var(--sidebar) minmax(0, 1fr); min-height: 100vh; }
   .sidebar {
     position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; background: var(--ink); color: var(--fog);

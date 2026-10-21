@@ -1,7 +1,7 @@
 // Task M4: the production content workflow (GitHub mocked). main becomes the published-content branch only with an
 // explicit production configuration; the admin reads the 33 items from main, writes only to cms/* draft branches, opens
 // draft PRs that target main, never writes to main, handles leftover branches from closed test PRs safely, and refuses
-// requests on the wrong host or with local-test settings. Access fails closed for anything unauthorised.
+// requests on the wrong host or with local-test settings. Sign-in fails closed for anything unauthorised.
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -12,6 +12,7 @@ import worker from '../worker/index.js';
 import { assertDraftBranch, WriteRefused } from '../worker/api.js';
 import { contentConfig, productionProblems } from '../worker/config.js';
 import { resetTokenCache } from '../worker/github.js';
+import { authEnv, ctxFor, SESSION_SECRET, sessionCookie } from './support/auth.mjs';
 import { createMockGitHub, gitSha } from './support/mock-github.mjs';
 import { CONNECTED_SLUGS } from '../shared/case-study-content.js';
 import { INSIGHT_SLUGS } from '../shared/insight-content.js';
@@ -19,9 +20,6 @@ import { PAGE_KEYS, editableOf as pageEditable } from '../shared/page-content.js
 
 const HOST = 'admin.techpi.eu';
 const ORIGIN = `https://${HOST}`;
-// A real Access audience tag is 64 hex characters. Identities use reserved domains only (never a real address).
-const AUD = 'a1b2c3d4'.repeat(8);
-const OWNER = 'owner@techpi.invalid';
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const read = (rel) => fs.readFileSync(path.join(repo, rel), 'utf8').replace(/\r\n/g, '\n');
 const FILES = Object.fromEntries([
@@ -35,12 +33,13 @@ const PEM = privateKey.export({ type: 'pkcs1', format: 'pem' });
 let gh;
 const prodEnv = (over = {}) => ({
   CONTENT_MODE: 'production', CONTENT_BASE_BRANCH: 'main', ADMIN_HOSTNAME: HOST,
-  ACCESS_AUD: AUD, ADMIN_EMAILS: OWNER, GITHUB_APP_ID: '123456', GITHUB_APP_INSTALLATION_ID: '7890', GITHUB_APP_PRIVATE_KEY: PEM,
+  ...authEnv, SESSION_SECRET: 'prod-like-secret-for-tests-only-9f8e7d6c5b4a39281706', GITHUB_APP_ID: '123456', GITHUB_APP_INSTALLATION_ID: '7890', GITHUB_APP_PRIVATE_KEY: PEM,
   ASSETS: { fetch: async () => new Response('<!doctype html><title>TechPi Admin</title>') }, ...over,
 });
-const ctxFor = (email = OWNER, aud = AUD) => ({ access: { aud, getIdentity: async () => ({ email }) } });
 async function call(method, p, { body, headers = {}, ctx = ctxFor(), e = prodEnv(), origin = ORIGIN } = {}) {
   const h = { 'X-TechPi-Admin': '1', 'Sec-Fetch-Site': 'same-origin', ...(method === 'GET' ? {} : { Origin: origin, 'Content-Type': 'application/json' }), ...headers };
+  const sessionHeader = await sessionCookie(ctx, { secret: e.SESSION_SECRET || SESSION_SECRET });
+  if (sessionHeader && !h.Cookie) h.Cookie = sessionHeader;
   const res = await worker.fetch(new Request(origin + p, { method, headers: h, body: body === undefined ? undefined : JSON.stringify(body) }), e, ctx);
   const text = await res.text();
   let data = null;
@@ -78,20 +77,19 @@ test('production refuses the wrong host, plain HTTP and every local-test setting
   assert.ok(productionProblems(prodEnv({ ADMIN_HOSTNAME: '' }), new URL(ORIGIN)).length);
   assert.ok(productionProblems(prodEnv({ GITHUB_API_BASE: 'http://127.0.0.1:8920' }), new URL(ORIGIN)).length, 'the local GitHub mock override');
   assert.ok(productionProblems(prodEnv({ ENABLE_TEST_CONTENT: 'true' }), new URL(ORIGIN)).length);
-  assert.ok(productionProblems(prodEnv({ ADMIN_EMAILS: 'admin@example.test' }), new URL(ORIGIN)).length, 'the local test identity');
-  assert.ok(productionProblems(prodEnv({ ADMIN_EMAILS: `${OWNER}, someone@example.com` }), new URL(ORIGIN)).length);
-  for (const aud of ['local-test-aud', 'test-aud-0001']) assert.ok(productionProblems(prodEnv({ ACCESS_AUD: aud }), new URL(ORIGIN)).length, aud);
+  assert.ok(productionProblems(prodEnv({ SESSION_SECRET }), new URL(ORIGIN)).length, 'the local test session secret');
+  assert.ok(productionProblems(prodEnv({ GITHUB_OAUTH_BASE: 'http://127.0.0.1:8920' }), new URL(ORIGIN)).length, 'the local OAuth mock override');
   assert.deepEqual(productionProblems({ CONTENT_BASE_BRANCH: 'feat/x' }, new URL('http://127.0.0.1:8787/')), [], 'development is unaffected');
 });
 
-test('Access fails closed in production: no identity, wrong audience, other users, wrong host, and no static bypass', async () => {
-  for (const ctx of [{}, ctxFor(OWNER, 'f'.repeat(64)), ctxFor('intruder@techpi.invalid')]) {
-    for (const p of ['/', '/assets/index.js', '/api/session', '/api/pages']) assert.equal((await call('GET', p, { ctx })).status, 403, p);
+test('sign-in fails closed in production: no session, forged session, other GitHub users, wrong host, and no static bypass', async () => {
+  for (const ctx of [{}, ctxFor('owner', 'forged'), ctxFor('intruder')]) {
+    for (const p of ['/', '/assets/index.js', '/api/session', '/api/pages']) assert.equal((await call('GET', p, { ctx })).status, 401, p);
   }
   for (const origin of ['https://techpi-admin.example.workers.dev', 'http://127.0.0.1:8787']) {
     for (const p of ['/', '/api/session']) assert.equal((await call('GET', p, { origin })).status, 503, `${origin}${p}`);
   }
-  assert.equal((await call('GET', '/', { e: prodEnv({ ADMIN_EMAILS: 'admin@example.test' }), ctx: ctxFor('admin@example.test') })).status, 503, 'a simulated test identity is not usable in production');
+  assert.equal((await call('GET', '/', { e: prodEnv({ SESSION_SECRET }) })).status, 503, 'the test session secret is not usable in production');
   assert.equal((await call('GET', '/')).status, 200, 'the owner gets the app');
   assert.equal(gh.state.log.length, 0, 'nothing reached GitHub');
 });
@@ -253,17 +251,17 @@ test('no response contains a credential', async () => {
 
 // ---------- the committed configuration files ----------
 const jsonc = (file) => JSON.parse(fs.readFileSync(path.join(repo, 'admin', file), 'utf8').replace(/^\s*\/\/.*$/gm, '').replace(/,(\s*[}\]])/g, '$1'));
-test('the committed configurations: no public hostnames, no simulated Access, no secrets; main only in the production template', () => {
+test('the committed configurations: no public hostnames, no Access, no secrets; main only in the production template', () => {
   const dev = jsonc('wrangler.jsonc');
   const prod = jsonc('wrangler.production.example.jsonc');
   for (const c of [dev, prod]) {
     assert.equal(c.workers_dev, false, 'no workers.dev hostname');
     assert.equal(c.preview_urls, false, 'no preview URLs');
     assert.equal(c.assets.run_worker_first, true, 'static files go through the Worker checks');
-    assert.ok(!('access' in c), 'no simulated Access identity in a deployable configuration');
-    assert.ok(!('GITHUB_APP_PRIVATE_KEY' in c.vars) && !('GITHUB_API_BASE' in c.vars) && !('ENABLE_TEST_CONTENT' in c.vars));
-    assert.equal(c.vars.ACCESS_AUD, '', 'no audience committed');
-    assert.equal(c.vars.ADMIN_EMAILS, '', 'no email committed');
+    assert.ok(!('access' in c), 'no Access configuration');
+    for (const secret of ['GITHUB_APP_PRIVATE_KEY', 'GITHUB_OAUTH_CLIENT_SECRET', 'SESSION_SECRET', 'GITHUB_API_BASE', 'GITHUB_OAUTH_BASE', 'ENABLE_TEST_CONTENT', 'ACCESS_AUD', 'ADMIN_EMAILS']) assert.ok(!(secret in c.vars), `${secret} is not committed`);
+    assert.equal(c.vars.GITHUB_OAUTH_CLIENT_ID, '', 'no client ID committed');
+    assert.equal(c.vars.ADMIN_GITHUB_USER_ID, '', 'no user ID committed');
   }
   assert.deepEqual(contentConfig(dev.vars).mode, 'development');
   assert.notEqual(dev.vars.CONTENT_BASE_BRANCH, 'main', 'the committed config does not point at main before the release is merged');

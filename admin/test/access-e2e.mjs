@@ -1,6 +1,6 @@
-// End-to-end check in Cloudflare's local runtime (workerd via `wrangler dev`), using Wrangler's documented `access.dev`
-// simulation and the GitHub mock over HTTP. Local only: nothing is deployed, no real Access, identity or GitHub.
-// Checks the Access gate for the app, its files and the API; then, as the administrator, the whole draft workflow.
+// End-to-end check in Cloudflare's local runtime (workerd via `wrangler dev`), signing in with GitHub through the real
+// OAuth redirects against the GitHub mock over HTTP. Local only: nothing is deployed, no real GitHub or identity.
+// Checks the sign-in gate for the app, its files and the API; then, as the owner, the whole draft workflow and logout.
 // Run: npm run build && node test/access-e2e.mjs        Add --serve to keep the admin case running for a browser check.
 import { spawn, execSync } from 'node:child_process';
 import crypto from 'node:crypto';
@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { writeConfigs } from './make-wrangler-configs.mjs';
-import { createMockGitHub } from './support/mock-github.mjs';
+import { createMockGitHub, MOCK_OAUTH } from './support/mock-github.mjs';
 import { CONNECTED_SLUGS } from '../shared/case-study-content.js';
 import { INSIGHT_SLUGS } from '../shared/insight-content.js';
 import { PAGE_KEYS } from '../shared/page-content.js';
@@ -39,7 +39,7 @@ let failures = 0;
 const lines = [];
 const check = (name, ok, detail) => { if (!ok) failures++; lines.push(`${ok ? 'PASS' : 'FAIL'} ${name}${detail ? `  (${detail})` : ''}`); };
 
-for (const c of serve ? configs.filter((x) => x.name === 'admin') : configs) {
+for (const c of serve ? configs.filter((x) => x.name === 'owner') : configs) {
   const proc = spawn(process.execPath, [wrangler, 'dev', '--config', c.file, '--log-level', 'error'], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] });
   let log = '';
   proc.stdout.on('data', (d) => (log += d));
@@ -51,24 +51,42 @@ for (const c of serve ? configs.filter((x) => x.name === 'admin') : configs) {
     try { res = await fetch(`${origin}/`, { signal: AbortSignal.timeout(3000) }); break; } catch { await sleep(1000); }
   }
   if (!res) { check(`${c.name}: Worker starts`, false, log.slice(-600)); kill(proc); continue; }
-  if (serve) { console.log(`Admin (simulated Access as admin@example.test): ${origin}/  mock GitHub on :${MOCK_PORT}. Ctrl+C to stop.`); await new Promise(() => {}); }
+  if (serve) { console.log(`Admin: ${origin}/ (Sign in with GitHub signs in at the mock as ${MOCK_OAUTH.user.login})  mock GitHub on :${MOCK_PORT}. Ctrl+C to stop.`); await new Promise(() => {}); }
 
+  // Sign in through the redirects, carrying the cookies by hand (as a browser would).
+  let cookie = '';
+  if (c.signIn) {
+    gh.state.oauthUser = c.signIn.as === 'owner' ? { ...MOCK_OAUTH.user } : { id: 7654321, login: 'someone-else' };
+    const jar = (r) => r.headers.getSetCookie().map((x) => x.split(';')[0]).filter((x) => !x.endsWith('='));
+    const login = await fetch(`${origin}/auth/login`, { redirect: 'manual' });
+    if (c.signIn.expect === 503) check(`${c.name}: sign-in refused -> ${login.status}`, login.status === 503 && login.headers.getSetCookie().length === 0);
+    else {
+      const authorize = new URL(login.headers.get('location'));
+      check(`${c.name}: /auth/login redirects to GitHub with PKCE S256`, login.status === 303 && authorize.searchParams.get('code_challenge_method') === 'S256' && authorize.searchParams.get('redirect_uri') === `${origin}/auth/callback`);
+      const atGitHub = await fetch(authorize, { redirect: 'manual' });
+      const back = await fetch(atGitHub.headers.get('location'), { redirect: 'manual', headers: { Cookie: jar(login).join('; ') } });
+      const got = jar(back);
+      check(`${c.name}: callback -> ${back.status}`, back.status === c.signIn.expect && (c.signIn.expect === 303 ? got.some((x) => x.startsWith('__Host-techpi_session=')) : got.length === 0));
+      cookie = got.join('; ');
+    }
+  }
+  if (cookie) res = await fetch(`${origin}/`, { headers: { Cookie: cookie } });
   const body = await res.text();
   check(`${c.name}: GET / -> ${res.status}`, res.status === c.expect && (c.expect === 200 ? /<html/i.test(body) : !/type="module"/.test(body)), `want ${c.expect}, x-robots=${res.headers.get('x-robots-tag')}`);
-  const asset = await fetch(`${origin}/techpi-symbol.png`).catch(() => null);
+  const asset = await fetch(`${origin}/techpi-symbol.png`, { headers: { Cookie: cookie } }).catch(() => null);
   check(`${c.name}: static file gated -> ${asset?.status}`, asset?.status === c.expect);
-  const api = { 'X-TechPi-Admin': '1' };
+  const api = { 'X-TechPi-Admin': '1', Cookie: cookie };
   const s = await fetch(`${origin}/api/session`, { headers: api }).catch(() => null);
   check(`${c.name}: GET /api/session -> ${s?.status}`, s?.status === c.expect);
 
   if (c.expect === 200) {
     const sess = await s.json();
-    check('admin: session email is the Access identity', sess.email === 'admin@example.test' && sess.github.configured === true, JSON.stringify(sess));
-    const post = await fetch(`${origin}/`, { method: 'POST', body: 'x' });
+    check('admin: the session is the GitHub owner', sess.login === MOCK_OAUTH.user.login && sess.signedInWith === 'github' && sess.github.configured === true, JSON.stringify(sess));
+    const post = await fetch(`${origin}/`, { method: 'POST', body: 'x', headers: { Cookie: cookie } });
     check(`admin: POST / -> ${post.status}`, post.status === 405);
     const cross = await fetch(`${origin}/api/m0-demo/m0-sample-article/draft`, { method: 'POST', headers: { ...api, Origin: 'https://evil.example', 'Content-Type': 'application/json' }, body: '{}' });
     check(`admin: cross-origin save -> ${cross.status}`, cross.status === 403);
-    const noHeader = await fetch(`${origin}/api/m0-demo`);
+    const noHeader = await fetch(`${origin}/api/m0-demo`, { headers: { Cookie: cookie } });
     check(`admin: API without the admin header -> ${noHeader.status}`, noHeader.status === 403);
 
     const list = await (await fetch(`${origin}/api/m0-demo`, { headers: api })).json();
@@ -170,12 +188,19 @@ for (const c of serve ? configs.filter((x) => x.name === 'admin') : configs) {
     check(`admin: Privacy saved with moved references -> ${p4.status}, PR #${pd4.draft?.number} flags owner legal review`, p4.status === 200 && /owner’s review/.test(pr4?.body ?? ''));
     check('admin: page drafts hold only their own change; the base pages are unchanged', Object.entries(pgFiles).every(([f, t]) => gh.fileOn(BASE, f) === t) && gh.fileOn('cms/pages/about', 'content/pages/privacy/index.json') === pgFiles['content/pages/privacy/index.json'] && gh.fileOn('cms/pages/privacy', CS_FILE) === csSample);
     check('admin: main and the base still unchanged after Rocketeer saves', gh.fileOn('main', 'README.md') === 'main' && Object.entries(csFiles).every(([f, t]) => gh.fileOn(BASE, f) === t));
-    check('admin: Worker log has no credentials', !/ghs_|PRIVATE KEY|Bearer /.test(log));
+    // Logout ends the session in the browser.
+    const out = await fetch(`${origin}/auth/logout`, { method: 'POST', headers: { ...api, Origin: origin, 'Content-Type': 'application/json' }, body: '{}' });
+    const cleared = out.headers.getSetCookie();
+    check(`admin: logout -> ${out.status}, cookies cleared`, out.status === 200 && cleared.some((x) => x.startsWith('__Host-techpi_session=;') && x.includes('Max-Age=0')));
+    const afterOut = await fetch(`${origin}/api/session`, { headers: { 'X-TechPi-Admin': '1' } });
+    check(`admin: without the cookie after logout -> ${afterOut.status}`, afterOut.status === 401);
+    check('admin: the GitHub user tokens were revoked', [...gh.state.userTokens.values()].every((t) => t.revoked));
+    check('admin: Worker log has no credentials', !/ghs_|ghu_|PRIVATE KEY|Bearer |mock-client-secret|test-session-secret/.test(log));
   }
   kill(proc);
   await sleep(1500);
 }
 mockServer.close();
 console.log(lines.join('\n'));
-console.log(`\nLocal end-to-end (workerd + simulated Access + mock GitHub): ${failures} failures`);
+console.log(`\nLocal end-to-end (workerd + GitHub sign-in + mock GitHub): ${failures} failures`);
 process.exit(failures ? 1 : 0);
