@@ -17,14 +17,14 @@
 //       10 ms CPU limit. The script prints the time measured on this computer as an ESTIMATE only: Cloudflare's CPU
 //       time can be higher. Verify a real sign-in after deploying (docs/admin/M4-GO-LIVE.md, section 8).
 //
-// Rules: 16 to 256 characters, at least 8 different characters, not containing "techpi" or "password".
+// Rules: 8 to 256 characters, at least 5 different characters, not containing "techpi" or "password".
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { spawnSync, execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { makeVerifier, parseVerifier, verifyPassword, MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH, MIN_ITERATIONS, MAX_ITERATIONS } from '../worker/password.js';
+import { makeVerifier, parseVerifier, verifyPassword, MIN_PASSWORD_LENGTH, MIN_DISTINCT_CHARACTERS, MAX_PASSWORD_LENGTH, MIN_ITERATIONS, MAX_ITERATIONS } from '../worker/password.js';
 
 const admin = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const say = (s) => process.stderr.write(`${s}\n`);
@@ -51,7 +51,7 @@ export function parseArgs(argv) {
 export function weakness(password) {
   if (password.length < MIN_PASSWORD_LENGTH) return `It must be at least ${MIN_PASSWORD_LENGTH} characters long.`;
   if (password.length > MAX_PASSWORD_LENGTH) return `It must be at most ${MAX_PASSWORD_LENGTH} characters long.`;
-  if (new Set(password).size < 8) return 'It must contain at least 8 different characters.';
+  if (new Set(password).size < MIN_DISTINCT_CHARACTERS) return `It must contain at least ${MIN_DISTINCT_CHARACTERS} different characters.`;
   if (/techpi|password/i.test(password)) return 'It must not contain "techpi" or "password".';
   return null;
 }
