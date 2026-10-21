@@ -1,0 +1,33 @@
+{
+  "facts": {
+    "key": "capabilities",
+    "pageKey": "capabilities",
+    "paths": {
+      "en": "/capabilities",
+      "el": "/el/capabilities"
+    },
+    "kind": "page"
+  },
+  "en": {
+    "seo": {
+      "title": "Capabilities — Products, Web & AI | TechPi",
+      "description": "What TechPi builds: digital products and platforms, websites and web experiences, AI and automation, and digital visibility, brought together around the problem."
+    },
+    "heading": "What we build.",
+    "lead": "Four capabilities, brought together around the problem.",
+    "covers": "What it covers",
+    "indexLabel": "Capabilities",
+    "seenIn": "Seen in"
+  },
+  "el": {
+    "seo": {
+      "title": "Δυνατότητες — Εφαρμογές, ιστοσελίδες & AI | TechPi",
+      "description": "Τι φτιάχνει η TechPi: ψηφιακά προϊόντα και πλατφόρμες, ιστοσελίδες, τεχνητή νοημοσύνη και αυτοματισμούς, και ψηφιακή ορατότητα, γύρω από το πρόβλημα που χρειάζεται λύση."
+    },
+    "heading": "Τι φτιάχνουμε.",
+    "lead": "Τέσσερις δυνατότητες που συνδυάζονται γύρω από το πρόβλημα.",
+    "covers": "Τι περιλαμβάνει",
+    "indexLabel": "Δυνατότητες",
+    "seenIn": "Ενδεικτικά έργα"
+  }
+}

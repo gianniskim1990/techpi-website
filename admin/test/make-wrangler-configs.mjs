@@ -22,7 +22,7 @@ export function writeConfigs({ assetsDir = '../dist', github } = {}) {
   const dir = path.join(here, '.wrangler-e2e');
   fs.mkdirSync(dir, { recursive: true });
   const gh = github
-    ? { GITHUB_API_BASE: github.apiBase, GITHUB_APP_ID: github.appId, GITHUB_APP_INSTALLATION_ID: github.installationId, GITHUB_APP_PRIVATE_KEY: github.privateKey, CONTENT_BASE_BRANCH: 'feat/techpi-admin-m2-insights' }
+    ? { GITHUB_API_BASE: github.apiBase, GITHUB_APP_ID: github.appId, GITHUB_APP_INSTALLATION_ID: github.installationId, GITHUB_APP_PRIVATE_KEY: github.privateKey, CONTENT_BASE_BRANCH: 'feat/techpi-admin-m3-website-pages' }
     : {};
   return cases.map((c) => {
     const config = {

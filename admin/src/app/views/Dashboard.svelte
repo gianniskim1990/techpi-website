@@ -7,6 +7,7 @@
   import { session } from '../lib/session.svelte.js';
   import { caseStudies, loadCaseStudies } from '../lib/case-studies.svelte.js';
   import { insights, loadInsights } from '../lib/insights.svelte.js';
+  import { pages, loadPages } from '../lib/pages.svelte.js';
 
   const c = $derived(counts());
   const drafts = $derived(store.entries.filter((e) => e.status !== 'published'));
@@ -19,10 +20,13 @@
   const articlesConnected = $derived(Boolean(session.data?.connected?.insights?.length));
   $effect(() => { if (connected) untrack(loadCaseStudies); });
   $effect(() => { if (articlesConnected) untrack(loadInsights); });
+  const pagesConnected = $derived(Boolean(session.data?.connected?.pages?.length));
+  $effect(() => { if (pagesConnected) untrack(loadPages); });
   /** Open draft pull requests of connected case studies, from GitHub. */
   const caseDrafts = $derived([
     ...caseStudies.entries.filter((e) => e.draft).map((e) => ({ ...e, type: 'case-studies', label: e.name, kind: 'Case study' })),
     ...insights.entries.filter((e) => e.draft).map((e) => ({ ...e, type: 'articles', label: e.title, kind: 'Article' })),
+    ...pages.entries.filter((e) => e.draft).map((e) => ({ ...e, type: 'pages', label: e.name, kind: 'Website page' })),
   ]);
   function newEntry(type) { navigate(`/${type}/${createDraft(type)}`); }
 </script>
@@ -80,7 +84,7 @@
       </dl>
       <p class="pending">
         <Icon name="info" size={16} />
-        <span>Publishing is not connected, so the status above is a snapshot. Saving drafts to GitHub works for <a href="#/test-content">Test content</a>, the <a href="#/case-studies">18 case studies</a> and the <a href="#/articles">7 Insights articles</a>.</span>
+        <span>Publishing is not connected, so the status above is a snapshot. Saving drafts to GitHub works for <a href="#/test-content">Test content</a>, the <a href="#/pages">8 website pages</a>, the <a href="#/case-studies">18 case studies</a> and the <a href="#/articles">7 Insights articles</a>.</span>
       </p>
     </div>
   </section>

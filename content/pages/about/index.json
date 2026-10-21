@@ -1,0 +1,79 @@
+{
+  "facts": {
+    "key": "about",
+    "pageKey": "about",
+    "paths": {
+      "en": "/about",
+      "el": "/el/about"
+    },
+    "kind": "page"
+  },
+  "en": {
+    "seo": {
+      "title": "About — Technology Built Around Business Needs | TechPi",
+      "description": "TechPi, the evolution of pigiota314, designs and builds digital products, platforms and intelligent systems around real business needs."
+    },
+    "heading": "TechPi is the evolution of pigiota314.",
+    "lead": "From websites and digital experiences to custom platforms, digital products and intelligent systems.",
+    "changeHeading": "What stayed, what changed",
+    "stayed": {
+      "label": "Stayed",
+      "text": "The Pi, the circular mark, the blue and cyan family, the client relationships and the people."
+    },
+    "changed": {
+      "label": "Changed",
+      "text": "The name is now pronounceable and spellable in any European language, the scope is stated as technology and products, the visual language is refined."
+    },
+    "name": "Pi stays. Tech says where we are going: digital products, platforms and intelligent systems.",
+    "principlesHeading": "How we work",
+    "principles": [
+      {
+        "heading": "The business problem first.",
+        "text": "We start with how an organisation actually works, and choose technology after that."
+      },
+      {
+        "heading": "AI where it creates value. Not where it creates noise."
+      },
+      {
+        "heading": "Built to run every day."
+      },
+      {
+        "heading": "Technology built around real business needs."
+      }
+    ]
+  },
+  "el": {
+    "seo": {
+      "title": "Η εταιρεία — Τεχνολογία για πραγματικές ανάγκες | TechPi",
+      "description": "Η TechPi είναι η εξέλιξη της pigiota314. Σχεδιάζει και αναπτύσσει ψηφιακά προϊόντα, πλατφόρμες και ευφυή συστήματα για επιχειρήσεις."
+    },
+    "heading": "Η TechPi είναι η εξέλιξη της pigiota314.",
+    "lead": "Από τις ιστοσελίδες και τις ψηφιακές εμπειρίες σε ειδικές πλατφόρμες, ψηφιακά προϊόντα και ευφυή συστήματα.",
+    "changeHeading": "Τι έμεινε, τι άλλαξε",
+    "stayed": {
+      "label": "Έμεινε",
+      "text": "Το Pi, το κυκλικό σήμα, η οικογένεια του μπλε και του κυανού, οι σχέσεις με τους πελάτες και οι άνθρωποι."
+    },
+    "changed": {
+      "label": "Άλλαξε",
+      "text": "Το όνομα προφέρεται και γράφεται πλέον εύκολα σε κάθε ευρωπαϊκή γλώσσα, το αντικείμενο διατυπώνεται ως τεχνολογία και προϊόντα, και η οπτική γλώσσα έγινε πιο εκλεπτυσμένη."
+    },
+    "name": "Το Pi μένει. Το Tech δείχνει πού πηγαίνουμε: ψηφιακά προϊόντα, πλατφόρμες και ευφυή συστήματα.",
+    "principlesHeading": "Πώς δουλεύουμε",
+    "principles": [
+      {
+        "heading": "Πρώτα το πρόβλημα της επιχείρησης.",
+        "text": "Ξεκινάμε από το πώς λειτουργεί πραγματικά ένας οργανισμός και επιλέγουμε την τεχνολογία μετά."
+      },
+      {
+        "heading": "Τεχνητή νοημοσύνη εκεί που δημιουργεί αξία. Όχι εκεί που δημιουργεί θόρυβο."
+      },
+      {
+        "heading": "Χτισμένο για να λειτουργεί κάθε μέρα."
+      },
+      {
+        "heading": "Τεχνολογία χτισμένη γύρω από πραγματικές επιχειρηματικές ανάγκες."
+      }
+    ]
+  }
+}

@@ -46,5 +46,8 @@ export const api = {
   listInsights: () => request('GET', 'insights'),
   getInsight: (slug) => request('GET', `insights/${encodeURIComponent(slug)}`),
   saveInsightDraft: (slug, content, expectedSha) => request('POST', `insights/${encodeURIComponent(slug)}/draft`, { content, expectedSha }),
+  listPages: () => request('GET', 'pages'),
+  getPage: (key) => request('GET', `pages/${encodeURIComponent(key)}`),
+  savePageDraft: (key, content, expectedSha) => request('POST', `pages/${encodeURIComponent(key)}/draft`, { content, expectedSha }),
   saveDemoDraft: (slug, content, expectedSha) => request('POST', `m0-demo/${encodeURIComponent(slug)}/draft`, { content, expectedSha }),
 };

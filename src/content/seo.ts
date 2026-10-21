@@ -1,6 +1,7 @@
 import type { Locale } from '../i18n/locales';
 import type { PageKey } from '../i18n/routes';
 import type { Project } from './projects';
+import { pageDocs } from './pages-content';
 
 /**
  * Search and sharing metadata: the browser title and meta description of every page, in both languages.
@@ -19,92 +20,22 @@ export interface PageMeta {
   description: string;
 }
 
-export const pageMeta: Record<Locale, Record<PageKey, PageMeta>> = {
-  en: {
-    home: {
-      title: 'TechPi — Digital Products & Technology',
-      description:
-        'TechPi designs and builds digital products, web experiences and intelligent systems, turning fragmented tools into connected technology, with AI where it adds value.',
-    },
-    work: {
-      title: 'Work — Digital Products & Platforms | TechPi',
-      description:
-        'Explore TechPi client websites, web applications and SaaS platforms, each with its own case study, and earlier branding and digital communication work by pigiota314.',
-    },
-    capabilities: {
-      title: 'Capabilities — Products, Web & AI | TechPi',
-      description:
-        'What TechPi builds: digital products and platforms, websites and web experiences, AI and automation, and digital visibility, brought together around the problem.',
-    },
-    euProjects: {
-      title: 'Websites & Digital Platforms for EU Projects | TechPi',
-      description:
-        'TechPi designs and builds project websites, digital platforms and web applications for EU-funded research, innovation and cooperation projects.',
-    },
-    about: {
-      title: 'About — Technology Built Around Business Needs | TechPi',
-      description:
-        'TechPi, the evolution of pigiota314, designs and builds digital products, platforms and intelligent systems around real business needs.',
-    },
-    contact: {
-      title: 'Contact — Start a Project | TechPi',
-      description:
-        'Start a project with TechPi: digital products, platforms, web systems and other technology projects. Tell us about the problem you need to solve.',
-    },
-    privacy: {
-      title: 'Privacy Policy | TechPi',
-      description:
-        'How TechPi, the brand of Ioannis Kimoundris (sole proprietorship, Xanthi), handles personal data from enquiries and website visits, and how to exercise your rights.',
-    },
-    cookies: {
-      title: 'Cookies Policy | TechPi',
-      description:
-        'TechPi uses no analytics, advertising or tracking cookies. This policy explains the security cookies Cloudflare may set and how you can control cookies.',
-    },
-  },
-  el: {
-    home: {
-      title: 'TechPi — Ψηφιακά προϊόντα & τεχνολογία',
-      description:
-        'Η TechPi φτιάχνει ψηφιακά προϊόντα, ιστοσελίδες και ευφυή συστήματα: από αποσπασματικά εργαλεία σε συνδεδεμένη τεχνολογία, με τεχνητή νοημοσύνη όπου προσφέρει αξία.',
-    },
-    work: {
-      title: 'Έργα — Ψηφιακά προϊόντα & πλατφόρμες | TechPi',
-      description:
-        'Έργα της TechPi: ιστοσελίδες, web εφαρμογές και πλατφόρμες SaaS πελατών, με αναλυτική παρουσίαση για κάθε έργο, και παλαιότερα έργα branding και ψηφιακής επικοινωνίας της pigiota314.',
-    },
-    capabilities: {
-      title: 'Δυνατότητες — Εφαρμογές, ιστοσελίδες & AI | TechPi',
-      description:
-        'Τι φτιάχνει η TechPi: ψηφιακά προϊόντα και πλατφόρμες, ιστοσελίδες, τεχνητή νοημοσύνη και αυτοματισμούς, και ψηφιακή ορατότητα, γύρω από το πρόβλημα που χρειάζεται λύση.',
-    },
-    euProjects: {
-      title: 'Ιστοσελίδες & ψηφιακές πλατφόρμες για ευρωπαϊκά έργα | TechPi',
-      description:
-        'Η TechPi σχεδιάζει και αναπτύσσει ιστοσελίδες, ψηφιακές πλατφόρμες και web εφαρμογές για έργα έρευνας, καινοτομίας και συνεργασίας με ευρωπαϊκή χρηματοδότηση.',
-    },
-    about: {
-      title: 'Η εταιρεία — Τεχνολογία για πραγματικές ανάγκες | TechPi',
-      description:
-        'Η TechPi είναι η εξέλιξη της pigiota314. Σχεδιάζει και αναπτύσσει ψηφιακά προϊόντα, πλατφόρμες και ευφυή συστήματα για επιχειρήσεις.',
-    },
-    contact: {
-      title: 'Επικοινωνία — Ξεκινήστε ένα έργο | TechPi',
-      description:
-        'Ξεκινήστε ένα έργο με την TechPi: ψηφιακά προϊόντα, πλατφόρμες, συστήματα web και άλλα τεχνολογικά έργα. Πείτε μας ποιο πρόβλημα θέλετε να λύσετε.',
-    },
-    privacy: {
-      title: 'Πολιτική Απορρήτου | TechPi',
-      description:
-        'Πώς η TechPi, ατομική επιχείρηση του Ιωάννη Κιμούντρη στην Ξάνθη, χειρίζεται τα προσωπικά δεδομένα από την επικοινωνία και τις επισκέψεις, και πώς ασκείτε τα δικαιώματά σας.',
-    },
-    cookies: {
-      title: 'Πολιτική Cookies | TechPi',
-      description:
-        'Η TechPi δεν χρησιμοποιεί cookies στατιστικών, διαφήμισης ή παρακολούθησης. Εξηγούμε τα cookies ασφαλείας που μπορεί να ορίσει η Cloudflare και πώς τα ελέγχετε.',
-    },
-  },
-};
+/**
+ * Since Task M3 each page's title and description live in its file, content/pages/<page>/index.json ("seo" in each
+ * language), edited through the admin. The admin and the build apply the same rules as scripts/seo/validate.mjs: the
+ * title names TechPi and has at most 70 characters, the description has 70 to 200.
+ */
+const metaIn = (locale: Locale): Record<PageKey, PageMeta> => ({
+  home: pageDocs.home[locale].seo,
+  work: pageDocs.work[locale].seo,
+  capabilities: pageDocs.capabilities[locale].seo,
+  euProjects: pageDocs.euProjects[locale].seo,
+  about: pageDocs.about[locale].seo,
+  contact: pageDocs.contact[locale].seo,
+  privacy: pageDocs.privacy[locale].seo,
+  cookies: pageDocs.cookies[locale].seo,
+});
+export const pageMeta: Record<Locale, Record<PageKey, PageMeta>> = { en: metaIn('en'), el: metaIn('el') };
 
 /**
  * A case study's metadata, from its own published facts: the name and category shown at the top of the page,

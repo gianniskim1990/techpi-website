@@ -1,0 +1,55 @@
+{
+  "facts": {
+    "key": "work",
+    "pageKey": "work",
+    "paths": {
+      "en": "/work",
+      "el": "/el/work"
+    },
+    "kind": "page"
+  },
+  "en": {
+    "seo": {
+      "title": "Work — Digital Products & Platforms | TechPi",
+      "description": "Explore TechPi client websites, web applications and SaaS platforms, each with its own case study, and earlier branding and digital communication work by pigiota314."
+    },
+    "linkLabel": "View case study",
+    "lead": "Client projects, each with its own case study, and earlier work by pigiota314.",
+    "groups": {
+      "client": {
+        "heading": "Client Projects",
+        "description": "Websites, platforms and web applications delivered for clients, each with its own case study."
+      },
+      "earlier": {
+        "heading": "Earlier Work by pigiota314",
+        "description": "Websites, branding, content and digital communication from our wider pigiota314 portfolio, shown separately from TechPi's current technology offering."
+      }
+    },
+    "highlightsLabel": "What it includes",
+    "disciplinesLabel": "Disciplines",
+    "filterLabel": "Filter the work portfolio",
+    "filterAll": "All work"
+  },
+  "el": {
+    "seo": {
+      "title": "Έργα — Ψηφιακά προϊόντα & πλατφόρμες | TechPi",
+      "description": "Έργα της TechPi: ιστοσελίδες, web εφαρμογές και πλατφόρμες SaaS πελατών, με αναλυτική παρουσίαση για κάθε έργο, και παλαιότερα έργα branding και ψηφιακής επικοινωνίας της pigiota314."
+    },
+    "linkLabel": "Δείτε το έργο",
+    "lead": "Έργα πελατών, το καθένα με αναλυτική παρουσίαση, και παλαιότερα έργα της pigiota314.",
+    "groups": {
+      "client": {
+        "heading": "Έργα πελατών",
+        "description": "Ιστοσελίδες, πλατφόρμες και web εφαρμογές που υλοποιήσαμε για πελάτες, με αναλυτική παρουσίαση για κάθε έργο."
+      },
+      "earlier": {
+        "heading": "Παλαιότερα έργα της pigiota314",
+        "description": "Ιστοσελίδες, branding, δημιουργία περιεχομένου και ψηφιακή επικοινωνία από την πορεία της pigiota314, ξεχωριστά από τις σημερινές τεχνολογικές υπηρεσίες της TechPi."
+      }
+    },
+    "highlightsLabel": "Τι περιλαμβάνει",
+    "disciplinesLabel": "Αντικείμενο",
+    "filterLabel": "Φιλτράρισμα έργων",
+    "filterAll": "Όλα τα έργα"
+  }
+}

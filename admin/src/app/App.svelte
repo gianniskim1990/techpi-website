@@ -10,6 +10,8 @@
   import DraftEditor from './views/DraftEditor.svelte';
   import CaseStudyEditor from './views/CaseStudyEditor.svelte';
   import InsightEditor from './views/InsightEditor.svelte';
+  import PagesList from './views/PagesList.svelte';
+  import PageEditor from './views/PageEditor.svelte';
   import { route, parts } from './lib/router.svelte.js';
   import { counts } from './lib/store.svelte.js';
   import { session, loadSession } from './lib/session.svelte.js';
@@ -30,7 +32,9 @@
   // Case studies connected to GitHub (from the Worker); every other one is the read-only snapshot.
   const connectedCase = $derived(current.section === 'case-studies' && current.slug && session.data?.connected?.caseStudies?.includes(current.slug));
   const connectedArticle = $derived(current.section === 'articles' && current.slug && session.data?.connected?.insights?.includes(current.slug));
-  const connectedSection = $derived((current.section === 'case-studies' && session.data?.connected?.caseStudies?.length) || (current.section === 'articles' && session.data?.connected?.insights?.length));
+  const pagesConnected = $derived(Boolean(session.data?.connected?.pages?.length));
+  const connectedPage = $derived(current.section === 'pages' && current.slug && session.data?.connected?.pages?.includes(current.slug));
+  const connectedSection = $derived((current.section === 'case-studies' && session.data?.connected?.caseStudies?.length) || (current.section === 'articles' && session.data?.connected?.insights?.length) || (current.section === 'pages' && pagesConnected));
   $effect(() => { route.path; menuOpen = false; });
 </script>
 
@@ -77,7 +81,7 @@
       {#if current.section === 'test-content' || connectedCase || connectedArticle || connectedSection}
         <span><strong>Connected.</strong> Saves go to a GitHub draft branch and draft pull request. Nothing is published or merged from here.</span>
       {:else}
-        <span><strong>Snapshot, not connected.</strong> Website pages are a read-only copy of the live site. Test content, the 18 case studies and the 7 Insights articles are connected.</span>
+        <span><strong>Not connected here.</strong> Test content, the 8 website pages, the 18 case studies and the 7 Insights articles are connected; the media library, SEO overview and settings are not built yet.</span>
       {/if}
     </div>
     {#if session.data && !session.data.github.configured}
@@ -101,6 +105,12 @@
         {#key route.path}<CaseStudyEditor slug={current.slug} />{/key}
       {:else if connectedArticle}
         {#key route.path}<InsightEditor slug={current.slug} />{/key}
+      {:else if connectedPage}
+        {#key route.path}<PageEditor pageKey={current.slug} />{/key}
+      {:else if current.section === 'pages' && pagesConnected && !current.slug}
+        <PagesList />
+      {:else if current.section === 'pages' && session.loading}
+        <p class="hint">Checking the connection…</p>
       {:else if (current.section === 'case-studies' || current.section === 'articles') && current.slug && session.loading}
         <p class="hint">Checking the connection…</p>
       {:else if (current.section === 'case-studies' || current.section === 'articles') && current.slug}

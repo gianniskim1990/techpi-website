@@ -1,60 +1,47 @@
+import { copyOf } from './pages-content';
+
 /**
- * English copy for the secondary pages (Phase 3C.1). Leads are the approved lines. Greek is in pages.el.ts.
- * Only confirmed facts appear here. The contact values themselves (email, phone) live in site.ts.
+ * English copy for the secondary pages. Since Task M3 the copy of the Work, Capabilities, About and Contact pages lives
+ * in content/pages/<page>/index.json ("en"), edited through the admin, with each page's search title and description.
+ * What stays here is shared by several pages: the case-study template labels and the closing line. Greek is in
+ * pages.el.ts. Only confirmed facts appear in the copy; the contact values themselves (email, phone) live in site.ts.
  */
+export interface WorkCopy {
+  linkLabel: string;
+  lead: string;
+  groups: { client: { heading: string; description: string }; earlier: { heading: string; description: string } };
+  highlightsLabel: string;
+  disciplinesLabel: string;
+  filterLabel: string;
+  filterAll: string;
+}
+export interface CapabilitiesCopy { heading: string; lead: string; covers: string; indexLabel: string; seenIn: string }
+export interface AboutCopy {
+  heading: string;
+  lead: string;
+  changeHeading: string;
+  stayed: { label: string; text: string };
+  changed: { label: string; text: string };
+  name: string;
+  principlesHeading: string;
+  /** The four approved principles. Only the first has supporting copy. */
+  principles: readonly { heading: string; text?: string }[];
+}
+export interface ContactCopy {
+  heading: string;
+  lead: string;
+  direct: string;
+  email: string;
+  phone: string;
+  location: string;
+  /** The town only. No street address is confirmed or shown. Locked in the admin. */
+  locationValue: string;
+}
+
 export const pagesEn = {
-  work: {
-    linkLabel: 'View case study',
-    lead: 'Client projects, each with its own case study, and earlier work by pigiota314.',
-    groups: {
-      client: {
-        heading: 'Client Projects',
-        description: 'Websites, platforms and web applications delivered for clients, each with its own case study.',
-      },
-      earlier: {
-        heading: 'Earlier Work by pigiota314',
-        description: 'Websites, branding, content and digital communication from our wider pigiota314 portfolio, shown separately from TechPi\'s current technology offering.',
-      },
-    },
-    highlightsLabel: 'What it includes',
-    disciplinesLabel: 'Disciplines',
-    filterLabel: 'Filter the work portfolio',
-    filterAll: 'All work',
-  },
-  capabilities: {
-    heading: 'What we build.',
-    lead: 'Four capabilities, brought together around the problem.',
-    covers: 'What it covers',
-    indexLabel: 'Capabilities',
-    seenIn: 'Seen in',
-  },
-  about: {
-    heading: 'TechPi is the evolution of pigiota314.',
-    lead: 'From websites and digital experiences to custom platforms, digital products and intelligent systems.',
-    changeHeading: 'What stayed, what changed',
-    // From the approved brand brief, section 8 (kept and changed). Not rewritten.
-    stayed: {
-      label: 'Stayed',
-      text: 'The Pi, the circular mark, the blue and cyan family, the client relationships and the people.',
-    },
-    changed: {
-      label: 'Changed',
-      text: 'The name is now pronounceable and spellable in any European language, the scope is stated as technology and products, the visual language is refined.',
-    },
-    // Approved homepage Evolution copy.
-    name: 'Pi stays. Tech says where we are going: digital products, platforms and intelligent systems.',
-    principlesHeading: 'How we work',
-    // The four approved principles. Headings are used as approved. Only the first has supporting copy.
-    principles: [
-      {
-        heading: 'The business problem first.',
-        text: 'We start with how an organisation actually works, and choose technology after that.',
-      },
-      { heading: 'AI where it creates value. Not where it creates noise.' },
-      { heading: 'Built to run every day.' },
-      { heading: 'Technology built around real business needs.' },
-    ] as readonly { heading: string; text?: string }[],
-  },
+  work: copyOf<WorkCopy>('work', 'en'),
+  capabilities: copyOf<CapabilitiesCopy>('capabilities', 'en'),
+  about: copyOf<AboutCopy>('about', 'en'),
   caseStudy: {
     back: 'Work',
     client: 'Client',
@@ -75,16 +62,7 @@ export const pagesEn = {
     earlierTag: 'Earlier work by pigiota314',
     earlier: 'This work belongs to the pigiota314 portfolio and is shown separately from TechPi’s current technology offering.',
   },
-  contact: {
-    heading: 'Have something worth building?',
-    lead: 'Tell us about the problem you need to solve.',
-    direct: 'Direct',
-    email: 'Email',
-    phone: 'Phone',
-    location: 'Location',
-    // The town only. No street address is confirmed or shown.
-    locationValue: 'Xanthi, Greece',
-  },
+  contact: copyOf<ContactCopy>('contact', 'en'),
   /** The quiet closing line on secondary pages: the homepage question, without the Blue surface or the circle. */
   closer: {
     heading: 'Have something worth building?',

@@ -1,0 +1,244 @@
+{
+  "facts": {
+    "key": "home",
+    "pageKey": "home",
+    "paths": {
+      "en": "/",
+      "el": "/el/"
+    },
+    "kind": "page"
+  },
+  "en": {
+    "seo": {
+      "title": "TechPi — Digital Products & Technology",
+      "description": "TechPi designs and builds digital products, web experiences and intelligent systems, turning fragmented tools into connected technology, with AI where it adds value."
+    },
+    "intro": {
+      "line": "Digital Products & Technology"
+    },
+    "hero": {
+      "meta": "Digital Products & Technology",
+      "statement": [
+        "We design and build",
+        "digital products."
+      ],
+      "support": [
+        "Technology built around",
+        "real business needs."
+      ],
+      "start": "Start a project",
+      "work": "Selected work",
+      "map": {
+        "label": "From fragmented tools to connected digital systems: websites, ordering and visibility, linked through automation and AI into systems and digital products.",
+        "from": "Fragmented",
+        "to": "Connected",
+        "websites": "Websites",
+        "ordering": "Ordering",
+        "visibility": "Visibility",
+        "automation": "Automation",
+        "ai": "AI",
+        "systems": "Systems",
+        "products": "Digital products"
+      }
+    },
+    "statement": {
+      "heading": "We turn business needs into digital products, platforms and intelligent systems.",
+      "steps": [
+        {
+          "step": "First",
+          "title": "The business problem",
+          "text": "We start with how your organisation actually works: who does what, where time is lost, and what has to be true for the project to pay off."
+        },
+        {
+          "step": "Second",
+          "title": "The technology",
+          "text": "Only then do we choose the stack, the architecture and where, if anywhere, AI belongs."
+        }
+      ]
+    },
+    "work": {
+      "heading": "Selected work",
+      "label": "Selected work",
+      "all": "See all work",
+      "caseLink": "View case study",
+      "factsLabel": "Capabilities"
+    },
+    "capabilities": {
+      "heading": "What we build."
+    },
+    "intelligence": {
+      "heading": [
+        "AI where it creates value.",
+        "Not where it creates noise."
+      ],
+      "lead": "We add AI to a product when it removes work, improves a decision or answers a question faster. When it does none of these, we leave it out.",
+      "areas": [
+        {
+          "title": "AI integrations",
+          "text": "Language and vision models connected to the systems you already run."
+        },
+        {
+          "title": "Intelligent search",
+          "text": "Search that understands a question and answers from your own content."
+        },
+        {
+          "title": "Assistants",
+          "text": "Task-specific assistants for staff or customers, with clear limits."
+        },
+        {
+          "title": "Automation",
+          "text": "Repetitive steps in a workflow, handled without manual effort."
+        },
+        {
+          "title": "Data-driven workflows",
+          "text": "Routing and decisions informed by the data a process already produces."
+        }
+      ]
+    },
+    "evolution": {
+      "heading": "TechPi is the evolution of pigiota314.",
+      "lead": "Our identity evolved alongside the work we do.",
+      "text": "Pi stays. Tech says where we are going: digital products, platforms and intelligent systems.",
+      "link": "About TechPi"
+    },
+    "contact": {
+      "heading": [
+        "Have something",
+        "worth building?"
+      ],
+      "cta": "Start a project",
+      "region": "Greece and Europe"
+    },
+    "euTeaser": {
+      "label": "EU-funded projects",
+      "heading": "Digital infrastructure for EU-funded projects.",
+      "text": "We design and build project websites, platforms, web applications and digital tools for European projects and collaborative programmes.",
+      "cta": "Explore EU Projects",
+      "items": [
+        "Project websites",
+        "Custom platforms and portals",
+        "Web applications",
+        "Dashboards and data tools",
+        "Stakeholder and community platforms",
+        "Long-term technical support"
+      ]
+    }
+  },
+  "el": {
+    "seo": {
+      "title": "TechPi — Ψηφιακά προϊόντα & τεχνολογία",
+      "description": "Η TechPi φτιάχνει ψηφιακά προϊόντα, ιστοσελίδες και ευφυή συστήματα: από αποσπασματικά εργαλεία σε συνδεδεμένη τεχνολογία, με τεχνητή νοημοσύνη όπου προσφέρει αξία."
+    },
+    "intro": {
+      "line": "Ψηφιακά προϊόντα & τεχνολογία"
+    },
+    "hero": {
+      "meta": "Ψηφιακά προϊόντα & τεχνολογία",
+      "statement": [
+        "Σχεδιάζουμε και",
+        "αναπτύσσουμε",
+        "ψηφιακά προϊόντα."
+      ],
+      "support": [
+        "Τεχνολογία χτισμένη γύρω από",
+        "πραγματικές επιχειρηματικές ανάγκες."
+      ],
+      "start": "Ξεκινήστε ένα έργο",
+      "work": "Επιλεγμένα έργα",
+      "map": {
+        "label": "Από αποσπασματικά εργαλεία σε συνδεδεμένα ψηφιακά συστήματα: ιστοσελίδες, παραγγελίες και ορατότητα, που συνδέονται μέσω αυτοματισμών και τεχνητής νοημοσύνης σε συστήματα και ψηφιακά προϊόντα.",
+        "from": "Αποσπασματικά",
+        "to": "Συνδεδεμένα",
+        "websites": "Ιστοσελίδες",
+        "ordering": "Παραγγελίες",
+        "visibility": "Ορατότητα",
+        "automation": "Αυτοματισμοί",
+        "ai": "Τεχνητή νοημοσύνη",
+        "systems": "Συστήματα",
+        "products": "Ψηφιακά προϊόντα"
+      }
+    },
+    "statement": {
+      "heading": "Μετατρέπουμε τις ανάγκες μιας επιχείρησης σε ψηφιακά προϊόντα, πλατφόρμες και ευφυή συστήματα.",
+      "steps": [
+        {
+          "step": "Πρώτα",
+          "title": "Το πρόβλημα της επιχείρησης",
+          "text": "Ξεκινάμε από το πώς λειτουργεί πραγματικά ο οργανισμός σας: ποιος κάνει τι, πού χάνεται χρόνος και τι πρέπει να ισχύει ώστε το έργο να αποδώσει."
+        },
+        {
+          "step": "Μετά",
+          "title": "Η τεχνολογία",
+          "text": "Μόνο τότε επιλέγουμε τεχνολογίες και αρχιτεκτονική, και αποφασίζουμε αν, και πού, έχει θέση η τεχνητή νοημοσύνη."
+        }
+      ]
+    },
+    "work": {
+      "heading": "Επιλεγμένα έργα",
+      "label": "Επιλεγμένα έργα",
+      "all": "Όλα τα έργα",
+      "caseLink": "Δείτε το έργο",
+      "factsLabel": "Δυνατότητες"
+    },
+    "capabilities": {
+      "heading": "Τι φτιάχνουμε."
+    },
+    "intelligence": {
+      "heading": [
+        "Τεχνητή νοημοσύνη εκεί που δημιουργεί αξία.",
+        "Όχι εκεί που δημιουργεί θόρυβο."
+      ],
+      "lead": "Προσθέτουμε τεχνητή νοημοσύνη σε ένα προϊόν όταν αφαιρεί δουλειά, βελτιώνει μια απόφαση ή απαντά πιο γρήγορα σε μια ερώτηση. Όταν δεν κάνει τίποτα από αυτά, την αφήνουμε έξω.",
+      "areas": [
+        {
+          "title": "Ενσωμάτωση τεχνητής νοημοσύνης",
+          "text": "Γλωσσικά μοντέλα και μοντέλα όρασης, συνδεδεμένα με τα συστήματα που ήδη χρησιμοποιείτε."
+        },
+        {
+          "title": "Έξυπνη αναζήτηση",
+          "text": "Αναζήτηση που κατανοεί την ερώτηση και απαντά από το δικό σας περιεχόμενο."
+        },
+        {
+          "title": "Ψηφιακοί βοηθοί",
+          "text": "Βοηθοί για συγκεκριμένες εργασίες, για το προσωπικό ή τους πελάτες, με σαφή όρια."
+        },
+        {
+          "title": "Αυτοματισμοί",
+          "text": "Επαναλαμβανόμενα βήματα μιας διαδικασίας, χωρίς χειροκίνητη εργασία."
+        },
+        {
+          "title": "Ροές εργασίας με βάση τα δεδομένα",
+          "text": "Δρομολόγηση και αποφάσεις με βάση τα δεδομένα που ήδη παράγει μια διαδικασία."
+        }
+      ]
+    },
+    "evolution": {
+      "heading": "Η TechPi είναι η εξέλιξη της pigiota314.",
+      "lead": "Η ταυτότητά μας εξελίχθηκε μαζί με τη δουλειά μας.",
+      "text": "Το Pi μένει. Το Tech δείχνει πού πηγαίνουμε: ψηφιακά προϊόντα, πλατφόρμες και ευφυή συστήματα.",
+      "link": "Σχετικά με την TechPi"
+    },
+    "contact": {
+      "heading": [
+        "Έχετε κάτι",
+        "που αξίζει να χτιστεί;"
+      ],
+      "cta": "Ξεκινήστε ένα έργο",
+      "region": "Ελλάδα και Ευρώπη"
+    },
+    "euTeaser": {
+      "label": "Ευρωπαϊκά έργα",
+      "heading": "Ψηφιακές λύσεις για ευρωπαϊκά έργα.",
+      "text": "Σχεδιάζουμε και αναπτύσσουμε ιστοσελίδες, πλατφόρμες, εφαρμογές και ψηφιακά εργαλεία για ευρωπαϊκά έργα και συνεργατικά προγράμματα.",
+      "cta": "Λύσεις για ευρωπαϊκά έργα",
+      "items": [
+        "Ιστοσελίδες έργων",
+        "Ειδικές πλατφόρμες και πύλες",
+        "Web εφαρμογές",
+        "Πίνακες ελέγχου και εργαλεία δεδομένων",
+        "Πλατφόρμες για φορείς και κοινότητες",
+        "Μακροπρόθεσμη τεχνική υποστήριξη"
+      ]
+    }
+  }
+}

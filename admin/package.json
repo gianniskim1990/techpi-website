@@ -11,7 +11,7 @@
     "dev": "vite",
     "dev:m0": "vite --mode m0",
     "build": "vite build",
-    "test": "node --test \"test/**/*.test.mjs\"",
+    "test": "node --test --test-concurrency=1 \"test/**/*.test.mjs\"",
     "test:e2e": "vite build && node test/access-e2e.mjs",
     "worker:dev": "wrangler dev"
   },
