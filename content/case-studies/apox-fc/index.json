@@ -1,0 +1,64 @@
+{
+  "facts": {
+    "slug": "apox-fc",
+    "name": "Apox FC",
+    "client": "Apox FC",
+    "year": 2025,
+    "workGroup": "earlier",
+    "featured": false,
+    "order": 17,
+    "capabilities": [],
+    "source": "https://pigiota314.eu/case-studies/apox-fc"
+  },
+  "images": {},
+  "en": {
+    "category": "Sports brand content & design",
+    "summary": "Graphic design and social media content supporting consistent communication with a sports audience.",
+    "disciplines": [
+      "Social media",
+      "Graphic design",
+      "Digital marketing"
+    ],
+    "overview": [
+      "Content, creative assets and digital marketing support for a sports brand with a strong community presence."
+    ],
+    "need": [
+      "Creating content that resonates with a sports community and strengthens the brand’s social media presence."
+    ],
+    "builtIntro": "Graphics, social media content and a communication direction for a consistent online presence.",
+    "services": [
+      "Social media content",
+      "Graphic design",
+      "Digital marketing",
+      "Community communication"
+    ],
+    "outcome": [
+      "An improved brand image and better communication with the community."
+    ]
+  },
+  "el": {
+    "category": "Περιεχόμενο και γραφιστική αθλητικής ομάδας",
+    "summary": "Γραφιστικά και περιεχόμενο social media για συνεπή επικοινωνία με το κοινό μιας αθλητικής ομάδας.",
+    "disciplines": [
+      "Social media",
+      "Γραφιστικός σχεδιασμός",
+      "Ψηφιακό μάρκετινγκ"
+    ],
+    "overview": [
+      "Περιεχόμενο, δημιουργικό υλικό και υποστήριξη ψηφιακού μάρκετινγκ για ένα αθλητικό brand με ισχυρή παρουσία στην κοινότητά του."
+    ],
+    "need": [
+      "Στόχος ήταν η δημιουργία περιεχομένου που απευθύνεται στην αθλητική κοινότητα και ενισχύει την παρουσία του brand στα social media."
+    ],
+    "builtIntro": "Γραφιστικά, περιεχόμενο για social media και κατεύθυνση επικοινωνίας για μια συνεπή παρουσία στο διαδίκτυο.",
+    "services": [
+      "Περιεχόμενο social media",
+      "Γραφιστικός σχεδιασμός",
+      "Ψηφιακό μάρκετινγκ",
+      "Επικοινωνία με την κοινότητα"
+    ],
+    "outcome": [
+      "Βελτιωμένη εικόνα του brand και καλύτερη επικοινωνία με την κοινότητα."
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "techpi-admin",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TechPi Admin: the custom content admin for techpi.eu. Separate from the public website: its own dependencies, build and Worker.",
+  "engines": {
+    "node": "^24.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "node --test --test-concurrency=1 \"test/**/*.test.mjs\"",
+    "test:e2e": "vite build && node test/access-e2e.mjs",
+    "worker:dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "svelte": "5.57.1",
+    "vite": "8.3.2",
+    "wrangler": "4.147.0"
+  }
+}

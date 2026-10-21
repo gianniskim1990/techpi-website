@@ -1,0 +1,64 @@
+{
+  "facts": {
+    "slug": "blackjack-streetwear",
+    "name": "Blackjack Streetwear",
+    "client": "Blackjack Streetwear",
+    "year": 2025,
+    "workGroup": "client",
+    "featured": false,
+    "order": 12,
+    "capabilities": [
+      "web-experiences"
+    ],
+    "source": "https://pigiota314.eu/case-studies/blackjack-streetwear"
+  },
+  "images": {},
+  "en": {
+    "category": "E-commerce website",
+    "summary": "An online store built on WooCommerce, designed around clear product presentation, the mobile experience and a streetwear aesthetic.",
+    "overview": [
+      "A modern e-commerce experience for a fashion brand, with clean product presentation and a streetwear aesthetic."
+    ],
+    "need": [
+      "The brand needed an e-commerce environment that showcases its products and keeps the shopping experience clean."
+    ],
+    "builtIntro": "An online store focused on product presentation, the mobile experience and an aesthetic tuned to a streetwear audience.",
+    "services": [
+      "E-shop design",
+      "Web design",
+      "WooCommerce setup",
+      "UX/UI"
+    ],
+    "technology": [
+      "WordPress",
+      "WooCommerce"
+    ],
+    "outcome": [
+      "A more professional online image and a cleaner browsing and purchasing experience."
+    ]
+  },
+  "el": {
+    "category": "Ηλεκτρονικό κατάστημα",
+    "summary": "Ηλεκτρονικό κατάστημα σε WooCommerce, με έμφαση στην παρουσίαση των προϊόντων, στην εμπειρία από το κινητό και σε streetwear αισθητική.",
+    "overview": [
+      "Σύγχρονη εμπειρία ηλεκτρονικού καταστήματος για ένα brand μόδας, με καθαρή παρουσίαση προϊόντων και streetwear αισθητική."
+    ],
+    "need": [
+      "Το brand χρειαζόταν ένα ηλεκτρονικό κατάστημα που αναδεικνύει τα προϊόντα του και κρατά την εμπειρία αγοράς καθαρή."
+    ],
+    "builtIntro": "Ηλεκτρονικό κατάστημα με έμφαση στην παρουσίαση των προϊόντων, την εμπειρία στο κινητό και μια αισθητική προσαρμοσμένη στο κοινό του streetwear.",
+    "services": [
+      "Σχεδιασμός e-shop",
+      "Σχεδιασμός ιστοσελίδων",
+      "Ρύθμιση WooCommerce",
+      "UX/UI"
+    ],
+    "technology": [
+      "WordPress",
+      "WooCommerce"
+    ],
+    "outcome": [
+      "Πιο επαγγελματική εικόνα στο διαδίκτυο και πιο καθαρή εμπειρία περιήγησης και αγοράς."
+    ]
+  }
+}

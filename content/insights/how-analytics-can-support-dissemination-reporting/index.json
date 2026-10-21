@@ -1,0 +1,31 @@
+{
+  "facts": {
+    "slug": "how-analytics-can-support-dissemination-reporting",
+    "order": 7,
+    "published": "2025-03-30",
+    "publishedText": "30 March 2025",
+    "source": "https://pigiota314.eu/insights/how-analytics-can-support-dissemination-reporting"
+  },
+  "en": {
+    "category": "Analytics",
+    "title": "How analytics can support dissemination reporting",
+    "lead": "Using web analytics to produce credible, useful evidence for communication and dissemination KPIs.",
+    "sections": [
+      {
+        "heading": "Tie metrics to objectives",
+        "paragraphs": [
+          "Generic traffic numbers rarely satisfy a project officer. Tie metrics directly to the communication and dissemination objectives in the proposal, and report against them consistently."
+        ]
+      }
+    ],
+    "note": "This article is about measuring an EU project’s website. techpi.eu itself uses no analytics or tracking: see the [Cookies Policy](/cookies).",
+    "related": [
+      "what-every-eu-project-website-should-include",
+      "how-to-structure-deliverables-and-publications"
+    ],
+    "meta": {
+      "title": "How analytics can support dissemination reporting | TechPi",
+      "description": "Using web analytics to produce credible evidence for EU project communication and dissemination KPIs, tied to the objectives set out in the proposal."
+    }
+  }
+}

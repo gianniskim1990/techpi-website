@@ -38,6 +38,20 @@ const src = fs.readFileSync(path.join(root, 'src/content/projects.ts'), 'utf8');
 const files = Object.fromEntries([...src.matchAll(/^import (\w+) from '\.\.\/assets\/projects\/([^']+)';/gm)].map((m) => [m[1], m[2]]));
 check(Object.keys(files).length > 0, 'no project image imports found in projects.ts');
 const uses = [...src.matchAll(/src: (\w+),\s*width: (\d+),\s*height: (\d+),/g)];
+// Admin-managed case studies declare their image sizes in content/case-studies/<slug>/index.json, by image id; the id to
+// import mapping is the managedImages object in projects.ts.
+const managedIds = Object.fromEntries([...(src.match(/const managedImages = \{([\s\S]*?)\};/)?.[1] ?? '').matchAll(/'([a-z0-9-]+)':\s*(\w+)/g)].map((m) => [m[1], m[2]]));
+const caseStudiesDir = path.join(root, 'content/case-studies');
+if (fs.existsSync(caseStudiesDir)) {
+  for (const d of fs.readdirSync(caseStudiesDir)) {
+    const doc = JSON.parse(fs.readFileSync(path.join(caseStudiesDir, d, 'index.json'), 'utf8'));
+    for (const im of [doc.images.image, doc.images.cover, ...(doc.images.gallery ?? [])].filter(Boolean)) {
+      const name = managedIds[im.id];
+      check(Boolean(name), 'content/case-studies/' + d + ': image id "' + im.id + '" is not in managedImages in projects.ts');
+      if (name) uses.push([null, name, String(im.width), String(im.height)]);
+    }
+  }
+}
 for (const [, name, w, h] of uses) {
   const file = files[name];
   check(Boolean(file), `projects.ts uses an unknown image import: ${name}`);

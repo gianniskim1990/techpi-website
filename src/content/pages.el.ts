@@ -1,59 +1,15 @@
-import type { PagesCopy } from './pages.en';
+import type { AboutCopy, CapabilitiesCopy, ContactCopy, PagesCopy, WorkCopy } from './pages.en';
+import { copyOf } from './pages-content';
 
 /**
- * Greek copy for the secondary pages and the case-study template (Phase 3D). Same shape as pages.en.ts: a missing
- * or extra key fails `npm run check`. Written in Greek from the approved English, with no new facts.
+ * Greek copy for the secondary pages and the case-study template (Phase 3D). Since Task M3 the copy of the Work,
+ * Capabilities, About and Contact pages lives in content/pages/<page>/index.json ("el"), edited through the admin.
+ * What stays here is shared by several pages: the case-study template labels and the closing line.
  */
 export const pagesEl: PagesCopy = {
-  work: {
-    linkLabel: 'Δείτε το έργο',
-    lead: 'Έργα πελατών, το καθένα με αναλυτική παρουσίαση, και παλαιότερα έργα της pigiota314.',
-    groups: {
-      client: {
-        heading: 'Έργα πελατών',
-        description: 'Ιστοσελίδες, πλατφόρμες και web εφαρμογές που υλοποιήσαμε για πελάτες, με αναλυτική παρουσίαση για κάθε έργο.',
-      },
-      earlier: {
-        heading: 'Παλαιότερα έργα της pigiota314',
-        description: 'Ιστοσελίδες, branding, δημιουργία περιεχομένου και ψηφιακή επικοινωνία από την πορεία της pigiota314, ξεχωριστά από τις σημερινές τεχνολογικές υπηρεσίες της TechPi.',
-      },
-    },
-    highlightsLabel: 'Τι περιλαμβάνει',
-    disciplinesLabel: 'Αντικείμενο',
-    filterLabel: 'Φιλτράρισμα έργων',
-    filterAll: 'Όλα τα έργα',
-  },
-  capabilities: {
-    heading: 'Τι φτιάχνουμε.',
-    lead: 'Τέσσερις δυνατότητες που συνδυάζονται γύρω από το πρόβλημα.',
-    covers: 'Τι περιλαμβάνει',
-    indexLabel: 'Δυνατότητες',
-    seenIn: 'Ενδεικτικά έργα',
-  },
-  about: {
-    heading: 'Η TechPi είναι η εξέλιξη της pigiota314.',
-    lead: 'Από τις ιστοσελίδες και τις ψηφιακές εμπειρίες σε ειδικές πλατφόρμες, ψηφιακά προϊόντα και ευφυή συστήματα.',
-    changeHeading: 'Τι έμεινε, τι άλλαξε',
-    stayed: {
-      label: 'Έμεινε',
-      text: 'Το Pi, το κυκλικό σήμα, η οικογένεια του μπλε και του κυανού, οι σχέσεις με τους πελάτες και οι άνθρωποι.',
-    },
-    changed: {
-      label: 'Άλλαξε',
-      text: 'Το όνομα προφέρεται και γράφεται πλέον εύκολα σε κάθε ευρωπαϊκή γλώσσα, το αντικείμενο διατυπώνεται ως τεχνολογία και προϊόντα, και η οπτική γλώσσα έγινε πιο εκλεπτυσμένη.',
-    },
-    name: 'Το Pi μένει. Το Tech δείχνει πού πηγαίνουμε: ψηφιακά προϊόντα, πλατφόρμες και ευφυή συστήματα.',
-    principlesHeading: 'Πώς δουλεύουμε',
-    principles: [
-      {
-        heading: 'Πρώτα το πρόβλημα της επιχείρησης.',
-        text: 'Ξεκινάμε από το πώς λειτουργεί πραγματικά ένας οργανισμός και επιλέγουμε την τεχνολογία μετά.',
-      },
-      { heading: 'Τεχνητή νοημοσύνη εκεί που δημιουργεί αξία. Όχι εκεί που δημιουργεί θόρυβο.' },
-      { heading: 'Χτισμένο για να λειτουργεί κάθε μέρα.' },
-      { heading: 'Τεχνολογία χτισμένη γύρω από πραγματικές επιχειρηματικές ανάγκες.' },
-    ],
-  },
+  work: copyOf<WorkCopy>('work', 'el'),
+  capabilities: copyOf<CapabilitiesCopy>('capabilities', 'el'),
+  about: copyOf<AboutCopy>('about', 'el'),
   caseStudy: {
     back: 'Έργα',
     client: 'Πελάτης',
@@ -74,16 +30,7 @@ export const pagesEl: PagesCopy = {
     earlierTag: 'Παλαιότερο έργο της pigiota314',
     earlier: 'Το έργο ανήκει στο χαρτοφυλάκιο της pigiota314 και παρουσιάζεται ξεχωριστά από τις σημερινές τεχνολογικές υπηρεσίες της TechPi.',
   },
-  contact: {
-    heading: 'Έχετε κάτι που αξίζει να χτιστεί;',
-    lead: 'Πείτε μας ποιο πρόβλημα θέλετε να λύσετε.',
-    direct: 'Στοιχεία',
-    email: 'Email',
-    phone: 'Τηλέφωνο',
-    location: 'Τοποθεσία',
-    // Μόνο η πόλη. Δεν έχει επιβεβαιωθεί ούτε εμφανίζεται διεύθυνση οδού.
-    locationValue: 'Ξάνθη, Ελλάδα',
-  },
+  contact: copyOf<ContactCopy>('contact', 'el'),
   closer: {
     heading: 'Έχετε κάτι που αξίζει να χτιστεί;',
     cta: 'Ξεκινήστε ένα έργο',

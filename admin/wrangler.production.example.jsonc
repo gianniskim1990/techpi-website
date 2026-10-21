@@ -1,0 +1,36 @@
+{
+  // PRODUCTION TEMPLATE for the TechPi Admin. Not active and not deployed. Applied at go-live only, after the owner has
+  // approved it, the consolidated release is merged into main, and Cloudflare Access protects the hostname
+  // (docs/admin/M4-GO-LIVE.md, steps E to G). Copy these values into wrangler.jsonc, or deploy with
+  // `npx wrangler deploy --config wrangler.production.example.jsonc` once the empty values are filled in.
+  //
+  // Never add an `access.dev` block here: Access is real in production. Never set GITHUB_API_BASE or
+  // ENABLE_TEST_CONTENT: the Worker refuses to serve anything if either is present in production mode.
+  "name": "techpi-admin",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-10-02",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+    "not_found_handling": "single-page-application"
+  },
+  "workers_dev": false,
+  "preview_urls": false,
+  // The proposed hostname. Adding this route as a Custom Domain makes Cloudflare create the DNS record for it on deploy,
+  // so it is part of the separately approved deployment, not of this pull request.
+  "routes": [{ "pattern": "admin.techpi.eu", "custom_domain": true }],
+  "vars": {
+    // From the Cloudflare Access application protecting admin.techpi.eu (Zero Trust, Access, Applications): its
+    // Application Audience (AUD) tag.
+    "ACCESS_AUD": "",
+    // The owner's sign-in email, as Access reports it. Comma-separated if more administrators are approved later.
+    "ADMIN_EMAILS": "",
+    "GITHUB_APP_ID": "",
+    "GITHUB_APP_INSTALLATION_ID": "",
+    "CONTENT_MODE": "production",
+    "CONTENT_BASE_BRANCH": "main",
+    "ADMIN_HOSTNAME": "admin.techpi.eu"
+  }
+  // Secret, uploaded separately: npx wrangler secret put GITHUB_APP_PRIVATE_KEY --config wrangler.production.example.jsonc
+}

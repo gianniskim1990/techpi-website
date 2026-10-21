@@ -1,0 +1,74 @@
+{
+  "facts": {
+    "slug": "project4you",
+    "name": "Project4You",
+    "year": 2026,
+    "liveUrl": "https://www.project4you.gr/",
+    "workGroup": "client",
+    "featured": false,
+    "order": 7,
+    "capabilities": [
+      "digital-products"
+    ],
+    "source": "https://pigiota314.gr/case-studies/project4you/"
+  },
+  "images": {},
+  "en": {
+    "category": "CMS platform",
+    "summary": "A modular content management platform for building digital invitations and websites, with themes, custom pages and flexible content editing.",
+    "highlights": [
+      "Modular CMS",
+      "Themes",
+      "Digital invitations",
+      "Custom website pages"
+    ],
+    "overview": [
+      "A custom web application that combines CMS logic with the ability to create digital invitations and websites through a modern builder."
+    ],
+    "need": [
+      "A more flexible system was needed, able to support different kinds of digital project, from invitations to full websites."
+    ],
+    "builtIntro": "A modular CMS environment focused on easy management, themes, custom pages and features delivered step by step.",
+    "services": [
+      "Product strategy",
+      "UX/UI design",
+      "Web application development",
+      "CMS architecture"
+    ],
+    "technology": [
+      "React",
+      "TypeScript",
+      "Supabase",
+      "Tailwind CSS"
+    ]
+  },
+  "el": {
+    "category": "Πλατφόρμα CMS",
+    "summary": "Ευέλικτη πλατφόρμα διαχείρισης περιεχομένου για ψηφιακά προσκλητήρια και ιστοσελίδες, με θεματικά σχέδια, προσαρμοσμένες σελίδες και αρθρωτή δομή.",
+    "highlights": [
+      "Αρθρωτό CMS",
+      "Θεματικά σχέδια",
+      "Ψηφιακά προσκλητήρια",
+      "Προσαρμοσμένες σελίδες"
+    ],
+    "overview": [
+      "Ειδικά σχεδιασμένη web εφαρμογή που συνδυάζει τη λογική ενός CMS με τη δυνατότητα δημιουργίας ψηφιακών προσκλητηρίων και ιστοσελίδων μέσα από ένα σύγχρονο εργαλείο κατασκευής (builder)."
+    ],
+    "need": [
+      "Χρειαζόταν ένα πιο ευέλικτο σύστημα, ικανό να υποστηρίζει διαφορετικά είδη ψηφιακών έργων, από προσκλητήρια μέχρι ολοκληρωμένες ιστοσελίδες."
+    ],
+    "builtIntro": "Αρθρωτό περιβάλλον CMS με έμφαση στην εύκολη διαχείριση, τα θεματικά σχέδια, τις προσαρμοσμένες σελίδες και τη σταδιακή προσθήκη λειτουργιών.",
+    "services": [
+      "Στρατηγική προϊόντος",
+      "Σχεδιασμός UX/UI",
+      "Ανάπτυξη web εφαρμογής",
+      "Αρχιτεκτονική CMS"
+    ],
+    "technology": [
+      "React",
+      "TypeScript",
+      "Supabase",
+      "Tailwind CSS"
+    ]
+  }
+}

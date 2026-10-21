@@ -4,12 +4,17 @@
 // the Cloudflare build, before anything is deployed. Reads the built output only. No dependencies.
 //
 // The expected articles are written out here on purpose, independent of src/content/insights.ts: the legacy slug, the
-// date the source page displays, and the section headings of the source article (pigiota314.eu/insights, read in full
-// on 2026-10-16; docs/content/insights-migration.md). So an article that loses a section, a slug or its date fails.
+// date the source page displays, the order, and the number of sections of the source article (pigiota314.eu/insights,
+// read in full on 2026-10-16; docs/content/insights-migration.md). So an article that loses a section, a slug or its
+// date fails.
+//
+// Section headings are editorial text, edited in the admin (Task M2), so their wording is NOT pinned here. They are
+// validated structurally instead: every section has a non-empty h2 that carries the section's own id, no two sections of
+// an article share a heading, and every section has real text under its heading.
 //
 // 1. The index and the seven articles exist at /insights and /insights/<legacy slug>; nothing else under insights/,
 //    and no Greek Insights page anywhere (English only, routes.md section 4.1).
-// 2. Each article: English, one h1, a real body (every source section heading present, and more than the lead), the
+// 2. Each article: English, one h1, the expected number of sections, each with a non-empty h2 and real body text, the
 //    source date in a <time>, a link back to /insights, no draft or placeholder text, no reading time, no author line.
 // 3. The index lists the seven articles in the source order, each card linking to its own article.
 // 4. Canonicals are self-referencing; no hreflang; the language switch offers the Greek EU Projects page as a labelled
@@ -29,14 +34,16 @@ const failures = [];
 const check = (ok, msg) => { checks++; if (!ok) failures.push(msg); };
 
 const SOURCE = [
-  { slug: 'what-every-eu-project-website-should-include', date: '2025-09-12', headings: ['Start from the project’s communication objectives', 'The structural minimum', 'Long-term dissemination, not just launch'] },
-  { slug: 'common-mistakes-in-horizon-europe-project-websites', date: '2025-08-21', headings: ['Treating the website as a one-off deliverable', 'Overloaded homepages', 'Hidden deliverables and publications'] },
-  { slug: 'how-to-structure-deliverables-and-publications', date: '2025-07-18', headings: ['Start with the content model', 'Design for browsing, not just searching'] },
-  { slug: 'accessibility-considerations-for-project-websites', date: '2025-06-09', headings: ['Accessibility is part of the brief', 'Where teams usually fall short'] },
-  { slug: 'preparing-a-website-brief-during-the-proposal-stage', date: '2025-05-14', headings: ['Describe the website as a working tool'] },
-  { slug: 'what-communication-partners-should-ask-a-web-development-supplier', date: '2025-04-22', headings: ['Process and communication', 'Architecture and accessibility'] },
-  { slug: 'how-analytics-can-support-dissemination-reporting', date: '2025-03-30', headings: ['Tie metrics to objectives'] },
+  { slug: 'what-every-eu-project-website-should-include', date: '2025-09-12', sections: 3 },
+  { slug: 'common-mistakes-in-horizon-europe-project-websites', date: '2025-08-21', sections: 3 },
+  { slug: 'how-to-structure-deliverables-and-publications', date: '2025-07-18', sections: 2 },
+  { slug: 'accessibility-considerations-for-project-websites', date: '2025-06-09', sections: 2 },
+  { slug: 'preparing-a-website-brief-during-the-proposal-stage', date: '2025-05-14', sections: 1 },
+  { slug: 'what-communication-partners-should-ask-a-web-development-supplier', date: '2025-04-22', sections: 2 },
+  { slug: 'how-analytics-can-support-dissemination-reporting', date: '2025-03-30', sections: 1 },
 ];
+/** A section's body, not counting its heading. The shortest original section has 25 words; fewer than this is a stub. */
+const MIN_SECTION_WORDS = 10;
 const DRAFT = /lorem ipsum|placeholder|\bTODO\b|\bTBD\b|\[OWNER|coming soon|\{\{|\}\}/i;
 const TRACKERS = /googletagmanager|gtag\(|google-analytics|analytics\.js|plausible|matomo|hotjar|clarity\.ms|connect\.facebook|fbq\(/i;
 
@@ -95,13 +102,22 @@ for (const a of SOURCE) {
   }
   const html = common(file, pagePath);
   const body = main(html);
-  const h2 = [...body.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/g)].map((m) => text(m[1]));
-  for (const heading of a.headings) check(h2.includes(heading), `${pagePath}: section "${heading}" present`);
-  const sections = [...body.matchAll(/<section aria-labelledby="s\d+-h"[^>]*>([\s\S]*?)<\/section>/g)].map((m) => text(m[1]));
-  check(sections.length === a.headings.length, `${pagePath}: ${sections.length} body sections, expected ${a.headings.length}`);
-  const words = sections.join(' ').split(' ').length;
-  check(words >= 25, `${pagePath}: a real body (${words} words in the sections)`);
-  check(sections.every((s) => s.split(' ').length > s.split(' ').slice(0, 9).length), `${pagePath}: every section has text under its heading`);
+  // The article's sections: numbered s1, s2, ...; each has an h2 carrying its id, and real text under the heading.
+  const blocks = [...body.matchAll(/<section aria-labelledby="(s\d+)-h"[^>]*>([\s\S]*?)<\/section>/g)].map((m) => ({ id: m[1], html: m[2] }));
+  check(blocks.length === a.sections, `${pagePath}: ${blocks.length} body sections, expected ${a.sections}`);
+  const headings = [];
+  blocks.forEach((b, n) => {
+    const h2 = b.html.match(/<h2 id="(s\d+-h)"[^>]*>([\s\S]*?)<\/h2>/);
+    check(Boolean(h2) && h2[1] === `${b.id}-h` && b.id === `s${n + 1}`, `${pagePath}: section ${n + 1} has an h2 with its own id`);
+    const heading = h2 ? text(h2[2]) : '';
+    headings.push(heading);
+    check(heading.length > 0, `${pagePath}: section ${n + 1} has a non-empty heading`);
+    const words = text(b.html.replace(/<h2[\s\S]*?<\/h2>/, ' ')).split(' ').filter(Boolean).length;
+    check(words >= MIN_SECTION_WORDS, `${pagePath}: section ${n + 1} has real text under its heading (${words} words, at least ${MIN_SECTION_WORDS})`);
+  });
+  check(new Set(headings.map((x) => x.toLowerCase())).size === headings.length, `${pagePath}: the section headings are distinct`);
+  const total = blocks.map((b) => text(b.html)).join(' ').split(' ').length;
+  check(total >= 25, `${pagePath}: a real body (${total} words in the sections)`);
   check(body.includes(`<time datetime="${a.date}"`),`${pagePath}: the source date ${a.date} shown in a <time>`);
   check(hrefs(body).includes('/insights'), `${pagePath}: links back to /insights`);
   check(!/min read|reading time/i.test(text(body)) && !/\bBy [A-Z][a-z]+ [A-Z][a-z]+/.test(text(body)), `${pagePath}: no reading time or author line`);

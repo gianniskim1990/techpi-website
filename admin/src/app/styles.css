@@ -1,0 +1,124 @@
+/*
+ * TechPi Admin: design tokens and base styles. The brand colours, font and hairline language come from the public
+ * website (src/styles/tokens.css): Ink, Paper, Sheet, TechPi Blue, with Cyan only on Ink. The few status colours are
+ * admin-only and chosen for AA contrast on Sheet.
+ */
+@font-face {
+  font-family: 'Commissioner';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('./fonts/commissioner-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Commissioner';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('./fonts/commissioner-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+:root {
+  --ink: #080e1e;
+  --ink-raised: #0e1630;
+  --ink-line: rgb(157 166 178 / 0.16);
+  --paper: #f0eee9;
+  --sheet: #faf9f6;
+  --white: #ffffff;
+  --blue: #0841c8;
+  --blue-hover: #0636a6;
+  --blue-soft: #e7edfa;
+  --cyan: #1fddfc;
+  --graphite: #3b4350;
+  --slate: #5e6672;
+  --fog: #9da6b2;
+  --rule: #d3d0c8;
+  --rule-soft: #e4e2dc;
+
+  --ok: #1d6b45;
+  --ok-soft: #e3f1e8;
+  --warn: #8a5300;
+  --warn-soft: #fbefd9;
+  --danger: #b42318;
+  --danger-soft: #fbe8e6;
+
+  --font: 'Commissioner', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 1.75rem;
+
+  --radius: 6px;
+  --radius-lg: 10px;
+  --shadow: 0 1px 2px rgb(8 14 30 / 0.06), 0 1px 1px rgb(8 14 30 / 0.04);
+  --shadow-lg: 0 12px 32px rgb(8 14 30 / 0.16), 0 2px 6px rgb(8 14 30 / 0.08);
+  --sidebar: 248px;
+  --ease: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: var(--text-2xl); font-weight: 500; letter-spacing: -0.015em; line-height: 1.2; }
+h2 { font-size: var(--text-lg); font-weight: 500; letter-spacing: -0.005em; }
+h3 { font-size: var(--text-md); font-weight: 600; }
+a { color: var(--blue); }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 36px; padding: 0 14px; border-radius: var(--radius); border: 1px solid transparent;
+  font-size: var(--text-base); font-weight: 500; line-height: 1; cursor: pointer; white-space: nowrap;
+  transition: background-color 150ms var(--ease), border-color 150ms var(--ease), color 150ms var(--ease);
+}
+.btn-primary { background: var(--blue); color: var(--sheet); }
+.btn-primary:hover:not(:disabled) { background: var(--blue-hover); }
+.btn-secondary { background: var(--white); border-color: var(--rule); color: var(--ink); }
+.btn-secondary:hover:not(:disabled) { border-color: var(--slate); }
+.btn-ghost { background: transparent; color: var(--graphite); }
+.btn-ghost:hover:not(:disabled) { background: var(--rule-soft); color: var(--ink); }
+.btn-danger { background: var(--white); border-color: #e7b4ae; color: var(--danger); }
+.btn:disabled { cursor: not-allowed; opacity: 0.55; }
+.btn-sm { min-height: 30px; padding: 0 10px; font-size: var(--text-sm); }
+
+/* Form controls */
+.field { display: grid; gap: 6px; }
+.field + .field { margin-top: 18px; }
+.label { font-size: var(--text-sm); font-weight: 600; color: var(--ink); display: flex; justify-content: space-between; gap: 12px; }
+.label .meta { font-weight: 400; color: var(--slate); font-variant-numeric: tabular-nums; }
+.label .meta.over { color: var(--danger); font-weight: 500; }
+.hint { font-size: var(--text-sm); color: var(--slate); }
+.error-text { font-size: var(--text-sm); color: var(--danger); }
+.input, .textarea, .select {
+  width: 100%; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--white);
+  padding: 8px 11px; font-size: var(--text-md); line-height: 1.45; transition: border-color 150ms var(--ease), box-shadow 150ms var(--ease);
+}
+.input:hover, .textarea:hover, .select:hover { border-color: #b9b5ab; }
+.input:focus, .textarea:focus, .select:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgb(8 65 200 / 0.14); }
+.input[aria-invalid='true'], .textarea[aria-invalid='true'] { border-color: var(--danger); }
+.input:read-only { background: var(--sheet); color: var(--graphite); }
+.textarea { resize: vertical; min-height: 84px; }
+.select { appearance: none; padding-right: 30px; background-image: linear-gradient(45deg, transparent 50%, var(--slate) 50%), linear-gradient(135deg, var(--slate) 50%, transparent 50%); background-position: calc(100% - 15px) 52%, calc(100% - 10px) 52%; background-size: 5px 5px; background-repeat: no-repeat; }
+
+/* Surfaces */
+.card { background: var(--sheet); border: 1px solid var(--rule-soft); border-radius: var(--radius-lg); box-shadow: var(--shadow); }
+.card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--rule-soft); }
+.card-body { padding: 20px; }

@@ -1,0 +1,216 @@
+{
+  "facts": {
+    "key": "cookies",
+    "pageKey": "cookies",
+    "paths": {
+      "en": "/cookies",
+      "el": "/el/cookies"
+    },
+    "kind": "legal",
+    "updated": "2026-10-17",
+    "updatedText": {
+      "en": "17 October 2026",
+      "el": "17 Οκτωβρίου 2026"
+    }
+  },
+  "en": {
+    "seo": {
+      "title": "Cookies Policy | TechPi",
+      "description": "TechPi uses no analytics, advertising or tracking cookies. This policy explains the security cookies Cloudflare may set and how you can control cookies."
+    },
+    "heading": "Cookies Policy",
+    "lead": "TechPi does not use cookies for analytics, advertising or tracking. This page explains the security cookies our hosting provider may set, and how you can control cookies.",
+    "updatedLabel": "Last updated",
+    "contentsLabel": "On this page",
+    "sections": [
+      {
+        "id": "cookies",
+        "heading": "What cookies are",
+        "blocks": [
+          {
+            "p": "Cookies are small text files that a website stores in your browser. Similar technologies, such as local storage, keep information on your device in other ways. In this policy, \"cookies\" covers both."
+          }
+        ]
+      },
+      {
+        "id": "our-use",
+        "heading": "Cookies used by TechPi",
+        "blocks": [
+          {
+            "p": "techpi.eu does not set cookies of its own and does not store information on your device through local or session storage."
+          },
+          {
+            "ul": [
+              "No analytics: we do not use Google Analytics or any other analytics service.",
+              "No advertising or social tracking: no Meta Pixel, no advertising networks, no tracking or profiling.",
+              "No fonts, scripts or embedded content loaded from other companies."
+            ]
+          },
+          {
+            "p": "The domain techpi.eu has been verified in Google Search Console, which we can use to review aggregated information about how the website performs in Google Search when data is available. It is set up through our domain settings, not through code on this website, so it adds no analytics script or cookie here."
+          }
+        ]
+      },
+      {
+        "id": "security",
+        "heading": "Security cookies from our hosting provider",
+        "blocks": [
+          {
+            "p": "techpi.eu is delivered and protected by Cloudflare. To keep the website available and to protect it from automated attacks, Cloudflare checks incoming requests. In some situations, for example when a request looks unusual and a security check is shown, Cloudflare may set a cookie in your browser, such as `cf_clearance`, which records that the check was passed so that it is not repeated."
+          },
+          {
+            "p": "These cookies are not set on every visit. They are used only for security, are strictly necessary to provide the website securely, and are not used by us or by Cloudflare for analytics or advertising. Strictly necessary cookies do not require consent under the ePrivacy rules (Directive 2002/58/EC and Greek Law 3471/2006)."
+          },
+          {
+            "p": "Cloudflare describes the cookies its services can set in its [cookie documentation]({{url.cloudflareCookies}}). Cloudflare also processes the request data described in our [Privacy Policy]({{path.privacy}})."
+          }
+        ]
+      },
+      {
+        "id": "banner",
+        "heading": "Why there is no cookie banner",
+        "blocks": [
+          {
+            "p": "A consent banner is needed for cookies that are not strictly necessary, such as analytics or advertising cookies. techpi.eu uses none, so it does not show one."
+          }
+        ]
+      },
+      {
+        "id": "control",
+        "heading": "How to control cookies",
+        "blocks": [
+          {
+            "p": "You can view, block and delete cookies in your browser settings at any time. If you block strictly necessary security cookies, a security check may not complete and some requests may be refused."
+          }
+        ]
+      },
+      {
+        "id": "other-sites",
+        "heading": "Links to other websites",
+        "blocks": [
+          {
+            "p": "Our case studies link to our clients' websites. Those websites, and any other site you reach through a link, may use their own cookies under their own policies. Email and telephone links open the email or telephone app on your device."
+          }
+        ]
+      },
+      {
+        "id": "changes",
+        "heading": "Future changes",
+        "blocks": [
+          {
+            "p": "If we ever add analytics or any other technology that stores information on your device and is not strictly necessary, we will update this policy first and, where the law requires it, ask for your consent before it is used."
+          }
+        ]
+      },
+      {
+        "id": "who-we-are",
+        "heading": "Who we are",
+        "blocks": [
+          {
+            "p": "techpi.eu is operated by {{operator.name}}, a sole proprietorship in {{operator.town}}, under the brand TechPi. Questions about cookies: {{email}}. How we handle personal data is explained in our [Privacy Policy]({{path.privacy}})."
+          }
+        ]
+      }
+    ]
+  },
+  "el": {
+    "seo": {
+      "title": "Πολιτική Cookies | TechPi",
+      "description": "Η TechPi δεν χρησιμοποιεί cookies στατιστικών, διαφήμισης ή παρακολούθησης. Εξηγούμε τα cookies ασφαλείας που μπορεί να ορίσει η Cloudflare και πώς τα ελέγχετε."
+    },
+    "heading": "Πολιτική Cookies",
+    "lead": "Η TechPi δεν χρησιμοποιεί cookies για στατιστικά, διαφήμιση ή παρακολούθηση. Εδώ εξηγούμε τα cookies ασφαλείας που μπορεί να ορίσει ο πάροχος φιλοξενίας μας και πώς ελέγχετε τα cookies.",
+    "updatedLabel": "Τελευταία ενημέρωση",
+    "contentsLabel": "Σε αυτή τη σελίδα",
+    "sections": [
+      {
+        "id": "cookies",
+        "heading": "Τι είναι τα cookies",
+        "blocks": [
+          {
+            "p": "Τα cookies είναι μικρά αρχεία κειμένου που αποθηκεύει ένας ιστότοπος στο πρόγραμμα περιήγησής σας. Παρόμοιες τεχνολογίες, όπως η τοπική αποθήκευση (local storage), κρατούν πληροφορίες στη συσκευή σας με άλλους τρόπους. Σε αυτή την πολιτική, ο όρος «cookies» καλύπτει και τα δύο."
+          }
+        ]
+      },
+      {
+        "id": "our-use",
+        "heading": "Cookies που χρησιμοποιεί η TechPi",
+        "blocks": [
+          {
+            "p": "Το techpi.eu δεν ορίζει δικά του cookies και δεν αποθηκεύει πληροφορίες στη συσκευή σας μέσω τοπικής αποθήκευσης ή αποθήκευσης συνεδρίας."
+          },
+          {
+            "ul": [
+              "Χωρίς στατιστικά: δεν χρησιμοποιούμε το Google Analytics ή άλλη υπηρεσία στατιστικών.",
+              "Χωρίς διαφήμιση ή παρακολούθηση: χωρίς Meta Pixel, χωρίς διαφημιστικά δίκτυα, χωρίς παρακολούθηση ή δημιουργία προφίλ.",
+              "Χωρίς γραμματοσειρές, scripts ή ενσωματωμένο περιεχόμενο από άλλες εταιρείες."
+            ]
+          },
+          {
+            "p": "Ο τομέας techpi.eu έχει επαληθευτεί στο Google Search Console, το οποίο μπορούμε να χρησιμοποιούμε για να βλέπουμε συγκεντρωτικά στοιχεία για την απόδοση του ιστότοπου στην Αναζήτηση Google, όταν υπάρχουν διαθέσιμα δεδομένα. Ρυθμίζεται μέσω των ρυθμίσεων του τομέα μας και όχι με κώδικα σε αυτόν τον ιστότοπο, επομένως δεν προσθέτει εδώ script ανάλυσης επισκεψιμότητας ή cookie."
+          }
+        ]
+      },
+      {
+        "id": "security",
+        "heading": "Cookies ασφαλείας του παρόχου φιλοξενίας",
+        "blocks": [
+          {
+            "p": "Το techpi.eu παρέχεται και προστατεύεται από την Cloudflare. Για να παραμένει ο ιστότοπος διαθέσιμος και να προστατεύεται από αυτοματοποιημένες επιθέσεις, η Cloudflare ελέγχει τα εισερχόμενα αιτήματα. Σε ορισμένες περιπτώσεις, για παράδειγμα όταν ένα αίτημα φαίνεται ασυνήθιστο και εμφανίζεται έλεγχος ασφαλείας, η Cloudflare μπορεί να ορίσει ένα cookie στο πρόγραμμα περιήγησής σας, όπως το `cf_clearance`, το οποίο καταγράφει ότι ο έλεγχος ολοκληρώθηκε, ώστε να μην επαναλαμβάνεται."
+          },
+          {
+            "p": "Τα cookies αυτά δεν ορίζονται σε κάθε επίσκεψη. Χρησιμοποιούνται μόνο για λόγους ασφάλειας, είναι απολύτως απαραίτητα για την ασφαλή παροχή του ιστότοπου και δεν χρησιμοποιούνται ούτε από εμάς ούτε από την Cloudflare για στατιστικά ή διαφήμιση. Τα απολύτως απαραίτητα cookies δεν απαιτούν συγκατάθεση σύμφωνα με τους κανόνες για την ιδιωτικότητα στις ηλεκτρονικές επικοινωνίες (Οδηγία 2002/58/ΕΚ και ν. 3471/2006)."
+          },
+          {
+            "p": "Η Cloudflare περιγράφει τα cookies που μπορούν να ορίσουν οι υπηρεσίες της στην [τεκμηρίωσή της για τα cookies]({{url.cloudflareCookies}}) (στα αγγλικά). Η Cloudflare επεξεργάζεται επίσης τα δεδομένα αιτημάτων που περιγράφονται στην [Πολιτική Απορρήτου]({{path.privacy}}) μας."
+          }
+        ]
+      },
+      {
+        "id": "banner",
+        "heading": "Γιατί δεν εμφανίζεται μήνυμα για cookies",
+        "blocks": [
+          {
+            "p": "Μήνυμα συγκατάθεσης χρειάζεται για cookies που δεν είναι απολύτως απαραίτητα, όπως τα cookies στατιστικών ή διαφήμισης. Το techpi.eu δεν χρησιμοποιεί τέτοια cookies, γι' αυτό δεν εμφανίζει τέτοιο μήνυμα."
+          }
+        ]
+      },
+      {
+        "id": "control",
+        "heading": "Πώς ελέγχετε τα cookies",
+        "blocks": [
+          {
+            "p": "Μπορείτε να δείτε, να αποκλείσετε και να διαγράψετε cookies από τις ρυθμίσεις του προγράμματος περιήγησής σας οποιαδήποτε στιγμή. Αν αποκλείσετε τα απολύτως απαραίτητα cookies ασφαλείας, ένας έλεγχος ασφαλείας μπορεί να μην ολοκληρωθεί και ορισμένα αιτήματα μπορεί να απορριφθούν."
+          }
+        ]
+      },
+      {
+        "id": "other-sites",
+        "heading": "Σύνδεσμοι προς άλλους ιστότοπους",
+        "blocks": [
+          {
+            "p": "Οι μελέτες περίπτωσης παραπέμπουν στους ιστότοπους των πελατών μας. Αυτοί, όπως και κάθε άλλος ιστότοπος στον οποίο φτάνετε μέσω συνδέσμου, μπορεί να χρησιμοποιούν δικά τους cookies σύμφωνα με τις δικές τους πολιτικές. Οι σύνδεσμοι email και τηλεφώνου ανοίγουν την αντίστοιχη εφαρμογή της συσκευής σας."
+          }
+        ]
+      },
+      {
+        "id": "changes",
+        "heading": "Μελλοντικές αλλαγές",
+        "blocks": [
+          {
+            "p": "Αν προσθέσουμε ποτέ εργαλείο στατιστικών ή άλλη τεχνολογία που αποθηκεύει πληροφορίες στη συσκευή σας και δεν είναι απολύτως απαραίτητη, θα ενημερώσουμε πρώτα αυτή την πολιτική και, όπου το απαιτεί ο νόμος, θα ζητήσουμε τη συγκατάθεσή σας πριν τη χρησιμοποιήσουμε."
+          }
+        ]
+      },
+      {
+        "id": "who-we-are",
+        "heading": "Ποιοι είμαστε",
+        "blocks": [
+          {
+            "p": "Το techpi.eu λειτουργεί από τον Ιωάννη Κιμούντρη, ατομική επιχείρηση στην Ξάνθη, με την επωνυμία TechPi. Ερωτήσεις για τα cookies: {{email}}. Πώς χειριζόμαστε τα προσωπικά δεδομένα εξηγείται στην [Πολιτική Απορρήτου]({{path.privacy}}) μας."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "facts": {
+    "slug": "rocketeer",
+    "name": "Rocketeer",
+    "client": "Rocketeer",
+    "year": 2026,
+    "liveUrl": "https://rocketeer.gr/",
+    "workGroup": "client",
+    "featured": true,
+    "order": 1,
+    "capabilities": [
+      "digital-products"
+    ],
+    "source": "https://pigiota314.gr/case-studies/rocketeer-custom-web-application/"
+  },
+  "images": {
+    "image": {
+      "id": "rocketeer-admin-dashboard",
+      "width": 2612,
+      "height": 980
+    },
+    "cover": {
+      "id": "rocketeer-admin-dashboard",
+      "width": 2612,
+      "height": 980
+    },
+    "gallery": [
+      {
+        "id": "rocketeer-sign-in",
+        "width": 1018,
+        "height": 850
+      }
+    ]
+  },
+  "en": {
+    "category": "Delivery operations platform",
+    "summary": "A custom web application that organises delivery requests, drivers and assignments in one place.",
+    "imageAlt": "The Rocketeer administration dashboard: a side menu, summary counts for pending and active requests, businesses and drivers, and a list of recent requests.",
+    "coverAlt": "The Rocketeer administration dashboard: a side menu, summary counts for pending and active requests, businesses and drivers, and a list of recent requests.",
+    "galleryAlts": [
+      "The Rocketeer sign-in screen, with the Rocketeer logo above an email and password form."
+    ],
+    "overview": [
+      "Rocketeer Dispatch is a custom web application for running a delivery service. It brings partner businesses, the administrator and drivers into one digital environment, where requests are created, assigned and followed through to delivery."
+    ],
+    "need": [
+      "Three groups needed different things from the same system. Partner businesses needed a simple way to submit delivery or shift requests. Drivers needed a clear view of their current and upcoming assignments and of the status of each request. The administrator needed full oversight of requests, drivers, businesses, assignments and key financial figures.",
+      "All of it had to be fast and simple to use in real operating conditions, where decisions are made on the spot."
+    ],
+    "builtItems": [
+      "Role-based dashboards for administrators, businesses and drivers, each showing only what that role needs",
+      "An admin panel for managing businesses, drivers, requests and assignments",
+      "A business panel for creating delivery or shift requests",
+      "A driver panel showing active and upcoming assignments",
+      "Manual driver assignment, so the administrator keeps control",
+      "A request flow that keeps new requests manageable even when no driver is immediately available",
+      "A mobile-friendly interface for everyday use by drivers and businesses"
+    ],
+    "technology": [
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "Supabase, including Supabase Auth",
+      "Leaflet and OpenStreetMap"
+    ],
+    "outcome": [
+      "Businesses, drivers and requests are managed in one place.",
+      "Active and upcoming assignments are clearer.",
+      "Less need for constant coordination by phone or message.",
+      "Easier everyday use on mobile devices for drivers and businesses.",
+      "A base that can be extended with further features."
+    ]
+  },
+  "el": {
+    "category": "Πλατφόρμα διαχείρισης διανομών",
+    "summary": "Web εφαρμογή που οργανώνει σε ένα σημείο αιτήματα διανομής, οδηγούς και αναθέσεις.",
+    "imageAlt": "Ο πίνακας ελέγχου διαχείρισης του Rocketeer: πλαϊνό μενού, συνοπτικοί αριθμοί για εκκρεμή και ενεργά αιτήματα, επιχειρήσεις και οδηγούς, και λίστα με τα πρόσφατα αιτήματα.",
+    "coverAlt": "Ο πίνακας ελέγχου διαχείρισης του Rocketeer: πλαϊνό μενού, συνοπτικοί αριθμοί για εκκρεμή και ενεργά αιτήματα, επιχειρήσεις και οδηγούς, και λίστα με τα πρόσφατα αιτήματα.",
+    "galleryAlts": [
+      "Η οθόνη σύνδεσης του Rocketeer, με το λογότυπο πάνω από τη φόρμα email και κωδικού."
+    ],
+    "overview": [
+      "Το Rocketeer Dispatch είναι μια ειδικά σχεδιασμένη web εφαρμογή για τη λειτουργία μιας υπηρεσίας διανομών. Φέρνει τις συνεργαζόμενες επιχειρήσεις, τον διαχειριστή και τους οδηγούς σε ένα ενιαίο ψηφιακό περιβάλλον, όπου τα αιτήματα δημιουργούνται, ανατίθενται και παρακολουθούνται μέχρι την παράδοση."
+    ],
+    "need": [
+      "Τρεις ομάδες χρηστών χρειάζονταν διαφορετικά πράγματα από το ίδιο σύστημα. Οι συνεργαζόμενες επιχειρήσεις χρειάζονταν έναν απλό τρόπο να καταχωρούν αιτήματα διανομής ή βάρδιας. Οι οδηγοί χρειάζονταν καθαρή εικόνα για τις τρέχουσες και τις επόμενες αναθέσεις τους και για την κατάσταση κάθε αιτήματος. Ο διαχειριστής χρειαζόταν πλήρη εποπτεία των αιτημάτων, των οδηγών, των επιχειρήσεων, των αναθέσεων και των βασικών οικονομικών στοιχείων.",
+      "Όλα αυτά έπρεπε να λειτουργούν γρήγορα και απλά σε πραγματικές συνθήκες, όπου οι αποφάσεις παίρνονται επί τόπου."
+    ],
+    "builtItems": [
+      "Πίνακες ελέγχου ανά ρόλο για διαχειριστές, επιχειρήσεις και οδηγούς, ώστε ο καθένας να βλέπει μόνο ό,τι χρειάζεται",
+      "Περιβάλλον διαχειριστή για επιχειρήσεις, οδηγούς, αιτήματα και αναθέσεις",
+      "Περιβάλλον επιχείρησης για τη δημιουργία αιτημάτων διανομής ή βάρδιας",
+      "Περιβάλλον οδηγού με τις ενεργές και τις επόμενες αναθέσεις",
+      "Χειροκίνητη ανάθεση οδηγών, ώστε ο έλεγχος να μένει στον διαχειριστή",
+      "Ροή αιτημάτων που κρατά τα νέα αιτήματα διαχειρίσιμα ακόμη κι όταν δεν υπάρχει άμεσα διαθέσιμος οδηγός",
+      "Περιβάλλον προσαρμοσμένο στο κινητό, για την καθημερινή χρήση από οδηγούς και επιχειρήσεις"
+    ],
+    "technology": [
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "Supabase και Supabase Auth",
+      "Leaflet και OpenStreetMap"
+    ],
+    "outcome": [
+      "Επιχειρήσεις, οδηγοί και αιτήματα διαχειρίζονται από ένα σημείο.",
+      "Οι ενεργές και οι επόμενες αναθέσεις είναι πιο ξεκάθαρες.",
+      "Λιγότερη ανάγκη για συνεχή συντονισμό με τηλέφωνα και μηνύματα.",
+      "Ευκολότερη καθημερινή χρήση από το κινητό για οδηγούς και επιχειρήσεις.",
+      "Μια βάση που μπορεί να επεκταθεί με νέες λειτουργίες."
+    ]
+  }
+}

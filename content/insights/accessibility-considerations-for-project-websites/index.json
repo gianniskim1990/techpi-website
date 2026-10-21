@@ -1,0 +1,42 @@
+{
+  "facts": {
+    "slug": "accessibility-considerations-for-project-websites",
+    "order": 4,
+    "published": "2025-06-09",
+    "publishedText": "9 June 2025",
+    "source": "https://pigiota314.eu/insights/accessibility-considerations-for-project-websites"
+  },
+  "en": {
+    "category": "Accessibility",
+    "title": "Accessibility considerations for project websites",
+    "lead": "What WCAG 2.2 AA means in practice for EU project websites, and where teams most often fall short.",
+    "sections": [
+      {
+        "heading": "Accessibility is part of the brief",
+        "paragraphs": [
+          "Treat accessibility as part of the original specification, not as a remediation effort before review. WCAG 2.2 Level AA is a useful accessibility target when planning a project website. The precise compliance requirements depend on the organisation operating the site and any applicable legal or contractual obligations."
+        ]
+      },
+      {
+        "heading": "Where teams usually fall short",
+        "paragraphs": [
+          "The same problems come up most often:"
+        ],
+        "list": [
+          "Low-contrast colour palettes",
+          "Missing focus states",
+          "Inaccessible PDFs uploaded as deliverables",
+          "Forms that cannot be completed with a keyboard"
+        ]
+      }
+    ],
+    "related": [
+      "what-communication-partners-should-ask-a-web-development-supplier",
+      "what-every-eu-project-website-should-include"
+    ],
+    "meta": {
+      "title": "Accessibility considerations for project websites | TechPi",
+      "description": "What WCAG 2.2 AA means in practice for EU project websites, and the problems teams most often miss: contrast, focus states, inaccessible PDFs and keyboard forms."
+    }
+  }
+}

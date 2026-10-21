@@ -1,0 +1,70 @@
+{
+  "facts": {
+    "slug": "local-xanthi",
+    "name": "Local Xanthi",
+    "client": "Local Xanthi",
+    "year": 2025,
+    "workGroup": "earlier",
+    "featured": false,
+    "order": 15,
+    "capabilities": [],
+    "source": "https://pigiota314.eu/case-studies/local-xanthi"
+  },
+  "images": {},
+  "en": {
+    "category": "Local social media & digital marketing",
+    "summary": "Social media content and digital marketing communications aimed at building a consistent presence for a local audience.",
+    "disciplines": [
+      "Social media",
+      "Content creation",
+      "Local promotion"
+    ],
+    "overview": [
+      "Social media and digital marketing campaigns with local targeting, and content designed to increase visibility."
+    ],
+    "need": [
+      "Building a more consistent online presence aimed at a local audience."
+    ],
+    "builtIntro": "Content and a communication direction focused on recognition and a connection with the local audience.",
+    "services": [
+      "Social media management",
+      "Digital marketing",
+      "Content creation",
+      "Local promotion"
+    ],
+    "technology": [
+      "Meta Business Suite"
+    ],
+    "outcome": [
+      "A stronger online presence and more consistent communication."
+    ]
+  },
+  "el": {
+    "category": "Τοπική ψηφιακή επικοινωνία",
+    "summary": "Περιεχόμενο social media και ψηφιακή επικοινωνία με στόχο μια συνεπή παρουσία για το τοπικό κοινό.",
+    "disciplines": [
+      "Social media",
+      "Δημιουργία περιεχομένου",
+      "Τοπική προβολή"
+    ],
+    "overview": [
+      "Καμπάνιες social media και ψηφιακού μάρκετινγκ με τοπική στόχευση και περιεχόμενο σχεδιασμένο για μεγαλύτερη προβολή."
+    ],
+    "need": [
+      "Στόχος ήταν η δημιουργία μιας πιο συνεπούς παρουσίας στο διαδίκτυο, για το τοπικό κοινό."
+    ],
+    "builtIntro": "Περιεχόμενο και κατεύθυνση επικοινωνίας με έμφαση στην αναγνωρισιμότητα και τη σύνδεση με το τοπικό κοινό.",
+    "services": [
+      "Διαχείριση social media",
+      "Ψηφιακό μάρκετινγκ",
+      "Δημιουργία περιεχομένου",
+      "Τοπική προβολή"
+    ],
+    "technology": [
+      "Meta Business Suite"
+    ],
+    "outcome": [
+      "Ισχυρότερη παρουσία στο διαδίκτυο και πιο συνεπής επικοινωνία."
+    ]
+  }
+}

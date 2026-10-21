@@ -1,0 +1,63 @@
+{
+  "facts": {
+    "slug": "alexandra-apartment",
+    "name": "Alexandra Apartment",
+    "client": "Alexandra Apartment",
+    "year": 2025,
+    "workGroup": "client",
+    "featured": false,
+    "order": 11,
+    "capabilities": [
+      "web-experiences",
+      "digital-visibility"
+    ],
+    "source": "https://pigiota314.eu/case-studies/alexandra-apartment"
+  },
+  "images": {},
+  "en": {
+    "category": "Hospitality website",
+    "summary": "A hospitality website combining property imagery, clear information and an approach to local search visibility.",
+    "overview": [
+      "A clean, modern online presence for a tourist accommodation, focused on imagery and trust."
+    ],
+    "need": [
+      "The accommodation needed a professional online presence that builds credibility and clearly presents the experience of staying there."
+    ],
+    "builtIntro": "A website with a clear structure, imagery, content and a direction for local search visibility.",
+    "services": [
+      "Web design",
+      "Hospitality website",
+      "Local SEO",
+      "Content structure"
+    ],
+    "technology": [
+      "WordPress"
+    ],
+    "outcome": [
+      "A more professional image and a better online presentation of the accommodation."
+    ]
+  },
+  "el": {
+    "category": "Ιστοσελίδα τουριστικού καταλύματος",
+    "summary": "Ιστοσελίδα καταλύματος με έμφαση στο οπτικό υλικό, την καθαρή πληροφόρηση και τη βελτίωση της τοπικής παρουσίας στις αναζητήσεις.",
+    "overview": [
+      "Καθαρή, σύγχρονη ψηφιακή παρουσία για ένα τουριστικό κατάλυμα, με έμφαση στην εικόνα και την αξιοπιστία."
+    ],
+    "need": [
+      "Το κατάλυμα χρειαζόταν μια επαγγελματική παρουσία στο διαδίκτυο, που εμπνέει εμπιστοσύνη και παρουσιάζει καθαρά την εμπειρία της διαμονής."
+    ],
+    "builtIntro": "Ιστοσελίδα με σαφή δομή, οπτικό υλικό, περιεχόμενο και κατεύθυνση για τοπικό SEO.",
+    "services": [
+      "Σχεδιασμός ιστοσελίδων",
+      "Ιστοσελίδα καταλύματος",
+      "Τοπικό SEO",
+      "Δομή περιεχομένου"
+    ],
+    "technology": [
+      "WordPress"
+    ],
+    "outcome": [
+      "Πιο επαγγελματική εικόνα και καλύτερη παρουσίαση του καταλύματος στο διαδίκτυο."
+    ]
+  }
+}

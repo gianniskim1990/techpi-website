@@ -1,0 +1,111 @@
+{
+  "facts": {
+    "slug": "rantevo",
+    "name": "Rantevo.gr",
+    "year": 2026,
+    "workGroup": "client",
+    "featured": false,
+    "order": 8,
+    "capabilities": [
+      "digital-products"
+    ],
+    "source": "https://pigiota314.eu/case-studies/rantevo"
+  },
+  "images": {
+    "image": {
+      "id": "rantevo-booking-home",
+      "width": 1549,
+      "height": 679
+    },
+    "cover": {
+      "id": "rantevo-booking-home",
+      "width": 1549,
+      "height": 679
+    },
+    "gallery": [
+      {
+        "id": "rantevo-business-page",
+        "width": 1412,
+        "height": 1194
+      }
+    ]
+  },
+  "en": {
+    "category": "Multi-sector SaaS booking platform",
+    "summary": "A web-based appointment platform for service businesses, combining business profiles, service listings and customer bookings.",
+    "highlights": [
+      "Business profiles",
+      "Service listings",
+      "Online appointments",
+      "Responsive interface"
+    ],
+    "imageAlt": "The Rantevo.gr homepage: the heading “Book an appointment easily and quickly” and a search form by service, city, date and time.",
+    "coverAlt": "The Rantevo.gr homepage: the heading “Book an appointment easily and quickly” and a search form by service, city, date and time.",
+    "coverCaption": "The public booking homepage. The screenshots on this page show the Greek-language interface.",
+    "galleryAlts": [
+      "The Rantevo.gr page for businesses: the heading “Grow your business with Rantevo”, a short description of the platform and four cards describing what it offers."
+    ],
+    "overview": [
+      "A modern SaaS booking platform for hair salons, beauty centres, physiotherapy clinics and other service professionals."
+    ],
+    "need": [
+      "Many small service businesses still manage appointments by hand, through phone calls, messages and notes. This creates delays, lost time, organisational friction and a limited online presence."
+    ],
+    "builtIntro": "A web-based SaaS booking platform with a clean, responsive interface, professional business pages, structured service listings and end-to-end online booking for customers.",
+    "services": [
+      "SaaS development",
+      "Web application",
+      "UX/UI design",
+      "Booking system",
+      "Digital product strategy"
+    ],
+    "technology": [
+      "React",
+      "TypeScript",
+      "Supabase",
+      "Tailwind CSS"
+    ],
+    "outcome": [
+      "A digital product that supports different types of business, strengthens their online presence and gives professionals and their customers a more organised booking experience."
+    ]
+  },
+  "el": {
+    "category": "Πλατφόρμα SaaS online ραντεβού",
+    "summary": "Πλατφόρμα online ραντεβού για επιχειρήσεις υπηρεσιών, με επαγγελματικά προφίλ, καταλόγους υπηρεσιών και δυνατότητα κράτησης από τον πελάτη.",
+    "highlights": [
+      "Επαγγελματικά προφίλ",
+      "Κατάλογοι υπηρεσιών",
+      "Online ραντεβού",
+      "Προσαρμογή σε όλες τις οθόνες"
+    ],
+    "imageAlt": "Η αρχική σελίδα του Rantevo.gr: ο τίτλος «Κλείσε ραντεβού εύκολα & γρήγορα» και φόρμα αναζήτησης ανά υπηρεσία, πόλη, ημερομηνία και ώρα.",
+    "coverAlt": "Η αρχική σελίδα του Rantevo.gr: ο τίτλος «Κλείσε ραντεβού εύκολα & γρήγορα» και φόρμα αναζήτησης ανά υπηρεσία, πόλη, ημερομηνία και ώρα.",
+    "coverCaption": "Η δημόσια αρχική σελίδα κρατήσεων.",
+    "galleryAlts": [
+      "Η σελίδα του Rantevo.gr για επιχειρήσεις: ο τίτλος «Αναπτύξτε την επιχείρησή σας με το Rantevo», σύντομη περιγραφή της πλατφόρμας και τέσσερις κάρτες με όσα προσφέρει."
+    ],
+    "overview": [
+      "Σύγχρονη πλατφόρμα SaaS για online κρατήσεις, για κομμωτήρια, κέντρα αισθητικής, φυσικοθεραπευτήρια και άλλους επαγγελματίες υπηρεσιών."
+    ],
+    "need": [
+      "Πολλές μικρές επιχειρήσεις υπηρεσιών διαχειρίζονται ακόμη τα ραντεβού χειροκίνητα, με τηλεφωνήματα, μηνύματα και σημειώσεις. Αυτό δημιουργεί καθυστερήσεις, χαμένο χρόνο, οργανωτικές τριβές και περιορισμένη παρουσία στο διαδίκτυο."
+    ],
+    "builtIntro": "Web πλατφόρμα SaaS για κρατήσεις, με καθαρή διεπαφή που προσαρμόζεται σε όλες τις οθόνες, επαγγελματικές σελίδες επιχειρήσεων, δομημένους καταλόγους υπηρεσιών και ολοκληρωμένη online κράτηση για τον πελάτη.",
+    "services": [
+      "Ανάπτυξη SaaS",
+      "Web εφαρμογή",
+      "Σχεδιασμός UX/UI",
+      "Σύστημα κρατήσεων",
+      "Στρατηγική ψηφιακού προϊόντος"
+    ],
+    "technology": [
+      "React",
+      "TypeScript",
+      "Supabase",
+      "Tailwind CSS"
+    ],
+    "outcome": [
+      "Ένα ψηφιακό προϊόν που υποστηρίζει διαφορετικούς τύπους επιχειρήσεων, ενισχύει την παρουσία τους στο διαδίκτυο και προσφέρει στους επαγγελματίες και στους πελάτες τους πιο οργανωμένη εμπειρία κράτησης."
+    ]
+  }
+}

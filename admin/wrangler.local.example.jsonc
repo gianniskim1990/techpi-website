@@ -1,0 +1,27 @@
+{
+  // LOCAL-ONLY template for the first real GitHub App test (docs/admin/A1.md, section 6).
+  // Copy to wrangler.local.jsonc (git-ignored), then run: npm run build && npx wrangler dev --config wrangler.local.jsonc
+  // Never deploy with this file: it simulates Cloudflare Access and is meant for `wrangler dev` on 127.0.0.1 only.
+  //
+  // The GitHub App private key is NOT in this file. It goes only in .dev.vars (git-ignored, next to this file) as
+  // GITHUB_APP_PRIVATE_KEY, which Wrangler loads for local development.
+  "name": "techpi-admin-local",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-10-02",
+  "assets": { "directory": "./dist", "binding": "ASSETS", "run_worker_first": true, "not_found_handling": "single-page-application" },
+  "workers_dev": false,
+  "preview_urls": false,
+  "dev": { "ip": "127.0.0.1", "port": 8787 },
+  // Wrangler's documented Access simulation: every local request arrives as this identity (reserved .test domain).
+  "access": { "dev": { "aud": "local-test-aud", "identity": { "email": "admin@example.test" } } },
+  "vars": {
+    "ACCESS_AUD": "local-test-aud",
+    "ADMIN_EMAILS": "admin@example.test",
+    // Not secret, but set only locally until deployment is approved.
+    "GITHUB_APP_ID": "",
+    "GITHUB_APP_INSTALLATION_ID": "",
+    // Drafts are based on, and pull requests target, this branch. `main` is refused by the Worker.
+    "CONTENT_MODE": "development",
+    "CONTENT_BASE_BRANCH": "feat/techpi-admin-m4-production-readiness"
+  }
+}
