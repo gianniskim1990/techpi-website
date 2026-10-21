@@ -8,7 +8,11 @@ import {
   ADMIN_EMAIL, LIMITS, LoginLimiter, MAX_ITERATIONS, MIN_ITERATIONS, makeVerifier, parseVerifier, passwordConfig, verifyPassword,
 } from '../worker/password.js';
 import { seal, SESSION_COOKIE, SESSION_TTL } from '../worker/session.js';
-import { weakness } from '../scripts/set-admin-password.mjs';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { applyKeys, deployConfigProblems, parseArgs, weakness, withSecretsFile } from '../scripts/set-admin-password.mjs';
 import { authEnv, SESSION_SECRET, sessionCookie, ctxFor } from './support/auth.mjs';
 import { createMockGitHub } from './support/mock-github.mjs';
 
@@ -222,13 +226,29 @@ test('rate limit: 5 attempts per client per 15 minutes, 20 in total per hour, sh
   assert.ok(![...f.LOGIN_LIMITER.map.keys()].some((k) => k.includes('192.0.2')));
 });
 
-test('misconfiguration fails closed: a malformed verifier or a missing limiter stops the admin; a failing limiter refuses sign-in', async () => {
+test('misconfiguration fails closed for the password only: no form, sign-in refused, no session; GitHub sign-in keeps working', async () => {
+  const githubSession = await sessionCookie(ctxFor());
   for (const over of [{ ADMIN_PASSWORD_HASH: 'plaintext-password' }, { ADMIN_PASSWORD_HASH: 'pbkdf2-sha256$1000$abc$def' }, { LOGIN_LIMITER: undefined }, { LOGIN_LIMITER: {} }]) {
+    const name = JSON.stringify(Object.keys(over));
     const e = env(over);
-    assert.deepEqual(passwordConfig(e).enabled, false);
-    for (const p of ['/', '/api/session', '/auth/login']) assert.equal((await get(p, e)).status, 503, `${JSON.stringify(Object.keys(over))} ${p}`);
-    assert.equal((await login(e)).status, 503);
+    assert.equal(passwordConfig(e).enabled, false, name);
+    assert.ok(passwordConfig(e).problems.length > 0, name);
+    const page = await get('/', e);
+    assert.equal(page.status, 401, `${name}: the sign-in page is still served`);
+    const html = await page.text();
+    assert.doesNotMatch(html, /<form/, `${name}: no password form`);
+    assert.match(html, /Sign in with GitHub/);
+    const res = await login(e);
+    assert.equal(res.status, 503, name);
+    assert.equal(sessionOf(res), undefined);
+    assert.match(await res.text(), /Password sign-in is not available/);
+    assert.equal((await get('/api/session', e, githubSession, api)).status, 200, `${name}: GitHub sessions work`);
+    const start = await worker.fetch(new Request(`${ORIGIN}/auth/login`, { redirect: 'manual' }), e);
+    assert.equal(start.status, 303, `${name}: GitHub sign-in starts`);
   }
+  // A password session cannot be used while the password sign-in is misconfigured (for example, the binding is missing).
+  const good = sessionOf(await login(env()));
+  assert.equal((await get('/api/session', env({ LOGIN_LIMITER: undefined }), good, api)).status, 401);
   const broken = env({ LOGIN_LIMITER: { idFromName: (n) => n, get: () => ({ fetch: async () => { throw new Error('down'); } }) } });
   const res = await login(broken);
   assert.equal(res.status, 503);
@@ -262,4 +282,80 @@ test('with password sign-in enabled: the page offers both, posts only to itself,
   const start = await worker.fetch(new Request(`${ORIGIN}/auth/login`, { redirect: 'manual' }), e);
   assert.equal(start.status, 303);
   assert.match(start.headers.get('Location'), /^https:\/\/github\.com\/login\/oauth\/authorize\?/);
+});
+
+// ---------- AUTH-P1 corrections: the setup and upload workflow ----------
+const adminDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+test('a verifier with a byte-order mark, trailing newline or spaces (as a Windows shell pipe adds) still works, for sign-in and sessions', async () => {
+  // Windows PowerShell 5.1 adds a byte-order mark and CRLF to text piped between programs (checked on Windows 11).
+  for (const [prefix, suffix] of [['', '\r\n'], ['', '\n'], ['', '  '], ['﻿', '\r\n']]) {
+    const e = env({ ADMIN_PASSWORD_HASH: prefix + VERIFIER + suffix });
+    assert.equal(passwordConfig(e).enabled, true, JSON.stringify(suffix));
+    const res = await login(e, { ip: `198.51.100.${prefix.length * 10 + suffix.length + 50}` });
+    assert.equal(res.status, 303, JSON.stringify(suffix));
+    assert.equal((await get('/api/session', env(), sessionOf(res), api)).status, 200, 'the same verifier tag as without the suffix');
+  }
+});
+
+test('setup options: --iterations bounded (Workers Free: 20000), --deploy needs --config, unknown options refused, no password argument', () => {
+  assert.deepEqual(parseArgs([]), { deploy: false, config: undefined, iterations: MAX_ITERATIONS });
+  assert.deepEqual(parseArgs(['--iterations=20000']), { deploy: false, config: undefined, iterations: 20000 });
+  assert.deepEqual(parseArgs(['--deploy', '--config', 'wrangler.production.local.jsonc', '--iterations=20000']), { deploy: true, config: 'wrangler.production.local.jsonc', iterations: 20000 });
+  assert.deepEqual(parseArgs(['--deploy', '--config=wrangler.production.local.jsonc']).config, 'wrangler.production.local.jsonc');
+  for (const bad of [['--iterations=500'], ['--iterations=200000'], ['--iterations=abc'], ['--deploy'], ['--config', 'x.jsonc'], ['--stdout'], ['--password=hunter2hunter2hunter2'], ['hunter2hunter2hunter2']]) {
+    const r = parseArgs(bad);
+    assert.ok(r.error, bad.join(' '));
+    assert.ok(!r.error.includes('hunter2'), 'a stray value is never echoed');
+  }
+});
+
+test('hidden input: Enter (CR or LF), Backspace, Ctrl+C, pasted text and control characters', () => {
+  assert.deepEqual(applyKeys('', 'abc\r'), { value: 'abc', done: true, cancelled: false });
+  assert.deepEqual(applyKeys('', 'abc\n'), { value: 'abc', done: true, cancelled: false });
+  assert.deepEqual(applyKeys('', 'a long pasted passphrase\r\n'), { value: 'a long pasted passphrase', done: true, cancelled: false });
+  assert.deepEqual(applyKeys('abc', '\u0008'), { value: 'ab', done: false, cancelled: false });
+  assert.deepEqual(applyKeys('abc', '\u007f\u007fx'), { value: 'ax', done: false, cancelled: false });
+  assert.deepEqual(applyKeys('ab€', '\u0008'), { value: 'ab', done: false, cancelled: false }, 'one character, not one UTF-16 unit');
+  assert.deepEqual(applyKeys('secret', '\u0003'), { value: '', done: true, cancelled: true });
+  assert.deepEqual(applyKeys('', 'a\u001b[Ab\tc'), { value: 'a[Abc', done: false, cancelled: false }, 'control characters are dropped');
+});
+
+test('deploy guard: refused without the LOGIN_LIMITER binding and migration, outside production, or with a secret as a variable', () => {
+  const example = fs.readFileSync(path.join(adminDir, 'wrangler.production.example.jsonc'), 'utf8');
+  assert.deepEqual(deployConfigProblems(example), [], 'the production template is ready');
+  const c = JSON.parse(example.replace(/^\s*\/\/.*$/gm, '').replace(/,(\s*[}\]])/g, '$1'));
+  const variant = (f) => { const x = structuredClone(c); f(x); return JSON.stringify(x); };
+  assert.match(deployConfigProblems(variant((x) => delete x.durable_objects)).join(' '), /LOGIN_LIMITER/);
+  assert.match(deployConfigProblems(variant((x) => { x.durable_objects.bindings[0].class_name = 'Other'; })).join(' '), /LOGIN_LIMITER/);
+  assert.match(deployConfigProblems(variant((x) => delete x.migrations)).join(' '), /migration/);
+  assert.match(deployConfigProblems(variant((x) => { x.vars.CONTENT_MODE = 'development'; })).join(' '), /production/);
+  assert.match(deployConfigProblems(variant((x) => { x.workers_dev = true; })).join(' '), /workers_dev/);
+  assert.match(deployConfigProblems(variant((x) => { x.vars.ADMIN_PASSWORD_HASH = VERIFIER; })).join(' '), /ADMIN_PASSWORD_HASH must not be a plain variable/);
+  assert.ok(deployConfigProblems(fs.readFileSync(path.join(adminDir, 'wrangler.local.example.jsonc'), 'utf8')).length, 'the local template is not a production deploy');
+  assert.deepEqual(deployConfigProblems('{ not json'), ['The configuration is not valid JSONC.']);
+});
+
+test('secrets file: only ADMIN_PASSWORD_HASH (existing secrets are kept by --secrets-file), owner-only, outside the repo, always deleted', async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'techpi-p1-test-'));
+  try {
+    let seen;
+    const restricted = [];
+    const result = await withSecretsFile(VERIFIER, (file) => {
+      seen = { file, content: JSON.parse(fs.readFileSync(file, 'utf8')) };
+      return 0;
+    }, { tmp, restrict: (dir, file) => restricted.push(dir, file) });
+    assert.equal(result, 0);
+    assert.deepEqual(seen.content, { ADMIN_PASSWORD_HASH: VERIFIER }, 'no other secret is replaced');
+    assert.ok(!path.resolve(seen.file).startsWith(path.resolve(adminDir, '..')), 'outside the repository');
+    assert.deepEqual(restricted.map((p) => path.basename(p)).slice(1), ['secrets.json']);
+    assert.equal(fs.existsSync(seen.file), false, 'deleted after success');
+    let failedFile;
+    await assert.rejects(withSecretsFile(VERIFIER, (file) => { failedFile = file; throw new Error('deploy failed'); }, { tmp, restrict: () => {} }), /deploy failed/);
+    assert.equal(fs.existsSync(failedFile), false, 'deleted after failure');
+    await assert.rejects(withSecretsFile(VERIFIER, () => 0, { tmp, restrict: () => { throw new Error('icacls failed'); } }), /icacls failed/);
+    assert.deepEqual(fs.readdirSync(tmp), [], 'nothing is left behind, even when restricting fails');
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
 });

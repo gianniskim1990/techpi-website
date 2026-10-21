@@ -16,7 +16,6 @@
 import { checkSameOrigin, handleAuth, sessionIdentity, signInPage } from './auth.js';
 import { handleApi } from './api.js';
 import { authConfig, productionProblems } from './config.js';
-import { passwordConfig } from './password.js';
 
 // The Durable Object class that counts password sign-in attempts (password.js) must be exported by the main module.
 export { LoginLimiter } from './password.js';
@@ -72,11 +71,12 @@ export default {
       return deny(503, `The admin is not available here. ${problems.join(' ')}`, isApi);
     }
     const auth = authConfig(env);
-    const password = passwordConfig(env);
-    if (!auth.ok || password.problems.length) {
-      console.error(`admin: sign-in is not configured (${auth.problems.length + password.problems.length} problem(s))`);
+    if (!auth.ok) {
+      console.error(`admin: sign-in is not configured (${auth.problems.length} problem(s))`);
       return deny(503, 'The admin is not configured.', isApi);
     }
+    // A password sign-in problem (a malformed ADMIN_PASSWORD_HASH, or the secret without the LOGIN_LIMITER binding)
+    // disables only the password sign-in (password.js); GitHub sign-in keeps working.
     const authResponse = await handleAuth(request, env);
     if (authResponse) return withSecurityHeaders(authResponse);
     const identity = await sessionIdentity(request, env);

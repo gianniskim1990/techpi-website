@@ -11,6 +11,11 @@
  * Cloudflare location): at most 5 attempts per client IP per 15 minutes and 20 in total per hour. The session is the
  * same signed cookie as for GitHub (session.js), bound to the current verifier: changing the password ends every
  * password session.
+ *
+ * A malformed ADMIN_PASSWORD_HASH, or the secret without the LOGIN_LIMITER binding, disables only this sign-in (503 on
+ * /auth/password, no form); GitHub sign-in keeps working. The verifier is trimmed, so a trailing newline added by a
+ * shell pipe does not break it. In production it is uploaded together with the code and the binding in one deploy
+ * (scripts/set-admin-password.mjs --deploy).
  */
 import { b64url, randomToken, sameString, seal, cookie, clearCookie, SESSION_COOKIE, OAUTH_COOKIE, SESSION_TTL } from './session.js';
 
@@ -139,6 +144,11 @@ function formRefusal(request) {
 export async function passwordLogin(request, env, page) {
   if (request.method !== 'POST') return new Response('Method not allowed.', { status: 405 });
   const cfg = passwordConfig(env);
+  if (cfg.problems.length) {
+    // Fail closed for the password only: the secret is set but cannot be used safely. GitHub sign-in is unaffected.
+    console.error(`auth: password sign-in is misconfigured (${cfg.problems.length} problem(s)); refused`);
+    return page(503, 'Password sign-in is not available. Use Sign in with GitHub.');
+  }
   if (!cfg.enabled) return new Response('Not found.', { status: 404 });
   const refused = formRefusal(request);
   if (refused) return page(403, refused);
