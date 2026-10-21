@@ -1,0 +1,37 @@
+{
+  "facts": {
+    "key": "contact",
+    "pageKey": "contact",
+    "paths": {
+      "en": "/contact",
+      "el": "/el/contact"
+    },
+    "kind": "page"
+  },
+  "en": {
+    "seo": {
+      "title": "Contact — Start a Project | TechPi",
+      "description": "Start a project with TechPi: digital products, platforms, web systems and other technology projects. Tell us about the problem you need to solve."
+    },
+    "heading": "Have something worth building?",
+    "lead": "Tell us about the problem you need to solve.",
+    "direct": "Direct",
+    "email": "Email",
+    "phone": "Phone",
+    "location": "Location",
+    "locationValue": "Xanthi, Greece"
+  },
+  "el": {
+    "seo": {
+      "title": "Επικοινωνία — Ξεκινήστε ένα έργο | TechPi",
+      "description": "Ξεκινήστε ένα έργο με την TechPi: ψηφιακά προϊόντα, πλατφόρμες, συστήματα web και άλλα τεχνολογικά έργα. Πείτε μας ποιο πρόβλημα θέλετε να λύσετε."
+    },
+    "heading": "Έχετε κάτι που αξίζει να χτιστεί;",
+    "lead": "Πείτε μας ποιο πρόβλημα θέλετε να λύσετε.",
+    "direct": "Στοιχεία",
+    "email": "Email",
+    "phone": "Τηλέφωνο",
+    "location": "Τοποθεσία",
+    "locationValue": "Ξάνθη, Ελλάδα"
+  }
+}
