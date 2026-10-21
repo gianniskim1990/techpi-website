@@ -16,7 +16,6 @@
     <h1>Website pages</h1>
     <p class="sub">The eight pages of techpi.eu, in English and Greek. Each is connected to GitHub: edits are saved as a draft pull request per page, and the website is not changed.</p>
   </div>
-  <button class="btn btn-primary" type="button" disabled title="Adding a new page is not available"><Icon name="plus" size={16} />New page</button>
 </header>
 
 <div class="card">

@@ -7,6 +7,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { githubConfig, importPrivateKey, repoRequest, GitHubError } from '../worker/github.js';
+import { contentConfig } from '../worker/config.js';
 
 const admin = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const results = [];
@@ -45,15 +46,17 @@ let keyOk = false;
 try { await importPrivateKey(env.GITHUB_APP_PRIVATE_KEY ?? ''); keyOk = true; } catch {}
 check('private key can be loaded for signing', keyOk, 'The file may be truncated or not the GitHub App key. Recreate .dev.vars.');
 check('Access simulation is configured', Boolean(cfg.access?.dev?.identity?.email) && cfg.access.dev.aud === env.ACCESS_AUD && env.ADMIN_EMAILS?.split(',').map((s) => s.trim()).includes(cfg.access.dev.identity.email));
-check('draft base is not main', env.CONTENT_BASE_BRANCH && env.CONTENT_BASE_BRANCH !== 'main');
+const content = contentConfig(env);
+check('content mode and base branch are valid (main only in production mode)', content.ok, content.problems.join(' '));
+check('local testing uses development mode', content.mode === 'development', 'Production mode only serves the admin hostname over HTTPS; use CONTENT_MODE=development locally.');
 check('admin is built (dist/index.html)', fs.existsSync(path.join(admin, 'dist', 'index.html')), 'Run: npm run build');
 
 if (process.argv.includes('--github') && results.every(Boolean)) {
   try {
     const ref = await repoRequest(env, 'GET', `/git/ref/heads/${env.CONTENT_BASE_BRANCH}`);
     check(`GitHub: installation token issued, base branch readable (${String(ref.data?.object?.sha).slice(0, 7)})`, Boolean(ref.data?.object?.sha));
-    const file = await repoRequest(env, 'GET', `/contents/content/m0-demo/m0-sample-article/index.json?ref=${encodeURIComponent(env.CONTENT_BASE_BRANCH)}`);
-    check('GitHub: demo article readable on the base branch', file.data?.type === 'file');
+    const file = await repoRequest(env, 'GET', `/contents/content/pages/home/index.json?ref=${encodeURIComponent(env.CONTENT_BASE_BRANCH)}`);
+    check('GitHub: the Home page file is readable on the base branch', file.data?.type === 'file');
   } catch (e) {
     check('GitHub read-only check', false, e instanceof GitHubError ? e.userMessage : 'Unexpected error (details not shown).');
   }
