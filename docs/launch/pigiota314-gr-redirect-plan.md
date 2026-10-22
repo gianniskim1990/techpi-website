@@ -47,6 +47,8 @@
 
 Every target case-study slug exists in `content/case-studies/<slug>/index.json` and all 18 are published in both languages. Two source Logotherapia project URLs intentionally converge to the same Greek case study.
 
+**Expanded source review (not deployment):** [189 audited legacy URL candidates](pigiota314-gr-source-review.csv) and [review methodology / owner decisions](pigiota314-gr-source-review.md). This review list supersedes the 35-rule snippet for **coverage decisions**, but the snippet itself is intentionally partial and is not approved for deployment. The 2026-10-19 live crawl counted 206 `.gr` source URLs; its full per-URL CSV is not available here, so exhaustive coverage has not yet been proven.
+
 ## Key findings from earlier GSC and 2026-10-19 audit
 
 - A pre-existing 2026-10-16 Search Console baseline shows 52 exported `.gr` URLs and **22 clicks**, of which 18 were for the legacy homepage. The 2026-10-19 read-only crawl checked **206 `.gr` sources**. The draft snippet's 35 rules do not cover them all.
