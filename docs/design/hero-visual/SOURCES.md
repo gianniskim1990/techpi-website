@@ -3,7 +3,7 @@
 | | English homepage (`/`) | Greek homepage (`/el/`) |
 |---|---|---|
 | Theme | EU projects: digital solutions for EU-funded projects, across their thematic breadth | Websites, web applications and digital solutions |
-| Visual | **A grid of six photographs**, one for each thematic area of EU-funded projects, with a label on each tile, the line "Digital solutions for EU-funded projects" and a link "Explore EU Project Solutions" to `/eu-projects` (`src/components/home/EuHeroGrid.astro`, `eu-themes.ts`) | **One photograph** (`src/assets/hero/hero-el.jpg`) in the corner the hero arc opens, clipped by the arc (`hero-visual.ts`) |
+| Visual | **A large layered background of six photographs**, one for each thematic area of EU-funded projects, overlapping, masked and softened into the Paper behind the headline and diagram; plus the line "Digital solutions for EU-funded projects" and a link "Explore EU Project Solutions" to `/eu-projects` (`src/components/home/EuHeroBackdrop.astro`, `eu-themes.ts`) | **One photograph** (`src/assets/hero/hero-el.jpg`) in the corner the hero arc opens, clipped by the arc (`hero-visual.ts`) |
 | Chosen | At build time from the page's `locale` (never from the referrer, the browser's language or a redirect) | The same |
 
 All seven photographs are **free to use under the [Unsplash License](https://unsplash.com/license)**: irrevocable, worldwide, for
@@ -17,8 +17,13 @@ building's name.
 ## English: the six thematic areas
 The names are the thematic areas under which European research and innovation work is commonly grouped. They name a **kind of work,
 not a programme**: nothing in the hero says or implies that TechPi works under, or is endorsed by, any EU programme, and there is no EU
-flag, emblem, logo or funding statement (`src/content/eu.ts` lists what must never be claimed). Each tile has a short label, and the full
-name appears on hover and is always available to assistive technology (the pictures themselves are decorative: empty `alt`).
+flag, emblem, logo or funding statement (`src/content/eu.ts` lists what must never be claimed). The photographs are decorative
+background (empty `alt`, `aria-hidden`); the area names are not shown, only recorded here and in `eu-themes.ts`.
+
+**Composition (desktop):** a skyline across the top (digital, culture, climate, left to right), health down the right edge, security and
+food in the lower right; the left and lower left are left to the diagram and headline. Each layer has an oval mask intersected with a
+fade on all four sides, so no edge is ever visible; a Paper veil gathers behind the headline, the navigation and "Selected work".
+Tablet and phone recompose the same six layers for a tall narrow stage.
 
 | # | Area (full name) | Photograph | Photographer | Place | Date | Camera | Page |
 |---|---|---|---|---|---|---|---|
@@ -43,15 +48,15 @@ name appears on hover and is always available to assistive technology (the pictu
   the top (the painted ceiling and the upper shelves); 04 and 06 are 3:2 bands starting 100 px from the top. Re-encoded as JPEG (quality
   82); Astro converts them to WebP (320, 480 and 640 px wide) at build time.
 - **No retouching in the files.** The shared look is applied by the site's CSS, so the originals stay untouched and replaceable: a
-  muted grade (saturation 0.72, a touch more contrast), an Ink wash that carries the label, and a hairline edge. On hover a tile returns
-  to the photograph's own colours.
+  muted, lifted grade (saturation 0.72, contrast 0.94, brightness 1.08), per-layer opacity (0.34 to 0.92), masks and a Paper veil.
 
 ### Why these, and what was left out
 - Chosen for subject, a calm cool palette (blue sky, deep blue and black, glass and stone), no faces, and an obvious real photographer
   or agency behind them. Two are European places (Prague, Hvide Sande in Denmark); the rest are generic subjects.
 - Not used: an earlier laboratory photograph that carried a small **EU-funding label** on the equipment (it would have read as a funding
   claim); "satellite" images that are 3D renders or Unsplash+ (paid); recent "coding desk" images that look generated.
-- The English homepage no longer uses a photograph of a single laboratory; `hero-en.jpg` was removed in an earlier change.
+- The English homepage no longer uses a photograph of a single laboratory (`hero-en.jpg` was removed earlier), the illustrative
+  EU-projects card, or the six-tile grid with labels (superseded by this background).
 
 ## Greek: the photograph
 Free to use under the Unsplash License (checked 2026-10-22). A real photograph (Canon EOS 60D); no face is shown.
@@ -71,10 +76,11 @@ Decorative (empty `alt`, `aria-hidden`). The Greek homepage is unchanged by the 
 
 ## Replacing a photograph
 Overwrite the file in `src/assets/hero/` (English tiles: 3:2, at least 1800 px wide; Greek: landscape, at least 1920 px wide) and, if
-the subject moves, adjust its `focus` (CSS `object-position`) in `src/components/home/eu-themes.ts` or `hero-visual.ts`. Then update the
-table above. `node scripts/assets/validate.mjs` (part of the checks) fails if the English homepage has other than six tiles, a tile
-without a WebP photograph, a decorative image with alt text, a missing full name or label, the wrong line or link, or any programme,
-Commission, funding, endorsement or flag wording in the grid; or if the Greek homepage loses its photograph or gains the grid.
+the subject moves, adjust its `focus` (CSS `object-position`) in `src/components/home/eu-themes.ts` or `hero-visual.ts`; placement and
+opacity are in `EuHeroBackdrop.astro` (`.ph-<key>`). Then update the table above. `node scripts/assets/validate.mjs` fails if the
+English homepage has other than six background photographs, one without a WebP file, a decorative image with alt text, the wrong line
+or link, the old tile grid, or any programme, Commission, funding, endorsement or flag wording; or if the Greek homepage loses its
+photograph or gains the background.
 
 ## Screenshots (local build)
 English: `en-desktop-1440.jpg`, `en-tablet-768.jpg`, `en-mobile-375.jpg`. Greek (unchanged): `el-desktop-1440.jpg`, `el-mobile-375.jpg`.
