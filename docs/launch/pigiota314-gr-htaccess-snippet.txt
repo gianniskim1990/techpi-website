@@ -1,0 +1,776 @@
+# TECHPI — pigiota314.gr source-host 301/410 migration (REVIEWED CANDIDATE, NOT INSTALLED)
+# Source inventory: docs/launch/pigiota314-gr-source-review.csv (181 from historic audit + 8 GSC aliases).
+# This is 189 EXPLICIT known URLs, not a catch-all and not a claimed 206-URL live re-crawl.
+# Install ONLY at the very top of legacy /public_html/.htaccess, BEFORE # BEGIN SpeedyCacheheaders.
+# Back up original .htaccess, preserve WordPress/SpeedyCache/PHP blocks and Google HTML verification file.
+# Exact hostname guards restrict to pigiota314.gr and www.pigiota314.gr; exclude all application subdomains.
+# WordPress admin, logins, wp-content images, old XML sitemaps and robots.txt remain on their original origin.
+# 301 uses QSD to discard stale UTM/query parameters; ?p=ID shortlinks at / are excluded for later mapping.
+# No DNS/mail/Cloudflare changes. Verify Unicode-percent-encoded URLs on the real host before rollout.
+# A 410 Gone requires a useful branded response page (Apache's default is allowed initially).
+# This block has no production effect until independently approved and installed by the owner.
+# BEGIN TECHPI PIGIOTA314-GR MIGRATION
+# PENDING CANARY: 410 originally returned 404 (suspected inherited cPanel error handling).
+# Keep only if the separate live 410 test returns HTTP 410 after this override.
+ErrorDocument 410 default
+<IfModule mod_rewrite.c>
+RewriteEngine On
+# 1. 301 /
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteCond %{QUERY_STRING} !(^|&)p=[0-9]+(&|$) [NC]
+RewriteRule ^$ https://techpi.eu/el/ [R=301,L,QSD,NC]
+
+# 2. 410 /2013/02/14/be-my-guest/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^2013/02/14/be-my-guest/?$ - [G,NC]
+
+# 3. 410 /2013/03/21/magna-fringilla-quis-condimentum/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^2013/03/21/magna-fringilla-quis-condimentum/?$ - [G,NC]
+
+# 4. 410 /2013/03/23/the-field/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^2013/03/23/the-field/?$ - [G,NC]
+
+# 5. 410 /2013/03/28/ambrose-redmoon/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^2013/03/28/ambrose-redmoon/?$ - [G,NC]
+
+# 6. 410 /2014/03/21/nulla-magna/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^2014/03/21/nulla-magna/?$ - [G,NC]
+
+# 7. 410 /2014/07/15/video-post/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^2014/07/15/video-post/?$ - [G,NC]
+
+# 8. 410 /2015/02/22/porttitor-porttitor-mollis-vitae-placerat/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^2015/02/22/porttitor-porttitor-mollis-vitae-placerat/?$ - [G,NC]
+
+# 9. 410 /2015/05/22/porttitor-porttitor-mollis-vitae-placerat-2/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^2015/05/22/porttitor-porttitor-mollis-vitae-placerat-2/?$ - [G,NC]
+
+# 10. 410 /2022/07/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^2022/07/?$ - [G,NC]
+
+# 11. 410 /2022/07/26/αναβάθμιση-ή-κατασκευή-e-shop-με-επιδότηση-90/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^2022/07/26/αναβάθμιση-ή-κατασκευή-e-shop-με-επιδότηση-90/?$ - [G,NC]
+
+# 12. 410 /2025/01/25/hello-world/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^2025/01/25/hello-world/?$ - [G,NC]
+
+# 13. 301 /about-us/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^about-us/?$ https://techpi.eu/el/about [R=301,L,QSD,NC]
+
+# 14. 301 /about/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^about/?$ https://techpi.eu/el/about [R=301,L,QSD,NC]
+
+# 15. 301 /alexandra-apartment-website
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^alexandra-apartment-website/?$ https://techpi.eu/el/work/alexandra-apartment [R=301,L,QSD,NC]
+
+# 16. 301 /apox-fc-social-media-digital-marketing-graphic-design
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^apox-fc-social-media-digital-marketing-graphic-design/?$ https://techpi.eu/el/work/apox-fc [R=301,L,QSD,NC]
+
+# 17. 410 /author/gianpigiot/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^author/gianpigiot/?$ - [G,NC]
+
+# 18. 301 /bella-donna-butique-website-social-media-logotype
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^bella-donna-butique-website-social-media-logotype/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 19. 301 /blackjack-streetwear-website
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^blackjack-streetwear-website/?$ https://techpi.eu/el/work/blackjack-streetwear [R=301,L,QSD,NC]
+
+# 20. 410 /blog-masonry-boxed/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^blog-masonry-boxed/?$ - [G,NC]
+
+# 21. 410 /blog-masonry-fullwidth/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^blog-masonry-fullwidth/?$ - [G,NC]
+
+# 22. 410 /blog/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^blog/?$ - [G,NC]
+
+# 23. 301 /booking-systems/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^booking-systems/?$ https://techpi.eu/el/work/rantevo [R=301,L,QSD,NC]
+
+# 24. 410 /branding-design/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^branding-design/?$ - [G,NC]
+
+# 25. 301 /case-studies/alexandra-apartment/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/alexandra-apartment/?$ https://techpi.eu/el/work/alexandra-apartment [R=301,L,QSD,NC]
+
+# 26. 301 /case-studies/apox-fc/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/apox-fc/?$ https://techpi.eu/el/work/apox-fc [R=301,L,QSD,NC]
+
+# 27. 301 /case-studies/armans-ethnic-street-food-online-ordering/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/armans-ethnic-street-food-online-ordering/?$ https://techpi.eu/el/work/armans [R=301,L,QSD,NC]
+
+# 28. 301 /case-studies/blackjack-streetwear/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/blackjack-streetwear/?$ https://techpi.eu/el/work/blackjack-streetwear [R=301,L,QSD,NC]
+
+# 29. 301 /case-studies/emoved/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/emoved/?$ https://techpi.eu/el/work/emoved [R=301,L,QSD,NC]
+
+# 30. 301 /case-studies/iliastech/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/iliastech/?$ https://techpi.eu/el/work/iliastech [R=301,L,QSD,NC]
+
+# 31. 301 /case-studies/itsallaboutxanthi/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/itsallaboutxanthi/?$ https://techpi.eu/el/work/itsallaboutxanthi [R=301,L,QSD,NC]
+
+# 32. 301 /case-studies/juliette-coffee-roasters/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/juliette-coffee-roasters/?$ https://techpi.eu/el/work/juliette-coffee-roasters [R=301,L,QSD,NC]
+
+# 33. 301 /case-studies/level-up-education-app/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/level-up-education-app/?$ https://techpi.eu/el/work/level-up-education-app [R=301,L,QSD,NC]
+
+# 34. 301 /case-studies/level-up-education/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/level-up-education/?$ https://techpi.eu/el/work/level-up-education [R=301,L,QSD,NC]
+
+# 35. 301 /case-studies/local-xanthi/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/local-xanthi/?$ https://techpi.eu/el/work/local-xanthi [R=301,L,QSD,NC]
+
+# 36. 301 /case-studies/logotherapia-xanthi-website-redesign/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/logotherapia-xanthi-website-redesign/?$ https://techpi.eu/el/work/logotherapia-xanthi [R=301,L,QSD,NC]
+
+# 37. 301 /case-studies/logotherapia-xanthi/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/logotherapia-xanthi/?$ https://techpi.eu/el/work/logotherapia-xanthi [R=301,L,QSD,NC]
+
+# 38. 301 /case-studies/mavie-website-rebranding/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/mavie-website-rebranding/?$ https://techpi.eu/el/work/mavie [R=301,L,QSD,NC]
+
+# 39. 301 /case-studies/physio/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/physio/?$ https://techpi.eu/el/work/physio [R=301,L,QSD,NC]
+
+# 40. 301 /case-studies/project4you/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/project4you/?$ https://techpi.eu/el/work/project4you [R=301,L,QSD,NC]
+
+# 41. 301 /case-studies/rantevo-gr-saas-booking-platform/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/rantevo-gr-saas-booking-platform/?$ https://techpi.eu/el/work/rantevo [R=301,L,QSD,NC]
+
+# 42. 301 /case-studies/rocketeer-custom-web-application/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/rocketeer-custom-web-application/?$ https://techpi.eu/el/work/rocketeer [R=301,L,QSD,NC]
+
+# 43. 301 /case-studies/saloon/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/saloon/?$ https://techpi.eu/el/work/saloon [R=301,L,QSD,NC]
+
+# 44. 301 /case-studies/street-box-custom-web-application/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/street-box-custom-web-application/?$ https://techpi.eu/el/work/rocketeer [R=301,L,QSD,NC]
+
+# 45. 410 /category/fashion/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^category/fashion/?$ - [G,NC]
+
+# 46. 410 /category/featured/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^category/featured/?$ - [G,NC]
+
+# 47. 410 /category/food-for-thought/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^category/food-for-thought/?$ - [G,NC]
+
+# 48. 410 /category/gaming/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^category/gaming/?$ - [G,NC]
+
+# 49. 410 /category/music/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^category/music/?$ - [G,NC]
+
+# 50. 410 /category/quotes/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^category/quotes/?$ - [G,NC]
+
+# 51. 410 /category/uncategorized/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^category/uncategorized/?$ - [G,NC]
+
+# 52. 301 /contact/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^contact/?$ https://techpi.eu/el/contact [R=301,L,QSD,NC]
+
+# 53. 410 /digital-marketing/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^digital-marketing/?$ - [G,NC]
+
+# 54. 301 /eddesign-website-graphic-design-social-media
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^eddesign-website-graphic-design-social-media/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 55. 301 /embed/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^embed/?$ https://techpi.eu/el/ [R=301,L,QSD,NC]
+
+# 56. 301 /emoved-graphic-design
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^emoved-graphic-design/?$ https://techpi.eu/el/work/emoved [R=301,L,QSD,NC]
+
+# 57. 301 /en_gb/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/?$ https://techpi.eu/ [R=301,L,QSD,NC]
+
+# 58. 410 /en_gb/blog-masonry-boxed/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/blog-masonry-boxed/?$ - [G,NC]
+
+# 59. 301 /en_gb/contact/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/contact/?$ https://techpi.eu/contact [R=301,L,QSD,NC]
+
+# 60. 301 /en_gb/eu-projects/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/eu-projects/?$ https://techpi.eu/eu-projects [R=301,L,QSD,NC]
+
+# 61. 301 /en_gb/portfolio/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/portfolio/?$ https://techpi.eu/work [R=301,L,QSD,NC]
+
+# 62. 301 /en_gb/portfolio/blackjack-streetwear-website/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/portfolio/blackjack-streetwear-website/?$ https://techpi.eu/work/blackjack-streetwear [R=301,L,QSD,NC]
+
+# 63. 301 /en_gb/portfolio/itsallaboutxanthi-website-social-media-graphic-design-digital-marketing/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/portfolio/itsallaboutxanthi-website-social-media-graphic-design-digital-marketing/?$ https://techpi.eu/work/itsallaboutxanthi [R=301,L,QSD,NC]
+
+# 64. 301 /en_gb/portfolio/levelup-education-website-social-media-logotype/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/portfolio/levelup-education-website-social-media-logotype/?$ https://techpi.eu/work/level-up-education [R=301,L,QSD,NC]
+
+# 65. 301 /en_gb/portfolio/mavie-website-rebranding/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/portfolio/mavie-website-rebranding/?$ https://techpi.eu/work/mavie [R=301,L,QSD,NC]
+
+# 66. 410 /en_gb/portfolio/myroauctions-social-media/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/portfolio/myroauctions-social-media/?$ - [G,NC]
+
+# 67. 301 /en_gb/portfolio/souvleri-website/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/portfolio/souvleri-website/?$ https://techpi.eu/work [R=301,L,QSD,NC]
+
+# 68. 301 /en_gb/portfolio/tsl-impex-website-logotype/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/portfolio/tsl-impex-website-logotype/?$ https://techpi.eu/work [R=301,L,QSD,NC]
+
+# 69. 410 /en_gb/portfolio/yakamos-social-media-digital-marketing/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/portfolio/yakamos-social-media-digital-marketing/?$ - [G,NC]
+
+# 70. 301 /en_gb/portfolio/αναστασιλάκης-website-social-media-graphic-design/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/portfolio/αναστασιλάκης-website-social-media-graphic-design/?$ https://techpi.eu/work [R=301,L,QSD,NC]
+
+# 71. 410 /en_gb/portfolio/καφετζής-ηλίας-graphic-design/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/portfolio/καφετζής-ηλίας-graphic-design/?$ - [G,NC]
+
+# 72. 410 /en_gb/project-type/digital-marketing/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/project-type/digital-marketing/?$ - [G,NC]
+
+# 73. 301 /eu-projects/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^eu-projects/?$ https://techpi.eu/el/eu-projects [R=301,L,QSD,NC]
+
+# 74. 410 /home-default/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^home-default/?$ - [G,NC]
+
+# 75. 301 /home-page/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^home-page/?$ https://techpi.eu/el/ [R=301,L,QSD,NC]
+
+# 76. 410 /home-particles/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^home-particles/?$ - [G,NC]
+
+# 77. 301 /home/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^home/?$ https://techpi.eu/el/ [R=301,L,QSD,NC]
+
+# 78. 301 /itsallaboutxanthi-website-social-media-graphic-design-digital-marketing
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^itsallaboutxanthi-website-social-media-graphic-design-digital-marketing/?$ https://techpi.eu/el/work/itsallaboutxanthi [R=301,L,QSD,NC]
+
+# 79. 410 /kataskevi-eshop-espa/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^kataskevi-eshop-espa/?$ - [G,NC]
+
+# 80. 301 /kataskevi-istoselidon-xanthi/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^kataskevi-istoselidon-xanthi/?$ https://techpi.eu/el/capabilities [R=301,L,QSD,NC]
+
+# 81. 301 /level-up-education-ekpaideftiki-web-efarmogi
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^level-up-education-ekpaideftiki-web-efarmogi/?$ https://techpi.eu/el/work/level-up-education-app [R=301,L,QSD,NC]
+
+# 82. 301 /levelup-education-website-social-media-logotype
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^levelup-education-website-social-media-logotype/?$ https://techpi.eu/el/work/level-up-education [R=301,L,QSD,NC]
+
+# 83. 410 /llasconsulting-social-media
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^llasconsulting-social-media/?$ - [G,NC]
+
+# 84. 301 /local-xanthi-social-media-digital-marketing
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^local-xanthi-social-media-digital-marketing/?$ https://techpi.eu/el/work/local-xanthi [R=301,L,QSD,NC]
+
+# 85. 301 /mavie-website-rebranding
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^mavie-website-rebranding/?$ https://techpi.eu/el/work/mavie [R=301,L,QSD,NC]
+
+# 86. 301 /my-story/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^my-story/?$ https://techpi.eu/el/about [R=301,L,QSD,NC]
+
+# 87. 410 /myroauctions-social-media
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^myroauctions-social-media/?$ - [G,NC]
+
+# 88. 301 /online-paraggelies-estiasis/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^online-paraggelies-estiasis/?$ https://techpi.eu/el/work/armans [R=301,L,QSD,NC]
+
+# 89. 301 /page/2/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^page/2/?$ https://techpi.eu/el/ [R=301,L,QSD,NC]
+
+# 90. 301 /portfolio/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 91. 301 /portfolio/alexandra-apartment-website/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/alexandra-apartment-website/?$ https://techpi.eu/el/work/alexandra-apartment [R=301,L,QSD,NC]
+
+# 92. 301 /portfolio/apox-fc-social-media-digital-marketing-graphic-design/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/apox-fc-social-media-digital-marketing-graphic-design/?$ https://techpi.eu/el/work/apox-fc [R=301,L,QSD,NC]
+
+# 93. 301 /portfolio/bella-donna-butique-website-social-media-logotype/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/bella-donna-butique-website-social-media-logotype/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 94. 301 /portfolio/blackjack-streetwear-website/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/blackjack-streetwear-website/?$ https://techpi.eu/el/work/blackjack-streetwear [R=301,L,QSD,NC]
+
+# 95. 301 /portfolio/blackjack-streetwear/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/blackjack-streetwear/?$ https://techpi.eu/el/work/blackjack-streetwear [R=301,L,QSD,NC]
+
+# 96. 301 /portfolio/blackjackstreetwear-website/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/blackjackstreetwear-website/?$ https://techpi.eu/el/work/blackjack-streetwear [R=301,L,QSD,NC]
+
+# 97. 301 /portfolio/dolce-vita-bags-website-social-media/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/dolce-vita-bags-website-social-media/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 98. 301 /portfolio/dolcevitabags-website/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/dolcevitabags-website/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 99. 301 /portfolio/eddesign-website-graphic-design-social-media/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/eddesign-website-graphic-design-social-media/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 100. 301 /portfolio/eddesign-website-logotype/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/eddesign-website-logotype/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 101. 301 /portfolio/emoved-graphic-design/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/emoved-graphic-design/?$ https://techpi.eu/el/work/emoved [R=301,L,QSD,NC]
+
+# 102. 301 /portfolio/emoved-logotype/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/emoved-logotype/?$ https://techpi.eu/el/work/emoved [R=301,L,QSD,NC]
+
+# 103. 301 /portfolio/iliastech-website/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/iliastech-website/?$ https://techpi.eu/el/work/iliastech [R=301,L,QSD,NC]
+
+# 104. 301 /portfolio/itsallaboutxanthi-website-social-media-graphic-design-digital-marketing/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/itsallaboutxanthi-website-social-media-graphic-design-digital-marketing/?$ https://techpi.eu/el/work/itsallaboutxanthi [R=301,L,QSD,NC]
+
+# 105. 301 /portfolio/itsallaboutxanthi-website-social-media-logotype/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/itsallaboutxanthi-website-social-media-logotype/?$ https://techpi.eu/el/work/itsallaboutxanthi [R=301,L,QSD,NC]
+
+# 106. 301 /portfolio/level-up-education-ekpaideftiki-web-efarmogi/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/level-up-education-ekpaideftiki-web-efarmogi/?$ https://techpi.eu/el/work/level-up-education-app [R=301,L,QSD,NC]
+
+# 107. 301 /portfolio/levelup-education-website-social-media-logotype/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/levelup-education-website-social-media-logotype/?$ https://techpi.eu/el/work/level-up-education [R=301,L,QSD,NC]
+
+# 108. 301 /portfolio/levelupeducation/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/levelupeducation/?$ https://techpi.eu/el/work/level-up-education [R=301,L,QSD,NC]
+
+# 109. 410 /portfolio/llasconsulting-social-media/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/llasconsulting-social-media/?$ - [G,NC]
+
+# 110. 301 /portfolio/local-xanthi-social-media-digital-marketing/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/local-xanthi-social-media-digital-marketing/?$ https://techpi.eu/el/work/local-xanthi [R=301,L,QSD,NC]
+
+# 111. 301 /portfolio/logotherapia-xanthi-website-social-media/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/logotherapia-xanthi-website-social-media/?$ https://techpi.eu/el/work/logotherapia-xanthi [R=301,L,QSD,NC]
+
+# 112. 301 /portfolio/logotherapia-xanthi-website/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/logotherapia-xanthi-website/?$ https://techpi.eu/el/work/logotherapia-xanthi [R=301,L,QSD,NC]
+
+# 113. 410 /portfolio/massage4you-social-media/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/massage4you-social-media/?$ - [G,NC]
+
+# 114. 301 /portfolio/mavie-website-rebranding/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/mavie-website-rebranding/?$ https://techpi.eu/el/work/mavie [R=301,L,QSD,NC]
+
+# 115. 410 /portfolio/myroauctions-social-media/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/myroauctions-social-media/?$ - [G,NC]
+
+# 116. 301 /portfolio/project4you-cms/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/project4you-cms/?$ https://techpi.eu/el/work/project4you [R=301,L,QSD,NC]
+
+# 117. 301 /portfolio/project4you/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/project4you/?$ https://techpi.eu/el/work/project4you [R=301,L,QSD,NC]
+
+# 118. 301 /portfolio/saloon-web-application/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/saloon-web-application/?$ https://techpi.eu/el/work/saloon [R=301,L,QSD,NC]
+
+# 119. 410 /portfolio/simakisenergy-social-media/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/simakisenergy-social-media/?$ - [G,NC]
+
+# 120. 301 /portfolio/souvleri-website/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/souvleri-website/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 121. 301 /portfolio/tsl-impex-website-logotype/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/tsl-impex-website-logotype/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 122. 410 /portfolio/yakamos-social-media-digital-marketing/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/yakamos-social-media-digital-marketing/?$ - [G,NC]
+
+# 123. 301 /portfolio/αναστασιλάκης-website-social-media-graphic-design/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/αναστασιλάκης-website-social-media-graphic-design/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 124. 301 /portfolio/αναστασιλάκης-website-social-media-logotype/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/αναστασιλάκης-website-social-media-logotype/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 125. 410 /portfolio/καφετζής-ηλίας-graphic-design/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/καφετζής-ηλίας-graphic-design/?$ - [G,NC]
+
+# 126. 301 /portfolio/νέα-γνώση-website-social-media-graphic-design-digital-marketing/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/νέα-γνώση-website-social-media-graphic-design-digital-marketing/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 127. 301 /portfolio/νέα-γνώση-website-social-media-logotype/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/νέα-γνώση-website-social-media-logotype/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 128. 410 /pricing/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^pricing/?$ - [G,NC]
+
+# 129. 301 /privacy-policy/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^privacy-policy/?$ https://techpi.eu/el/privacy [R=301,L,QSD,NC]
+
+# 130. 410 /project-category/branding/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-category/branding/?$ - [G,NC]
+
+# 131. 410 /project-category/digital-marketing/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-category/digital-marketing/?$ - [G,NC]
+
+# 132. 410 /project-category/graphic-design/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-category/graphic-design/?$ - [G,NC]
+
+# 133. 301 /project-category/seo/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-category/seo/?$ https://techpi.eu/el/capabilities [R=301,L,QSD,NC]
+
+# 134. 410 /project-category/social-media/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-category/social-media/?$ - [G,NC]
+
+# 135. 301 /project-category/web-applications/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-category/web-applications/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 136. 301 /project-category/web-design/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-category/web-design/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 137. 301 /project-category/web-design/page/1
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-category/web-design/page/1/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 138. 301 /project-category/web-design/page/2/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-category/web-design/page/2/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 139. 410 /project-type/digital-marketing/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-type/digital-marketing/?$ - [G,NC]
+
+# 140. 410 /project-type/digitalmarketing/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-type/digitalmarketing/?$ - [G,NC]
+
+# 141. 410 /project-type/graphic-design/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-type/graphic-design/?$ - [G,NC]
+
+# 142. 410 /project-type/graphicdesign/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-type/graphicdesign/?$ - [G,NC]
+
+# 143. 410 /project-type/social-media/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-type/social-media/?$ - [G,NC]
+
+# 144. 410 /project-type/social-media/page/2/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-type/social-media/page/2/?$ - [G,NC]
+
+# 145. 410 /project-type/socialmedia/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-type/socialmedia/?$ - [G,NC]
+
+# 146. 301 /project-type/web-applications/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-type/web-applications/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 147. 301 /project-type/web-design/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-type/web-design/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 148. 301 /project-type/web-design/page/2/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-type/web-design/page/2/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 149. 301 /project-type/webdesign/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project-type/webdesign/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 150. 301 /project4you-cms
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^project4you-cms/?$ https://techpi.eu/el/work/project4you [R=301,L,QSD,NC]
+
+# 151. 301 /saloon-web-application
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^saloon-web-application/?$ https://techpi.eu/el/work/saloon [R=301,L,QSD,NC]
+
+# 152. 410 /sample-page/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^sample-page/?$ - [G,NC]
+
+# 153. 301 /services/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^services/?$ https://techpi.eu/el/capabilities [R=301,L,QSD,NC]
+
+# 154. 410 /simakisenergy-social-media
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^simakisenergy-social-media/?$ - [G,NC]
+
+# 155. 410 /social-media-management/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^social-media-management/?$ - [G,NC]
+
+# 156. 410 /social-media/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^social-media/?$ - [G,NC]
+
+# 157. 301 /souvleri-website
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^souvleri-website/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 158. 410 /tag/90/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/90/?$ - [G,NC]
+
+# 159. 410 /tag/art/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/art/?$ - [G,NC]
+
+# 160. 410 /tag/awesome/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/awesome/?$ - [G,NC]
+
+# 161. 410 /tag/cars/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/cars/?$ - [G,NC]
+
+# 162. 410 /tag/classic/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/classic/?$ - [G,NC]
+
+# 163. 410 /tag/custom/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/custom/?$ - [G,NC]
+
+# 164. 410 /tag/data/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/data/?$ - [G,NC]
+
+# 165. 410 /tag/epic/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/epic/?$ - [G,NC]
+
+# 166. 410 /tag/eshop/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/eshop/?$ - [G,NC]
+
+# 167. 410 /tag/funny/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/funny/?$ - [G,NC]
+
+# 168. 410 /tag/gaming-tips/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/gaming-tips/?$ - [G,NC]
+
+# 169. 410 /tag/music/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/music/?$ - [G,NC]
+
+# 170. 410 /tag/photography/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/photography/?$ - [G,NC]
+
+# 171. 410 /tag/standard/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/standard/?$ - [G,NC]
+
+# 172. 410 /tag/themenectar/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/themenectar/?$ - [G,NC]
+
+# 173. 410 /tag/videos/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/videos/?$ - [G,NC]
+
+# 174. 410 /tag/wordpress/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/wordpress/?$ - [G,NC]
+
+# 175. 410 /tag/επιδοτηση/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/επιδοτηση/?$ - [G,NC]
+
+# 176. 410 /tag/εσπα/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/εσπα/?$ - [G,NC]
+
+# 177. 410 /tag/ιστοσελιδα/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tag/ιστοσελιδα/?$ - [G,NC]
+
+# 178. 410 /test/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^test/?$ - [G,NC]
+
+# 179. 301 /tsl-impex-website-logotype
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^tsl-impex-website-logotype/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 180. 410 /type/quote/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^type/quote/?$ - [G,NC]
+
+# 181. 410 /type/video/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^type/video/?$ - [G,NC]
+
+# 182. 301 /web-design/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^web-design/?$ https://techpi.eu/el/capabilities [R=301,L,QSD,NC]
+
+# 183. 410 /webdesign-social-media-graphic-design/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^webdesign-social-media-graphic-design/?$ - [G,NC]
+
+# 184. 301 /website-for-airbnb/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^website-for-airbnb/?$ https://techpi.eu/el/work/alexandra-apartment [R=301,L,QSD,NC]
+
+# 185. 410 /yakamos-social-media-digital-marketing
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^yakamos-social-media-digital-marketing/?$ - [G,NC]
+
+# 186. 301 /αναστασιλάκης-website-social-media-graphic-design
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^αναστασιλάκης-website-social-media-graphic-design/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+
+# 187. 301 /αρχική/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^αρχική/?$ https://techpi.eu/el/ [R=301,L,QSD,NC]
+
+# 188. 301 /κατασκευή-ιστοσελίδας-eshop/
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^κατασκευή-ιστοσελίδας-eshop/?$ https://techpi.eu/el/capabilities [R=301,L,QSD,NC]
+
+# 189. 410 /καφετζής-ηλίας-graphic-design
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^καφετζής-ηλίας-graphic-design/?$ - [G,NC]
+
+</IfModule>
+# END TECHPI PIGIOTA314-GR MIGRATION
