@@ -18,6 +18,8 @@
 RewriteEngine On
 # Homepage
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+# Preserve WordPress numeric ?p=ID shortlinks until their targets are individually mapped.
+RewriteCond %{QUERY_STRING} !(^|&)p=[0-9]+(&|$) [NC]
 RewriteRule ^$ https://techpi.eu/el/ [R=301,L]
 
 # Portfolio
