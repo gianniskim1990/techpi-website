@@ -42,13 +42,15 @@ curl.exe -sS -o NUL -D - "https://pigiota314.gr/portfolio/"
 
 Check:
 - Canary 301: **HTTP 301** and `Location: https://techpi.eu/el/`.
-- Canary 410: **HTTP 410 Gone**, no redirect to the homepage. On 2026-10-22 the first canary (without `ErrorDocument 410 default`) returned WordPress **404**, despite 301 PASS. The `ErrorDocument 410 default` line is an isolated correction to override a suspected inherited cPanel 410 error handler. This needs a new live curl check; do not assert it works before that check.
+- Canary 410: **HTTP 410 Gone**, no redirect to the homepage. On 2026-10-22 the first canary (without `ErrorDocument 410 default`) returned WordPress **404**, despite 301 PASS. The `ErrorDocument 410 default` line is an isolated correction to override a suspected inherited cPanel 410 error handler. **Second live curl check PASSED:** `curl.exe -sS -o NUL -D - https://pigiota314.gr/techpi-migration-check-410-20261022` returned `HTTP/1.1 410 Gone`, `Server: Apache`, at `Thu, 22 Oct 2026 13:17:32 GMT` with the override at the top of the block. The earlier 301 probe returned `HTTP/1.1 301 Moved Permanently` and the exact expected `Location: https://techpi.eu/el/` at `13:12:10 GMT`. Both behaviors are now proven for the apex on the old origin. No www, asset, Google ownership file or rollback check is yet reported.
 - Untouched portfolio: still the original old WordPress response; no TechPi redirect from this canary.
 - Optionally repeat 301 and 410 probes on `https://www.pigiota314.gr/...`. If www has an older host-level redirect to apex, capture that separate hop and do not wrongly attribute it to this rule.
 - Spot-check `https://pigiota314.gr/`, the Search Console HTML verification file (must remain 200), one `/wp-content/uploads/...` image and any critical application subdomain. Do not post the verification filename or token in PR logs/chat.
 - If new 500 errors occur, immediately **delete only the canary block** and save. Preserve all original file contents.
 
 ## 4. Remove the canary again
+
+**Next owner action as of 2026-10-22:** remove the test block (including `ErrorDocument 410 default`), save, and confirm that both probe URLs no longer return the test-generated 301/410. This rollback has not yet been reported as complete.
 
 After getting the response headers, open the same `.htaccess`, remove the entire `# BEGIN TECHPI CANARY` through `# END TECHPI CANARY` block including its rules, and save. The first line must again be `# BEGIN SpeedyCacheheaders`. Confirm the two probe URLs no longer return the added 301/410. This is the rollback verification. Ensure the `ErrorDocument 410 default` line is also removed together with the canary block; it must not be left behind after this test.
 
