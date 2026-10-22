@@ -10,8 +10,8 @@ What the site is, as built and deployed:
 | Part | What it is | Security relevance |
 |---|---|---|
 | Build | Astro 7 static output (`output: 'static'`), 50 HTML pages | All HTML is generated once, at build time, from files in this repository |
-| Hosting | Cloudflare Workers Static Assets (`wrangler.jsonc`): no Worker script, `404-page` not-found handling, `auto-trailing-slash` | Nothing executes on the server per request. Only GET and HEAD are served (other methods: 405) |
-| Server-side features | None: no SSR, database, login, API, contact form, upload, search, comments or cookies | No server-side injection, authentication or session surface |
+| Hosting | Cloudflare Workers Static Assets (`wrangler.jsonc`), `404-page` not-found handling, `auto-trailing-slash`. Since 2026-10-22 a Worker script runs for `/api/*` only (the contact form) | Static pages: nothing executes per request. `/api/contact`: see `contact-form.md` |
+| Server-side features | One: the contact form endpoint `/api/contact` (2026-10-22). No SSR, database, login, upload, search, comments or cookies | Its threat model and controls (origin, size, validation, Turnstile, rate limit, fixed recipient, no logging of personal data): `contact-form.md` |
 | Client JavaScript | One first-party module (motion and the mobile menu, 5.8 KB), one inline head bootstrap, Astro's inlined menu module; on the homepage also the intro's head check and its same-origin module (5.2 KB), which attaches local video files when the intro plays | No third-party script. No `eval`. Nothing reads URL parameters or user input into the DOM |
 | Other inline content | JSON-LD (`application/ld+json`), not executed | Built from repository data; `<` is escaped (`src/seo/schema.ts`) |
 | Assets | Self-hosted Commissioner (2 WOFF2), local images, PNG icons and sharing images | No third-party font, CDN or tracker |
@@ -276,3 +276,12 @@ None. The homepage intro plays on every entry (owner's decision), so the first v
 (`techpi-intro-seen`) was removed with it; no `sessionStorage`, cookie or other storage replaces it. The only state the
 intro keeps is the page's own scroll offset in its session-history entry (`history.state`), so that a reload or Back
 that restores a scrolled-down page is not covered: never sent anywhere, gone with the tab's history.
+
+## 12. Contact form (2026-10-22)
+
+The site now has one server-side feature, the contact form endpoint. Its threat model, controls, tests and
+production setup are in `contact-form.md`. What changed for the static site: the two contact pages allow one extra
+origin, `https://challenges.cloudflare.com`, for Turnstile's script and frame (`script-src` and `frame-src`), set per
+page by `ContactPage.astro`; every other page keeps the 'self'-only policy. `scripts/security/validate.mjs` checks both.
+`_headers` and `_redirects` are unchanged and still apply to every static response; the Worker sets its own headers on
+`/api/*` responses.

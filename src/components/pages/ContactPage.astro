@@ -1,11 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContactForm from '../../components/secondary/ContactForm.astro';
 import FactRows from '../../components/secondary/FactRows.astro';
 import PageIntro from '../../components/secondary/PageIntro.astro';
 import SectionSplit from '../../components/secondary/SectionSplit.astro';
 import { pagesCopy } from '../../content/copy';
 import { pageMeta } from '../../content/seo';
 import { contactFacts } from '../../content/site';
+import { getDictionary } from '../../i18n';
 import type { Locale } from '../../i18n/locales';
 
 interface Props {
@@ -16,13 +18,26 @@ const { locale } = Astro.props;
 const pages = pagesCopy[locale];
 const copy = pages.contact;
 const meta = pageMeta[locale].contact;
+
+// The contact form loads Cloudflare Turnstile (a script and its iframe) from challenges.cloudflare.com. This page, and
+// only this page, allows that one origin; every other page keeps the site-wide 'self'-only policy
+// (docs/production/contact-form.md, checked by scripts/security/validate.mjs).
+// Inserting a resource replaces the configured list, so 'self' (the site's own bundled scripts) is restated.
+const csp = Astro.csp;
+if (!csp) throw new Error('ContactPage: the CSP API is required (astro.config.mjs security.csp)');
+csp.insertScriptResource("'self'");
+csp.insertScriptResource('https://challenges.cloudflare.com');
+csp.insertDirective('frame-src https://challenges.cloudflare.com');
 ---
 
-{/* Contact. The lead plus the three confirmed direct facts: email, phone, location. Editorial fact rows, no cards.
-    No form and no fake form: a form is deferred (docs/production/launch-blockers.md). No WhatsApp, social links,
-    office hours, street address or map: none is confirmed. The location is the town only. */}
+{/* Contact. The lead, the contact form (ContactForm.astro, worker/contact.js), then the three confirmed direct facts:
+    email, phone, location, as editorial fact rows, no cards. The direct facts stay: the form adds a way, it replaces
+    none. No WhatsApp, social links, office hours, street address or map: none is confirmed. The location is the town only. */}
 <BaseLayout locale={locale} page="contact" title={meta.title} description={meta.description} pageType="ContactPage" bleed>
   <PageIntro heading={copy.heading} lead={copy.lead} />
+  <SectionSplit id="message" heading={getDictionary(locale).contactForm.heading}>
+    <ContactForm locale={locale} />
+  </SectionSplit>
   <SectionSplit id="direct" heading={copy.direct}>
     <FactRows
       variant="large"

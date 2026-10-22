@@ -7,10 +7,10 @@
       "el": "/el/cookies"
     },
     "kind": "legal",
-    "updated": "2026-10-17",
+    "updated": "2026-10-22",
     "updatedText": {
-      "en": "17 October 2026",
-      "el": "17 Οκτωβρίου 2026"
+      "en": "22 October 2026",
+      "el": "22 Οκτωβρίου 2026"
     }
   },
   "en": {
@@ -43,7 +43,7 @@
             "ul": [
               "No analytics: we do not use Google Analytics or any other analytics service.",
               "No advertising or social tracking: no Meta Pixel, no advertising networks, no tracking or profiling.",
-              "No fonts, scripts or embedded content loaded from other companies."
+              "No fonts, scripts or embedded content loaded from other companies, except Cloudflare Turnstile on the Contact page (see below)."
             ]
           },
           {
@@ -63,6 +63,9 @@
           },
           {
             "p": "Cloudflare describes the cookies its services can set in its [cookie documentation]({{url.cloudflareCookies}}). Cloudflare also processes the request data described in our [Privacy Policy]({{path.privacy}})."
+          },
+          {
+            "p": "**The contact form.** The Contact page loads Cloudflare Turnstile, which checks that a message is sent by a person and not by automated software. It runs in a frame served by Cloudflare and may store or read information on your device only for this check, not for advertising or tracking. It is strictly necessary for the form you choose to use to work securely, so it does not ask for your consent. Cloudflare describes it in its [privacy policy]({{url.cloudflarePrivacy}}) and its [cookie documentation]({{url.cloudflareCookies}})."
           }
         ]
       },
@@ -143,7 +146,7 @@
             "ul": [
               "Χωρίς στατιστικά: δεν χρησιμοποιούμε το Google Analytics ή άλλη υπηρεσία στατιστικών.",
               "Χωρίς διαφήμιση ή παρακολούθηση: χωρίς Meta Pixel, χωρίς διαφημιστικά δίκτυα, χωρίς παρακολούθηση ή δημιουργία προφίλ.",
-              "Χωρίς γραμματοσειρές, scripts ή ενσωματωμένο περιεχόμενο από άλλες εταιρείες."
+              "Χωρίς γραμματοσειρές, scripts ή ενσωματωμένο περιεχόμενο από άλλες εταιρείες, εκτός από το Cloudflare Turnstile στη σελίδα Επικοινωνίας (δείτε παρακάτω)."
             ]
           },
           {
@@ -163,6 +166,9 @@
           },
           {
             "p": "Η Cloudflare περιγράφει τα cookies που μπορούν να ορίσουν οι υπηρεσίες της στην [τεκμηρίωσή της για τα cookies]({{url.cloudflareCookies}}) (στα αγγλικά). Η Cloudflare επεξεργάζεται επίσης τα δεδομένα αιτημάτων που περιγράφονται στην [Πολιτική Απορρήτου]({{path.privacy}}) μας."
+          },
+          {
+            "p": "**Η φόρμα επικοινωνίας.** Η σελίδα Επικοινωνίας φορτώνει το Cloudflare Turnstile, που ελέγχει ότι ένα μήνυμα στέλνεται από άνθρωπο και όχι από αυτοματοποιημένο λογισμικό. Λειτουργεί σε πλαίσιο που παρέχει η Cloudflare και μπορεί να αποθηκεύει ή να διαβάζει πληροφορίες στη συσκευή σας μόνο για αυτόν τον έλεγχο, όχι για διαφήμιση ή παρακολούθηση. Είναι απολύτως απαραίτητο για να λειτουργεί με ασφάλεια η φόρμα που επιλέγετε να χρησιμοποιήσετε, γι’ αυτό δεν ζητά τη συγκατάθεσή σας. Η Cloudflare το περιγράφει στην [πολιτική απορρήτου]({{url.cloudflarePrivacy}}) της και στην [τεκμηρίωση για τα cookies]({{url.cloudflareCookies}})."
           }
         ]
       },

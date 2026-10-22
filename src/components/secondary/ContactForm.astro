@@ -1,0 +1,447 @@
+---
+import { getDictionary } from '../../i18n';
+import type { Locale } from '../../i18n/locales';
+import { pathFor } from '../../i18n/routes';
+import { contactFacts } from '../../content/site';
+
+interface Props {
+  locale: Locale;
+}
+
+/**
+ * The contact form. It posts JSON to /api/contact (worker/contact.js), which checks it, verifies Cloudflare Turnstile
+ * server-side and sends it to info@techpi.eu through Resend. The recipient is fixed in the Worker, not here.
+ *
+ * - The page asks the endpoint for its public configuration first. Until that answers, and whenever the form is not
+ *   configured, the submit button stays disabled and the visitor is pointed to the email address.
+ * - Turnstile runs in "interaction-only" mode: invisible unless Cloudflare needs the visitor to act. Its script is
+ *   loaded only on this page, only by this component, and only when the form is configured (CSP: ContactPage.astro).
+ * - Validation runs in the browser for quick feedback and again in the Worker, which is the authority.
+ * - "Sent" is shown only when the Worker reports that Resend accepted the message.
+ * - Without JavaScript the form cannot pass Turnstile, so a note gives the email address and phone instead.
+ */
+const { locale } = Astro.props;
+const t = getDictionary(locale).contactForm;
+const email = contactFacts.email;
+const withEmail = (s: string) => s.split('{email}');
+const client = {
+  sending: t.sending,
+  submit: t.submit,
+  errors: Object.fromEntries(Object.entries(t.errors).map(([k, v]) => [k, v.replace('{email}', email)])),
+};
+const timeframes = Object.entries(t.timeframes) as [string, string][];
+const [noscriptBefore, noscriptAfter] = withEmail(t.noscript);
+---
+
+<div class="cf" data-contact-form data-locale={locale} data-copy={JSON.stringify(client)}>
+  <form class="form" action="/api/contact" method="post" novalidate>
+    <div class="grid">
+      <div class="field">
+        <label for="cf-name">{t.name}</label>
+        <input id="cf-name" name="name" type="text" autocomplete="name" required maxlength="100" aria-describedby="cf-name-err" />
+        <p class="err" id="cf-name-err" data-error="name"></p>
+      </div>
+      <div class="field">
+        <label for="cf-email">{t.email}</label>
+        <input
+          id="cf-email"
+          name="email"
+          type="email"
+          inputmode="email"
+          autocomplete="email"
+          spellcheck="false"
+          required
+          maxlength="254"
+          aria-describedby="cf-email-err"
+        />
+        <p class="err" id="cf-email-err" data-error="email"></p>
+      </div>
+      <div class="field">
+        <label for="cf-organisation">{t.organisation} <span class="opt">({t.optional})</span></label>
+        <input id="cf-organisation" name="organisation" type="text" autocomplete="organization" maxlength="150" aria-describedby="cf-organisation-err" />
+        <p class="err" id="cf-organisation-err" data-error="organisation"></p>
+      </div>
+      <div class="field">
+        <label for="cf-timeframe">{t.timeframe} <span class="opt">({t.optional})</span></label>
+        <div class="select">
+          <select id="cf-timeframe" name="timeframe" aria-describedby="cf-timeframe-err">
+            {timeframes.map(([value, label]) => <option value={value}>{label}</option>)}
+          </select>
+        </div>
+        <p class="err" id="cf-timeframe-err" data-error="timeframe"></p>
+      </div>
+      <div class="field wide">
+        <label for="cf-message">{t.message}</label>
+        <p class="hint" id="cf-message-hint">{t.messageHint}</p>
+        <textarea id="cf-message" name="message" rows="6" required minlength="10" maxlength="5000" aria-describedby="cf-message-hint cf-message-err"></textarea>
+        <p class="err" id="cf-message-err" data-error="message"></p>
+      </div>
+    </div>
+    {/* A field people never see or reach. Software that fills every field fills this one, and the Worker refuses it. */}
+    <div class="hp" aria-hidden="true">
+      <label for="cf-website">Website</label>
+      <input id="cf-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+    <div class="ts" data-turnstile></div>
+    <div class="foot">
+      <button class="btn" type="submit" disabled data-submit>{t.submit}<span class="arr" aria-hidden="true">→</span></button>
+      <p class="note">{t.privacy} <a href={pathFor('privacy', locale)}>{t.privacyLink}</a>.</p>
+    </div>
+    <p class="status" role="alert" data-status></p>
+  </form>
+  <div class="done" role="status" data-done hidden>
+    <h3 tabindex="-1">{t.successHeading}</h3>
+    <p>{t.successText}</p>
+  </div>
+  <noscript>
+    <p class="status">{noscriptBefore}<a href={`mailto:${email}`}>{email}</a>{noscriptAfter}</p>
+  </noscript>
+</div>
+
+<style>
+  .cf {
+    --err: #a8231b; /* error text and marks on Paper: 6.3:1 */
+    max-width: 52rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 30px var(--space-gap);
+  }
+  .wide {
+    grid-column: 1 / -1;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  label {
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    color: var(--color-ink);
+  }
+  .opt,
+  .hint {
+    color: var(--color-slate);
+    font-weight: var(--weight-body);
+  }
+  .hint {
+    margin-top: 4px;
+    font-size: var(--text-small);
+  }
+  input,
+  textarea,
+  select {
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px 0;
+    border: 0;
+    border-bottom: 1px solid var(--color-slate);
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-body);
+    line-height: 1.5;
+    transition: border-color 300ms var(--ease-state);
+  }
+  textarea {
+    resize: vertical;
+    min-height: 9.5em;
+  }
+  input:hover,
+  textarea:hover,
+  select:hover {
+    border-bottom-color: var(--color-ink);
+  }
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid var(--color-techpi-blue);
+    outline-offset: 4px;
+    border-bottom-color: var(--color-techpi-blue);
+  }
+  [aria-invalid='true'] {
+    border-bottom: 2px solid var(--err);
+  }
+  .select {
+    position: relative;
+  }
+  select {
+    appearance: none;
+    padding-right: 28px;
+    cursor: pointer;
+  }
+  /* The chevron: two hairlines, no image. */
+  .select::after {
+    content: '';
+    position: absolute;
+    right: 6px;
+    top: calc(50% + 2px);
+    width: 8px;
+    height: 8px;
+    border-right: 1.5px solid var(--color-ink);
+    border-bottom: 1.5px solid var(--color-ink);
+    transform: translateY(-50%) rotate(45deg);
+    pointer-events: none;
+  }
+  .err {
+    min-height: 0;
+    margin-top: 8px;
+    font-size: var(--text-small);
+    color: var(--err);
+  }
+  .err:empty {
+    display: none;
+  }
+  .hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .ts:not(:empty) {
+    margin-top: 28px;
+  }
+  .foot {
+    margin-top: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px 32px;
+  }
+  .btn {
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn .arr {
+    margin-left: 12px;
+  }
+  .btn:disabled {
+    cursor: default;
+    opacity: 0.55;
+  }
+  .btn[aria-busy='true'] {
+    opacity: 1;
+    cursor: progress;
+  }
+  .note {
+    flex: 1 1 16rem;
+    font-size: var(--text-small);
+    color: var(--color-graphite);
+  }
+  .note a,
+  .status a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .status {
+    margin-top: 24px;
+    font-size: var(--text-body);
+    color: var(--err);
+  }
+  .status:empty {
+    display: none;
+  }
+  noscript .status {
+    color: var(--color-graphite);
+  }
+  .done h3 {
+    font-size: var(--text-heading);
+    line-height: 1.2;
+    letter-spacing: -0.012em;
+    outline: none;
+  }
+  .done p {
+    margin-top: 12px;
+    color: var(--color-graphite);
+  }
+
+  @media (max-width: 760px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 26px;
+    }
+    .foot {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .btn {
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  type Copy = { sending: string; submit: string; errors: Record<string, string> };
+  type Turnstile = {
+    render: (el: HTMLElement, opts: Record<string, unknown>) => string;
+    reset: (id: string) => void;
+  };
+  const TURNSTILE_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+  const EMAIL = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/;
+  const chars = (s: string) => [...s].length;
+
+  function loadTurnstile(): Promise<Turnstile> {
+    const w = window as unknown as { turnstile?: Turnstile };
+    if (w.turnstile) return Promise.resolve(w.turnstile);
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = TURNSTILE_SRC;
+      s.async = true;
+      s.onload = () => (w.turnstile ? resolve(w.turnstile) : reject(new Error('turnstile')));
+      s.onerror = () => reject(new Error('turnstile'));
+      document.head.append(s);
+    });
+  }
+
+  async function init(root: HTMLElement) {
+    const form = root.querySelector('form')!;
+    const submit = root.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const status = root.querySelector<HTMLElement>('[data-status]')!;
+    const done = root.querySelector<HTMLElement>('[data-done]')!;
+    const holder = root.querySelector<HTMLElement>('[data-turnstile]')!;
+    const copy = JSON.parse(root.dataset.copy || '{}') as Copy;
+    const locale = root.dataset.locale || 'en';
+    const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+    const say = (key: string) => (status.textContent = copy.errors[key] || copy.errors.failed);
+
+    let token = '';
+    let waiting: ((t: string) => void) | null = null;
+    let widget = '';
+    let turnstile: Turnstile | null = null;
+
+    // 1. Configuration and Turnstile. Until both are ready, nothing can be sent.
+    try {
+      const res = await fetch('/api/contact', { headers: { Accept: 'application/json' }, credentials: 'same-origin' });
+      const cfg = res.ok ? await res.json() : null;
+      if (!cfg?.siteKey) throw new Error('unavailable');
+      turnstile = await loadTurnstile();
+      widget = turnstile.render(holder, {
+        sitekey: cfg.siteKey,
+        action: 'contact',
+        theme: 'light',
+        language: locale,
+        appearance: 'interaction-only',
+        callback: (t: string) => {
+          token = t;
+          waiting?.(t);
+          waiting = null;
+        },
+        'expired-callback': () => (token = ''),
+        'error-callback': () => {
+          token = '';
+        },
+      });
+      submit.disabled = false;
+    } catch {
+      say('unavailable');
+      return;
+    }
+
+    const fresh = () =>
+      token
+        ? Promise.resolve(token)
+        : new Promise<string>((resolve) => {
+            waiting = resolve;
+            setTimeout(() => resolve(token), 20000);
+          });
+
+    // 2. Field errors: text under the field, linked by aria-describedby, and aria-invalid on the control.
+    function mark(name: string, on: boolean) {
+      const el = field(name);
+      const err = root.querySelector<HTMLElement>(`[data-error="${name}"]`);
+      if (!el || !err) return;
+      el.setAttribute('aria-invalid', String(on));
+      err.textContent = on ? copy.errors[name] : '';
+    }
+    const NAMES = ['name', 'email', 'organisation', 'timeframe', 'message'];
+    function check(): string[] {
+      const v = (n: string) => field(n).value.trim();
+      const bad: string[] = [];
+      if (!v('name') || chars(v('name')) > 100) bad.push('name');
+      if (!EMAIL.test(v('email')) || v('email').length > 254) bad.push('email');
+      if (chars(v('organisation')) > 150) bad.push('organisation');
+      if (chars(v('message')) < 10 || chars(v('message')) > 5000) bad.push('message');
+      return bad;
+    }
+    function show(bad: string[]) {
+      NAMES.forEach((n) => mark(n, bad.includes(n)));
+      if (bad.length) {
+        say('invalid');
+        field(bad[0]).focus();
+      }
+    }
+    // Once a field has been marked, it is re-checked as the visitor corrects it.
+    form.addEventListener('input', (e) => {
+      const name = (e.target as HTMLInputElement).name;
+      if (field(name)?.getAttribute('aria-invalid') === 'true') mark(name, check().includes(name));
+    });
+
+    function busy(on: boolean) {
+      submit.disabled = on;
+      submit.setAttribute('aria-busy', String(on));
+      form.setAttribute('aria-busy', String(on));
+      submit.firstChild!.textContent = on ? copy.sending : copy.submit;
+    }
+
+    // 3. Sending.
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (submit.getAttribute('aria-busy') === 'true') return;
+      status.textContent = '';
+      const bad = check();
+      show(bad);
+      if (bad.length) return;
+      busy(true);
+      try {
+        const t = await fresh();
+        if (!t) throw Object.assign(new Error('verification'), { code: 'verification' });
+        const body = {
+          name: field('name').value,
+          email: field('email').value,
+          organisation: field('organisation').value,
+          timeframe: field('timeframe').value,
+          message: field('message').value,
+          website: field('website').value,
+          locale,
+          token: t,
+        };
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify(body),
+        });
+        const out = await res.json().catch(() => null);
+        if (res.ok && out?.ok === true) {
+          form.hidden = true;
+          done.hidden = false;
+          done.querySelector<HTMLElement>('h3')!.focus();
+          return;
+        }
+        const code = out?.error;
+        if (code === 'invalid' && Array.isArray(out.fields) && out.fields.some((f: string) => NAMES.includes(f))) show(out.fields);
+        else
+          say(
+            code === 'verification_failed' ? 'verification' : code === 'rate_limited' ? 'rateLimited' : code === 'unavailable' ? 'unavailable' : 'failed',
+          );
+      } catch (err) {
+        say((err as { code?: string }).code === 'verification' ? 'verification' : 'failed');
+      } finally {
+        // A Turnstile token is single-use: every attempt that did not succeed gets a fresh one.
+        if (!form.hidden) {
+          token = '';
+          if (turnstile && widget) turnstile.reset(widget);
+          busy(false);
+        }
+      }
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-contact-form]').forEach((root) => void init(root));
+</script>

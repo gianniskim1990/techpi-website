@@ -29,7 +29,7 @@ Internal information does not go into public page copy. This repository is curre
 
 | Item | Decision | Notes |
 |---|---|---|
-| Contact form | Not wanted yet | No form, no fields, no backend, no third-party form service, no CAPTCHA. When approved, the planned fields are: name, organisation, email, what you need to solve, optional timeframe. No budget field. It needs a recipient, a mail provider and a spam strategy first |
+| Contact form | Built 2026-10-22, not live | On `/contact` and `/el/contact`: name, email, organisation (optional), timeframe (optional), message; no budget field. Sent through a Worker endpoint (`/api/contact`) and Resend to info@techpi.eu, protected by Cloudflare Turnstile. Fails closed until Resend, Turnstile and the Cloudflare secrets are set up: `contact-form.md` section 4 |
 | Analytics and trackers | Not approved | None is implemented: no analytics, tag manager, advertising pixel or session recording. No cookie banner exists, and none is added for hypothetical trackers. Privacy and cookie requirements are assessed once the final tracking stack is known |
 | Privacy Policy, Cookies Policy, Terms | Not created | They need the legal entity details and the tracking decision. The footer links to no page that does not exist |
 | EU project case studies | Not approved | The service page is approved; specific projects are not. See section 4 |
