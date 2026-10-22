@@ -311,9 +311,16 @@ const [noscriptBefore, noscriptAfter] = withEmail(t.noscript);
     const say = (key: string) => (status.textContent = copy.errors[key] || copy.errors.failed);
 
     let token = '';
-    let waiting: ((t: string) => void) | null = null;
+    let waiting: { resolve: (t: string) => void; reject: (err: Error) => void } | null = null;
     let widget = '';
     let turnstile: Turnstile | null = null;
+
+    const verificationError = () => Object.assign(new Error('verification'), { code: 'verification' });
+    const failVerification = () => {
+      token = '';
+      if (waiting) waiting.reject(verificationError());
+      else say('verification');
+    };
 
     // 1. Configuration and Turnstile. Until both are ready, nothing can be sent.
     try {
@@ -329,13 +336,16 @@ const [noscriptBefore, noscriptAfter] = withEmail(t.noscript);
         appearance: 'interaction-only',
         callback: (t: string) => {
           token = t;
-          waiting?.(t);
-          waiting = null;
+          status.textContent = '';
+          waiting?.resolve(t);
         },
         'expired-callback': () => (token = ''),
+        // Never leave the Send button spinning if Turnstile cannot issue a token.
         'error-callback': () => {
-          token = '';
+          failVerification();
+          return true;
         },
+        'timeout-callback': () => failVerification(),
       });
       submit.disabled = false;
     } catch {
@@ -346,9 +356,28 @@ const [noscriptBefore, noscriptAfter] = withEmail(t.noscript);
     const fresh = () =>
       token
         ? Promise.resolve(token)
-        : new Promise<string>((resolve) => {
-            waiting = resolve;
-            setTimeout(() => resolve(token), 20000);
+        : new Promise<string>((resolve, reject) => {
+            // A challenge might be blocked or misconfigured without ever calling back.
+            // Always settle the wait and restore the submit button.
+            const timer = window.setTimeout(() => {
+              if (waiting === pending) {
+                waiting = null;
+                reject(verificationError());
+              }
+            }, 12000);
+            const pending = {
+              resolve: (t: string) => {
+                window.clearTimeout(timer);
+                if (waiting === pending) waiting = null;
+                resolve(t);
+              },
+              reject: (err: Error) => {
+                window.clearTimeout(timer);
+                if (waiting === pending) waiting = null;
+                reject(err);
+              },
+            };
+            waiting = pending;
           });
 
     // 2. Field errors: text under the field, linked by aria-describedby, and aria-invalid on the control.
