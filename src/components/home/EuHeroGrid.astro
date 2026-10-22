@@ -1,0 +1,317 @@
+---
+import { Image } from 'astro:assets';
+import { pathFor } from '../../i18n/routes';
+import { euThemes } from './eu-themes';
+
+/**
+ * The English homepage's hero visual: a grid of six real photographs, one for each thematic area of EU-funded projects
+ * (health; culture, creativity and inclusive society; civil security; digital, industry and space; climate, energy and
+ * mobility; food, bioeconomy, natural resources, agriculture and environment), with a line and one call to action under
+ * it. It tells a visitor at a glance that TechPi serves the whole breadth of EU projects.
+ *
+ * Presentation: the photographs share one calm grade (muted, with an Ink wash) so six different subjects read as one set;
+ * a tile returns to its own colours when hovered, and shows the full name of its area. Each tile has a small label.
+ * The pictures are decorative (empty alt text); each tile's full name is in text for assistive technology.
+ *
+ * No EU flag, emblem, programme name or funding statement: the tiles name kinds of work, not programmes, and nothing says
+ * or implies TechPi works under or is endorsed by any programme (src/content/eu.ts). Sources and licences:
+ * docs/design/hero-visual/SOURCES.md.
+ */
+const LINE = 'Digital solutions for EU-funded projects';
+const CTA = 'Explore EU Project Solutions';
+const href = pathFor('euProjects', 'en');
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<div class="eu-unit">
+  <ul class="grid">
+    {
+      euThemes.map((t, i) => (
+        <li class="tile" style={`--i:${i}`}>
+          <Image
+            src={t.image}
+            alt=""
+            widths={[320, 480, 640]}
+            sizes="(max-width: 520px) 46vw, (max-width: 900px) 30vw, 230px"
+            format="webp"
+            quality={78}
+            loading="eager"
+            fetchpriority="low"
+            decoding="async"
+            style={`object-position:${t.focus}`}
+          />
+          <p class="cap">
+            <span class="vh">{t.name}</span>
+            <span class="lbl" aria-hidden="true"><i>{pad(i + 1)}</i>{t.label}</span>
+            {t.label !== t.name && <span class="full" aria-hidden="true">{t.name}</span>}
+          </p>
+        </li>
+      ))
+    }
+  </ul>
+  <div class="say">
+    <p class="line">{LINE}</p>
+    <a class="eu-cta" href={href}>{CTA}<span class="arr" aria-hidden="true">→</span></a>
+  </div>
+</div>
+
+<style>
+  /* Desktop: the unit floats in the top right of the hero, from just under the header down to just above the map's line
+     (--map-b, measured by src/scripts/motion.ts). It sits above the arc: the arc passes behind it and carries on below
+     it, so the arc is never drawn across a photograph. */
+  .eu-unit {
+    position: absolute;
+    z-index: 2;
+    top: 96px;
+    right: var(--space-margin);
+    bottom: calc(100% - var(--map-b, 480px) + 52px);
+    width: min(660px, 47vw);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .grid {
+    flex: 1 1 0;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 8px;
+    /* Paper behind the tiles and their gaps: the arc passes behind the whole grid, never between the photographs. */
+    background: var(--color-paper);
+  }
+  .tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    background: var(--color-ink-raised);
+    isolation: isolate;
+    min-height: 0;
+  }
+  .tile :global(img) {
+    position: absolute;
+    inset: -6% -4%;
+    width: 108%;
+    height: 112%;
+    max-width: none;
+    object-fit: cover;
+    /* One grade for all six: slightly muted, a touch deeper. Hover brings back the photograph's own colours. */
+    filter: saturate(0.72) contrast(1.03) brightness(0.98);
+    transition:
+      filter 600ms var(--ease-state),
+      transform 900ms var(--ease-reveal);
+  }
+  /* An Ink wash that unifies the set and carries the label; a hairline edge. */
+  .tile::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      linear-gradient(to top, rgb(8 14 30 / 0.84) 0%, rgb(8 14 30 / 0.5) 34%, rgb(8 14 30 / 0.12) 62%, rgb(8 14 30 / 0) 82%),
+      linear-gradient(rgb(8 14 30 / 0.07), rgb(8 14 30 / 0.07));
+    transition: opacity 600ms var(--ease-state);
+  }
+  .tile::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgb(250 249 246 / 0.14);
+    pointer-events: none;
+  }
+  .cap {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 0 11px 9px;
+    color: var(--color-sheet);
+    font-size: 0.75rem;
+    font-weight: var(--weight-ui);
+    line-height: 1.25;
+    letter-spacing: 0.005em;
+  }
+  .lbl {
+    display: block;
+  }
+  .lbl i {
+    margin-right: 7px;
+    font-style: normal;
+    font-variant-numeric: tabular-nums;
+    color: rgb(250 249 246 / 0.62);
+  }
+  /* The full name appears on hover, in the space under the label. */
+  .full {
+    display: block;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    color: rgb(250 249 246 / 0.8);
+    font-size: 0.6875rem;
+    font-weight: var(--weight-body);
+    transition:
+      max-height 500ms var(--ease-reveal),
+      opacity 400ms var(--ease-state),
+      margin-top 500ms var(--ease-reveal);
+  }
+  .vh {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+  @media (hover: hover) {
+    .tile:hover :global(img) {
+      filter: saturate(1) contrast(1) brightness(1);
+      transform: scale(1.05);
+    }
+    .tile:hover::before {
+      opacity: 0.8;
+    }
+    .tile:hover .full {
+      max-height: 4.2em;
+      margin-top: 3px;
+      opacity: 1;
+    }
+  }
+
+  /* The line and the call to action, directly under the grid. */
+  .say {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .line {
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    color: var(--color-ink);
+  }
+  .eu-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 22px;
+    border: 1px solid var(--color-ink);
+    border-radius: 999px;
+    color: var(--color-ink);
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color 300ms var(--ease-state),
+      color 300ms var(--ease-state),
+      border-color 300ms var(--ease-state);
+  }
+  .eu-cta:hover {
+    background: var(--color-techpi-blue);
+    border-color: var(--color-techpi-blue);
+    color: var(--color-sheet);
+  }
+  .eu-cta:focus-visible {
+    outline: 3px solid var(--color-techpi-blue);
+    outline-offset: 3px;
+  }
+
+  /* Tablets: three columns, a full-width in-flow grid above the map, with the line and the link under it. */
+  @media (max-width: 900px) {
+    .eu-unit {
+      position: relative;
+      inset: auto;
+      width: 100%;
+      flex: none;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .grid {
+      flex: none;
+      grid-template-rows: none;
+      grid-auto-rows: auto;
+    }
+    .tile {
+      aspect-ratio: 16 / 9;
+    }
+    .say {
+      flex-wrap: wrap;
+      gap: 12px 20px;
+    }
+  }
+  /* Phones: two columns of three, a little shorter, with the small label only. */
+  @media (max-width: 520px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .cap {
+      padding: 0 9px 7px;
+      font-size: 0.6875rem;
+    }
+    .say {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .line {
+      font-size: 1.0625rem;
+    }
+  }
+
+  /* ---------- Motion (only under html.mo: scripting runs and motion is allowed) ---------- */
+  /* The tiles arrive after the headline has settled: each opens from its bottom edge while its photograph eases in from a
+     slightly larger size, one after another along the grid. Then the line and the link fade in. */
+  :global(.mo) .tile {
+    animation: eu-tile 1100ms var(--ease-reveal) both;
+    animation-delay: calc(560ms + var(--i, 0) * 95ms);
+  }
+  :global(.mo) .tile :global(img) {
+    animation: eu-zoom 1600ms var(--ease-reveal) both;
+    animation-delay: calc(560ms + var(--i, 0) * 95ms);
+  }
+  :global(.mo) .say {
+    animation: eu-fade 900ms var(--ease-reveal) both;
+    animation-delay: 1300ms;
+  }
+  @keyframes eu-tile {
+    from {
+      clip-path: inset(100% 0 0 0 round 6px);
+      opacity: 0;
+    }
+    to {
+      clip-path: inset(0 0 0 0 round 6px);
+    }
+  }
+  @keyframes eu-zoom {
+    from {
+      transform: scale(1.14);
+    }
+  }
+  @keyframes eu-fade {
+    from {
+      opacity: 0;
+    }
+  }
+  /* Scroll scene (html.sc): as the hero leaves, the columns drift at slightly different speeds, and the unit fades. */
+  :global(.sc) .tile {
+    translate: 0 calc(var(--out, 0) * -4vh);
+  }
+  :global(.sc) .tile:nth-child(3n + 2) {
+    translate: 0 calc(var(--out, 0) * -9vh);
+  }
+  :global(.sc) .tile:nth-child(3n) {
+    translate: 0 calc(var(--out, 0) * -6vh);
+  }
+  :global(.sc) .eu-unit {
+    opacity: calc(1 - var(--out, 0) * 1.5);
+  }
+</style>
