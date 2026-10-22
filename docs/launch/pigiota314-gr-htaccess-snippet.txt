@@ -34,15 +34,15 @@ RewriteRule ^about-us/?$ https://techpi.eu/el/about [R=301,L]
 
 # Booking systems landing
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
-RewriteRule ^booking-systems/?$ https://techpi.eu/el/capabilities [R=301,L]
+RewriteRule ^booking-systems/?$ https://techpi.eu/el/work/rantevo [R=301,L]
 
 # Airbnb websites landing
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
-RewriteRule ^website-for-airbnb/?$ https://techpi.eu/el/capabilities [R=301,L]
+RewriteRule ^website-for-airbnb/?$ https://techpi.eu/el/work/alexandra-apartment [R=301,L]
 
 # Online ordering landing
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
-RewriteRule ^online-paraggelies-estiasis/?$ https://techpi.eu/el/capabilities [R=301,L]
+RewriteRule ^online-paraggelies-estiasis/?$ https://techpi.eu/el/work/armans [R=301,L]
 
 # Rocketeer (Rocketeer Dispatch)
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
@@ -115,5 +115,46 @@ RewriteRule ^case-studies/apox-fc/?$ https://techpi.eu/el/work/apox-fc [R=301,L]
 # Emoved
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
 RewriteRule ^case-studies/emoved/?$ https://techpi.eu/el/work/emoved [R=301,L]
+# Additional Google Search Console aliases — PRE-DEPLOY REVIEW ONLY
+# Old privacy page (GSC)
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^privacy-policy/?$ https://techpi.eu/el/privacy [R=301,L]
+
+# Old service index (GSC)
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^services/?$ https://techpi.eu/el/capabilities [R=301,L]
+
+# Old web design page (GSC)
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^web-design/?$ https://techpi.eu/el/capabilities [R=301,L]
+
+# Old Project4You portfolio alias (GSC)
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/project4you-cms/?$ https://techpi.eu/el/work/project4you [R=301,L]
+
+# Old Project4You alternate portfolio alias (GSC)
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/project4you/?$ https://techpi.eu/el/work/project4you [R=301,L]
+
+# Old Local Xanthi portfolio alias (GSC)
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/local-xanthi-social-media-digital-marketing/?$ https://techpi.eu/el/work/local-xanthi [R=301,L]
+
+# Old Blackjack alias (GSC)
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/blackjack-streetwear/?$ https://techpi.eu/el/work/blackjack-streetwear [R=301,L]
+
+# Old English homepage (GSC click)
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/?$ https://techpi.eu/ [R=301,L]
+
+# Old English Itsallaboutxanthi alias (GSC)
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^en_gb/portfolio/itsallaboutxanthi-website-social-media-graphic-design-digital-marketing/?$ https://techpi.eu/work/itsallaboutxanthi [R=301,L]
+
+# Old EU project pages
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^eu-projects/?$ https://techpi.eu/el/eu-projects [R=301,L]
+
 </IfModule>
 # END TECHPI PIGIOTA314-GR MIGRATION
