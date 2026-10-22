@@ -21,7 +21,9 @@
   "vars": {
     "CONTACT_FROM": "TechPi website <website@notify.techpi.eu>"
   },
-  // Per-IP limit on contact form submissions: 5 a minute. A second line of defence behind Turnstile.
+  // Per-IP limit on contact form submissions: 5 a minute, counted per Cloudflare location and approximate (eventually
+  // consistent), so a brake on abuse rather than an exact quota. Required: without this binding, or if it fails, the
+  // form refuses to send (worker/contact.js). A second line of defence behind Turnstile.
   "ratelimits": [
     {
       "name": "CONTACT_RATE_LIMITER",

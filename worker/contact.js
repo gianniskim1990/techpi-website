@@ -5,8 +5,8 @@
  *   POST /api/contact  One enquiry, as JSON. It is checked in this order, and stops at the first failure:
  *     1. same origin: Origin must equal this site's origin, and Sec-Fetch-Site (when sent) must be same-origin; JSON only
  *     2. size: at most MAX_BODY bytes, whatever Content-Length claims
- *     3. configuration: every secret present (fail closed, 503)
- *     4. rate limit per client IP (Workers Rate Limiting binding, when bound)
+ *     3. configuration: every secret and the rate-limit binding present (fail closed, 503)
+ *     4. rate limit per client IP (Workers Rate Limiting binding, required; if it fails, 503, never a bypass)
  *     5. the fields: types, lengths, allowed values, no control characters in single-line fields, and the honeypot
  *     6. Cloudflare Turnstile, verified server-side (action and hostname included)
  *     7. delivery through Resend, to the fixed RECIPIENT, with Reply-To set to the visitor's validated address
@@ -44,11 +44,16 @@ const fail = (status, error, extra) => json(status, { ok: false, error, ...extra
 // display name: "TechPi website <website@notify.techpi.eu>".
 const FROM = /^(?:[^<>\r\n"]{1,80} )?<?[a-z0-9._%+-]{1,64}@(?:[a-z0-9-]{1,63}\.)*techpi\.eu>?$/i;
 
-/** The complete configuration, or null when anything is missing: the form then fails closed. */
+/**
+ * The complete configuration, or null when anything is missing: the form then fails closed. The rate-limit binding
+ * (wrangler.jsonc, CONTACT_RATE_LIMITER) is part of it: without it the form is unavailable, never unlimited.
+ */
 export function contactConfig(env) {
   const from = typeof env.CONTACT_FROM === 'string' ? env.CONTACT_FROM.trim() : '';
+  const limiter = env.CONTACT_RATE_LIMITER;
   if (!env.RESEND_API_KEY || !env.TURNSTILE_SECRET_KEY || !env.TURNSTILE_SITE_KEY || !FROM.test(from)) return null;
-  return { from, resendKey: env.RESEND_API_KEY, turnstileSecret: env.TURNSTILE_SECRET_KEY, siteKey: env.TURNSTILE_SITE_KEY };
+  if (!limiter || typeof limiter.limit !== 'function') return null;
+  return { from, limiter, resendKey: env.RESEND_API_KEY, turnstileSecret: env.TURNSTILE_SECRET_KEY, siteKey: env.TURNSTILE_SITE_KEY };
 }
 
 /** Same-origin requests only. A form on another site cannot post here, and a browser sends no CORS allowance back. */
@@ -201,14 +206,16 @@ export async function handleContact(request, env) {
     return fail(503, 'unavailable');
   }
 
-  if (env.CONTACT_RATE_LIMITER) {
-    try {
-      const { success } = await env.CONTACT_RATE_LIMITER.limit({ key: request.headers.get('CF-Connecting-IP') || 'unknown' });
-      if (!success) return fail(429, 'rate_limited');
-    } catch {
-      // The limiter is a second line of defence behind Turnstile: if it is unavailable, carry on.
-    }
+  // The rate limit is required: contactConfig() refuses a missing binding, and a limiter that fails or answers anything
+  // but { success: true } stops the request. Nothing is ever sent without it.
+  let limited;
+  try {
+    limited = await cfg.limiter.limit({ key: request.headers.get('CF-Connecting-IP') || 'unknown' });
+  } catch {
+    console.error('contact: rate limiter unavailable');
+    return fail(503, 'unavailable');
   }
+  if (!limited || limited.success !== true) return fail(429, 'rate_limited');
 
   let body;
   try {

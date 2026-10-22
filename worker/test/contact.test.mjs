@@ -11,6 +11,7 @@ const ENV = {
   TURNSTILE_SECRET_KEY: 'ts_secret',
   TURNSTILE_SITE_KEY: 'ts_site',
   CONTACT_FROM: 'TechPi website <website@notify.techpi.eu>',
+  CONTACT_RATE_LIMITER: { limit: async () => ({ success: true }) },
 };
 const VALID = {
   name: 'Maria Papadopoulou',
@@ -67,7 +68,7 @@ describe('configuration', () => {
     assert.equal(r.headers.get('Cache-Control'), 'no-store');
     assert.ok(!JSON.stringify(r.body).includes('re_test_key') && !JSON.stringify(r.body).includes('ts_secret'));
   });
-  for (const missing of ['RESEND_API_KEY', 'TURNSTILE_SECRET_KEY', 'TURNSTILE_SITE_KEY', 'CONTACT_FROM']) {
+  for (const missing of ['RESEND_API_KEY', 'TURNSTILE_SECRET_KEY', 'TURNSTILE_SITE_KEY', 'CONTACT_FROM', 'CONTACT_RATE_LIMITER']) {
     it(`fails closed without ${missing}`, async () => {
       const env = { ...ENV, [missing]: undefined };
       assert.equal((await worker.fetch(new Request(`${ORIGIN}/api/contact`), env)).status, 503);
@@ -143,6 +144,38 @@ describe('request checks', () => {
     assert.equal(r.body.error, 'rate_limited');
     assert.equal(calls.length, 0);
   });
+  it('keys the limit on the client IP', async () => {
+    const keys = [];
+    await post(VALID, { env: { ...ENV, CONTACT_RATE_LIMITER: { limit: async ({ key }) => (keys.push(key), { success: true }) } } });
+    assert.deepEqual(keys, ['203.0.113.7']);
+  });
+});
+
+describe('rate-limit binding: fails closed, never bypassed', () => {
+  const noSend = async (env, status, error) => {
+    const r = await read(await post(VALID, { env }));
+    assert.equal(r.status, status);
+    assert.equal(r.body.error, error);
+    assert.equal(calls.length, 0, 'no Turnstile or Resend call');
+  };
+  it('a binding without a limit() method disables the form', async () => {
+    const env = { ...ENV, CONTACT_RATE_LIMITER: {} };
+    assert.equal((await worker.fetch(new Request(`${ORIGIN}/api/contact`), env)).status, 503);
+    await noSend(env, 503, 'unavailable');
+  });
+  it('a limiter that throws answers 503 and sends nothing', async () => {
+    await noSend({ ...ENV, CONTACT_RATE_LIMITER: { limit: async () => { throw new Error('binding down'); } } }, 503, 'unavailable');
+    assert.ok(logs.some((l) => l.includes('rate limiter unavailable')));
+    assert.ok(!logs.join('\n').includes('203.0.113.7'), 'the IP is not logged');
+  });
+  it('a limiter that rejects synchronously answers 503', async () => {
+    await noSend({ ...ENV, CONTACT_RATE_LIMITER: { limit: () => { throw new TypeError('not a function'); } } }, 503, 'unavailable');
+  });
+  for (const [label, answer] of [['undefined', undefined], ['an empty object', {}], ['success: "true" (a string)', { success: 'true' }]]) {
+    it(`a limiter answering ${label} is treated as limited`, async () => {
+      await noSend({ ...ENV, CONTACT_RATE_LIMITER: { limit: async () => answer } }, 429, 'rate_limited');
+    });
+  }
 });
 
 describe('validation', () => {

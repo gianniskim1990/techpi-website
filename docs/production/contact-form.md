@@ -27,8 +27,8 @@ anything else disables the form. Reply-To is the visitor's validated email, so r
 | 1 | `Origin` equals the site's own origin, `Sec-Fetch-Site` (when sent) is `same-origin` | 403 `forbidden` |
 | 2 | `Content-Type: application/json` (a cross-site HTML form cannot send it, and a cross-site `fetch` needs a CORS preflight this endpoint never grants) | 415 |
 | 3 | Body at most 16 KB, counted while reading, whatever `Content-Length` says | 413 |
-| 4 | All three secrets and a valid `CONTACT_FROM` present (fail closed) | 503 `unavailable` |
-| 5 | Rate limit: 5 requests a minute per client IP (Workers Rate Limiting binding `CONTACT_RATE_LIMITER`) | 429 |
+| 4 | All three secrets, a valid `CONTACT_FROM` and the `CONTACT_RATE_LIMITER` binding present (fail closed; `GET` also answers 503, so the page keeps the form disabled) | 503 `unavailable` |
+| 5 | Rate limit: about 5 requests a minute per client IP (Workers Rate Limiting binding `CONTACT_RATE_LIMITER`). Required: if the binding throws, the request is refused (503 `unavailable`), and any answer other than `{ success: true }` counts as limited. It is never skipped | 429 `rate_limited` |
 | 6 | Fields: strings only; name 1–100, email (one address, ≤ 254), organisation ≤ 150, message 10–5000 characters, timeframe from a fixed list; no control characters in single-line fields (no CR/LF: no header injection); message line breaks normalised | 400 `invalid` + field names |
 | 7 | Honeypot field (`website`) empty. A filled one is refused, never reported as sent | 400 `rejected` |
 | 8 | Cloudflare Turnstile `siteverify`, server-side, with the client IP; `success`, action `contact` and the request's hostname must all match | 403 `verification_failed` |
@@ -44,6 +44,11 @@ anything else disables the form. Reply-To is the visitor's validated email, so r
   message. After any failure the Turnstile widget is reset, because a token is single-use.
 - Without JavaScript the form cannot pass Turnstile; a `<noscript>` note gives the email address instead.
 - Turnstile runs in `interaction-only` mode: invisible unless Cloudflare needs the visitor to act.
+- **The rate limit is approximate.** Cloudflare Workers Rate Limiting counts per Cloudflare location (data centre), not
+  globally, and its counters are eventually consistent, so the effective limit can be somewhat higher than 5 a minute,
+  especially for a client whose requests reach several locations. It is a brake on abuse from one source, not an
+  exact quota. Turnstile is the main defence against automated submissions; the honeypot and validation come before
+  any email is sent.
 
 ## 3. Configuration
 
@@ -53,7 +58,7 @@ anything else disables the form. Reply-To is the visitor's validated email, so r
 | `RESEND_API_KEY` | secret | Cloudflare | Resend API key, sending access, restricted to the sending domain |
 | `TURNSTILE_SECRET_KEY` | secret | Cloudflare | Turnstile widget secret key |
 | `TURNSTILE_SITE_KEY` | secret | Cloudflare | Turnstile widget site key (public, sent to the page by `GET /api/contact`; kept as a secret only so it survives deploys and stays out of the repository) |
-| `CONTACT_RATE_LIMITER` | binding | `wrangler.jsonc` | `namespace_id` `1001`, 5 per 60 s. The id must be unique among rate-limit namespaces in the Cloudflare account |
+| `CONTACT_RATE_LIMITER` | binding | `wrangler.jsonc` | `namespace_id` `1001`, limit 5 per 60 s, counted per Cloudflare location and approximate (section 2). Required: without it the form is unavailable. The id must be unique among rate-limit namespaces in the Cloudflare account |
 
 Secrets are never in the repository and never in `wrangler.jsonc`. `wrangler deploy` keeps existing secrets.
 
@@ -113,7 +118,7 @@ Settings → Variables and Secrets → Add → type **Secret**.
 
 ### 4.4 Check after deploying
 
-1. `https://techpi.eu/api/contact` answers `{"ok":true,"siteKey":"…"}` (503 means a secret or `CONTACT_FROM` is missing).
+1. `https://techpi.eu/api/contact` answers `{"ok":true,"siteKey":"…"}` (503 means a secret, `CONTACT_FROM` or the rate-limit binding is missing).
 2. `/contact`: the Send button is enabled; there is no CSP error in the browser console.
 3. One real test message, **only after the owner approves it**: it arrives at info@techpi.eu from
    `website@notify.techpi.eu`, and Reply goes to the address typed in the form. Check the headers show DKIM `pass`.
@@ -121,9 +126,11 @@ Settings → Variables and Secrets → Add → type **Secret**.
 
 ## 5. Tests run (2026-10-22)
 
-- `npm test`: 42 unit tests of the endpoint, every provider mocked (origin, content type, size, method, config, each
+- `npm test`: 50 unit tests of the endpoint, every provider mocked (origin, content type, size, method, config, each
   field, header injection, honeypot, Turnstile failure/hostname/action/outage, Resend 401/500/no id/outage, rate
-  limit, escaping, fixed recipient, no personal data in logs).
+  limit, escaping, fixed recipient, no personal data in logs). The rate-limit binding (2026-10-22 correction): missing,
+  without `limit()`, throwing (async and sync) and malformed answers all fail closed with nothing sent, and the limit
+  is keyed on the client IP.
 - Browser, both languages, against the build with the real Worker module and mocked providers: empty submit,
   invalid email, provider failure, success (mocked Resend payload checked), failed verification, honeypot,
   missing configuration (Turnstile not loaded, button disabled), mobile layout. Real Turnstile widget with
