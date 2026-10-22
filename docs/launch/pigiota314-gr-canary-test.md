@@ -50,7 +50,7 @@ Check:
 
 ## 4. Remove the canary again
 
-**Next owner action as of 2026-10-22:** remove the test block (including `ErrorDocument 410 default`), save, and confirm that both probe URLs no longer return the test-generated 301/410. This rollback has not yet been reported as complete.
+**Rollback VERIFIED by owner on 2026-10-22, 13:20:40–13:20:41 GMT.** The entire canary block (including `ErrorDocument 410 default`) was removed. Both test URLs returned `HTTP/1.1 404 Not Found` with WordPress headers (`Server: Apache`, `Link: .../wp-json/`). This confirms the canary no longer intercepts requests and the prior WordPress routing was restored for both test paths. The old homepage, Google verification file, assets and application subdomains should still be smoke-tested before full migration.
 
 After getting the response headers, open the same `.htaccess`, remove the entire `# BEGIN TECHPI CANARY` through `# END TECHPI CANARY` block including its rules, and save. The first line must again be `# BEGIN SpeedyCacheheaders`. Confirm the two probe URLs no longer return the added 301/410. This is the rollback verification. Ensure the `ErrorDocument 410 default` line is also removed together with the canary block; it must not be left behind after this test.
 
