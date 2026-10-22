@@ -1,11 +1,11 @@
 # pigiota314.gr -> TechPi Greek: scoped 301 migration (DRAFT)
 
-**State:** ready for owner review; not installed; no DNS, hosting, mail, subdomain or production modifications in this PR.
+**State:** research draft ONLY; not rollout-ready; not installed. Owner saved a backup of `/public_html/.htaccess` on 2026-10-22. No DNS, hosting, mail, subdomain or production modifications in this PR. The partial mapping must still be reconciled with the full 2026-10-19 crawl before installation.
 
 ## What this changes after separate approval
 
 - Root `pigiota314.gr` and `www.pigiota314.gr` visitors to **known content URLs** receive one-hop permanent 301 to an appropriate canonical `https://techpi.eu/el/` page.
-- This is a **reviewed subset of 25 URL mappings** (18 audited project pages + 7 known pages). It is NOT the entire WordPress URL inventory or the earlier migration-audit's broader mapping. Do not claim all old URLs handled.
+- This is an **incomplete 35-rule subset**: 18 audited project pages + 7 known pages + 10 important GSC / historical aliases. It is NOT the entire WordPress URL inventory. A more extensive read-only audit on 2026-10-19 found **206 distinct `.gr` sources**; a 2026-10-16 spreadsheet has 181 `.gr` routing proposals plus 8 previously missing GSC aliases. The remaining paths need explicit treatment before full site cutover. **Do not install this partial block as a complete migration.**
 - The host guard on every rule excludes `proposal.pigiota314.gr`, `saloon.pigiota314.gr`, `physio.pigiota314.gr`, every other application subdomain, and mail hosts even on shared document roots.
 - WordPress administration, REST endpoints and `/wp-content` assets are not redirected. There is **no wildcard catch-all** because sending unrelated old URLs to the homepage creates potential Google soft 404s.
 - Apache/LiteSpeed `.htaccess` snippet only; not Cloudflare's `techpi.eu` `_redirects`. The owner shared `/public_html/.htaccess` (2026-10-22), confirming `# BEGIN SpeedyCacheheaders`, `# BEGIN WEBPspeedycache`, `# BEGIN speedycache`, `# BEGIN WordPress` and cPanel PHP handler blocks. SpeedyCache has a rewrite rule with `[L]` that could serve cached HTML before later redirects are reached, so **the migration block must be placed at the very top, ahead of all SpeedyCache markers**, not merely above WordPress. If legacy host behaviour differs, inspect the actual server before rollout.
@@ -18,9 +18,9 @@
 | `/portfolio/` | `https://techpi.eu/el/work` |
 | `/contact/` | `https://techpi.eu/el/contact` |
 | `/about-us/` | `https://techpi.eu/el/about` |
-| `/booking-systems/` | `https://techpi.eu/el/capabilities` |
-| `/website-for-airbnb/` | `https://techpi.eu/el/capabilities` |
-| `/online-paraggelies-estiasis/` | `https://techpi.eu/el/capabilities` |
+| `/booking-systems/` | `https://techpi.eu/el/work/rantevo` |
+| `/website-for-airbnb/` | `https://techpi.eu/el/work/alexandra-apartment` |
+| `/online-paraggelies-estiasis/` | `https://techpi.eu/el/work/armans` |
 
 ## 18 historic project URLs (source: `docs/content/portfolio-migration.md`)
 
@@ -47,6 +47,31 @@
 
 Every target case-study slug exists in `content/case-studies/<slug>/index.json` and all 18 are published in both languages. Two source Logotherapia project URLs intentionally converge to the same Greek case study.
 
+## Key findings from earlier GSC and 2026-10-19 audit
+
+- A pre-existing 2026-10-16 Search Console baseline shows 52 exported `.gr` URLs and **22 clicks**, of which 18 were for the legacy homepage. The 2026-10-19 read-only crawl checked **206 `.gr` sources**. The draft snippet's 35 rules do not cover them all.
+- Another 43 legacy URLs are theme/demo/archive pages previously recommended for **410 Gone**. Do not redirect unrelated demo pages to the TechPi homepage. Some obsolete services or 27 retired portfolio items need explicit owner decisions (301 to a relevant index vs 410).
+- `/online-paraggelies-estiasis/` had one recorded GSC click and should lead to the more specific Arman's project rather than generic capabilities. `/en_gb/` also had one click; map it to the English homepage.
+- The old `.gr` Search Console property's ownership mechanism is **unverified**: earlier read-only checks found no evident DNS TXT or homepage meta verification. If ownership depends on a tag on the WordPress homepage, a 301 will stop that tag from being served. **Before cutover, visit old `.gr` Search Console → Settings → Ownership verification, verify the method, and preferably ensure persistent DNS TXT ownership**. Do not expose the verification token.
+- Four WordPress `?p=ID` shortlinks require review; the provisional root redirect intentionally excludes numeric `?p=` to avoid silently sending these post links to an unrelated homepage.
+- The `pigiota314.eu` migration is a separate, previously audited workstream. The 2026-10-19 audit suggested sequencing `.eu` before `.gr`, partly because `.eu` case-study images are served from `.gr` WordPress uploads. Keeping old assets operational is necessary.
+- **No 301 or 410 rule in this PR has been deployed, nor has the Google Change of Address action been submitted.**
+
+## Extra high-priority alias routes present in the partial snippet
+
+| Old route | Target |
+|---|---|
+| `/privacy-policy/` | `/el/privacy` |
+| `/services/`, `/web-design/` | `/el/capabilities` |
+| `/portfolio/project4you-cms/`, `/portfolio/project4you/` | `/el/work/project4you` |
+| `/portfolio/local-xanthi-social-media-digital-marketing/` | `/el/work/local-xanthi` |
+| `/portfolio/blackjack-streetwear/` | `/el/work/blackjack-streetwear` |
+| `/en_gb/` | `/` (English) |
+| `/en_gb/portfolio/itsallaboutxanthi-website-social-media-graphic-design-digital-marketing/` | `/work/itsallaboutxanthi` (English) |
+| `/eu-projects/` | `/el/eu-projects` |
+
+**Sources of planning evidence:** legacy `TechPi_SEO_Migration_Audit_2026-10-16.xlsx` (Google Search Console exports reconciled against historical 217-row plan) and the 2026-10-19 legacy-domain preflight audit. Neither is a production-config source of truth without new verification.
+
 ## Before enabling on origin
 
 1. Confirm `https://pigiota314.gr` and `https://www.pigiota314.gr` currently reach the old WordPress host and identify Apache/LiteSpeed and the correct document root. Confirm if a CDN or existing redirect rule intercepts the request.
@@ -62,7 +87,7 @@ Every target case-study slug exists in `content/case-studies/<slug>/index.json` 
 
 - No `.eu` legacy migration in this review; that property needs its own mapping (English Insights links are different).
 - Not included: unverifiable service slugs, old media URLs, old WordPress date archives, unknown legacy pages, product app hostnames or `proposal.pigiota314.gr`.
-- Old `/booking-systems/`, `/website-for-airbnb/` and `/online-paraggelies-estiasis/` are consolidated to Greek `capabilities`, a relevant section though not an identical standalone new service page.
+- Old `/booking-systems/`, `/website-for-airbnb/` and `/online-paraggelies-estiasis/` map to specific Greek project pages (`rantevo`, `alexandra-apartment`, `armans`) based on the expanded 2026-10-19 audit; owner must approve the semantics before launch.
 - If source/export evidence shows an old URL with no relevant replacement, prefer a genuine 404/410 over an irrelevant redirect.
 
 ## Dry-run mapping verification
