@@ -46,6 +46,13 @@ anything else disables the form. Reply-To is the visitor's validated email, so r
   message. After any failure the Turnstile widget is reset, because a token is single-use.
 - Without JavaScript the form cannot pass Turnstile; a `<noscript>` note gives the email address instead.
 - Turnstile runs in `interaction-only` mode: invisible unless Cloudflare needs the visitor to act.
+- If the widget errors or times out, the form immediately reports a localized verification failure and restores the button.
+  If it never returns any callback, waiting for a token ends after 12 seconds; the submit POST also has a 30-second
+  browser-side network timeout. Never report a message as sent unless the Worker returned success.
+- Troubleshooting after enabling secrets: `GET /api/contact` showing `ok: true` confirms only that keys are present,
+  not that the Turnstile widget can issue tokens. Check the actual **Site Key** (public, up to 32 characters) is stored in
+  `TURNSTILE_SITE_KEY`, not the **Secret Key**; ensure the widget allows `techpi.eu`. A wrong site key may trigger
+  Turnstile client error `110100` or `110110`. Do not paste secret key values into tickets, screenshots or chat.
 - **The rate limit is approximate.** Cloudflare Workers Rate Limiting counts per Cloudflare location (data centre), not
   globally, and its counters are eventually consistent, so the effective limit can be somewhat higher than 5 a minute,
   especially for a client whose requests reach several locations. It is a brake on abuse from one source, not an
