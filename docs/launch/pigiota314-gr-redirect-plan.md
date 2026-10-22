@@ -1,11 +1,11 @@
-# pigiota314.gr -> TechPi Greek: scoped 301 migration (DRAFT)
+# pigiota314.gr -> TechPi: 189-path 301/410 migration candidate (DRAFT)
 
-**State:** research draft ONLY; not rollout-ready; not installed. Owner saved a backup of `/public_html/.htaccess` on 2026-10-22. No DNS, hosting, mail, subdomain or production modifications in this PR. The partial mapping must still be reconciled with the full 2026-10-19 crawl before installation.
+**State:** owner-approved editorial redirect/retirement policy; full 189-known-path execution candidate **prepared, NOT installed**. Owner backed up `/public_html/.htaccess` on 2026-10-22. Separate approval is still required for deployment. No DNS, hosting, mail, subdomain or production modifications in this PR.
 
 ## What this changes after separate approval
 
-- Root `pigiota314.gr` and `www.pigiota314.gr` visitors to **known content URLs** receive one-hop permanent 301 to an appropriate canonical `https://techpi.eu/el/` page.
-- This is an **incomplete 35-rule subset**: 18 audited project pages + 7 known pages + 10 important GSC / historical aliases. It is NOT the entire WordPress URL inventory. A more extensive read-only audit on 2026-10-19 found **206 distinct `.gr` sources**; a 2026-10-16 spreadsheet has 181 `.gr` routing proposals plus 8 previously missing GSC aliases. The remaining paths need explicit treatment before full site cutover. **Do not install this partial block as a complete migration.**
+- Root `pigiota314.gr` and `www.pigiota314.gr` visitors to **known equivalent content URLs** receive one-hop permanent 301 to appropriate canonical English or Greek TechPi pages. Approved retired/demo URLs receive 410 Gone.
+- **189 source-specific rewrite rules** (107×301, 82×410), compiled from 181 audited `.gr` routes + eight missing GSC aliases. The 2026-10-19 crawl reported **206 `.gr` URLs**; its full list is unavailable, so coverage beyond the known 189 sources is **not claimed**. Unmapped URLs remain handled by old WordPress; there is no catch-all.
 - The host guard on every rule excludes `proposal.pigiota314.gr`, `saloon.pigiota314.gr`, `physio.pigiota314.gr`, every other application subdomain, and mail hosts even on shared document roots.
 - WordPress administration, REST endpoints and `/wp-content` assets are not redirected. There is **no wildcard catch-all** because sending unrelated old URLs to the homepage creates potential Google soft 404s.
 - Apache/LiteSpeed `.htaccess` snippet only; not Cloudflare's `techpi.eu` `_redirects`. The owner shared `/public_html/.htaccess` (2026-10-22), confirming `# BEGIN SpeedyCacheheaders`, `# BEGIN WEBPspeedycache`, `# BEGIN speedycache`, `# BEGIN WordPress` and cPanel PHP handler blocks. SpeedyCache has a rewrite rule with `[L]` that could serve cached HTML before later redirects are reached, so **the migration block must be placed at the very top, ahead of all SpeedyCache markers**, not merely above WordPress. If legacy host behaviour differs, inspect the actual server before rollout.
@@ -47,17 +47,17 @@
 
 Every target case-study slug exists in `content/case-studies/<slug>/index.json` and all 18 are published in both languages. Two source Logotherapia project URLs intentionally converge to the same Greek case study.
 
-**Expanded source review (not deployment):** [189 audited legacy URL candidates](pigiota314-gr-source-review.csv) and [review methodology / owner decisions](pigiota314-gr-source-review.md). This review list supersedes the 35-rule snippet for **coverage decisions**, but the snippet itself is intentionally partial and is not approved for deployment. The 2026-10-19 live crawl counted 206 `.gr` source URLs; its full per-URL CSV is not available here, so exhaustive coverage has not yet been proven.
+**Current 189-rule execution candidate (not deployed):** [reviewed 301/410 rules](pigiota314-gr-htaccess-snippet.txt), [final URL-to-status mapping](pigiota314-gr-final-mapping.csv), plus [source audit register](pigiota314-gr-source-review.csv) and [review methodology](pigiota314-gr-source-review.md). The 2026-10-19 crawl identified 206 `.gr` URLs; its per-URL CSV is unavailable, so not every observed URL has been shown to be covered.
 
 ## Key findings from earlier GSC and 2026-10-19 audit
 
-- A pre-existing 2026-10-16 Search Console baseline shows 52 exported `.gr` URLs and **22 clicks**, of which 18 were for the legacy homepage. The 2026-10-19 read-only crawl checked **206 `.gr` sources**. The draft snippet's 35 rules do not cover them all.
+- A pre-existing 2026-10-16 Search Console baseline shows 52 exported `.gr` URLs and **22 clicks**, of which 18 were for the legacy homepage. The 2026-10-19 read-only crawl checked **206 `.gr` sources**. Our 189-rule staged set covers every known audited route, but does **not** prove exhaustive coverage of the 206 live-crawled URLs.
 - Another 43 legacy URLs are theme/demo/archive pages previously recommended for **410 Gone**. Do not redirect unrelated demo pages to the TechPi homepage. Some obsolete services or 27 retired portfolio items need explicit owner decisions (301 to a relevant index vs 410).
 - `/online-paraggelies-estiasis/` had one recorded GSC click and should lead to the more specific Arman's project rather than generic capabilities. `/en_gb/` also had one click; map it to the English homepage.
 - **Google Search Console ownership has been verified by the owner (2026-10-22 screenshot):** the `pigiota314.gr` property uses **HTML file** ownership verification, currently successful. Preserve that verification HTML file in `/public_html` and ensure the exact `https://pigiota314.gr/<verification-file>.html` URL continues to answer 200 after the redirects. The planned exact-path 301 rules do not target this file; do not introduce a blanket catch-all, delete it, or block it. DNS TXT is an optional redundant method, not a prerequisite. Avoid sharing the verification filename/token in public code.
 - Four WordPress `?p=ID` shortlinks require review; the provisional root redirect intentionally excludes numeric `?p=` to avoid silently sending these post links to an unrelated homepage.
 - The `pigiota314.eu` migration is a separate, previously audited workstream. The 2026-10-19 audit suggested sequencing `.eu` before `.gr`, partly because `.eu` case-study images are served from `.gr` WordPress uploads. Keeping old assets operational is necessary.
-- **No 301 or 410 rule in this PR has been deployed, nor has the Google Change of Address action been submitted.**
+- **No 301 or 410 rule in this PR has been deployed, nor has the Google Change of Address action been submitted.** Owner policy approval does **not** authorize activating these production rewrites.
 
 ## Extra high-priority alias routes present in the partial snippet
 
@@ -73,6 +73,18 @@ Every target case-study slug exists in `content/case-studies/<slug>/index.json` 
 | `/eu-projects/` | `/el/eu-projects` |
 
 **Sources of planning evidence:** legacy `TechPi_SEO_Migration_Audit_2026-10-16.xlsx` (Google Search Console exports reconciled against historical 217-row plan) and the 2026-10-19 legacy-domain preflight audit. Neither is a production-config source of truth without new verification.
+
+## Reviewed 301/410 matrix (not deployed)
+
+| Status | Count | Approved purpose |
+|---|---:|---|
+| 301 | 107 | Relevant replacement (existing case study, Greek/English portfolio, service or contact page) |
+| 410 | 82 | Old demos, WordPress themes, abandoned archives and retired creative/social-media content with no relevant equivalent |
+| Not enumerated | At least 17 potentially additional URLs in 2026-10-19 crawl | Left on old WordPress; review actual later crawl CSV before claiming a sitewide complete migration |
+
+Each 301 goes directly to a canonical URL from TechPi's published 60-page route list. Every directive is anchored and host-scoped to apex/www only. There is no catch-all; old `/wp-content` images, the Search Console HTML verification file, old sitemap and administrative paths are not matched. Queries on migrated URLs are discarded using Apache `[QSD]`, but root `?p=123` WordPress shortlinks are explicitly excluded.
+
+**Scope limitation:** the 2026-10-19 audit counted 206 URLs but its machine-readable mapping is unavailable. The 189 explicit rules handle all currently recovered source routes; the rest remain on the old server pending separate identification. The 189-rule file is ready for owner review, but **not ready to be described as an exhaustive migration of all historic URLs**.
 
 ## Before enabling on origin
 
