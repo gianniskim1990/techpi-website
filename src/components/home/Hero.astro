@@ -2,7 +2,7 @@
 import type { HomeCopy } from '../../content/home.en';
 import { pathFor } from '../../i18n/routes';
 import { Image } from 'astro:assets';
-import EuHeroGrid from './EuHeroGrid.astro';
+import EuHeroBackdrop from './EuHeroBackdrop.astro';
 import TransformationMap from './TransformationMap.astro';
 import { heroVisuals } from './hero-visual';
 import type { Locale } from '../../i18n/locales';
@@ -13,8 +13,8 @@ interface Props {
 }
 
 const { copy, locale } = Astro.props;
-// The Greek homepage has a photograph (hero-visual.ts); the English homepage has the EU projects panel instead
-// (EuHeroGrid.astro): six photographs, one for each thematic area of EU-funded projects. Chosen at build time from the locale.
+// The Greek homepage has a photograph (hero-visual.ts); the English homepage has a large layered background of six
+// photographs instead (EuHeroBackdrop.astro), one for each thematic area of EU-funded projects. Chosen at build time from the locale.
 const visual = heroVisuals[locale];
 ---
 
@@ -28,7 +28,7 @@ const visual = heroVisuals[locale];
     when it clears. */}
 <section class="hero s-paper" aria-labelledby="hero-h" data-scene>
   <div class="stage" class:list={{ eu: !visual }}>
-    {!visual && <EuHeroGrid />}
+    {!visual && <EuHeroBackdrop />}
     {/* The visual: one real image in the corner the arc opens, clipped by the arc's own circle so the arc is its edge.
         Its bottom edge is the map's line (--map-b, measured by src/scripts/motion.ts). On tablets and phones, where the
         arc is too small to frame anything, it is a quiet band above the map. Decorative. */}
@@ -99,12 +99,10 @@ const visual = heroVisuals[locale];
     justify-content: flex-end;
   }
 
-  /* English desktop: the map is taller, so the EU projects panel beside it has room to be read (EuHeroGrid.astro). The
-     map's own design is unchanged: its curves stretch and its labels keep their places. */
-  @media (min-width: 901px) {
-    .hero .stage.eu :global(.tmap) {
-      height: clamp(300px, 45vh, 460px);
-    }
+  /* English: the stage isolates its stacking context, so the background layer (z-index -1) stays behind the content but
+     above the page (EuHeroBackdrop.astro). */
+  .stage.eu {
+    isolation: isolate;
   }
 
   .statement {

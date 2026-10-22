@@ -4,8 +4,8 @@
  * page's `locale` (never from the referrer, the browser's language or a redirect), so each homepage is plain static HTML.
  *
  *   el  websites, web applications and digital solutions -> src/assets/hero/hero-el.jpg
- *   en  no single photograph: the English homepage shows a grid of six photographs, one for each thematic area of
- *       EU-funded projects (src/components/home/EuHeroGrid.astro, eu-themes.ts), with a line and a call to action, so
+ *   en  no single photograph: the English homepage has a large layered background of six photographs, one for each thematic area of
+ *       EU-funded projects (src/components/home/EuHeroBackdrop.astro, eu-themes.ts), with a line and a call to action, so
  *       that it says at a glance what TechPi offers EU-funded projects.
  *
  * The Greek photograph is free to use under the Unsplash License (sources, licence and the edit made:

@@ -72,8 +72,8 @@ if (fs.existsSync(distAstro)) {
 }
 
 // The homepage hero visual. Greek (src/components/home/hero-visual.ts): one decorative WebP photograph, chosen at build time.
-// English (src/components/home/EuHeroGrid.astro, eu-themes.ts): a grid of six decorative WebP photographs, one for each
-// thematic area of EU-funded projects, each with a label, plus the line and the link to /eu-projects. Neither homepage ships
+// English (src/components/home/EuHeroBackdrop.astro, eu-themes.ts): a large background of six decorative WebP photographs,
+// one for each thematic area of EU-funded projects, plus the line and the link to /eu-projects. Neither homepage ships
 // the other's visual, and no other page carries a hero visual.
 {
   const root = path.resolve(distAstro, '..');
@@ -84,36 +84,30 @@ if (fs.existsSync(distAstro)) {
   check(photo.includes('aria-hidden="true"'), 'el/index.html: the hero photograph is not hidden from assistive technology');
   check(/src="\/_astro\/hero-el\.[^"]+\.webp"/.test(photo) && /srcset="[^"]*\.webp \d+w/.test(photo), 'el/index.html: the Greek hero photograph (hero-el) is missing or not WebP');
   check(/ alt[ =>]/.test(photo) && !/alt="[^"]+"/.test(photo), 'el/index.html: the hero photograph must be decorative (empty alt)');
-  check(!/class="eu-unit/.test(el), 'el/index.html: carries the English EU themes grid');
+  check(!/class="eu-(bg|say)/.test(el), 'el/index.html: carries the English EU background');
 
   const en = page('index.html');
-  const unit = (en.match(/<div class="eu-unit[\s\S]*?<\/a><\/div><\/div>/) || [''])[0];
-  check(unit !== '', 'index.html: the EU themes grid (eu-unit) is missing from the English hero');
-  const tiles = unit.match(/<li class="tile"[\s\S]*?<\/li>/g) || [];
-  check(tiles.length === 6, `index.html: the EU themes grid must have six tiles, found ${tiles.length}`);
-  const THEMES = [
-    ['health', 'Health'],
-    ['culture', 'Culture, Creativity and Inclusive Society'],
-    ['security', 'Civil Security for Society'],
-    ['digital', 'Digital, Industry and Space'],
-    ['climate', 'Climate, Energy and Mobility'],
-    ['food', 'Food, Bioeconomy, Natural Resources, Agriculture and Environment'],
-  ];
-  THEMES.forEach(([key, name], i) => {
-    const t = tiles[i] || '';
-    check(new RegExp(`<img[^>]+src="/_astro/eu-${key}\\.[^"]+\\.webp"`).test(t) && /srcset="[^"]*\.webp \d+w/.test(t), `index.html: tile ${i + 1} (${key}) has no WebP photograph`);
-    check(/ alt[ =>]/.test(t.match(/<img[^>]*>/)?.[0] ?? '') && !/alt="[^"]+"/.test(t.match(/<img[^>]*>/)?.[0] ?? ''), `index.html: tile ${i + 1} (${key}) photograph must be decorative (empty alt)`);
-    check(t.includes(`>${name}</span>`), `index.html: tile ${i + 1} must carry the full name "${name}" for assistive technology`);
-    check(/class="lbl" aria-hidden="true"/.test(t), `index.html: tile ${i + 1} (${key}) has no visible label`);
-  });
-  check(unit.includes('Digital solutions for EU-funded projects'), 'index.html: the supporting line "Digital solutions for EU-funded projects" is missing');
-  check(/<a class="eu-cta[^"]*" href="\/eu-projects"[^>]*>Explore EU Project Solutions/.test(unit), 'index.html: the call to action must read "Explore EU Project Solutions" and link to /eu-projects');
+  const bg = (en.match(/<div class="eu-bg"[\s\S]*?<div class="veil"[^>]*><\/div><\/div>/) || [''])[0];
+  check(bg !== '', 'index.html: the EU background (eu-bg) is missing from the English hero');
+  check(/class="eu-bg" aria-hidden="true"/.test(bg), 'index.html: the EU background is not hidden from assistive technology');
+  const figs = bg.match(/<figure class="ph ph-[a-z]+"[\s\S]*?<\/figure>/g) || [];
+  check(figs.length === 6, `index.html: the EU background must have six photographs, found ${figs.length}`);
+  for (const key of ['health', 'culture', 'security', 'digital', 'climate', 'food']) {
+    const f = figs.find((x) => x.includes(`ph-${key}"`)) || '';
+    const img = f.match(/<img[^>]*>/)?.[0] ?? '';
+    check(new RegExp(`src="/_astro/eu-${key}\\.[^"]+\\.webp"`).test(img) && /srcset="[^"]*\.webp \d+w/.test(img), `index.html: the ${key} photograph is missing or not WebP`);
+    check(/ alt[ =>]/.test(img) && !/alt="[^"]+"/.test(img), `index.html: the ${key} photograph must be decorative (empty alt)`);
+  }
+  const say = (en.match(/<div class="eu-say[\s\S]*?<\/a><\/div>/) || [''])[0];
+  check(say.includes('Digital solutions for EU-funded projects'), 'index.html: the supporting line "Digital solutions for EU-funded projects" is missing');
+  check(/<a class="eu-cta[^"]*" href="\/eu-projects"[^>]*>Explore EU Project Solutions/.test(say), 'index.html: the call to action must read "Explore EU Project Solutions" and link to /eu-projects');
   check(!/<div class="visual"/.test(en) && !/hero-(en|el)\./.test(en), 'index.html: the English hero must not carry the Greek photograph');
-  // The grid names kinds of work, not programmes: no programme, Commission, funding or EU-emblem wording beyond the line.
-  check(!/(European Commission|Horizon|Erasmus|Interreg|co-funded|funded by|flag|stars|endorse|official)/i.test(unit.replace('Digital solutions for EU-funded projects', '')), 'index.html: the EU themes grid carries a programme, funding, endorsement or EU-emblem claim');
+  check(!/class="eu-unit|class="tile"/.test(en), 'index.html: still carries the retired six-tile grid');
+  // The background names kinds of work, not programmes: no programme, Commission, funding or EU-emblem wording beyond the line.
+  check(!/(European Commission|Horizon|Erasmus|Interreg|co-funded|funded by|flag|stars|endorse|official)/i.test((bg + say).replace('Digital solutions for EU-funded projects', '')), 'index.html: the EU background carries a programme, funding, endorsement or EU-emblem claim');
 
   for (const p of ['about.html', 'contact.html', 'work.html', 'capabilities.html', 'eu-projects.html', 'privacy.html', 'el/about.html']) {
-    check(!/(hero-(en|el)|eu-(health|culture|security|digital|climate|food))\./.test(page(p)) && !/class="eu-unit/.test(page(p)), `${p}: carries a homepage hero visual`);
+    check(!/(hero-(en|el)|eu-(health|culture|security|digital|climate|food))\./.test(page(p)) && !/class="eu-(bg|say)/.test(page(p)), `${p}: carries a homepage hero visual`);
   }
 }
 
