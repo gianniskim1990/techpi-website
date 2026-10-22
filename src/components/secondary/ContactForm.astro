@@ -445,6 +445,8 @@ const [noscriptBefore, noscriptAfter] = withEmail(t.noscript);
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           credentials: 'same-origin',
           body: JSON.stringify(body),
+          // The Worker enforces provider timeouts; also bound a stalled browser/network request.
+          signal: AbortSignal.timeout(30000),
         });
         const out = await res.json().catch(() => null);
         if (res.ok && out?.ok === true) {
