@@ -1,6 +1,9 @@
 # DRAFT ONLY — pigiota314.gr apex/www -> Greek TechPi 301 redirects.
 # NOT installed. For old WordPress Apache/LiteSpeed DOCUMENT ROOT .htaccess ONLY.
-# Back up existing .htaccess. Insert this block ABOVE # BEGIN WordPress.
+# Verified old .htaccess (2026-10-22): SpeedyCache rewrites requests BEFORE WordPress.
+# Back up existing .htaccess. Insert this entire block at the VERY TOP,
+# immediately BEFORE "# BEGIN SpeedyCacheheaders" (ahead of ALL SpeedyCache rewrite rules).
+# Putting it merely above "# BEGIN WordPress" is NOT enough: SpeedyCache may stop rewrites with [L].
 # Do NOT paste in techpi.eu's public/_redirects, do NOT replace WordPress rules.
 # Host guard on EVERY rule is deliberate: protect shared-host subdomains.
 # Not a complete old-site URL inventory: do not add an all-path catch-all.
@@ -8,6 +11,7 @@
 # Query parameters are retained by Apache unless explicitly changed.
 # Requires mod_rewrite and confirmed Apache/LiteSpeed origin.
 # Do not deploy without owner approval, old-host access check and backup.
+# Clear SpeedyCache and any old-domain CDN/edge cache after deployment, then verify GET and HEAD 301 responses.
 #
 # BEGIN TECHPI PIGIOTA314-GR MIGRATION — REVIEW ONLY
 <IfModule mod_rewrite.c>
