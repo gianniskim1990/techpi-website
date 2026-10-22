@@ -14,6 +14,8 @@
 
 ```apache
 # BEGIN TECHPI CANARY — REMOVE AFTER TEST
+# The inherited cPanel ErrorDocument may re-route mod_rewrite [G] 410 into WordPress 404.
+ErrorDocument 410 default
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
@@ -40,7 +42,7 @@ curl.exe -sS -o NUL -D - "https://pigiota314.gr/portfolio/"
 
 Check:
 - Canary 301: **HTTP 301** and `Location: https://techpi.eu/el/`.
-- Canary 410: **HTTP 410 Gone**, no redirect to the homepage.
+- Canary 410: **HTTP 410 Gone**, no redirect to the homepage. On 2026-10-22 the first canary (without `ErrorDocument 410 default`) returned WordPress **404**, despite 301 PASS. The `ErrorDocument 410 default` line is an isolated correction to override a suspected inherited cPanel 410 error handler. This needs a new live curl check; do not assert it works before that check.
 - Untouched portfolio: still the original old WordPress response; no TechPi redirect from this canary.
 - Optionally repeat 301 and 410 probes on `https://www.pigiota314.gr/...`. If www has an older host-level redirect to apex, capture that separate hop and do not wrongly attribute it to this rule.
 - Spot-check `https://pigiota314.gr/`, the Search Console HTML verification file (must remain 200), one `/wp-content/uploads/...` image and any critical application subdomain. Do not post the verification filename or token in PR logs/chat.
@@ -48,6 +50,6 @@ Check:
 
 ## 4. Remove the canary again
 
-After getting the response headers, open the same `.htaccess`, remove the entire `# BEGIN TECHPI CANARY` through `# END TECHPI CANARY` block including its rules, and save. The first line must again be `# BEGIN SpeedyCacheheaders`. Confirm the two probe URLs no longer return the added 301/410. This is the rollback verification.
+After getting the response headers, open the same `.htaccess`, remove the entire `# BEGIN TECHPI CANARY` through `# END TECHPI CANARY` block including its rules, and save. The first line must again be `# BEGIN SpeedyCacheheaders`. Confirm the two probe URLs no longer return the added 301/410. This is the rollback verification. Ensure the `ErrorDocument 410 default` line is also removed together with the canary block; it must not be left behind after this test.
 
 **No production migration should proceed merely because this canary passes**: the full 189-rule matrix still needs separate approval and reconciliation with the 206-URL crawl's absent per-URL inventory.
