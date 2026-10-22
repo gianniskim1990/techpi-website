@@ -333,7 +333,7 @@ Checks: an automated accessibility check in CI on every page, and a manual keybo
 
 | Topic | Plan | Status |
 |---|---|---|
-| Contact form | A plain HTML form posting to one small Worker route, which sends an email through a transactional provider. Works without JavaScript. A honeypot field and rate limiting first, a privacy-friendly challenge only if spam requires it. The route is explicitly sent to the Worker, because a plain form post would otherwise be treated as a page request | Provider and recipient address to confirm. Built in 3C |
+| Contact form | A form posting JSON to one small Worker route (`/api/contact`, `run_worker_first: ["/api/*"]`), which verifies Cloudflare Turnstile and sends an email through Resend to a fixed recipient. A honeypot and a per-IP rate limit as well. Needs JavaScript (Turnstile); without it the page gives the email address | Built 2026-10-22; production setup pending: `contact-form.md` |
 | Analytics | Cookieless, EU-hosted analytics, so no consent banner is needed for analytics alone | Product to choose |
 | Consent | No banner if nothing requires consent. A banner only if a cookie or tracker is added | Depends on analytics and embeds |
 | Security headers | Content Security Policy, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, set at the host | Planned for 3A |
@@ -400,7 +400,7 @@ Not installed, by design: Tailwind, React, GSAP, a sitemap integration (3F), an 
 - `output: 'static'`, `build.format: 'preserve'`, `trailingSlash: 'ignore'`, `site: 'https://techpi.eu'`.
 - i18n: default locale `en` without a prefix, `el` as the prefixed locale, no fallback and no `redirectToDefaultLocale`, so Astro creates no automatic locale redirect.
 - `tsconfig.json` extends Astro's strict preset and includes only `src/` and the Astro config, so `explorations/`, `docs/` and `brand-source/` can never enter the production type check.
-- `wrangler.jsonc`: no Worker script, `assets.directory: "./dist"`, `not_found_handling: "404-page"`, `html_handling: "auto-trailing-slash"`, compatibility date 2026-10-02. Preview settings are not configured. They are set when the repository is connected to Cloudflare.
+- `wrangler.jsonc` (updated 2026-10-22 for the contact form): a Worker script (`worker/index.js`) that runs only for `/api/*`, `assets.directory: "./dist"`, `not_found_handling: "404-page"`, `html_handling: "auto-trailing-slash"`, compatibility date 2026-10-02, the `CONTACT_FROM` variable and the `CONTACT_RATE_LIMITER` binding. All other requests are served by the static files first. See `contact-form.md`.
 - Scripts: `dev`, `build`, `preview`, `check`.
 
 ### 13.3 Differences from the approved architecture

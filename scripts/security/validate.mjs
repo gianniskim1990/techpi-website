@@ -64,6 +64,13 @@ for (const f of pages) {
     check(v.includes("'self'"), f, `${d} allows 'self'`);
     check(!v.some((x) => /unsafe-(inline|eval|hashes)|^\*$|^https?:$|^data:$/.test(x)), f, `${d} has no unsafe or wildcard source: ${v.join(' ')}`);
   }
+  // One exception to 'self': the two contact pages load Cloudflare Turnstile (script and iframe) for the contact form,
+  // from exactly one origin. No other page allows any other origin or any frame (docs/production/contact-form.md).
+  const contactPage = f === 'contact.html' || f === 'el/contact.html';
+  const hosts = (policy['script-src'] || []).filter((x) => /^https?:/.test(x));
+  check(contactPage ? hosts.join(' ') === 'https://challenges.cloudflare.com' : hosts.length === 0, f, `script-src origins: ${hosts.join(' ') || 'none'}`);
+  check(contactPage ? policy['frame-src']?.join(' ') === 'https://challenges.cloudflare.com' : !policy['frame-src'], f, `frame-src: ${policy['frame-src']?.join(' ') || 'none'}`);
+  check(!policy['connect-src'] && !policy['form-action']?.some((x) => x !== "'self'"), f, "connect-src and form-action stay 'self'");
   check(!policy['script-src-attr'] && !policy['script-src-elem'] && !policy['style-src-elem'], f, 'no script/style element or script attribute override');
   check(policy['style-src-attr']?.join(' ') === "'unsafe-inline'", f, "style-src-attr 'unsafe-inline' (build-time style attributes)");
   // The meta comes before the body, and every executable inline script after it, and every <style>, is hashed.

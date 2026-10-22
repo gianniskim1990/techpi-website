@@ -7,10 +7,10 @@
       "el": "/el/privacy"
     },
     "kind": "legal",
-    "updated": "2026-10-17",
+    "updated": "2026-10-22",
     "updatedText": {
-      "en": "17 October 2026",
-      "el": "17 Οκτωβρίου 2026"
+      "en": "22 October 2026",
+      "el": "22 Οκτωβρίου 2026"
     }
   },
   "en": {
@@ -64,10 +64,13 @@
             "p": "**When you contact us.** If you email or call us, we receive the information you choose to give us: usually your name, your email address or telephone number, your organisation, the content of your message and any files you attach. During a call we may note what is needed to follow up."
           },
           {
+            "p": "**When you use the contact form.** The form on our Contact page asks for your name, your email address and your message, and optionally your organisation and a timeframe. When you send it, these details are delivered by email to {{email}} and handled like any other enquiry. The website does not keep a copy in a database. Before the form can be sent, Cloudflare Turnstile checks that the request comes from a person rather than automated software; for this purpose only, it processes technical signals such as your IP address and information about your browser. To prevent abuse, the number of messages that can be sent from one IP address in a short time is also limited."
+          },
+          {
             "p": "**When you visit the website.** To deliver the website and protect it from abuse, our hosting and security provider processes technical information about each request: your IP address, the date and time, the page requested, information your browser sends (such as its type and language) and security signals derived from these. We do not use this information to identify you or to build a profile."
           },
           {
-            "p": "**What we do not do.** The website has no forms and no user accounts. It does not use analytics, advertising, tracking or profiling tools, and it does not load fonts or scripts from other companies. See the [Cookies Policy]({{path.cookies}})."
+            "p": "**What we do not do.** Apart from the contact form, the website has no forms, and it has no user accounts. It does not use analytics, advertising, tracking or profiling tools, and it does not load fonts or scripts from other companies, except Cloudflare Turnstile on the Contact page. See the [Cookies Policy]({{path.cookies}})."
           }
         ]
       },
@@ -78,7 +81,7 @@
           {
             "ul": [
               "To answer your enquiry, prepare a proposal or quotation and discuss a possible project: steps taken at your request before entering into a contract (Article 6(1)(b) GDPR). Where an enquiry does not concern a possible contract, our legitimate interest in replying to messages sent to us (Article 6(1)(f) GDPR).",
-              "To deliver the website and keep it secure, including protection against automated attacks: our legitimate interest in operating a secure website (Article 6(1)(f) GDPR).",
+              "To deliver the website and keep it secure, including protection against automated attacks and protecting the contact form against spam with Cloudflare Turnstile: our legitimate interest in operating a secure website (Article 6(1)(f) GDPR).",
               "If we work together: performing our contract with you or your organisation (Article 6(1)(b) GDPR), and keeping invoices, accounting records and related correspondence as tax and commercial law require (Article 6(1)(c) GDPR).",
               "Where necessary, to establish, exercise or defend legal claims: our legitimate interest (Article 6(1)(f) GDPR)."
             ]
@@ -100,7 +103,8 @@
           },
           {
             "ul": [
-              "**Cloudflare** hosts the website and provides its network, domain name (DNS) and security services, for techpi.eu and techpi.gr. It processes the technical information described above. Cloudflare explains its own processing in its [privacy policy]({{url.cloudflarePrivacy}}).",
+              "**Cloudflare** hosts the website and provides its network, domain name (DNS) and security services, for techpi.eu and techpi.gr. It processes the technical information described above. It also provides Turnstile, the check that protects the contact form, and runs the small program that receives the form and passes it on for delivery. Cloudflare explains its own processing in its [privacy policy]({{url.cloudflarePrivacy}}).",
+              "**Resend** delivers the messages sent through the contact form to our mailbox. It receives the details you enter in the form and keeps records of each delivery for a limited time. Resend explains its own processing in its privacy policy, published on resend.com, and we use it under its data processing agreement.",
               "**Pointer.gr** hosts our email. Messages sent to and from @techpi.eu addresses are stored on its servers. We read our mail through the provider's webmail and through an email program on our own computer, which keeps a copy of the messages it downloads."
             ]
           },
@@ -118,6 +122,9 @@
         "blocks": [
           {
             "p": "Cloudflare is a United States company with a global network, so technical request data may be processed outside the European Economic Area, including in the United States. In its [privacy policy]({{url.cloudflarePrivacy}}), Cloudflare states that for transfers from the EEA to the United States it relies on its certification under the EU–U.S. Data Privacy Framework and, should that certification lapse, on standard contractual clauses."
+          },
+          {
+            "p": "Resend, which delivers the messages sent through the contact form, is also a United States company, so the details you enter in the form are processed in the United States. Resend states that it relies on standard contractual clauses, included in its data processing agreement, and on its participation in the EU–U.S. Data Privacy Framework."
           }
         ]
       },
@@ -128,6 +135,7 @@
           {
             "ul": [
               "**Enquiries that do not lead to a collaboration** (including requests for a quotation): 12 months after our most recent communication. After that we delete them, or anonymise them, unless a specific legal obligation or a justified need, such as an ongoing dispute, requires us to keep them longer.",
+              "**Messages sent through the contact form** arrive in our mailbox and are kept as described above for enquiries. Resend keeps records of each delivery, including the message, for a limited period under its own practices; the website itself keeps no copy.",
               "**Clients:** contracts, invoices, accounting records and related correspondence are kept for as long as the collaboration lasts and afterwards for as long as applicable tax and commercial law requires. These periods are set by law and can be longer than 12 months.",
               "**Technical data of website visits:** we do not run our own web server and do not keep our own visitor logs. Cloudflare processes request data under its own retention practices, described in its privacy policy."
             ]
@@ -182,7 +190,7 @@
         "heading": "Changes to this policy",
         "blocks": [
           {
-            "p": "We update this policy when the way we process personal data changes, for example if we add a contact form or an analytics tool. The date at the top shows the current version."
+            "p": "We update this policy when the way we process personal data changes, for example if we add an analytics tool or a new service provider. The date at the top shows the current version."
           }
         ]
       }
@@ -239,10 +247,13 @@
             "p": "**Όταν επικοινωνείτε μαζί μας.** Αν μας στείλετε email ή μας τηλεφωνήσετε, λαμβάνουμε όσα στοιχεία επιλέγετε να μας δώσετε: συνήθως το όνομά σας, τη διεύθυνση email ή τον αριθμό τηλεφώνου σας, τον οργανισμό σας, το περιεχόμενο του μηνύματος και τυχόν συνημμένα αρχεία. Σε μια κλήση μπορεί να κρατήσουμε σημειώσεις για όσα χρειάζονται για τη συνέχεια."
           },
           {
+            "p": "**Όταν χρησιμοποιείτε τη φόρμα επικοινωνίας.** Η φόρμα στη σελίδα Επικοινωνίας ζητά το ονοματεπώνυμό σας, τη διεύθυνση email σας και το μήνυμά σας και, προαιρετικά, την επιχείρηση ή τον οργανισμό σας και ένα χρονοδιάγραμμα. Όταν τη στέλνετε, τα στοιχεία αυτά παραδίδονται με email στο {{email}} και τα χειριζόμαστε όπως κάθε άλλο μήνυμα. Ο ιστότοπος δεν κρατά αντίγραφο σε βάση δεδομένων. Πριν σταλεί η φόρμα, το Cloudflare Turnstile ελέγχει ότι το αίτημα προέρχεται από άνθρωπο και όχι από αυτοματοποιημένο λογισμικό· μόνο για τον σκοπό αυτό επεξεργάζεται τεχνικές ενδείξεις, όπως τη διεύθυνση IP σας και πληροφορίες για το πρόγραμμα περιήγησής σας. Για την αποτροπή κατάχρησης, περιορίζεται επίσης ο αριθμός των μηνυμάτων που μπορούν να σταλούν από μία διεύθυνση IP σε σύντομο χρόνο."
+          },
+          {
             "p": "**Όταν επισκέπτεστε τον ιστότοπο.** Για να παρέχεται ο ιστότοπος και να προστατεύεται από κατάχρηση, ο πάροχος φιλοξενίας και ασφάλειας επεξεργάζεται τεχνικές πληροφορίες για κάθε αίτημα: τη διεύθυνση IP σας, την ημερομηνία και ώρα, τη σελίδα που ζητήθηκε, πληροφορίες που στέλνει το πρόγραμμα περιήγησής σας (όπως τον τύπο και τη γλώσσα του) και ενδείξεις ασφαλείας που προκύπτουν από αυτές. Δεν χρησιμοποιούμε αυτές τις πληροφορίες για να σας ταυτοποιήσουμε ή για να δημιουργήσουμε προφίλ."
           },
           {
-            "p": "**Τι δεν κάνουμε.** Ο ιστότοπος δεν έχει φόρμες ούτε λογαριασμούς χρηστών. Δεν χρησιμοποιεί εργαλεία στατιστικών, διαφήμισης, παρακολούθησης ή δημιουργίας προφίλ και δεν φορτώνει γραμματοσειρές ή scripts από άλλες εταιρείες. Δείτε την [Πολιτική Cookies]({{path.cookies}})."
+            "p": "**Τι δεν κάνουμε.** Εκτός από τη φόρμα επικοινωνίας, ο ιστότοπος δεν έχει φόρμες ούτε λογαριασμούς χρηστών. Δεν χρησιμοποιεί εργαλεία στατιστικών, διαφήμισης, παρακολούθησης ή δημιουργίας προφίλ και δεν φορτώνει γραμματοσειρές ή scripts από άλλες εταιρείες, εκτός από το Cloudflare Turnstile στη σελίδα Επικοινωνίας. Δείτε την [Πολιτική Cookies]({{path.cookies}})."
           }
         ]
       },
@@ -253,7 +264,7 @@
           {
             "ul": [
               "Για να απαντήσουμε στο μήνυμά σας, να ετοιμάσουμε πρόταση ή προσφορά και να συζητήσουμε ένα πιθανό έργο: ενέργειες κατόπιν αιτήματός σας πριν από τη σύναψη σύμβασης (άρθρο 6 παρ. 1 στοιχ. β΄ ΓΚΠΔ). Όταν ένα μήνυμα δεν αφορά πιθανή σύμβαση, το έννομο συμφέρον μας να απαντάμε στα μηνύματα που λαμβάνουμε (άρθρο 6 παρ. 1 στοιχ. στ΄ ΓΚΠΔ).",
-              "Για να παρέχεται ο ιστότοπος με ασφάλεια, μαζί με την προστασία από αυτοματοποιημένες επιθέσεις: το έννομο συμφέρον μας για τη λειτουργία ενός ασφαλούς ιστότοπου (άρθρο 6 παρ. 1 στοιχ. στ΄ ΓΚΠΔ).",
+              "Για να παρέχεται ο ιστότοπος με ασφάλεια, μαζί με την προστασία από αυτοματοποιημένες επιθέσεις και την προστασία της φόρμας επικοινωνίας από ανεπιθύμητα μηνύματα με το Cloudflare Turnstile: το έννομο συμφέρον μας για τη λειτουργία ενός ασφαλούς ιστότοπου (άρθρο 6 παρ. 1 στοιχ. στ΄ ΓΚΠΔ).",
               "Αν συνεργαστούμε: την εκτέλεση της σύμβασης με εσάς ή τον οργανισμό σας (άρθρο 6 παρ. 1 στοιχ. β΄ ΓΚΠΔ) και την τήρηση τιμολογίων, λογιστικών αρχείων και της σχετικής αλληλογραφίας, όπως απαιτεί η φορολογική και εμπορική νομοθεσία (άρθρο 6 παρ. 1 στοιχ. γ΄ ΓΚΠΔ).",
               "Όπου χρειάζεται, για τη θεμελίωση, άσκηση ή υποστήριξη νομικών αξιώσεων: το έννομο συμφέρον μας (άρθρο 6 παρ. 1 στοιχ. στ΄ ΓΚΠΔ)."
             ]
@@ -275,7 +286,8 @@
           },
           {
             "ul": [
-              "Η **Cloudflare** φιλοξενεί τον ιστότοπο και παρέχει τις υπηρεσίες δικτύου, ονομάτων τομέα (DNS) και ασφάλειας για τα techpi.eu και techpi.gr. Επεξεργάζεται τις τεχνικές πληροφορίες που περιγράφονται παραπάνω. Η Cloudflare εξηγεί τη δική της επεξεργασία στην [πολιτική απορρήτου]({{url.cloudflarePrivacy}}) της.",
+              "Η **Cloudflare** φιλοξενεί τον ιστότοπο και παρέχει τις υπηρεσίες δικτύου, ονομάτων τομέα (DNS) και ασφάλειας για τα techpi.eu και techpi.gr. Επεξεργάζεται τις τεχνικές πληροφορίες που περιγράφονται παραπάνω. Παρέχει επίσης το Turnstile, τον έλεγχο που προστατεύει τη φόρμα επικοινωνίας, και εκτελεί το μικρό πρόγραμμα που λαμβάνει τη φόρμα και τη διαβιβάζει για αποστολή. Η Cloudflare εξηγεί τη δική της επεξεργασία στην [πολιτική απορρήτου]({{url.cloudflarePrivacy}}) της.",
+              "Η **Resend** παραδίδει στο γραμματοκιβώτιό μας τα μηνύματα που στέλνονται μέσω της φόρμας επικοινωνίας. Λαμβάνει τα στοιχεία που συμπληρώνετε στη φόρμα και τηρεί στοιχεία κάθε αποστολής για περιορισμένο διάστημα. Η Resend εξηγεί τη δική της επεξεργασία στην πολιτική απορρήτου της, που δημοσιεύεται στο resend.com, και τη χρησιμοποιούμε βάσει της σύμβασης επεξεργασίας δεδομένων της.",
               "Η **Pointer.gr** φιλοξενεί το email μας. Τα μηνύματα προς και από διευθύνσεις @techpi.eu αποθηκεύονται στους διακομιστές της. Διαβάζουμε την αλληλογραφία μας μέσω του webmail του παρόχου και μέσω προγράμματος email στον δικό μας υπολογιστή, το οποίο κρατά αντίγραφο των μηνυμάτων που κατεβάζει."
             ]
           },
@@ -293,6 +305,9 @@
         "blocks": [
           {
             "p": "Η Cloudflare είναι αμερικανική εταιρεία με παγκόσμιο δίκτυο, επομένως τεχνικά δεδομένα αιτημάτων μπορεί να υποβάλλονται σε επεξεργασία εκτός του Ευρωπαϊκού Οικονομικού Χώρου, μεταξύ άλλων στις Ηνωμένες Πολιτείες. Στην [πολιτική απορρήτου]({{url.cloudflarePrivacy}}) της, η Cloudflare αναφέρει ότι για διαβιβάσεις από τον ΕΟΧ προς τις Ηνωμένες Πολιτείες βασίζεται στην πιστοποίησή της στο Πλαίσιο Προστασίας Δεδομένων ΕΕ-ΗΠΑ και, αν η πιστοποίηση αυτή πάψει να ισχύει, σε τυποποιημένες συμβατικές ρήτρες."
+          },
+          {
+            "p": "Η Resend, που παραδίδει τα μηνύματα της φόρμας επικοινωνίας, είναι επίσης αμερικανική εταιρεία, επομένως τα στοιχεία που συμπληρώνετε στη φόρμα υποβάλλονται σε επεξεργασία στις Ηνωμένες Πολιτείες. Η Resend αναφέρει ότι βασίζεται σε τυποποιημένες συμβατικές ρήτρες, που περιλαμβάνονται στη σύμβαση επεξεργασίας δεδομένων της, και στη συμμετοχή της στο Πλαίσιο Προστασίας Δεδομένων ΕΕ-ΗΠΑ."
           }
         ]
       },
@@ -303,6 +318,7 @@
           {
             "ul": [
               "**Μηνύματα που δεν οδηγούν σε συνεργασία** (μαζί με τα αιτήματα προσφοράς): 12 μήνες από την τελευταία μας επικοινωνία. Μετά τα διαγράφουμε ή τα ανωνυμοποιούμε, εκτός αν συγκεκριμένη νομική υποχρέωση ή δικαιολογημένη ανάγκη, όπως μια εκκρεμής διαφορά, απαιτεί να τα κρατήσουμε περισσότερο.",
+              "**Μηνύματα που στέλνονται μέσω της φόρμας επικοινωνίας:** φτάνουν στο γραμματοκιβώτιό μας και τηρούνται όπως περιγράφεται παραπάνω για τα μηνύματα. Η Resend τηρεί στοιχεία κάθε αποστολής, μαζί με το μήνυμα, για περιορισμένο διάστημα σύμφωνα με τις δικές της πρακτικές· ο ιστότοπος δεν κρατά κανένα αντίγραφο.",
               "**Πελάτες:** συμβάσεις, τιμολόγια, λογιστικά αρχεία και η σχετική αλληλογραφία τηρούνται για όσο διαρκεί η συνεργασία και στη συνέχεια για όσο απαιτεί η ισχύουσα φορολογική και εμπορική νομοθεσία. Τα διαστήματα αυτά ορίζονται από τον νόμο και μπορεί να ξεπερνούν τους 12 μήνες.",
               "**Τεχνικά δεδομένα επισκέψεων:** δεν λειτουργούμε δικό μας διακομιστή ιστού και δεν τηρούμε δικά μας αρχεία καταγραφής επισκεπτών. Η Cloudflare επεξεργάζεται τα δεδομένα αιτημάτων σύμφωνα με τις δικές της πρακτικές τήρησης, όπως τις περιγράφει στην πολιτική απορρήτου της."
             ]
@@ -357,7 +373,7 @@
         "heading": "Αλλαγές στην πολιτική",
         "blocks": [
           {
-            "p": "Ενημερώνουμε την πολιτική όταν αλλάζει ο τρόπος με τον οποίο επεξεργαζόμαστε προσωπικά δεδομένα, για παράδειγμα αν προσθέσουμε φόρμα επικοινωνίας ή εργαλείο στατιστικών. Η ημερομηνία στην αρχή δείχνει την τρέχουσα έκδοση."
+            "p": "Ενημερώνουμε την πολιτική όταν αλλάζει ο τρόπος με τον οποίο επεξεργαζόμαστε προσωπικά δεδομένα, για παράδειγμα αν προσθέσουμε εργαλείο στατιστικών ή νέο πάροχο υπηρεσιών. Η ημερομηνία στην αρχή δείχνει την τρέχουσα έκδοση."
           }
         ]
       }

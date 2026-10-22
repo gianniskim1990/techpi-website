@@ -1,13 +1,34 @@
 {
-  // Cloudflare Workers with Static Assets. No Worker script: the site is static.
-  // Verified behaviour and the reasons for these values: docs/production/architecture.md and routes.md.
+  // Cloudflare Workers with Static Assets. The site is static; a small Worker script handles only /api/* (the contact
+  // form endpoint, worker/contact.js). Every other request is answered by the static files first, with _redirects,
+  // _headers and the 404 page exactly as before.
+  // Verified behaviour and the reasons for these values: docs/production/architecture.md, routes.md and contact-form.md.
   "name": "techpi-website",
+  "main": "worker/index.js",
   "compatibility_date": "2026-10-02",
   // Enables Worker Previews (non-production branch preview builds). Inherits the settings above.
   "previews": {},
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "html_handling": "auto-trailing-slash"
-  }
+    "html_handling": "auto-trailing-slash",
+    // Only these paths run the Worker before the static files. Nothing else does.
+    "run_worker_first": ["/api/*"]
+  },
+  // Public, non-secret settings. The sender must be an address on the domain verified in Resend (docs/production/contact-form.md).
+  // Secrets (RESEND_API_KEY, TURNSTILE_SECRET_KEY, TURNSTILE_SITE_KEY) are set with `wrangler secret put`, never here.
+  "vars": {
+    "CONTACT_FROM": "TechPi website <website@notify.techpi.eu>"
+  },
+  // Per-IP limit on contact form submissions: 5 a minute, counted per Cloudflare location and approximate (eventually
+  // consistent), so a brake on abuse rather than an exact quota. Required: without this binding, or if it fails, the
+  // form refuses to send (worker/contact.js). A second line of defence behind Turnstile.
+  "ratelimits": [
+    {
+      "name": "CONTACT_RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 5, "period": 60 }
+    }
+  ]
 }
