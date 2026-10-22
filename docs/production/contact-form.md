@@ -31,7 +31,7 @@ anything else disables the form. Reply-To is the visitor's validated email, so r
 | 3 | Body at most 16 KB, counted while reading, whatever `Content-Length` says | 413 |
 | 4 | All three secrets, a valid `CONTACT_FROM` and the `CONTACT_RATE_LIMITER` binding present (fail closed; `GET` also answers 503, so the page keeps the form disabled) | 503 `unavailable` |
 | 5 | Rate limit: about 5 requests a minute per client IP (Workers Rate Limiting binding `CONTACT_RATE_LIMITER`). Required: if the binding throws, the request is refused (503 `unavailable`), and any answer other than `{ success: true }` counts as limited. It is never skipped | 429 `rate_limited` |
-| 6 | Fields: strings only; name 1–100, email (one address, ≤ 254), organisation ≤ 150, message 10–5000 characters, timeframe from a fixed list; no control characters in single-line fields (no CR/LF: no header injection); message line breaks normalised | 400 `invalid` + field names |
+| 6 | Fields: strings only; name 1–100, email (one address, ≤ 254), organisation ≤ 150, message 1–5000 characters (no 10-character minimum; only nonblank input is required), timeframe from a fixed list; no control characters in single-line fields (no CR/LF: no header injection); message line breaks normalised | 400 `invalid` + field names |
 | 7 | Honeypot field (`website`) empty. A filled one is refused, never reported as sent | 400 `rejected` |
 | 8 | Cloudflare Turnstile `siteverify`, server-side, with the client IP; `success`, action `contact` and the request's hostname must all match | 403 `verification_failed` |
 | 9 | Resend `POST /emails`; only a 2xx answer with a message id counts as sent | 502 `send_failed` |

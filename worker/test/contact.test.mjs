@@ -205,7 +205,8 @@ describe('validation', () => {
     ['email with injected header', { email: 'eve@example.com\r\nBcc: victim@example.com' }, 'email'],
     ['email with two addresses', { email: 'a@example.com,b@example.com' }, 'email'],
     ['organisation with a control character', { organisation: 'Org\u0000' }, 'organisation'],
-    ['message too short', { message: 'Hi' }, 'message'],
+    ['empty message', { message: '' }, 'message'],
+    ['whitespace-only message', { message: '   \n   ' }, 'message'],
     ['message too long', { message: 'x'.repeat(5001) }, 'message'],
     ['unknown timeframe', { timeframe: 'yesterday' }, 'timeframe'],
     ['non-string field', { name: { $ne: 1 } }, 'name'],
@@ -219,6 +220,16 @@ describe('validation', () => {
       assert.equal(calls.length, 0);
     });
   }
+  it('accepts a one-character message and sends it to the fixed recipient', async () => {
+    const r = await read(await post({ ...VALID, message: 'X' }));
+    assert.equal(r.status, 200);
+    assert.deepEqual(r.body, { ok: true });
+    const [call] = resendCalls();
+    assert.ok(call, 'one message sent via Resend');
+    const email = JSON.parse(call.init.body);
+    assert.deepEqual(email.to, [RECIPIENT]);
+    assert.match(email.text, /Message:\nX(?:\n|$)/);
+  });
   it('rejects malformed JSON', async () => {
     assert.equal((await post(null, { raw: '{"name":' })).status, 400);
   });
