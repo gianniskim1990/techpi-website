@@ -86,6 +86,8 @@ Each 301 goes directly to a canonical URL from TechPi's published 60-page route 
 
 **Scope limitation:** the 2026-10-19 audit counted 206 URLs but its machine-readable mapping is unavailable. The 189 explicit rules handle all currently recovered source routes; the rest remain on the old server pending separate identification. The 189-rule file is ready for owner review, but **not ready to be described as an exhaustive migration of all historic URLs**.
 
+**Canary outcome, 2026-10-22 — NOT FULLY PASSING:** owner tested two new paths on Apache. 301 correctly returned `Location: https://techpi.eu/el/`. The `[G,L]` test path returned WordPress `404` rather than Apache `410`. A suspected inherited cPanel 410 error handler may be taking over; the isolated candidate fix is `ErrorDocument 410 default` placed before canary `mod_rewrite`. **Do not deploy the full 189-rule file until a live request returns 410**, and test root/verification files/assets/subdomains are unaffected. If the override does not work, investigate server error handlers rather than treating 404 as pass.
+
 ## Before enabling on origin
 
 1. Confirm `https://pigiota314.gr` and `https://www.pigiota314.gr` currently reach the old WordPress host and identify Apache/LiteSpeed and the correct document root. Confirm if a CDN or existing redirect rule intercepts the request.
