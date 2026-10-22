@@ -20,7 +20,7 @@ anything else disables the form. Reply-To is the visitor's validated email, so r
 
 ## 2. Request flow and controls
 
-`POST /api/contact`, in this order; the first failure answers and stops:
+`GET /api/contact` and `HEAD /api/contact` expose only the public Turnstile site key when configured. They can be opened directly from a browser or a link on another site, regardless of `Sec-Fetch-Site`; they never expose private secrets.\n\n`POST /api/contact`, in this order; the first failure answers and stops:
 
 | # | Check | Answer on failure |
 |---|---|---|
