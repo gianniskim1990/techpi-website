@@ -54,7 +54,7 @@ anything else disables the form. Reply-To is the visitor's validated email, so r
 
 | Name | Kind | Where | Value |
 |---|---|---|---|
-| `CONTACT_FROM` | variable | `wrangler.jsonc` | `TechPi website <website@notify.techpi.eu>` (change here if a different sending subdomain is chosen) |
+| `CONTACT_FROM` | variable | `wrangler.jsonc` | `TechPi website <website@techpi.eu>` (owner-verified `techpi.eu` domain on Resend) |
 | `RESEND_API_KEY` | secret | Cloudflare | Resend API key, sending access, restricted to the sending domain |
 | `TURNSTILE_SECRET_KEY` | secret | Cloudflare | Turnstile widget secret key |
 | `TURNSTILE_SITE_KEY` | secret | Cloudflare | Turnstile widget site key (public, sent to the page by `GET /api/contact`; kept as a secret only so it survives deploys and stays out of the repository) |
@@ -62,29 +62,22 @@ anything else disables the form. Reply-To is the visitor's validated email, so r
 
 Secrets are never in the repository and never in `wrangler.jsonc`. `wrangler deploy` keeps existing secrets.
 
-## 4. Production setup (to do, in this order)
+## 4. Production setup (owner progress, 2026-10-22)
 
-Nothing below has been done. None of it changes the existing mailbox, the `techpi.eu` MX records or Pointer/cPanel.
+Owner-confirmed completed: Resend `techpi.eu` domain verified with Ireland (eu-west-1) selected, Resend
+Receiving disabled, a successful external-to-`info@techpi.eu` delivery test at the existing Pointer inbox, a sending-only
+Resend API key created, and a Cloudflare Turnstile widget created for `techpi.eu`. No API keys belong in GitHub or chat.
+**Still required:** store the three Worker secrets, confirm the live `CONTACT_FROM` value, and verify one actual submission.
+Do not modify the Pointer mailbox, apex MX/SPF records or DNS just for this form.
 
-### 4.1 Resend: a sending subdomain
+### 4.1 Resend: verified `techpi.eu` sender
 
-1. Create the Resend account (owner). Its Data Processing Addendum is part of the terms.
-2. **Domains → Add domain:** `notify.techpi.eu`. Region: **Ireland (eu-west-1)**.
-3. Resend shows the DNS records to add. For a subdomain they are on names under `notify.techpi.eu` only, typically:
-
-   | Type | Name (in the `techpi.eu` zone) | Value | Notes |
-   |---|---|---|---|
-   | TXT | `resend._domainkey.notify` | the DKIM public key Resend shows (`p=MIGf…`) | DKIM |
-   | MX | `send.notify` | `feedback-smtp.eu-west-1.amazonses.com`, priority 10 | bounce handling (SPF return path); **not** the apex MX |
-   | TXT | `send.notify` | `v=spf1 include:amazonses.com ~all` | SPF for the return path |
-
-   Copy the exact values from the Resend dashboard; they win over this table. In Cloudflare DNS add them as **DNS
-   only** (grey cloud). Do not touch the apex `MX`, the apex SPF `TXT`, or any record Pointer uses.
-4. **DMARC:** check whether `_dmarc.techpi.eu` exists. If it does, leave it; Resend's DKIM (`d=notify.techpi.eu`)
-   aligns with it in relaxed mode. If none exists, adding `_dmarc.techpi.eu TXT "v=DMARC1; p=none;"` is recommended
-   but is a separate decision, because it also covers the Pointer mailbox.
-5. Wait until Resend shows the domain as **Verified**.
-6. **API Keys → Create:** permission **Sending access**, domain **notify.techpi.eu** only. Copy it once.
+Use the existing verified `techpi.eu` sending domain, not the originally proposed `notify.techpi.eu` subdomain.
+The sender is `TechPi website <website@techpi.eu>` and the fixed recipient is `info@techpi.eu`.
+Resend Receiving must stay disabled to avoid competing with the existing incoming Pointer service.
+The user's external email test passed. If email delivery issues arise, review the real Cloudflare DNS records,
+especially apex MX/SPF/DKIM, rather than guessing or changing them pre-emptively.
+The API key should have sending-only permission scoped to the verified `techpi.eu` domain.
 
 ### 4.2 Cloudflare Turnstile
 
@@ -99,7 +92,9 @@ widget; production is unaffected.
 
 ### 4.3 Cloudflare secrets for the `techpi-website` Worker
 
-From the repository root, logged in to the right account (`npx wrangler whoami`):
+Use Cloudflare dashboard → Workers & Pages → **techpi-website** → Settings → Variables and Secrets → Add, type **Secret**. Do not put secret values in chat, source control, screenshots or deployment commands.
+
+Alternatively, from an up-to-date repository root with a confirmed Wrangler login, use:
 
 ```bash
 npx wrangler secret put RESEND_API_KEY
@@ -113,15 +108,14 @@ npx wrangler secret put TURNSTILE_SECRET_KEY
 npx wrangler secret put TURNSTILE_SITE_KEY
 ```
 
-Each command prompts for the value; nothing is written to disk. Alternatively: Workers & Pages → `techpi-website` →
-Settings → Variables and Secrets → Add → type **Secret**.
+Each command prompts for its secret value. Confirm the account and target Worker before changing production settings.
 
 ### 4.4 Check after deploying
 
 1. `https://techpi.eu/api/contact` answers `{"ok":true,"siteKey":"…"}` (503 means a secret, `CONTACT_FROM` or the rate-limit binding is missing).
 2. `/contact`: the Send button is enabled; there is no CSP error in the browser console.
 3. One real test message, **only after the owner approves it**: it arrives at info@techpi.eu from
-   `website@notify.techpi.eu`, and Reply goes to the address typed in the form. Check the headers show DKIM `pass`.
+   `website@techpi.eu`, and Reply goes to the address typed in the form. Check the headers show DKIM `pass`.
 4. Resend dashboard → Logs: one delivered email.
 
 ## 5. Tests run (2026-10-22)
