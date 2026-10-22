@@ -283,7 +283,7 @@ RewriteRule ^en_gb/portfolio/souvleri-website/?$ https://techpi.eu/work [R=301,L
 
 # 68. 301 /en_gb/portfolio/tsl-impex-website-logotype/
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
-RewriteRule ^en_gb/portfolio/tsl-impex-website-logotype/?$ https://techpi.eu/el/work [R=301,L,QSD,NC]
+RewriteRule ^en_gb/portfolio/tsl-impex-website-logotype/?$ https://techpi.eu/work [R=301,L,QSD,NC]
 
 # 69. 410 /en_gb/portfolio/yakamos-social-media-digital-marketing/
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
