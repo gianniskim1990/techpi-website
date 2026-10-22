@@ -1,0 +1,115 @@
+# DRAFT ONLY — pigiota314.gr apex/www -> Greek TechPi 301 redirects.
+# NOT installed. For old WordPress Apache/LiteSpeed DOCUMENT ROOT .htaccess ONLY.
+# Back up existing .htaccess. Insert this block ABOVE # BEGIN WordPress.
+# Do NOT paste in techpi.eu's public/_redirects, do NOT replace WordPress rules.
+# Host guard on EVERY rule is deliberate: protect shared-host subdomains.
+# Not a complete old-site URL inventory: do not add an all-path catch-all.
+# Old /wp-content assets, /wp-admin, /wp-json, API and app subdomains are not redirected.
+# Query parameters are retained by Apache unless explicitly changed.
+# Requires mod_rewrite and confirmed Apache/LiteSpeed origin.
+# Do not deploy without owner approval, old-host access check and backup.
+#
+# BEGIN TECHPI PIGIOTA314-GR MIGRATION — REVIEW ONLY
+<IfModule mod_rewrite.c>
+RewriteEngine On
+# Homepage
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^$ https://techpi.eu/el/ [R=301,L]
+
+# Portfolio
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^portfolio/?$ https://techpi.eu/el/work [R=301,L]
+
+# Contact
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^contact/?$ https://techpi.eu/el/contact [R=301,L]
+
+# About (legacy URL)
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^about-us/?$ https://techpi.eu/el/about [R=301,L]
+
+# Booking systems landing
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^booking-systems/?$ https://techpi.eu/el/capabilities [R=301,L]
+
+# Airbnb websites landing
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^website-for-airbnb/?$ https://techpi.eu/el/capabilities [R=301,L]
+
+# Online ordering landing
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^online-paraggelies-estiasis/?$ https://techpi.eu/el/capabilities [R=301,L]
+
+# Rocketeer (Rocketeer Dispatch)
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/rocketeer-custom-web-application/?$ https://techpi.eu/el/work/rocketeer [R=301,L]
+
+# Arman's Ethnic Street Food – online ordering platform
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/armans-ethnic-street-food-online-ordering/?$ https://techpi.eu/el/work/armans [R=301,L]
+
+# Λογοθεραπεία Ξάνθη – Website Redesign
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/logotherapia-xanthi-website-redesign/?$ https://techpi.eu/el/work/logotherapia-xanthi [R=301,L]
+
+# Level Up Education App
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/level-up-education-app/?$ https://techpi.eu/el/work/level-up-education-app [R=301,L]
+
+# Saloon
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/saloon/?$ https://techpi.eu/el/work/saloon [R=301,L]
+
+# Physio
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/physio/?$ https://techpi.eu/el/work/physio [R=301,L]
+
+# Project4You
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/project4you/?$ https://techpi.eu/el/work/project4you [R=301,L]
+
+# Mavie Website Rebranding
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/mavie-website-rebranding/?$ https://techpi.eu/el/work/mavie [R=301,L]
+
+# iliastech
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/iliastech/?$ https://techpi.eu/el/work/iliastech [R=301,L]
+
+# Alexandra Apartment
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/alexandra-apartment/?$ https://techpi.eu/el/work/alexandra-apartment [R=301,L]
+
+# Blackjack Streetwear
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/blackjack-streetwear/?$ https://techpi.eu/el/work/blackjack-streetwear [R=301,L]
+
+# Level Up Education (website and marketing)
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/level-up-education/?$ https://techpi.eu/el/work/level-up-education [R=301,L]
+
+# Logotherapia Xanthi (earlier entry)
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/logotherapia-xanthi/?$ https://techpi.eu/el/work/logotherapia-xanthi [R=301,L]
+
+# Itsallaboutxanthi
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/itsallaboutxanthi/?$ https://techpi.eu/el/work/itsallaboutxanthi [R=301,L]
+
+# Juliette Coffee Roasters
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/juliette-coffee-roasters/?$ https://techpi.eu/el/work/juliette-coffee-roasters [R=301,L]
+
+# Local Xanthi
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/local-xanthi/?$ https://techpi.eu/el/work/local-xanthi [R=301,L]
+
+# Apox FC
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/apox-fc/?$ https://techpi.eu/el/work/apox-fc [R=301,L]
+
+# Emoved
+RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr$ [NC]
+RewriteRule ^case-studies/emoved/?$ https://techpi.eu/el/work/emoved [R=301,L]
+</IfModule>
+# END TECHPI PIGIOTA314-GR MIGRATION
