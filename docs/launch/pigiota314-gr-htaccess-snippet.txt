@@ -10,6 +10,9 @@
 # A 410 Gone requires a useful branded response page (Apache's default is allowed initially).
 # This block has no production effect until independently approved and installed by the owner.
 # BEGIN TECHPI PIGIOTA314-GR MIGRATION
+# PENDING CANARY: 410 originally returned 404 (suspected inherited cPanel error handling).
+# Keep only if the separate live 410 test returns HTTP 410 after this override.
+ErrorDocument 410 default
 <IfModule mod_rewrite.c>
 RewriteEngine On
 # 1. 301 /
