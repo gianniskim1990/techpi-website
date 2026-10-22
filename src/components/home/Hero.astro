@@ -2,6 +2,7 @@
 import type { HomeCopy } from '../../content/home.en';
 import { pathFor } from '../../i18n/routes';
 import { Image } from 'astro:assets';
+import EuHeroPanel from './EuHeroPanel.astro';
 import TransformationMap from './TransformationMap.astro';
 import { heroVisuals } from './hero-visual';
 import type { Locale } from '../../i18n/locales';
@@ -12,7 +13,8 @@ interface Props {
 }
 
 const { copy, locale } = Astro.props;
-// One photograph per language, chosen at build time (hero-visual.ts).
+// The Greek homepage has a photograph (hero-visual.ts); the English homepage has the EU projects panel instead
+// (EuHeroPanel.astro), which says what TechPi builds for EU-funded projects. Chosen at build time from the locale.
 const visual = heroVisuals[locale];
 ---
 
@@ -25,10 +27,12 @@ const visual = heroVisuals[locale];
     When the intro plays they play under its blurred backdrop (src/components/home/Intro.astro) and are at rest
     when it clears. */}
 <section class="hero s-paper" aria-labelledby="hero-h" data-scene>
-  <div class="stage">
+  <div class="stage" class:list={{ eu: !visual }}>
+    {!visual && <EuHeroPanel />}
     {/* The visual: one real image in the corner the arc opens, clipped by the arc's own circle so the arc is its edge.
         Its bottom edge is the map's line (--map-b, measured by src/scripts/motion.ts). On tablets and phones, where the
         arc is too small to frame anything, it is a quiet band above the map. Decorative. */}
+    {visual && (
     <div class="visual" aria-hidden="true">
       <div class="frame">
         <Image
@@ -45,6 +49,7 @@ const visual = heroVisuals[locale];
         />
       </div>
     </div>
+    )}
     <svg class="arc" aria-hidden="true" focusable="false">
       {/* A circle in pixel units, so the hairline keeps its exact weight. Turned so the stroke starts just
           above the top edge of the window and runs down to the right edge when it draws. */}
@@ -92,6 +97,14 @@ const visual = heroVisuals[locale];
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+  }
+
+  /* English desktop: the map is taller, so the EU projects panel beside it has room to be read (EuHeroPanel.astro). The
+     map's own design is unchanged: its curves stretch and its labels keep their places. */
+  @media (min-width: 901px) {
+    .hero .stage.eu :global(.tmap) {
+      height: clamp(300px, 45vh, 460px);
+    }
   }
 
   .statement {

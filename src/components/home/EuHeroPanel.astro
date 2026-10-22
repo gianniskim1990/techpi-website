@@ -1,0 +1,428 @@
+---
+import { euCopy } from '../../content/eu';
+import { pathFor } from '../../i18n/routes';
+
+/**
+ * The English homepage's hero visual: an illustration of what TechPi builds for EU-funded projects, a project website
+ * with its partners, work packages, deliverables, results, events and stakeholders, with a line and one call to action
+ * under it. It replaces the cropped laboratory photograph, which did not say what TechPi offers.
+ *
+ * It is an ILLUSTRATION, drawn here in markup (no photograph, no licence): generic placeholders ("Project name"), no
+ * real project, partner, programme, number or funding claim, no EU flag, no stars, no blue and yellow
+ * (src/content/eu.ts lists what must never be claimed). The section names are the ones the EU Projects page uses for
+ * the content model of a project website (euCopy.page.websites.model). The picture is hidden from assistive
+ * technology; the line and the link beside it carry the meaning.
+ */
+const model = euCopy.en.page.websites.model;
+const LINE = 'Digital solutions for EU-funded projects';
+const CTA = 'Explore EU Project Solutions';
+const href = pathFor('euProjects', 'en');
+const [partners, workPackages, deliverables] = [model[0], model[1], model[2]];
+---
+
+<div class="eu-unit">
+  <div class="mock" aria-hidden="true">
+   <div class="in">
+    <div class="chrome">
+      <i></i><i></i><i></i>
+      <span class="bar"></span>
+      <span class="tag">Illustrative example</span>
+    </div>
+    <div class="site">
+      <div class="head">
+        <span class="mark"></span>
+        <b class="pname">Project name</b>
+        <nav>{model.map((m) => <span>{m}</span>)}</nav>
+      </div>
+      <div class="hero">
+        <div class="copy">
+          <span class="h1"></span><span class="h1 short"></span>
+          <span class="p"></span><span class="p mid"></span>
+        </div>
+        <svg class="net" viewBox="0 0 200 120" focusable="false">
+          <g class="links">
+            <path d="M100 60 L38 28 M100 60 L168 24 M100 60 L26 88 M100 60 L174 92 M100 60 L100 108 M38 28 L26 88 M168 24 L174 92" />
+          </g>
+          <circle class="hub" cx="100" cy="60" r="9" />
+          {
+            [
+              [38, 28],
+              [168, 24],
+              [26, 88],
+              [174, 92],
+              [100, 108],
+            ].map(([x, y]) => <circle class="node" cx={x} cy={y} r="5" />)
+          }
+        </svg>
+      </div>
+      <div class="tiles">
+        <div class="tile">
+          <b>{workPackages}</b>
+          <span class="meter" style="--w:78%"></span>
+          <span class="meter" style="--w:54%"></span>
+        </div>
+        <div class="tile">
+          <b>{deliverables}</b>
+          <span class="doc"></span><span class="doc short"></span>
+        </div>
+        <div class="tile">
+          <b>{partners}</b>
+          <span class="dots"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+      </div>
+    </div>
+   </div>
+  </div>
+  <div class="say">
+    <p class="line">{LINE}</p>
+    <a class="eu-cta" href={href}>{CTA}<span class="arr" aria-hidden="true">→</span></a>
+  </div>
+</div>
+
+<style>
+  /* Desktop: the unit floats in the top right of the hero, from just under the header down to just above the map's line
+     (--map-b, measured by src/scripts/motion.ts). It sits above the arc: the arc passes behind it and carries on below
+     it, so the picture is never crossed by the line. */
+  .eu-unit {
+    position: absolute;
+    z-index: 2;
+    top: 96px;
+    right: var(--space-margin);
+    bottom: calc(100% - var(--map-b, 480px) + 52px);
+    width: min(660px, 47vw);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .mock {
+    flex: 1 1 0;
+    min-height: 0;
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--color-sheet);
+    border: 1px solid rgb(8 14 30 / 0.16);
+    border-radius: 8px;
+    color: var(--color-ink);
+    user-select: none;
+  }
+  /* Everything inside is in em: 1em is a fifty-eighth of the card's width, so the drawing scales as a whole. (Container
+     units resolve against an ancestor container, so this is a child of .mock, not .mock itself.) */
+  .in {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    font-size: calc(100cqw / 58);
+    font-weight: var(--weight-ui);
+    line-height: 1.2;
+  }
+  .chrome {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    padding: 0.9em 1.3em;
+    border-bottom: 1px solid var(--color-rule);
+    background: var(--color-paper);
+  }
+  .chrome i {
+    width: 0.8em;
+    height: 0.8em;
+    border-radius: 50%;
+    background: var(--color-rule);
+  }
+  .chrome .bar {
+    flex: 1;
+    height: 1.4em;
+    margin: 0 1em 0 0.8em;
+    border-radius: 999px;
+    background: rgb(8 14 30 / 0.06);
+  }
+  .chrome .tag {
+    font-size: 0.95em;
+    color: var(--color-slate);
+    letter-spacing: 0.02em;
+  }
+  .site {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 1.3em 1.9em 1.5em;
+    gap: 1.2em;
+  }
+  .head {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 0.9em;
+  }
+  .mark {
+    width: 2.1em;
+    height: 2.1em;
+    border-radius: 50%;
+    border: 0.35em solid var(--color-techpi-blue);
+  }
+  .pname {
+    font-size: 1.35em;
+    font-weight: var(--weight-name);
+    letter-spacing: 0.01em;
+  }
+  .head nav {
+    margin-left: auto;
+    display: flex;
+    gap: 1.4em;
+    font-size: 1.05em;
+    color: var(--color-graphite);
+    white-space: nowrap;
+  }
+  .hero {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 2em;
+    align-items: center;
+  }
+  .copy {
+    display: grid;
+    gap: 0.7em;
+    justify-items: start;
+  }
+  .h1,
+  .p {
+    display: block;
+    border-radius: 999px;
+  }
+  .h1 {
+    width: 92%;
+    height: 1.6em;
+    background: var(--color-ink);
+  }
+  .h1.short {
+    width: 62%;
+  }
+  .p {
+    width: 86%;
+    height: 0.8em;
+    background: var(--color-rule);
+  }
+  .p.mid {
+    width: 70%;
+  }
+  .net {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    overflow: visible;
+  }
+  .links path {
+    fill: none;
+    stroke: var(--color-slate);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+    opacity: 0.55;
+  }
+  .hub {
+    fill: var(--color-techpi-blue);
+  }
+  .node {
+    fill: var(--color-sheet);
+    stroke: var(--color-ink);
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+  }
+  .tiles {
+    flex: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2em;
+  }
+  .tile {
+    display: grid;
+    gap: 0.7em;
+    align-content: start;
+    padding: 1.1em 1.3em 1.3em;
+    border: 1px solid var(--color-rule);
+    border-radius: 5px;
+    background: var(--color-paper);
+  }
+  .tile b {
+    font-size: 1.1em;
+    font-weight: var(--weight-ui);
+    color: var(--color-graphite);
+  }
+  .meter {
+    display: block;
+    height: 0.65em;
+    border-radius: 999px;
+    background: linear-gradient(to right, var(--color-techpi-blue) var(--w), rgb(8 14 30 / 0.1) var(--w));
+  }
+  .doc {
+    display: block;
+    height: 0.65em;
+    border-radius: 999px;
+    background: rgb(8 14 30 / 0.2);
+  }
+  .doc.short {
+    width: 60%;
+  }
+  .dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7em;
+  }
+  .dots i {
+    width: 1.7em;
+    height: 1.7em;
+    border-radius: 50%;
+    background: var(--color-ink);
+    opacity: 0.85;
+  }
+  .dots i:nth-child(2n) {
+    background: var(--color-techpi-blue);
+    opacity: 1;
+  }
+
+  /* The line and the call to action, directly under the picture. */
+  .say {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .line {
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    color: var(--color-ink);
+  }
+  .eu-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 22px;
+    border: 1px solid var(--color-ink);
+    border-radius: 999px;
+    color: var(--color-ink);
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color 300ms var(--ease-state),
+      color 300ms var(--ease-state),
+      border-color 300ms var(--ease-state);
+  }
+  .eu-cta:hover {
+    background: var(--color-techpi-blue);
+    border-color: var(--color-techpi-blue);
+    color: var(--color-sheet);
+  }
+  .eu-cta:focus-visible {
+    outline: 3px solid var(--color-techpi-blue);
+    outline-offset: 3px;
+  }
+
+  /* Tablets and phones: an in-flow card above the map, with the line and the link under it. */
+  @media (max-width: 900px) {
+    .eu-unit {
+      position: relative;
+      inset: auto;
+      width: 100%;
+      flex: none;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    /* Wide and shallow on tablets, so the headline still starts in the first screen. */
+    .mock {
+      flex: none;
+      aspect-ratio: 58 / 24;
+    }
+    /* Shorter tiles, so the drawing above them keeps room: one bar, one line, one row of dots. */
+    .meter:nth-of-type(2),
+    .doc:nth-of-type(2) {
+      display: none;
+    }
+    .dots {
+      flex-wrap: nowrap;
+      gap: 0.5em;
+    }
+    .dots i {
+      width: 1.2em;
+      height: 1.2em;
+    }
+    .tile {
+      padding: 0.9em 1.1em 1em;
+    }
+    .say {
+      flex-wrap: wrap;
+      gap: 12px 20px;
+    }
+  }
+  @media (max-width: 520px) {
+    /* A phone: the section names in the header would be too small, so they go; the card is a little taller and its
+       drawing a little larger, so the three tiles can still be read. */
+    .mock {
+      aspect-ratio: 42 / 26;
+    }
+
+    .in {
+      font-size: calc(100cqw / 42);
+    }
+    .head nav {
+      display: none;
+    }
+    .chrome .tag {
+      display: none;
+    }
+    .say {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .line {
+      font-size: 1.0625rem;
+    }
+  }
+
+  /* ---------- Motion (only under html.mo: scripting runs and motion is allowed) ---------- */
+  /* The unit arrives after the headline has settled: it fades up, then the tiles come in one after another. */
+  :global(.mo) .eu-unit {
+    animation: eu-in 1200ms var(--ease-reveal) both;
+    animation-delay: 560ms;
+  }
+  :global(.mo) .tile,
+  :global(.mo) .say {
+    animation: eu-fade 900ms var(--ease-reveal) both;
+    animation-delay: calc(900ms + var(--n, 0) * 110ms);
+  }
+  .tile:nth-child(2) {
+    --n: 1;
+  }
+  .tile:nth-child(3) {
+    --n: 2;
+  }
+  .say {
+    --n: 3;
+  }
+  @keyframes eu-in {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+  }
+  @keyframes eu-fade {
+    from {
+      opacity: 0;
+    }
+  }
+  /* Scroll scene (html.sc): the unit lifts a little slower than the headline and fades as the hero leaves. */
+  :global(.sc) .eu-unit {
+    translate: 0 calc(var(--out, 0) * -7vh);
+    opacity: calc(1 - var(--out, 0) * 1.5);
+  }
+</style>

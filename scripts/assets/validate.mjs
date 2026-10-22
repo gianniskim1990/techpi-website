@@ -71,25 +71,33 @@ if (fs.existsSync(distAstro)) {
   }
 }
 
-// The homepage hero visual (src/components/home/hero-visual.ts): one photograph per language, chosen at build time.
-// Each homepage ships its own, decorative, as WebP; neither ships the other language's file, and no other page has them.
+// The homepage hero visual. Greek (src/components/home/hero-visual.ts): one decorative WebP photograph, chosen at build time.
+// English (src/components/home/EuHeroPanel.astro): no photograph, but the EU projects panel with its line and its link to
+// /eu-projects. Neither homepage ships the other's visual, and no other page carries a hero visual.
 {
   const root = path.resolve(distAstro, '..');
   const page = (p) => (fs.existsSync(path.join(root, p)) ? fs.readFileSync(path.join(root, p), 'utf8') : '');
-  const visual = (h) => (h.match(/<div class="visual"[\s\S]*?<\/div><\/div>/) || [''])[0];
-  for (const [file, own, other, lang] of [
-    ['index.html', 'hero-en', 'hero-el', 'English'],
-    ['el/index.html', 'hero-el', 'hero-en', 'Greek'],
-  ]) {
-    const html = page(file);
-    const v = visual(html);
-    check(v.includes('aria-hidden="true"'), `${file}: the hero visual is not hidden from assistive technology`);
-    check(new RegExp(`src="/_astro/${own}\\.[^"]+\\.webp"`).test(v) && /srcset="[^"]*\.webp \d+w/.test(v), `${file}: the ${lang} hero image (${own}) is missing or not WebP`);
-    check(/ alt[ =>]/.test(v) && !/alt="[^"]+"/.test(v), `${file}: the hero image must be decorative (empty alt)`);
-    check(!html.includes(`${other}.`), `${file}: carries the other language's hero image (${other})`);
-  }
+
+  const el = page('el/index.html');
+  const photo = (el.match(/<div class="visual"[\s\S]*?<\/div><\/div>/) || [''])[0];
+  check(photo.includes('aria-hidden="true"'), 'el/index.html: the hero photograph is not hidden from assistive technology');
+  check(/src="\/_astro\/hero-el\.[^"]+\.webp"/.test(photo) && /srcset="[^"]*\.webp \d+w/.test(photo), 'el/index.html: the Greek hero photograph (hero-el) is missing or not WebP');
+  check(/ alt[ =>]/.test(photo) && !/alt="[^"]+"/.test(photo), 'el/index.html: the hero photograph must be decorative (empty alt)');
+  check(!/class="eu-unit/.test(el), 'el/index.html: carries the English EU projects panel');
+
+  const en = page('index.html');
+  const unit = (en.match(/<div class="eu-unit[\s\S]*?<\/a><\/div><\/div>/) || [''])[0];
+  check(unit !== '', 'index.html: the EU projects panel (eu-unit) is missing from the English hero');
+  check(/<div class="mock"[^>]*aria-hidden="true"/.test(unit), 'index.html: the EU projects illustration is not hidden from assistive technology');
+  check(unit.includes('Digital solutions for EU-funded projects'), 'index.html: the supporting line "Digital solutions for EU-funded projects" is missing');
+  check(/<a class="eu-cta[^"]*" href="\/eu-projects"[^>]*>Explore EU Project Solutions/.test(unit), 'index.html: the call to action must read "Explore EU Project Solutions" and link to /eu-projects');
+  check(!/<div class="visual"/.test(en) && !/hero-(en|el)\./.test(en), 'index.html: the English hero must not carry a photograph');
+  // The illustration makes no claim: no programme, funding or EU-emblem wording beyond the supporting line, and no picture.
+  check(!/(European Commission|Horizon|Erasmus|Interreg|co-funded|funded by|flag|stars)/i.test(unit.replace('Digital solutions for EU-funded projects', '')), 'index.html: the EU projects panel carries a programme, funding or EU-emblem claim');
+  check(!/<img/.test(unit), 'index.html: the EU projects panel must be markup, not a picture');
+
   for (const p of ['about.html', 'contact.html', 'work.html', 'capabilities.html', 'eu-projects.html', 'privacy.html', 'el/about.html']) {
-    check(!/hero-(en|el)\./.test(page(p)), `${p}: carries a homepage hero image`);
+    check(!/hero-(en|el)\./.test(page(p)) && !/class="eu-unit/.test(page(p)), `${p}: carries a homepage hero visual`);
   }
 }
 
