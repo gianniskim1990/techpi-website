@@ -1,0 +1,361 @@
+---
+import { Image } from 'astro:assets';
+import { pathFor } from '../../i18n/routes';
+import { bizThemes } from './biz-themes';
+
+/**
+ * The Greek homepage's hero background: six real photographs of the services Greek businesses come to TechPi for (a
+ * website on a laptop, a dashboard, a web design wireframe board, a mobile app, an online payment, a workflow sketch),
+ * composed as one large atmospheric layer behind the headline and the diagram. The same language as the English hero
+ * (EuHeroBackdrop.astro): overlapping layers, soft masks, a quiet grade and a Paper veil, three depths that drift apart on
+ * scroll. The arrangement is its own, so the two homepages are related but not the same picture.
+ *
+ * Under it: one line and one call to action to the capabilities page.
+ *
+ * Decorative (empty alt, aria-hidden). No logos, client names or results: the photographs show tools and work, and nothing
+ * claims TechPi made what is pictured. Sources and licences: docs/design/hero-visual/SOURCES.md.
+ */
+const LINE = 'Ψηφιακές λύσεις για επιχειρήσεις';
+const CTA = 'Δείτε τις δυνατότητές μας';
+const href = pathFor('capabilities', 'el');
+---
+
+<div class="biz-bg" aria-hidden="true">
+  {
+    bizThemes.map((t) => (
+      <figure class={`ph ph-${t.key}`} data-area={t.area}>
+        <Image
+          src={t.image}
+          alt=""
+          widths={[640, 960, 1280]}
+          sizes="(max-width: 760px) 90vw, (max-width: 1100px) 60vw, 46vw"
+          format="webp"
+          quality={72}
+          loading="eager"
+          fetchpriority="low"
+          decoding="async"
+          style={`object-position:${t.focus}`}
+        />
+      </figure>
+    ))
+  }
+  <div class="veil"></div>
+</div>
+<div class="biz-say">
+  <p class="line">{LINE}</p>
+  <a class="biz-cta" href={href}>{CTA}<span class="arr" aria-hidden="true">→</span></a>
+</div>
+
+<style>
+  /* The whole layer sits behind the stage's content (the stage isolates it) and never takes a click. */
+  .biz-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: clip;
+  }
+
+  /* Each photograph is a layer with a soft mask, intersected with a fade on all four sides, so it has no edges: it dissolves
+     into the Paper. --o is its resting opacity, --d its depth (how far it drifts as the hero leaves, in vh). */
+  .ph {
+    position: absolute;
+    margin: 0;
+    opacity: var(--o, 0.5);
+    -webkit-mask-image: var(--mask), linear-gradient(to right, transparent, #000 22%, #000 78%, transparent), linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+    mask-image: var(--mask), linear-gradient(to right, transparent, #000 22%, #000 78%, transparent), linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+  .ph :global(img) {
+    position: absolute;
+    inset: -7%;
+    width: 114%;
+    height: 114%;
+    max-width: none;
+    object-fit: cover;
+    /* One grade for the set: a little muted and lifted, so dark screens stay mid-tone behind the Ink text. */
+    filter: saturate(0.74) contrast(0.94) brightness(1.08);
+  }
+
+  /* Desktop: the website on its laptop is the large layer at the top right; the wireflow board and the dashboard form a band
+     across the top; the phone runs down the right edge; the card payment and the workflow sketch sit in the lower right.
+     The left and the lower left are left to the diagram and the headline. Overlaps are deliberate. */
+  .ph-website {
+    --o: 0.9;
+    --d: -10;
+    --mask: radial-gradient(ellipse 56% 60% at 56% 44%, #000 32%, transparent 100%);
+    right: -8%;
+    top: -12%;
+    width: 50%;
+    height: 58%;
+  }
+  .ph-design {
+    --o: 0.6;
+    --d: -6;
+    --mask: radial-gradient(ellipse 54% 58% at 50% 50%, #000 24%, transparent 100%);
+    left: 33%;
+    top: -12%;
+    width: 30%;
+    height: 48%;
+  }
+  .ph-dashboard {
+    --o: 0.42;
+    --d: -16;
+    --mask: radial-gradient(ellipse 54% 58% at 50% 50%, #000 16%, transparent 100%);
+    left: 14%;
+    top: -14%;
+    width: 28%;
+    height: 40%;
+  }
+  .ph-app {
+    --o: 0.74;
+    --d: 6;
+    --mask: radial-gradient(ellipse 54% 58% at 58% 50%, #000 30%, transparent 100%);
+    right: -7%;
+    top: 30%;
+    width: 30%;
+    height: 46%;
+  }
+  .ph-store {
+    --o: 0.5;
+    --d: 14;
+    --mask: radial-gradient(ellipse 54% 58% at 50% 50%, #000 30%, transparent 100%);
+    left: 56%;
+    bottom: -14%;
+    width: 30%;
+    height: 42%;
+  }
+  .ph-workflow {
+    --o: 0.58;
+    --d: 20;
+    --mask: radial-gradient(ellipse 54% 58% at 56% 50%, #000 30%, transparent 100%);
+    right: -5%;
+    bottom: -12%;
+    width: 28%;
+    height: 42%;
+  }
+
+  /* The veil keeps the words dominant: Paper gathers behind the headline and the support line (bottom left), a little along
+     the top for the navigation, behind "Επιλεγμένα έργα" at the bottom right, and thinly across the rest. */
+  .veil {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to bottom, rgb(240 238 233 / 0.7) 0, rgb(240 238 233 / 0) 9%),
+      radial-gradient(ellipse 58% 46% at 20% 90%, rgb(240 238 233 / 0.92) 30%, rgb(240 238 233 / 0) 100%),
+      radial-gradient(ellipse 12% 7% at 90% 89%, rgb(240 238 233 / 0.9) 30%, rgb(240 238 233 / 0) 100%),
+      rgb(240 238 233 / 0.1);
+  }
+
+  /* The line and the call to action, top right, on a quiet Paper chip so they read over any photograph. */
+  .biz-say {
+    position: absolute;
+    z-index: 2;
+    top: 92px;
+    right: var(--space-margin);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 8px 8px 8px 20px;
+    border-radius: 999px;
+    background: rgb(240 238 233 / 0.86);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .line {
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    color: var(--color-ink);
+  }
+  .biz-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 22px;
+    border: 1px solid var(--color-ink);
+    border-radius: 999px;
+    color: var(--color-ink);
+    font-size: var(--text-small);
+    font-weight: var(--weight-ui);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color 300ms var(--ease-state),
+      color 300ms var(--ease-state),
+      border-color 300ms var(--ease-state);
+  }
+  .biz-cta:hover {
+    background: var(--color-techpi-blue);
+    border-color: var(--color-techpi-blue);
+    color: var(--color-sheet);
+  }
+  .biz-cta:focus-visible {
+    outline: 3px solid var(--color-techpi-blue);
+    outline-offset: 3px;
+  }
+
+  /* Tablets: the composition is rebuilt for a tall, narrow stage; the line and the link sit in flow above the map. */
+  @media (max-width: 900px) {
+    .ph-dashboard {
+      left: -12%;
+      top: -3%;
+      width: 56%;
+      height: 17%;
+    }
+    .ph-design {
+      left: 28%;
+      top: 4%;
+      width: 46%;
+      height: 19%;
+    }
+    .ph-website {
+      right: -16%;
+      top: -4%;
+      width: 88%;
+      height: 21%;
+    }
+    .ph-app {
+      right: -12%;
+      top: 17%;
+      width: 56%;
+      height: 21%;
+    }
+    .ph-store {
+      right: -22%;
+      top: 31%;
+      width: 66%;
+      height: 14%;
+    }
+    .ph-workflow {
+      --o: 0.26;
+      left: 6%;
+      top: auto;
+      bottom: 0;
+      width: 88%;
+      height: 18%;
+    }
+    .veil {
+      background:
+        linear-gradient(to bottom, rgb(240 238 233 / 0.9) 0, rgb(240 238 233 / 0) 12%),
+        linear-gradient(to bottom, rgb(240 238 233 / 0) 40%, rgb(240 238 233 / 0.55) 62%, rgb(240 238 233 / 0.3) 100%),
+        rgb(240 238 233 / 0.12);
+    }
+    .biz-say {
+      background: rgb(240 238 233 / 0.74);
+      position: relative;
+      inset: auto;
+      align-self: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+      padding: 8px 8px 8px 18px;
+      gap: 8px 16px;
+    }
+  }
+  @media (max-width: 520px) {
+    /* A narrow stage: the layers are larger relative to it, and the chip lets more of them through. */
+    .ph-website {
+      right: -26%;
+      width: 112%;
+      height: 24%;
+    }
+    .ph-design {
+      left: 22%;
+      top: 5%;
+      width: 64%;
+      height: 24%;
+    }
+    .ph-dashboard {
+      left: -22%;
+      width: 76%;
+      height: 22%;
+    }
+    .ph-app {
+      right: -24%;
+      top: 22%;
+      width: 82%;
+      height: 26%;
+    }
+    .ph-store {
+      right: -34%;
+      top: 38%;
+      width: 90%;
+      height: 12%;
+    }
+    .biz-say {
+      background: rgb(240 238 233 / 0.72);
+      flex-direction: column;
+      align-items: flex-start;
+      border-radius: 22px;
+      padding: 14px 14px 14px 18px;
+    }
+    .line {
+      font-size: 1.0625rem;
+    }
+  }
+
+  /* ---------- Motion (only under html.mo: scripting runs and motion is allowed) ---------- */
+  /* The photographs arrive after the headline has begun to settle: each fades up from slightly larger, one after another,
+     far layers first. Then the line and the link fade in. Opacity and transform only, once. */
+  :global(.mo) .ph {
+    animation: bg-in 1700ms var(--ease-reveal) both;
+    animation-delay: calc(240ms + var(--n, 0) * 140ms);
+  }
+  .ph-workflow { --n: 0; }
+  .ph-dashboard { --n: 1; }
+  .ph-design { --n: 2; }
+  .ph-website { --n: 3; }
+  .ph-app { --n: 4; }
+  .ph-store { --n: 5; }
+  :global(.mo) .veil {
+    animation: bg-veil 1400ms var(--ease-reveal) both;
+  }
+  :global(.mo) .biz-say {
+    animation: bg-fade 900ms var(--ease-reveal) both;
+    animation-delay: 1200ms;
+  }
+  @keyframes bg-in {
+    from {
+      opacity: 0;
+      transform: scale(1.06) translateY(2%);
+    }
+  }
+  @keyframes bg-fade {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes bg-veil {
+    from {
+      opacity: 0.6;
+    }
+  }
+  /* A slow, shallow drift inside each layer, at a different pace for each, so the composition is never quite still. It
+     moves the photograph inside its mask, never the mask. */
+  :global(.mo) .ph :global(img) {
+    animation: bg-drift var(--t, 30s) ease-in-out infinite alternate;
+  }
+  .ph-workflow { --t: 34s; --dx: -1.6%; --dy: -1.2%; }
+  .ph-dashboard { --t: 29s; --dx: 1.4%; --dy: 1.4%; }
+  .ph-design { --t: 33s; --dx: -1.2%; --dy: 1.6%; }
+  .ph-website { --t: 37s; --dx: 1.8%; --dy: 1%; }
+  .ph-app { --t: 31s; --dx: -1.4%; --dy: -1.4%; }
+  .ph-store { --t: 36s; --dx: 1.2%; --dy: -1%; }
+  @keyframes bg-drift {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(var(--dx, 1%), var(--dy, 1%), 0) scale(1.03);
+    }
+  }
+  /* Scroll scene (html.sc): as the hero leaves, the layers part at their own depths (the `translate` property, so it never
+     competes with the load animation's transform), and the whole background lets go slowly. */
+  :global(.sc) .ph {
+    translate: 0 calc(var(--out, 0) * var(--d, 0) * 1vh);
+  }
+  :global(.sc) .biz-bg {
+    opacity: calc(1 - var(--out, 0) * 0.85);
+  }
+</style>
