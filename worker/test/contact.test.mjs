@@ -97,9 +97,27 @@ describe('request checks', () => {
   it('rejects a cross-site fetch even with a matching Origin', async () => {
     assert.equal((await post(VALID, { headers: { 'Sec-Fetch-Site': 'cross-site' } })).status, 403);
   });
-  it('rejects a cross-site GET of the configuration', async () => {
-    const request = new Request(`${ORIGIN}/api/contact`, { headers: { 'Sec-Fetch-Site': 'cross-site' } });
-    assert.equal((await worker.fetch(request, ENV)).status, 403);
+  for (const site of ['none', 'cross-site', 'same-site']) {
+    it(`serves the public site key on a navigated GET with Sec-Fetch-Site: ${site}`, async () => {
+      const request = new Request(`${ORIGIN}/api/contact`, { headers: { 'Sec-Fetch-Site': site } });
+      const r = await read(await worker.fetch(request, ENV));
+      assert.equal(r.status, 200);
+      assert.deepEqual(r.body, { ok: true, siteKey: 'ts_site' });
+      assert.ok(!JSON.stringify(r.body).includes('re_test_key'));
+      assert.ok(!JSON.stringify(r.body).includes('ts_secret'));
+      assert.equal(calls.length, 0);
+    });
+  }
+  it('serves the public HEAD configuration when navigated', async () => {
+    const request = new Request(`${ORIGIN}/api/contact`, {
+      method: 'HEAD', headers: { 'Sec-Fetch-Site': 'none' },
+    });
+    assert.equal((await worker.fetch(request, ENV)).status, 200);
+    assert.equal(calls.length, 0);
+  });
+  it('rejects POST even with a matching Origin when Sec-Fetch-Site is none', async () => {
+    assert.equal((await post(VALID, { headers: { 'Sec-Fetch-Site': 'none' } })).status, 403);
+    assert.equal(calls.length, 0);
   });
   it('rejects a plain HTML form post (not JSON)', async () => {
     const r = await post(null, { raw: 'name=a&email=b', headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
