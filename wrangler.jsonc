@@ -19,7 +19,7 @@
   // Public, non-secret settings. The sender must be an address on the domain verified in Resend (docs/production/contact-form.md).
   // Secrets (RESEND_API_KEY, TURNSTILE_SECRET_KEY, TURNSTILE_SITE_KEY) are set with `wrangler secret put`, never here.
   "vars": {
-    "CONTACT_FROM": "TechPi website <website@notify.techpi.eu>"
+    "CONTACT_FROM": "TechPi website <website@techpi.eu>"
   },
   // Per-IP limit on contact form submissions: 5 a minute, counted per Cloudflare location and approximate (eventually
   // consistent), so a brake on abuse rather than an exact quota. Required: without this binding, or if it fails, the
