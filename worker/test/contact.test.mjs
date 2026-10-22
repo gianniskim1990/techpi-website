@@ -228,7 +228,7 @@ describe('validation', () => {
     assert.ok(call, 'one message sent via Resend');
     const email = JSON.parse(call.init.body);
     assert.deepEqual(email.to, [RECIPIENT]);
-    assert.match(email.text, /Message:\\nX(?:\\n|$)/);
+    assert.match(email.text, /Message:\nX(?:\n|$)/);
   });
   it('rejects malformed JSON', async () => {
     assert.equal((await post(null, { raw: '{"name":' })).status, 400);
