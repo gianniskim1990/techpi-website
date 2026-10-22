@@ -11,7 +11,7 @@ shows "the form is not available, please email info@techpi.eu", and the email ad
 | Page CSP | `src/components/pages/ContactPage.astro` | Allows `https://challenges.cloudflare.com` for scripts and frames on the two contact pages only |
 | Endpoint | `worker/contact.js`, `worker/index.js` | `GET /api/contact` (public config), `POST /api/contact` (one enquiry) |
 | Routing | `wrangler.jsonc` | `main: worker/index.js`, `run_worker_first: ["/api/*"]`. Everything else is served by the static files first, as before |
-| Tests | `worker/test/contact.test.mjs` (`npm test`) | 42 tests, every provider mocked |
+| Tests | `worker/test/contact.test.mjs` (`npm test`) | 54 tests, every provider mocked |
 | Checks | `scripts/security/validate.mjs` | The Turnstile origin only on the contact pages, no other origin or frame anywhere |
 
 The recipient is the constant `RECIPIENT = 'info@techpi.eu'` in `worker/contact.js`. No request field can change it.
@@ -19,6 +19,8 @@ The sender comes from `CONTACT_FROM` (`wrangler.jsonc`), which must be an addres
 anything else disables the form. Reply-To is the visitor's validated email, so replying in the mailbox answers them.
 
 ## 2. Request flow and controls
+
+`GET /api/contact` and `HEAD /api/contact` expose only the public Turnstile site key when configured. They can be opened directly from a browser or a link on another site, regardless of `Sec-Fetch-Site`; they never expose private secrets.
 
 `POST /api/contact`, in this order; the first failure answers and stops:
 
