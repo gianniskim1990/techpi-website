@@ -56,11 +56,15 @@ export function contactConfig(env) {
   return { from, limiter, resendKey: env.RESEND_API_KEY, turnstileSecret: env.TURNSTILE_SECRET_KEY, siteKey: env.TURNSTILE_SITE_KEY };
 }
 
-/** Same-origin requests only. A form on another site cannot post here, and a browser sends no CORS allowance back. */
+/**
+ * The GET/HEAD response contains only a public Turnstile site key. It must also work when opened directly in the
+ * browser (Sec-Fetch-Site: none) or via a link from another site (cross-site).
+ * Sending a message (POST) stays strictly same-origin: Origin must match and Fetch Metadata must not be cross-site.
+ */
 function crossOrigin(request) {
+  if (request.method === 'GET' || request.method === 'HEAD') return false;
   const site = request.headers.get('Sec-Fetch-Site');
   if (site && site !== 'same-origin') return true;
-  if (request.method === 'GET' || request.method === 'HEAD') return false;
   return request.headers.get('Origin') !== new URL(request.url).origin;
 }
 
