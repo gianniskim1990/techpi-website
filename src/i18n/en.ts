@@ -77,7 +77,7 @@ export const en = {
       name: 'Please enter your name.',
       email: 'Please enter a valid email address.',
       organisation: 'Please shorten the organisation name.',
-      message: 'Please describe your project or question in at least 10 characters.',
+      message: 'Please enter your project or question.',
       timeframe: 'Please choose a timeframe from the list.',
       invalid: 'Please check the highlighted fields.',
       verification: 'We could not confirm that this message was sent by a person. Please try again.',
