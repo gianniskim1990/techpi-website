@@ -73,7 +73,7 @@ const [noscriptBefore, noscriptAfter] = withEmail(t.noscript);
       <div class="field wide">
         <label for="cf-message">{t.message}</label>
         <p class="hint" id="cf-message-hint">{t.messageHint}</p>
-        <textarea id="cf-message" name="message" rows="6" required minlength="10" maxlength="5000" aria-describedby="cf-message-hint cf-message-err"></textarea>
+        <textarea id="cf-message" name="message" rows="6" required maxlength="5000" aria-describedby="cf-message-hint cf-message-err"></textarea>
         <p class="err" id="cf-message-err" data-error="message"></p>
       </div>
     </div>
@@ -397,7 +397,7 @@ const [noscriptBefore, noscriptAfter] = withEmail(t.noscript);
       if (!v('name') || chars(v('name')) > 100) bad.push('name');
       if (!EMAIL.test(v('email')) || v('email').length > 254) bad.push('email');
       if (chars(v('organisation')) > 150) bad.push('organisation');
-      if (chars(v('message')) < 10 || chars(v('message')) > 5000) bad.push('message');
+      if (!v('message') || chars(v('message')) > 5000) bad.push('message');
       return bad;
     }
     function show(bad: string[]) {
