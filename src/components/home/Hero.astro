@@ -1,10 +1,9 @@
 ---
 import type { HomeCopy } from '../../content/home.en';
 import { pathFor } from '../../i18n/routes';
-import { Image } from 'astro:assets';
+import BizHeroBackdrop from './BizHeroBackdrop.astro';
 import EuHeroBackdrop from './EuHeroBackdrop.astro';
 import TransformationMap from './TransformationMap.astro';
-import { heroVisuals } from './hero-visual';
 import type { Locale } from '../../i18n/locales';
 
 interface Props {
@@ -13,9 +12,9 @@ interface Props {
 }
 
 const { copy, locale } = Astro.props;
-// The Greek homepage has a photograph (hero-visual.ts); the English homepage has a large layered background of six
-// photographs instead (EuHeroBackdrop.astro), one for each thematic area of EU-funded projects. Chosen at build time from the locale.
-const visual = heroVisuals[locale];
+// Each homepage has its own large layered photographic background, chosen at build time from the locale: the English one
+// is about EU-funded projects (EuHeroBackdrop.astro), the Greek one about digital services for businesses (BizHeroBackdrop.astro).
+const biz = locale === 'el';
 ---
 
 {/* ARC. The first state of the one geometric idea that runs through the homepage: a segment of a circle far
@@ -27,29 +26,8 @@ const visual = heroVisuals[locale];
     When the intro plays they play under its blurred backdrop (src/components/home/Intro.astro) and are at rest
     when it clears. */}
 <section class="hero s-paper" aria-labelledby="hero-h" data-scene>
-  <div class="stage" class:list={{ eu: !visual }}>
-    {!visual && <EuHeroBackdrop />}
-    {/* The visual: one real image in the corner the arc opens, clipped by the arc's own circle so the arc is its edge.
-        Its bottom edge is the map's line (--map-b, measured by src/scripts/motion.ts). On tablets and phones, where the
-        arc is too small to frame anything, it is a quiet band above the map. Decorative. */}
-    {visual && (
-    <div class="visual" aria-hidden="true">
-      <div class="frame">
-        <Image
-          src={visual.image}
-          alt=""
-          widths={[480, 720, 960]}
-          sizes="(max-width: 900px) calc(100vw - 40px), 704px"
-          format="webp"
-          quality={82}
-          loading="eager"
-          fetchpriority="low"
-          decoding="async"
-          style={`object-position:${visual.focus}`}
-        />
-      </div>
-    </div>
-    )}
+  <div class="stage" class:list={{ eu: !biz, biz }}>
+    {biz ? <BizHeroBackdrop /> : <EuHeroBackdrop />}
     <svg class="arc" aria-hidden="true" focusable="false">
       {/* A circle in pixel units, so the hairline keeps its exact weight. Turned so the stroke starts just
           above the top edge of the window and runs down to the right edge when it draws. */}
@@ -100,8 +78,9 @@ const visual = heroVisuals[locale];
   }
 
   /* English: the stage isolates its stacking context, so the background layer (z-index -1) stays behind the content but
-     above the page (EuHeroBackdrop.astro). */
-  .stage.eu {
+     above the page (EuHeroBackdrop.astro, BizHeroBackdrop.astro). */
+  .stage.eu,
+  .stage.biz {
     isolation: isolate;
   }
 
@@ -157,44 +136,6 @@ const visual = heroVisuals[locale];
     display: none;
   }
 
-  /* The visual. Desktop: the layer is the whole stage, clipped to the arc's circle (the same centre and radius as .arc
-     below), so the picture fills the corner the arc opens and the arc hairline is its curved edge. The frame sits
-     between the header and the map's line (--map-b, measured by motion.ts; the fallback is the resting position). */
-  .visual {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    clip-path: circle(1412.6px at calc(100% + 350px) -900px);
-  }
-  .frame {
-    position: absolute;
-    right: 0;
-    /* It stops 34 px above the map's line: the label of the line's end ("Digital products") sits in that gap, on Paper. */
-    bottom: calc(100% - var(--map-b, 402px) + 34px);
-    width: 704px;
-    height: min(calc(var(--map-b, 402px) - 126px), 400px);
-    overflow: hidden;
-    background: var(--color-ink-raised);
-  }
-  /* A hairline around the picture, like the arc: a light photograph would otherwise melt into the Paper. */
-  .frame::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    box-shadow: inset 0 0 0 1px rgb(8 14 30 / 0.16);
-    pointer-events: none;
-  }
-  /* The picture is a little taller than its frame, so the scroll shift never shows an edge. */
-  .frame :global(img) {
-    position: absolute;
-    left: 0;
-    top: -40px;
-    width: 100%;
-    height: calc(100% + 80px);
-    object-fit: cover;
-  }
-
   /* The arc: the outer sweep of the TechPi symbol, far larger than the screen. Hand-cropped per breakpoint so it
      crosses the top edge between the name and the navigation, and never touches the text. */
   .arc {
@@ -242,25 +183,6 @@ const visual = heroVisuals[locale];
   }
 
   @media (max-width: 900px) {
-    /* The arc is too small here to frame a picture: the visual becomes a band above the map, between the header and
-       the diagram, in the space that used to stand empty. */
-    /* It takes whatever height the window has left over (up to 240 px), and never fewer than that minimum, so the first screen
-       keeps its headline and its calls to action where they were. */
-    .visual {
-      position: relative;
-      inset: auto;
-      clip-path: none;
-      flex: 1 1 0;
-      /* 96 px on phones, growing to 150 px on tablets, which have the height to spare. */
-      min-height: clamp(96px, 20vw - 4px, 150px);
-      max-height: 240px;
-      margin-bottom: 22px;
-    }
-    .frame {
-      inset: 0;
-      width: 100%;
-      height: 100%;
-    }
     .arc {
       width: 984px;
       height: 984px;
@@ -372,22 +294,6 @@ const visual = heroVisuals[locale];
     }
   }
 
-  /* The visual arrives after the headline has settled: the picture eases in from a slightly larger size while the
-     frame fades up. Opacity and transform only, once, about a second and a half. */
-  :global(.mo) .frame {
-    animation: hero-fade 1300ms var(--ease-reveal) both;
-    animation-delay: 380ms;
-  }
-  :global(.mo) .frame :global(img) {
-    animation: hero-visual-in 1700ms var(--ease-reveal) both;
-    animation-delay: 380ms;
-  }
-  @keyframes hero-visual-in {
-    from {
-      transform: scale(1.07);
-    }
-  }
-
   /* The arc draws itself once, from the top edge to the right edge of the window. */
   :global(.mo) .arc circle {
     stroke-dasharray: 1;
@@ -413,13 +319,5 @@ const visual = heroVisuals[locale];
   }
   :global(.sc) .arc {
     translate: calc(var(--out, 0) * -6vw) calc(var(--out, 0) * 30vh);
-  }
-  /* The picture is the furthest layer: it sinks slowly inside its frame while the page rises past it (40 px at most,
-     the margin the picture has above its frame), and the frame itself leaves with the foot. */
-  :global(.sc) .frame :global(img) {
-    translate: 0 calc(var(--out, 0) * 40px);
-  }
-  :global(.sc) .frame {
-    opacity: calc(1 - var(--out, 0) * 1.4);
   }
 </style>

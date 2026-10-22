@@ -71,20 +71,33 @@ if (fs.existsSync(distAstro)) {
   }
 }
 
-// The homepage hero visual. Greek (src/components/home/hero-visual.ts): one decorative WebP photograph, chosen at build time.
-// English (src/components/home/EuHeroBackdrop.astro, eu-themes.ts): a large background of six decorative WebP photographs,
-// one for each thematic area of EU-funded projects, plus the line and the link to /eu-projects. Neither homepage ships
-// the other's visual, and no other page carries a hero visual.
+// The homepage hero visual. Each homepage has its own large background of six decorative WebP photographs, chosen at build time.
+// English (src/components/home/EuHeroBackdrop.astro, eu-themes.ts): one for each thematic area of EU-funded projects, plus the line
+// and the link to /eu-projects. Greek (BizHeroBackdrop.astro, biz-themes.ts): the services Greek businesses come for, plus a line and
+// a link to the capabilities page. Neither homepage ships the other's visual, and no other page carries a hero visual.
 {
   const root = path.resolve(distAstro, '..');
   const page = (p) => (fs.existsSync(path.join(root, p)) ? fs.readFileSync(path.join(root, p), 'utf8') : '');
 
   const el = page('el/index.html');
-  const photo = (el.match(/<div class="visual"[\s\S]*?<\/div><\/div>/) || [''])[0];
-  check(photo.includes('aria-hidden="true"'), 'el/index.html: the hero photograph is not hidden from assistive technology');
-  check(/src="\/_astro\/hero-el\.[^"]+\.webp"/.test(photo) && /srcset="[^"]*\.webp \d+w/.test(photo), 'el/index.html: the Greek hero photograph (hero-el) is missing or not WebP');
-  check(/ alt[ =>]/.test(photo) && !/alt="[^"]+"/.test(photo), 'el/index.html: the hero photograph must be decorative (empty alt)');
-  check(!/class="eu-(bg|say)/.test(el), 'el/index.html: carries the English EU background');
+  const bizBg = (el.match(/<div class="biz-bg"[\s\S]*?<div class="veil"[^>]*><\/div><\/div>/) || [''])[0];
+  check(bizBg !== '', 'el/index.html: the Greek background (biz-bg) is missing from the Greek hero');
+  check(/class="biz-bg" aria-hidden="true"/.test(bizBg), 'el/index.html: the Greek background is not hidden from assistive technology');
+  const bizFigs = bizBg.match(/<figure class="ph ph-[a-z]+"[\s\S]*?<\/figure>/g) || [];
+  check(bizFigs.length === 6, `el/index.html: the Greek background must have six photographs, found ${bizFigs.length}`);
+  for (const key of ['website', 'dashboard', 'design', 'app', 'store', 'workflow']) {
+    const f = bizFigs.find((x) => x.includes(`ph-${key}"`)) || '';
+    const img = f.match(/<img[^>]*>/)?.[0] ?? '';
+    check(new RegExp(`src="/_astro/el-${key}\\.[^"]+\\.webp"`).test(img) && /srcset="[^"]*\.webp \d+w/.test(img), `el/index.html: the ${key} photograph is missing or not WebP`);
+    check(/ alt[ =>]/.test(img) && !/alt="[^"]+"/.test(img), `el/index.html: the ${key} photograph must be decorative (empty alt)`);
+  }
+  const bizSay = (el.match(/<div class="biz-say[\s\S]*?<\/a><\/div>/) || [''])[0];
+  check(bizSay.includes('Ψηφιακές λύσεις για επιχειρήσεις'), 'el/index.html: the Greek supporting line is missing');
+  check(/<a class="biz-cta[^"]*" href="\/el\/capabilities"[^>]*>Δείτε τις δυνατότητές μας/.test(bizSay), 'el/index.html: the Greek call to action must read "Δείτε τις δυνατότητές μας" and link to /el/capabilities');
+  check(!/<div class="visual"/.test(el) && !/hero-(en|el)\./.test(el), 'el/index.html: still carries the retired single hero photograph');
+  check(!/class="(eu-(bg|say)|tile)/.test(el) && !/eu-(health|culture|security|digital|climate|food)\./.test(el), 'el/index.html: carries the English EU background');
+  // The photographs show tools and work: no logo, client, programme, funding or endorsement wording in the Greek background.
+  check(!/(European Commission|Horizon|Erasmus|Interreg|ΕΣΠΑ|co-funded|funded by|flag|endorse|official|βραβ|πιστοποιημ|award)/i.test(bizBg + bizSay), 'el/index.html: the Greek background carries a programme, funding, endorsement or award claim');
 
   const en = page('index.html');
   const bg = (en.match(/<div class="eu-bg"[\s\S]*?<div class="veil"[^>]*><\/div><\/div>/) || [''])[0];
@@ -101,13 +114,13 @@ if (fs.existsSync(distAstro)) {
   const say = (en.match(/<div class="eu-say[\s\S]*?<\/a><\/div>/) || [''])[0];
   check(say.includes('Digital solutions for EU-funded projects'), 'index.html: the supporting line "Digital solutions for EU-funded projects" is missing');
   check(/<a class="eu-cta[^"]*" href="\/eu-projects"[^>]*>Explore EU Project Solutions/.test(say), 'index.html: the call to action must read "Explore EU Project Solutions" and link to /eu-projects');
-  check(!/<div class="visual"/.test(en) && !/hero-(en|el)\./.test(en), 'index.html: the English hero must not carry the Greek photograph');
+  check(!/<div class="visual"/.test(en) && !/hero-(en|el)\./.test(en) && !/class="biz-(bg|say)/.test(en) && !/el-(website|dashboard|design|app|store|workflow)\./.test(en), 'index.html: the English hero must not carry the Greek background');
   check(!/class="eu-unit|class="tile"/.test(en), 'index.html: still carries the retired six-tile grid');
   // The background names kinds of work, not programmes: no programme, Commission, funding or EU-emblem wording beyond the line.
   check(!/(European Commission|Horizon|Erasmus|Interreg|co-funded|funded by|flag|stars|endorse|official)/i.test((bg + say).replace('Digital solutions for EU-funded projects', '')), 'index.html: the EU background carries a programme, funding, endorsement or EU-emblem claim');
 
   for (const p of ['about.html', 'contact.html', 'work.html', 'capabilities.html', 'eu-projects.html', 'privacy.html', 'el/about.html']) {
-    check(!/(hero-(en|el)|eu-(health|culture|security|digital|climate|food))\./.test(page(p)) && !/class="eu-(bg|say)/.test(page(p)), `${p}: carries a homepage hero visual`);
+    check(!/(hero-(en|el)|eu-(health|culture|security|digital|climate|food)|el-(website|dashboard|design|app|store|workflow))\./.test(page(p)) && !/class="(eu|biz)-(bg|say)/.test(page(p)), `${p}: carries a homepage hero visual`);
   }
 }
 
