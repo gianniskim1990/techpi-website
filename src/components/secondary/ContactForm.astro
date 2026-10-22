@@ -326,7 +326,9 @@ const [noscriptBefore, noscriptAfter] = withEmail(t.noscript);
     try {
       const res = await fetch('/api/contact', { headers: { Accept: 'application/json' }, credentials: 'same-origin' });
       const cfg = res.ok ? await res.json() : null;
-      if (!cfg?.siteKey) throw new Error('unavailable');
+      // Cloudflare site keys are public identifiers with a maximum length of 32.
+      // Catch an accidentally pasted secret key before starting an unusable challenge.
+      if (typeof cfg?.siteKey !== 'string' || !cfg.siteKey || cfg.siteKey.length > 32) throw new Error('unavailable');
       turnstile = await loadTurnstile();
       widget = turnstile.render(holder, {
         sitekey: cfg.siteKey,
