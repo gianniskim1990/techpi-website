@@ -19,7 +19,6 @@
 export const RECIPIENT = 'info@techpi.eu';
 export const MAX_BODY = 16 * 1024;
 export const LIMITS = { name: 100, email: 254, organisation: 150, message: 5000, token: 2048 };
-export const MIN_MESSAGE = 10;
 export const TIMEFRAMES = ['', 'asap', '1-3-months', '3-6-months', 'later'];
 const LOCALES = ['en', 'el'];
 
@@ -122,7 +121,7 @@ export function validate(body) {
   if (email === null || !email || email.length > LIMITS.email || !EMAIL.test(email)) fields.push('email');
   if (organisation === null || chars(organisation) > LIMITS.organisation || LINE_BREAKERS.test(organisation)) fields.push('organisation');
   const text = message === null ? null : message.replace(/\r\n?/g, '\n');
-  if (text === null || chars(text) < MIN_MESSAGE || chars(text) > LIMITS.message || MESSAGE_CONTROLS.test(text)) fields.push('message');
+  if (text === null || !text || chars(text) > LIMITS.message || MESSAGE_CONTROLS.test(text)) fields.push('message');
   if (timeframe === null || !TIMEFRAMES.includes(timeframe)) fields.push('timeframe');
   if (locale === null || (locale && !LOCALES.includes(locale))) fields.push('locale');
   if (token === null || !token || token.length > LIMITS.token) fields.push('token');
