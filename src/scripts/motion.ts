@@ -256,6 +256,9 @@ function initHeroMap() {
     map.classList.toggle('on-arc', ok);
     if (ok) map.style.setProperty('--hit', `${hit.toFixed(1)}px`);
     else map.style.removeProperty('--hit');
+    // The hero visual's bottom edge is this line: hand its distance from the top of the stage to CSS as --map-b.
+    const stage = map.closest<HTMLElement>('.stage');
+    if (stage) stage.style.setProperty('--map-b', `${(y - stage.getBoundingClientRect().top).toFixed(1)}px`);
     tidy(cx + mx, cy + my, r);
   };
 

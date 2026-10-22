@@ -71,6 +71,28 @@ if (fs.existsSync(distAstro)) {
   }
 }
 
+// The homepage hero visual (src/components/home/hero-visual.ts): one photograph per language, chosen at build time.
+// Each homepage ships its own, decorative, as WebP; neither ships the other language's file, and no other page has them.
+{
+  const root = path.resolve(distAstro, '..');
+  const page = (p) => (fs.existsSync(path.join(root, p)) ? fs.readFileSync(path.join(root, p), 'utf8') : '');
+  const visual = (h) => (h.match(/<div class="visual"[\s\S]*?<\/div><\/div>/) || [''])[0];
+  for (const [file, own, other, lang] of [
+    ['index.html', 'hero-en', 'hero-el', 'English'],
+    ['el/index.html', 'hero-el', 'hero-en', 'Greek'],
+  ]) {
+    const html = page(file);
+    const v = visual(html);
+    check(v.includes('aria-hidden="true"'), `${file}: the hero visual is not hidden from assistive technology`);
+    check(new RegExp(`src="/_astro/${own}\\.[^"]+\\.webp"`).test(v) && /srcset="[^"]*\.webp \d+w/.test(v), `${file}: the ${lang} hero image (${own}) is missing or not WebP`);
+    check(/ alt[ =>]/.test(v) && !/alt="[^"]+"/.test(v), `${file}: the hero image must be decorative (empty alt)`);
+    check(!html.includes(`${other}.`), `${file}: carries the other language's hero image (${other})`);
+  }
+  for (const p of ['about.html', 'contact.html', 'work.html', 'capabilities.html', 'eu-projects.html', 'privacy.html', 'el/about.html']) {
+    check(!/hero-(en|el)\./.test(page(p)), `${p}: carries a homepage hero image`);
+  }
+}
+
 console.log(`\nAsset validation: ${checks} checks, ${failures.length} failures.`);
 for (const f of failures) console.log('  FAIL ' + f);
 process.exit(failures.length ? 1 : 0);
