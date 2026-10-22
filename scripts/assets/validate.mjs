@@ -72,8 +72,9 @@ if (fs.existsSync(distAstro)) {
 }
 
 // The homepage hero visual. Greek (src/components/home/hero-visual.ts): one decorative WebP photograph, chosen at build time.
-// English (src/components/home/EuHeroPanel.astro): no photograph, but the EU projects panel with its line and its link to
-// /eu-projects. Neither homepage ships the other's visual, and no other page carries a hero visual.
+// English (src/components/home/EuHeroGrid.astro, eu-themes.ts): a grid of six decorative WebP photographs, one for each
+// thematic area of EU-funded projects, each with a label, plus the line and the link to /eu-projects. Neither homepage ships
+// the other's visual, and no other page carries a hero visual.
 {
   const root = path.resolve(distAstro, '..');
   const page = (p) => (fs.existsSync(path.join(root, p)) ? fs.readFileSync(path.join(root, p), 'utf8') : '');
@@ -83,21 +84,36 @@ if (fs.existsSync(distAstro)) {
   check(photo.includes('aria-hidden="true"'), 'el/index.html: the hero photograph is not hidden from assistive technology');
   check(/src="\/_astro\/hero-el\.[^"]+\.webp"/.test(photo) && /srcset="[^"]*\.webp \d+w/.test(photo), 'el/index.html: the Greek hero photograph (hero-el) is missing or not WebP');
   check(/ alt[ =>]/.test(photo) && !/alt="[^"]+"/.test(photo), 'el/index.html: the hero photograph must be decorative (empty alt)');
-  check(!/class="eu-unit/.test(el), 'el/index.html: carries the English EU projects panel');
+  check(!/class="eu-unit/.test(el), 'el/index.html: carries the English EU themes grid');
 
   const en = page('index.html');
   const unit = (en.match(/<div class="eu-unit[\s\S]*?<\/a><\/div><\/div>/) || [''])[0];
-  check(unit !== '', 'index.html: the EU projects panel (eu-unit) is missing from the English hero');
-  check(/<div class="mock"[^>]*aria-hidden="true"/.test(unit), 'index.html: the EU projects illustration is not hidden from assistive technology');
+  check(unit !== '', 'index.html: the EU themes grid (eu-unit) is missing from the English hero');
+  const tiles = unit.match(/<li class="tile"[\s\S]*?<\/li>/g) || [];
+  check(tiles.length === 6, `index.html: the EU themes grid must have six tiles, found ${tiles.length}`);
+  const THEMES = [
+    ['health', 'Health'],
+    ['culture', 'Culture, Creativity and Inclusive Society'],
+    ['security', 'Civil Security for Society'],
+    ['digital', 'Digital, Industry and Space'],
+    ['climate', 'Climate, Energy and Mobility'],
+    ['food', 'Food, Bioeconomy, Natural Resources, Agriculture and Environment'],
+  ];
+  THEMES.forEach(([key, name], i) => {
+    const t = tiles[i] || '';
+    check(new RegExp(`<img[^>]+src="/_astro/eu-${key}\\.[^"]+\\.webp"`).test(t) && /srcset="[^"]*\.webp \d+w/.test(t), `index.html: tile ${i + 1} (${key}) has no WebP photograph`);
+    check(/ alt[ =>]/.test(t.match(/<img[^>]*>/)?.[0] ?? '') && !/alt="[^"]+"/.test(t.match(/<img[^>]*>/)?.[0] ?? ''), `index.html: tile ${i + 1} (${key}) photograph must be decorative (empty alt)`);
+    check(t.includes(`>${name}</span>`), `index.html: tile ${i + 1} must carry the full name "${name}" for assistive technology`);
+    check(/class="lbl" aria-hidden="true"/.test(t), `index.html: tile ${i + 1} (${key}) has no visible label`);
+  });
   check(unit.includes('Digital solutions for EU-funded projects'), 'index.html: the supporting line "Digital solutions for EU-funded projects" is missing');
   check(/<a class="eu-cta[^"]*" href="\/eu-projects"[^>]*>Explore EU Project Solutions/.test(unit), 'index.html: the call to action must read "Explore EU Project Solutions" and link to /eu-projects');
-  check(!/<div class="visual"/.test(en) && !/hero-(en|el)\./.test(en), 'index.html: the English hero must not carry a photograph');
-  // The illustration makes no claim: no programme, funding or EU-emblem wording beyond the supporting line, and no picture.
-  check(!/(European Commission|Horizon|Erasmus|Interreg|co-funded|funded by|flag|stars)/i.test(unit.replace('Digital solutions for EU-funded projects', '')), 'index.html: the EU projects panel carries a programme, funding or EU-emblem claim');
-  check(!/<img/.test(unit), 'index.html: the EU projects panel must be markup, not a picture');
+  check(!/<div class="visual"/.test(en) && !/hero-(en|el)\./.test(en), 'index.html: the English hero must not carry the Greek photograph');
+  // The grid names kinds of work, not programmes: no programme, Commission, funding or EU-emblem wording beyond the line.
+  check(!/(European Commission|Horizon|Erasmus|Interreg|co-funded|funded by|flag|stars|endorse|official)/i.test(unit.replace('Digital solutions for EU-funded projects', '')), 'index.html: the EU themes grid carries a programme, funding, endorsement or EU-emblem claim');
 
   for (const p of ['about.html', 'contact.html', 'work.html', 'capabilities.html', 'eu-projects.html', 'privacy.html', 'el/about.html']) {
-    check(!/hero-(en|el)\./.test(page(p)) && !/class="eu-unit/.test(page(p)), `${p}: carries a homepage hero visual`);
+    check(!/(hero-(en|el)|eu-(health|culture|security|digital|climate|food))\./.test(page(p)) && !/class="eu-unit/.test(page(p)), `${p}: carries a homepage hero visual`);
   }
 }
 
