@@ -10,7 +10,7 @@ const ENV = {
   RESEND_API_KEY: 're_test_key',
   TURNSTILE_SECRET_KEY: 'ts_secret',
   TURNSTILE_SITE_KEY: 'ts_site',
-  CONTACT_FROM: 'TechPi website <website@notify.techpi.eu>',
+  CONTACT_FROM: 'TechPi website <website@techpi.eu>',
   CONTACT_RATE_LIMITER: { limit: async () => ({ success: true }) },
 };
 const VALID = {
