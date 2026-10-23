@@ -8,6 +8,7 @@
  *                                           draft pull request into the base branch
  *   /api/<collection>/<slug>/images[...]     add, replace, remove and preview the images of a NEW case study or article
  *                                           (images.js)
+ *   /api/media[...]                         the media library (media.js): upload, browse, edit and remove library images
  *   POST /api/<collection>                  create a new entry (case studies and articles only, Task M5): the file is written
  *                                           on a new cms/<collection>/<slug> branch and one draft pull request is opened.
  *                                           Nothing is published until that pull request is merged.
@@ -33,6 +34,8 @@ import * as insight from '../shared/insight-content.js';
 import * as page from '../shared/page-content.js';
 import { contentConfig } from './config.js';
 import { imageRoutes } from './images.js';
+import { mediaRoutes } from './media.js';
+import { isMediaId } from '../shared/media-content.js';
 
 const json = (status, data) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
 const fail = (status, message, extra = {}) => json(status, { error: { message, ...extra } });
@@ -40,8 +43,11 @@ const MAX_BODY = 64 * 1024;
 const PUBLIC_NOTE = 'This repository is public, so this draft is publicly visible on GitHub.';
 const REVIEW_NOTE = 'Saving in the admin is not publishing. To publish: review the changes in this pull request, wait for the required checks to pass, mark it ready for review and merge it. The website is rebuilt from the base branch after the merge.';
 
-/** The branch a save may write to: a `cms/<collection>/<slug>` draft branch, never the base and never `main`. */
-const DRAFT_BRANCH = /^cms\/(?:case-studies|insights|pages|m0-demo)\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
+/**
+ * The branch a save may write to: a `cms/<collection>/<slug>` draft branch, or the media library's one draft branch
+ * (Task M8); never the base and never `main`.
+ */
+const DRAFT_BRANCH = /^(?:cms\/(?:case-studies|insights|pages|m0-demo)\/[a-z0-9]+(?:-[a-z0-9]+)*|cms\/media\/library)$/;
 export class WriteRefused extends Error {}
 /** Every write goes through this guard: no Worker code path can write to `main` or to the base branch. */
 export function assertDraftBranch(branch, base) {
@@ -419,12 +425,35 @@ async function saveDraft(env, base, col, slug, request, ctx) {
   return json(200, { slug, sha: newSha, changed: Boolean(commit), commit, baseBranch: base, draft: draft ? { branch, ...draft } : null });
 }
 
-/** The images of new case studies (Task M6) and new articles (Task M7): images.js, with the helpers above. */
-const helpers = { json, fail, repoRequest, readFile, refSha, openDraftPr, assertDraftBranch, b64encode, qs };
+/**
+ * The images of new case studies (Task M6) and new articles (Task M7): images.js; the media library (Task M8): media.js.
+ * Both with the helpers above; an entry may use a library image (`locateImage`).
+ */
+const helpers = { json, fail, repoRequest, readFile, refSha, openDraftPr, prsForBranch, assertDraftBranch, b64encode, qs, repoName: `${REPO.owner}/${REPO.name}`, notes: `${REVIEW_NOTE}\n\n${PUBLIC_NOTE}` };
+const MEDIA = mediaRoutes(helpers);
+helpers.locateImage = MEDIA.locate;
 const IMAGES = {
   [study.CASE_STUDY.name]: imageRoutes(helpers, study.CASE_STUDY.name, COLLECTIONS[study.CASE_STUDY.name]),
   [insight.INSIGHT.name]: imageRoutes(helpers, insight.INSIGHT.name, COLLECTIONS[insight.INSIGHT.name]),
 };
+
+/** The media library's routes (media.js). Errors are answered by handleApi. */
+async function handleMedia(request, env, cfg, parts) {
+  if (!cfg.ok) return fail(503, `The content branch is not configured: ${cfg.problems.join(' ')}`);
+  if (!githubConfig(env).configured) return fail(503, `The GitHub connection is not configured (${githubConfig(env).missing.join(', ')}).`);
+  const base = cfg.base;
+  const m = request.method;
+  if (parts.length === 1) return m === 'GET' ? MEDIA.list(env, base) : m === 'POST' ? MEDIA.upload(env, base, request) : fail(405, 'Method not allowed.');
+  if (parts.length === 3 && parts[1] === 'blobs' && /^[0-9a-f]{40}$/.test(parts[2])) return m === 'GET' ? MEDIA.blob(env, parts[2]) : fail(405, 'Method not allowed.');
+  const id = parts[1];
+  // Any image may be shown; only a library image (isMediaId) may be edited or removed.
+  if (!demo.isSlug(id)) return fail(400, 'Invalid image name.');
+  if (parts.length === 3 && (parts[2] === 'thumb' || parts[2] === 'file')) return m === 'GET' ? MEDIA.file(env, base, id, parts[2]) : fail(405, 'Method not allowed.');
+  if (!isMediaId(id)) return fail(404, 'There is no such image in the media library.');
+  if (parts.length === 2) return m === 'POST' ? MEDIA.edit(env, base, id, request) : fail(405, 'Method not allowed.');
+  if (parts.length === 3 && parts[2] === 'delete') return m === 'POST' ? MEDIA.remove(env, base, id) : fail(405, 'Method not allowed.');
+  return fail(404, 'Not found.');
+}
 
 /** Routes an authenticated, same-origin API request. */
 export async function handleApi(request, env, identity) {
@@ -433,6 +462,7 @@ export async function handleApi(request, env, identity) {
   try {
     if (parts[0] === 'session' && parts.length === 1) return request.method === 'GET' ? await session(env, identity) : fail(405, 'Method not allowed.');
     const cfg = contentConfig(env);
+    if (parts[0] === 'media') return await handleMedia(request, env, cfg, parts);
     const col = Object.hasOwn(COLLECTIONS, parts[0]) ? COLLECTIONS[parts[0]] : null;
     // The M0 test collection exists only in development, and only when explicitly enabled.
     if (!col || (parts[0] === demo.COLLECTION.name && !cfg.testContent)) return fail(404, 'Not found.');
@@ -453,6 +483,7 @@ export async function handleApi(request, env, identity) {
     if (images && parts[2] === 'images') {
       if (parts.length === 3) return request.method === 'POST' ? await images.add(env, base, slug, request) : fail(405, 'Method not allowed.');
       if (parts.length === 4 && parts[3] === 'remove' && request.method === 'POST') return await images.remove(env, base, slug, request);
+      if (parts.length === 4 && parts[3] === 'use' && request.method === 'POST') return await images.use(env, base, slug, request);
       if (parts.length === 4) return request.method === 'GET' ? await images.get(env, base, slug, parts[3]) : fail(405, 'Method not allowed.');
       return fail(404, 'Not found.');
     }

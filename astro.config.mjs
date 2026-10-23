@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import { writePageRules } from './scripts/redirects/page-rules.mjs';
+import { usedMedia } from './scripts/media/used-media.mjs';
 
 // Phase 3A foundation. Verified against Astro 7.3.5.
 export default defineConfig({
@@ -17,6 +18,9 @@ export default defineConfig({
       },
     },
   ],
+
+  // The media library (src/assets/media): only the images a page uses are built (scripts/media/used-media.mjs).
+  vite: { plugins: [usedMedia()] },
 
   // Used to build absolute canonical and hreflang URLs from the route map.
   site: 'https://techpi.eu',

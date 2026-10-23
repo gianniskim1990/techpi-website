@@ -258,7 +258,7 @@ test('client-supplied repository, branch and path are ignored; only known collec
   assert.equal(r.status, 200);
   assert.ok(gh.state.writes.every((w) => w.branch === 'cms/m0-demo/m0-sample-article' && (!w.path.startsWith('/contents/') || w.path === `/contents/${FILE}`)));
   for (const p of ['/api/m0-demo/..%2F..%2Fsrc', '/api/m0-demo/Bad_Slug', '/api/m0-demo/a.b']) assert.equal((await call('GET', p)).status, 400, p);
-  for (const p of ['/api/media', '/api/m0-demo/x/y/z', '/api/repos/gianniskim1990/techpi-website/contents/README.md']) assert.equal((await call('GET', p)).status, 404, p);
+  for (const p of ['/api/uploads', '/api/m0-demo/x/y/z', '/api/repos/gianniskim1990/techpi-website/contents/README.md']) assert.equal((await call('GET', p)).status, 404, p);
   assert.equal((await call('DELETE', '/api/m0-demo/m0-sample-article', { body: {} })).status, 405);
   assert.equal((await call('POST', '/api/m0-demo/m0-sample-article/publish', { body: {} })).status, 404, 'no publish endpoint exists');
 });
