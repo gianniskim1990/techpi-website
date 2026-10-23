@@ -1,6 +1,7 @@
 // Asset validator. Run after a build:  node scripts/assets/validate.mjs
 //
-// 1. Project images (src/assets/projects, read as a whole by src/content/projects.ts; the admin uploads into it, Task M6):
+// 1. Project images (src/assets/projects, read as a whole by src/content/projects.ts; the admin uploads into it, Task M6),
+//    and article images (src/assets/insights, read by src/content/insights.ts, Task M7), each against its own content:
 //    every file is a real PNG, JPEG or WebP (read from its bytes, admin/shared/image-info.js), at most MAX_IMAGE_BYTES,
 //    with a unique id (its name without the extension); every image a case study references exists, with exactly the
 //    declared size (declared, not read from the import, so the full-size originals are not copied into dist/ unused; a
@@ -14,7 +15,6 @@ import { fileURLToPath } from 'node:url';
 import { imageInfo } from '../../admin/shared/image-info.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const assetsDir = path.join(root, 'src/assets/projects');
 // The build to check: dist/ by default, or `--dist <dir>` like the other validators.
 const distArg = process.argv.indexOf('--dist');
 const distAstro = path.join(distArg >= 0 ? path.resolve(process.argv[distArg + 1]) : path.join(root, 'dist'), '_astro');
@@ -24,41 +24,50 @@ let checks = 0;
 const failures = [];
 const check = (ok, msg) => { checks++; if (!ok) failures.push(msg); };
 
-// 1. The files, by id.
-const images = {};
-for (const f of fs.readdirSync(assetsDir)) {
-  const bytes = fs.readFileSync(path.join(assetsDir, f));
-  const info = imageInfo(bytes);
-  const id = f.replace(/\.[a-z]+$/i, '');
-  check(Boolean(info) && /\.(png|jpe?g|webp)$/.test(f), `src/assets/projects/${f}: not a PNG, JPEG or WebP image`);
-  check(!info || (info.ext === 'jpg' ? /\.jpe?g$/ : new RegExp(`\\.${info.ext}$`)).test(f), `src/assets/projects/${f}: the extension does not match the content (${info?.type})`);
-  check(bytes.length <= MAX_IMAGE_BYTES, `src/assets/projects/${f}: ${bytes.length} bytes, at most ${MAX_IMAGE_BYTES}`);
-  check(!images[id], `src/assets/projects: two files share the id "${id}"`);
-  images[id] = { file: f, info, used: false };
-}
-check(Object.keys(images).length > 0, 'no project images found in src/assets/projects');
-// Every reference, with its declared size.
-const caseStudiesDir = path.join(root, 'content/case-studies');
-if (fs.existsSync(caseStudiesDir)) {
-  for (const d of fs.readdirSync(caseStudiesDir)) {
-    const doc = JSON.parse(fs.readFileSync(path.join(caseStudiesDir, d, 'index.json'), 'utf8'));
-    for (const im of [doc.images.image, doc.images.cover, ...(doc.images.gallery ?? [])].filter(Boolean)) {
+// 1. Each image folder: the files, by id, and every reference to them with its declared size.
+const caseStudyRefs = (doc) => [doc.images?.image, doc.images?.cover, ...(doc.images?.gallery ?? [])];
+const articleRefs = (doc) => [doc.images?.cover, ...Object.values(doc.images?.sections ?? {})];
+const GROUPS = [
+  { folder: 'src/assets/projects', content: 'content/case-studies', refs: caseStudyRefs, user: 'case study', required: true },
+  { folder: 'src/assets/insights', content: 'content/insights', refs: articleRefs, user: 'article', required: false },
+];
+for (const g of GROUPS) {
+  const dir = path.join(root, g.folder);
+  if (!fs.existsSync(dir)) { check(!g.required, `${g.folder} not found`); continue; }
+  const images = {};
+  for (const f of fs.readdirSync(dir)) {
+    const bytes = fs.readFileSync(path.join(dir, f));
+    const info = imageInfo(bytes);
+    const id = f.replace(/\.[a-z]+$/i, '');
+    check(Boolean(info) && /\.(png|jpe?g|webp)$/.test(f), `${g.folder}/${f}: not a PNG, JPEG or WebP image`);
+    check(!info || (info.ext === 'jpg' ? /\.jpe?g$/ : new RegExp(`\\.${info.ext}$`)).test(f), `${g.folder}/${f}: the extension does not match the content (${info?.type})`);
+    check(bytes.length <= MAX_IMAGE_BYTES, `${g.folder}/${f}: ${bytes.length} bytes, at most ${MAX_IMAGE_BYTES}`);
+    check(!images[id], `${g.folder}: two files share the id "${id}"`);
+    images[id] = { file: f, info, used: false };
+  }
+  if (g.required) check(Object.keys(images).length > 0, `no images found in ${g.folder}`);
+  const contentDir = path.join(root, g.content);
+  for (const d of fs.existsSync(contentDir) ? fs.readdirSync(contentDir) : []) {
+    const file = path.join(contentDir, d, 'index.json');
+    if (!fs.existsSync(file)) continue;
+    const doc = JSON.parse(fs.readFileSync(file, 'utf8'));
+    for (const im of g.refs(doc).filter(Boolean)) {
       const found = images[im.id];
-      check(Boolean(found), `content/case-studies/${d}: image "${im.id}" has no file in src/assets/projects`);
+      check(Boolean(found), `${g.content}/${d}: image "${im.id}" has no file in ${g.folder}`);
       if (!found) continue;
       found.used = true;
       const real = found.info;
       check(Boolean(real) && real.width === im.width && real.height === im.height, `${found.file}: declared ${im.width}x${im.height}, file is ${real ? `${real.width}x${real.height}` : 'unreadable'}`);
     }
   }
+  for (const { file, used } of Object.values(images)) check(used, `${g.folder}/${file}: no ${g.user} uses this image`);
 }
-for (const { file, used } of Object.values(images)) check(used, `src/assets/projects/${file}: no case study uses this image`);
 
 // 2. No original in dist/_astro (dist/ must exist: run a build first). Astro names an original <name>.<8-character hash>.<ext>
 // and a derivative <name>.<hash>_<hash>.<ext>; a hash may itself contain _ or -.
 check(fs.existsSync(distAstro), 'dist/_astro not found: run `npm run build` first');
 if (fs.existsSync(distAstro)) {
-  for (const f of fs.readdirSync(assetsDir)) {
+  for (const f of GROUPS.flatMap((g) => (fs.existsSync(path.join(root, g.folder)) ? fs.readdirSync(path.join(root, g.folder)) : []))) {
     const base = path.parse(f).name;
     const leaked = fs.readdirSync(distAstro).filter((d) => d.startsWith(base + '.') && /^\.[A-Za-z0-9_-]{8}\.(png|jpe?g|webp)$/i.test(d.slice(base.length)));
     check(leaked.length === 0, `dist/_astro contains an unused original of ${f}: ${leaked.join(', ')}`);

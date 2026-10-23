@@ -18,7 +18,9 @@
  */
 
 import { validateDocument } from '../../admin/shared/insight-content.js';
+import type { ImageMetadata } from 'astro';
 import { managedCaseStudies } from './case-studies';
+import type { ProjectImage } from './projects';
 
 export interface InsightSection {
   heading: string;
@@ -27,6 +29,8 @@ export interface InsightSection {
   list?: readonly string[];
   /** Paragraphs after the list, if any. */
   after?: readonly string[];
+  /** An image shown after the section's text (Task M7: added in the admin to a new article). */
+  image?: ProjectImage;
 }
 
 export interface Insight {
@@ -44,6 +48,8 @@ export interface Insight {
   sections: readonly InsightSection[];
   /** A short note set apart from the article text, where the article needs one. */
   note?: string;
+  /** An image between the head and the text (Task M7: added in the admin to a new article). */
+  cover?: ProjectImage;
   /** Slugs of genuinely related articles, in order. */
   related: readonly string[];
   meta: { title: string; description: string };
@@ -59,9 +65,27 @@ export interface Insight {
  * (admin/shared/insight-content.js) against the articles and case studies that exist, so an invalid draft, or a related
  * article or link that does not exist, fails the build instead of reaching the site.
  */
+interface ImageRef { id: string; width: number; height: number }
+type ManagedSection = Omit<InsightSection, 'image'> & { imageAlt?: string; imageCaption?: string };
 interface ManagedInsight {
   facts: { slug: string; order: number; published: string; publishedText: string; source?: string };
-  en: Pick<Insight, 'category' | 'title' | 'lead' | 'sections' | 'note' | 'related' | 'meta'>;
+  images?: { cover?: ImageRef; sections?: Record<string, ImageRef> };
+  en: Pick<Insight, 'category' | 'title' | 'lead' | 'note' | 'related' | 'meta'> & { sections: ManagedSection[]; coverAlt?: string; coverCaption?: string };
+}
+/**
+ * The article images, by id (file name without extension): every PNG, JPEG or WebP in src/assets/insights, where the
+ * admin uploads them (Task M7). Declared sizes live in the content files and are checked by scripts/assets/validate.mjs,
+ * which also refuses a file that no article uses.
+ */
+const imageFiles = import.meta.glob<ImageMetadata>('../assets/insights/*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' });
+const articleImages: Record<string, ImageMetadata> = Object.fromEntries(
+  Object.entries(imageFiles).map(([file, meta]) => [(file.split('/').at(-1) as string).replace(/\.[a-z]+$/, ''), meta]),
+);
+function articleImage(ref: ImageRef | undefined, alt: string | undefined, caption: string | undefined, slug: string): ProjectImage | undefined {
+  if (!ref) return undefined;
+  const src = articleImages[ref.id];
+  if (!src) throw new Error(`Article "${slug}" uses an image with no file in src/assets/insights: ${ref.id}`);
+  return { src, width: ref.width, height: ref.height, alt: alt as string, ...(caption ? { caption } : {}) };
 }
 const files = import.meta.glob<{ default: unknown }>('../../content/insights/*/index.json', { eager: true });
 const managedInsights: readonly { slug: string; doc: ManagedInsight }[] = Object.entries(files).map(([file, mod]) => ({
@@ -82,7 +106,11 @@ function insightFrom({ slug, doc }: { slug: string; doc: ManagedInsight }): Insi
     lead: en.lead,
     published: facts.published,
     publishedText: facts.publishedText,
-    sections: en.sections,
+    sections: en.sections.map(({ imageAlt, imageCaption, ...section }, i) => {
+      const image = articleImage(doc.images?.sections?.[String(i)], imageAlt, imageCaption, slug);
+      return image ? { ...section, image } : section;
+    }),
+    ...(doc.images?.cover ? { cover: articleImage(doc.images.cover, en.coverAlt, en.coverCaption, slug) } : {}),
     ...(en.note !== undefined ? { note: en.note } : {}),
     related: en.related,
     meta: en.meta,
