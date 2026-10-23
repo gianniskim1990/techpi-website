@@ -1,8 +1,9 @@
 /**
- * Insights: seven English articles migrated from pigiota314.eu/insights (owner approval, 2026-10-16; migration audit
+ * Insights: English articles. The first seven were migrated from pigiota314.eu/insights (owner approval, 2026-10-16; migration audit
  * decision D2). English only: there is no Greek version of any Insights page, and none is implied (routes.md, §4.1).
  *
- * Since Task M2 each article lives in content/insights/<slug>/index.json and is edited through the admin.
+ * Since Task M2 each article lives in content/insights/<slug>/index.json and is edited through the admin. Since Task M5
+ * articles can also be created in the admin; those have no `source` and show no provenance line.
  *
  * Source of every article: the live page at `source`, read in full on 2026-10-16 (server-rendered HTML, confirmed with a
  * rendered fetch). The legacy articles are short; their substance is kept and not padded out (docs/content/
@@ -17,13 +18,7 @@
  */
 
 import { validateDocument } from '../../admin/shared/insight-content.js';
-import whatEveryEuProjectWebsiteShouldInclude from '../../content/insights/what-every-eu-project-website-should-include/index.json';
-import commonMistakesInHorizonEuropeProjectWebsites from '../../content/insights/common-mistakes-in-horizon-europe-project-websites/index.json';
-import howToStructureDeliverablesAndPublications from '../../content/insights/how-to-structure-deliverables-and-publications/index.json';
-import accessibilityConsiderationsForProjectWebsites from '../../content/insights/accessibility-considerations-for-project-websites/index.json';
-import preparingAWebsiteBriefDuringTheProposalStage from '../../content/insights/preparing-a-website-brief-during-the-proposal-stage/index.json';
-import whatCommunicationPartnersShouldAskAWebDevelopmentSupplier from '../../content/insights/what-communication-partners-should-ask-a-web-development-supplier/index.json';
-import howAnalyticsCanSupportDisseminationReporting from '../../content/insights/how-analytics-can-support-dissemination-reporting/index.json';
+import { managedCaseStudies } from './case-studies';
 
 export interface InsightSection {
   heading: string;
@@ -52,32 +47,32 @@ export interface Insight {
   /** Slugs of genuinely related articles, in order. */
   related: readonly string[];
   meta: { title: string; description: string };
-  /** The legacy URL, for the redirect map. Never rendered. */
-  source: string;
+  /** The legacy URL of a migrated article, for the redirect map. Never rendered. Absent on articles created in the admin. */
+  source?: string;
 }
 
 /**
- * The 7 articles, managed in the admin since Task M2: one file each, content/insights/<slug>/index.json (the article
- * text, its search title and description, related articles; and the locked slug, position, publication date and
- * source). Listed explicitly: a file is published only when it is listed here. Every file is validated on every build
- * (admin/shared/insight-content.js), so an invalid draft fails the build instead of reaching the site.
+ * The articles, managed in the admin since Task M2: one file each, content/insights/<slug>/index.json (the article text,
+ * its search title and description, related articles; and the locked slug, position, publication date and, for the
+ * migrated ones, source). Since Task M5 the list is read from that folder at build time, so an article created in the
+ * admin is published by merging its draft pull request. Every file is validated on every build
+ * (admin/shared/insight-content.js) against the articles and case studies that exist, so an invalid draft, or a related
+ * article or link that does not exist, fails the build instead of reaching the site.
  */
 interface ManagedInsight {
-  facts: { slug: string; order: number; published: string; publishedText: string; source: string };
+  facts: { slug: string; order: number; published: string; publishedText: string; source?: string };
   en: Pick<Insight, 'category' | 'title' | 'lead' | 'sections' | 'note' | 'related' | 'meta'>;
 }
-const managedInsights: readonly { slug: string; doc: ManagedInsight }[] = [
-  { slug: 'what-every-eu-project-website-should-include', doc: whatEveryEuProjectWebsiteShouldInclude as unknown as ManagedInsight },
-  { slug: 'common-mistakes-in-horizon-europe-project-websites', doc: commonMistakesInHorizonEuropeProjectWebsites as unknown as ManagedInsight },
-  { slug: 'how-to-structure-deliverables-and-publications', doc: howToStructureDeliverablesAndPublications as unknown as ManagedInsight },
-  { slug: 'accessibility-considerations-for-project-websites', doc: accessibilityConsiderationsForProjectWebsites as unknown as ManagedInsight },
-  { slug: 'preparing-a-website-brief-during-the-proposal-stage', doc: preparingAWebsiteBriefDuringTheProposalStage as unknown as ManagedInsight },
-  { slug: 'what-communication-partners-should-ask-a-web-development-supplier', doc: whatCommunicationPartnersShouldAskAWebDevelopmentSupplier as unknown as ManagedInsight },
-  { slug: 'how-analytics-can-support-dissemination-reporting', doc: howAnalyticsCanSupportDisseminationReporting as unknown as ManagedInsight },
-];
+const files = import.meta.glob<{ default: unknown }>('../../content/insights/*/index.json', { eager: true });
+const managedInsights: readonly { slug: string; doc: ManagedInsight }[] = Object.entries(files).map(([file, mod]) => ({
+  slug: file.split('/').at(-2) as string,
+  doc: mod.default as ManagedInsight,
+}));
+/** What exists: related articles and links in notes are checked against it. */
+const known = { insights: managedInsights.map((x) => x.slug), caseStudies: managedCaseStudies.map((x) => x.slug) };
 
 function insightFrom({ slug, doc }: { slug: string; doc: ManagedInsight }): Insight {
-  const result = validateDocument(doc, slug);
+  const result = validateDocument(doc, slug, known);
   if (!result.ok) throw new Error(`Invalid article content/insights/${slug}/index.json:\n  ${result.problems.join('\n  ')}`);
   const { facts, en } = doc;
   return {
@@ -91,16 +86,22 @@ function insightFrom({ slug, doc }: { slug: string; doc: ManagedInsight }): Insi
     ...(en.note !== undefined ? { note: en.note } : {}),
     related: en.related,
     meta: en.meta,
-    source: facts.source,
+    ...(facts.source !== undefined ? { source: facts.source } : {}),
   };
 }
 
-/** Newest first, as on the source index: each file's locked position, which must be exactly 1 to N. */
+/**
+ * Newest first: by publication date, then by each file's locked position (unique whole numbers from 1; an article created
+ * in the admin takes the next free one). For the migrated articles this is the order of the source index.
+ */
 export const insights: readonly Insight[] = (() => {
-  const list = [...managedInsights].sort((x, y) => x.doc.facts.order - y.doc.facts.order);
-  list.forEach((x, i) => {
-    if (x.doc.facts.order !== i + 1) throw new Error(`Insights order must be 1 to ${list.length} without gaps or repeats (${x.slug}: ${x.doc.facts.order})`);
-  });
+  const seen = new Map<number, string>();
+  for (const x of managedInsights) {
+    const other = seen.get(x.doc.facts.order);
+    if (other) throw new Error(`Two Insights articles share position ${x.doc.facts.order}: ${other} and ${x.slug}`);
+    seen.set(x.doc.facts.order, x.slug);
+  }
+  const list = [...managedInsights].sort((x, y) => y.doc.facts.published.localeCompare(x.doc.facts.published) || x.doc.facts.order - y.doc.facts.order);
   return list.map(insightFrom);
 })();
 

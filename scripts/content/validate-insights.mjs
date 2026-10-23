@@ -3,20 +3,22 @@
 // Runs as part of `npm run build` (package.json), so a broken or incomplete Insights page fails the build, and with it
 // the Cloudflare build, before anything is deployed. Reads the built output only. No dependencies.
 //
-// The expected articles are written out here on purpose, independent of src/content/insights.ts: the legacy slug, the
-// date the source page displays, the order, and the number of sections of the source article (pigiota314.eu/insights,
-// read in full on 2026-10-16; docs/content/insights-migration.md). So an article that loses a section, a slug or its
-// date fails.
+// The seven migrated articles are written out here on purpose, independent of src/content/insights.ts: the legacy slug,
+// the date the source page displays and the number of sections of the source article (pigiota314.eu/insights, read in
+// full on 2026-10-16; docs/content/insights-migration.md). So a migrated article that loses a section, its slug or its
+// date fails. Articles created in the admin (Task M5) are checked against their own content file
+// (content/insights/<slug>/index.json): every file has its page, with the file's date and number of sections.
 //
 // Section headings are editorial text, edited in the admin (Task M2), so their wording is NOT pinned here. They are
 // validated structurally instead: every section has a non-empty h2 that carries the section's own id, no two sections of
 // an article share a heading, and every section has real text under its heading.
 //
-// 1. The index and the seven articles exist at /insights and /insights/<legacy slug>; nothing else under insights/,
+// 1. The index and every article exist at /insights and /insights/<slug> (the seven migrated ones always); nothing else under insights/,
 //    and no Greek Insights page anywhere (English only, routes.md section 4.1).
 // 2. Each article: English, one h1, the expected number of sections, each with a non-empty h2 and real body text, the
 //    source date in a <time>, a link back to /insights, no draft or placeholder text, no reading time, no author line.
-// 3. The index lists the seven articles in the source order, each card linking to its own article.
+// 3. The index lists every article newest first (by date, then position), each card linking to its own article. The
+//    "first published under the pigiota314 name" line appears exactly on the migrated articles.
 // 4. Canonicals are self-referencing; no hreflang; the language switch offers the Greek EU Projects page as a labelled
 //    fallback, never a Greek article; no page in the build links to /el/insights.
 // 5. No analytics, tag manager or third-party script on any page.
@@ -42,6 +44,18 @@ const SOURCE = [
   { slug: 'what-communication-partners-should-ask-a-web-development-supplier', date: '2025-04-22', sections: 2 },
   { slug: 'how-analytics-can-support-dissemination-reporting', date: '2025-03-30', sections: 1 },
 ];
+/** Every article in content/ (the migrated ones and any created in the admin), newest first like the index. */
+const ARTICLES = fs
+  .readdirSync(path.join(root, 'content/insights'), { withFileTypes: true })
+  .filter((e) => e.isDirectory() && fs.existsSync(path.join(root, 'content/insights', e.name, 'index.json')))
+  .map((e) => JSON.parse(fs.readFileSync(path.join(root, 'content/insights', e.name, 'index.json'), 'utf8')))
+  .map((d) => ({ slug: d.facts.slug, date: d.facts.published, order: d.facts.order, sections: d.en.sections.length, migrated: 'source' in d.facts }))
+  .sort((a, b) => b.date.localeCompare(a.date) || a.order - b.order);
+for (const m of SOURCE) {
+  const a = ARTICLES.find((x) => x.slug === m.slug);
+  check(Boolean(a) && a.migrated && a.date === m.date && a.sections === m.sections, `${m.slug}: the migrated article keeps its slug, source date (${m.date}) and ${m.sections} sections`);
+}
+const PROVENANCE = 'First published under the pigiota314 name';
 /** A section's body, not counting its heading. The shortest original section has 25 words; fewer than this is a stub. */
 const MIN_SECTION_WORDS = 10;
 const DRAFT = /lorem ipsum|placeholder|\bTODO\b|\bTBD\b|\[OWNER|coming soon|\{\{|\}\}/i;
@@ -83,17 +97,17 @@ function common(file, pagePath) {
 
 // 1. Files.
 const built = fs.existsSync(path.join(dist, 'insights')) ? fs.readdirSync(path.join(dist, 'insights')).sort() : [];
-const want = SOURCE.map((a) => `${a.slug}.html`).sort();
-check(JSON.stringify(built) === JSON.stringify(want), `insights/ holds exactly the seven articles: ${built.join(', ')}`);
+const want = ARTICLES.map((a) => `${a.slug}.html`).sort();
+check(JSON.stringify(built) === JSON.stringify(want), `insights/ holds exactly the ${ARTICLES.length} articles in content/insights: ${built.join(', ')}`);
 check(!exists('el/insights.html') && !exists('el/insights'), 'no Greek Insights page is built');
 
 // 3. Index.
 const index = common('insights.html', '/insights');
 const cards = [...main(index).matchAll(/<a class="title" href="([^"]+)"/g)].map((m) => m[1]);
-check(JSON.stringify(cards) === JSON.stringify(SOURCE.map((a) => `/insights/${a.slug}`)), `/insights: seven cards in source order, each to its article: ${cards.join(' ')}`);
+check(JSON.stringify(cards) === JSON.stringify(ARTICLES.map((a) => `/insights/${a.slug}`)), `/insights: ${ARTICLES.length} cards, newest first, each to its article: ${cards.join(' ')}`);
 
 // 2. Articles.
-for (const a of SOURCE) {
+for (const a of ARTICLES) {
   const pagePath = `/insights/${a.slug}`;
   const file = `insights/${a.slug}.html`;
   if (!exists(file)) {
@@ -123,7 +137,8 @@ for (const a of SOURCE) {
   check(!/min read|reading time/i.test(text(body)) && !/\bBy [A-Z][a-z]+ [A-Z][a-z]+/.test(text(body)), `${pagePath}: no reading time or author line`);
   check(/<article\b/.test(body) && /<header class="head"/.test(body), `${pagePath}: semantic <article> with a header`);
   check(!/Pigiota314 can support|Discuss your project/.test(text(body)), `${pagePath}: no legacy pigiota314 call to action`);
-  for (const h of hrefs(body).filter((x) => x.startsWith('/insights/'))) check(SOURCE.some((s) => `/insights/${s.slug}` === h), `${pagePath}: related link ${h} resolves`);
+  check(text(body).includes(PROVENANCE) === a.migrated, `${pagePath}: the pigiota314 provenance line ${a.migrated ? 'is shown (migrated article)' : 'is absent (written for TechPi)'}`);
+  for (const h of hrefs(body).filter((x) => x.startsWith('/insights/'))) check(ARTICLES.some((s) => `/insights/${s.slug}` === h), `${pagePath}: related link ${h} resolves`);
 }
 
 // 4 and 5. Whole build.
@@ -152,4 +167,4 @@ if (failures.length) {
   console.log(`\nInsights validation: ${checks} checks, ${failures.length} failures.`);
   process.exit(1);
 }
-console.log(`Insights validation: ${checks} checks, 0 failures (index + 7 articles; ${all.length} pages scanned).`);
+console.log(`Insights validation: ${checks} checks, 0 failures (index + ${ARTICLES.length} articles; ${all.length} pages scanned).`);
