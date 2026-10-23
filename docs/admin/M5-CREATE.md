@@ -16,8 +16,8 @@ on it, marked “New, not on the website yet”; further saves update the same p
 **New** tag. Merging the pull request publishes the page; nothing else is needed.
 
 Fixed at creation, like every existing entry: the address, the facts, the sections (case studies) and the section
-structure and date (articles). A new case study has **no images** (the admin has no media upload yet; its page is led by
-typography, as for the existing case studies without a capture), is **not featured** on the homepage, and goes **at the
+structure and date (articles). A new case study starts with **no images**; until its draft is merged, images can be uploaded in
+its editor (row image, cover, gallery: see `M6-IMAGES.md`). It is **not featured** on the homepage, and goes **at the
 end of its group** on the Work page. A new article has no legacy source, so it shows no “first published under the
 pigiota314 name” line.
 
