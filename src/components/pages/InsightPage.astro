@@ -63,7 +63,8 @@ function inline(text: string): Part[] {
         <p>
           {insightsCopy.published} <time datetime={article.published}>{article.publishedText}</time>
         </p>
-        <p>{insightsCopy.provenance}</p>
+        {/* Only the articles migrated from pigiota314 carry this line; one written in the admin has no legacy source. */}
+        {article.source && <p>{insightsCopy.provenance}</p>}
         <p>
           {insightsCopy.englishOnly}
           <a class="tlink" href={fallback.el.href} lang="el" hreflang="el">{insightsCopy.greekFallback}</a>

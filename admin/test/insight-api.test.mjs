@@ -60,10 +60,11 @@ test('the list shows the 7 articles in index order with dates, English only, no 
   const r = await call('GET', '/api/insights');
   assert.equal(r.status, 200);
   assert.deepEqual(r.data.entries.map((x) => x.slug), INSIGHT_SLUGS);
-  assert.ok(r.data.entries.every((x) => x.draft === null && x.hasGreek === false && x.title && x.published));
+  assert.ok(r.data.entries.every((x) => x.draft === null && x.hasGreek === false && x.title && x.published && x.isNew === false));
+  // Since Task M5 the list is read live from the content branch (new articles can be created), not fixed in the session.
   const s = await call('GET', '/api/session');
-  assert.deepEqual(s.data.connected.insights, INSIGHT_SLUGS);
-  assert.equal(s.data.connected.caseStudies.length, 18, 'case studies still connected');
+  assert.equal(s.data.connected.insights, undefined);
+  assert.deepEqual(s.data.create, ['case-studies', 'insights']);
 });
 
 test('every one of the 7 loads with its real content and version', async () => {
@@ -182,7 +183,7 @@ test('facts, structure, a Greek version and unsafe links cannot be saved', async
   assert.ok(gh.state.writes.every((w) => w.branch === draftOf(NOTE)));
 });
 
-test('only the 7 existing articles exist; everything else is refused before GitHub is asked', async () => {
+test('an article that does not exist is 404; an invalid name is refused before GitHub is asked; nothing is written', async () => {
   for (const slug of ['new-article', 'main', 'rocketeer', 'm0-sample-article']) {
     assert.equal((await call('GET', `/api/insights/${slug}`)).status, 404, slug);
     assert.equal((await save(slug, editableOf(DOC[NOTE]), gitSha(TEXT[NOTE]))).status, 404, slug);
@@ -191,8 +192,8 @@ test('only the 7 existing articles exist; everything else is refused before GitH
   assert.equal((await call('POST', `/api/insights/${NOTE}/publish`, { body: {} })).status, 404, 'no publish endpoint');
   assert.equal((await call('POST', `/api/insights/${NOTE}/merge`, { body: {} })).status, 404, 'no merge endpoint');
   assert.equal((await call('DELETE', `/api/insights/${NOTE}`, { body: {} })).status, 405, 'no delete');
-  assert.equal((await call('POST', '/api/insights', { body: {} })).status, 405, 'no create');
-  assert.ok(!gh.state.log.some((l) => /new-article|m0-sample|insights\/rocketeer/.test(l)));
+  assert.equal((await call('POST', '/api/insights', { body: {} })).status, 422, 'creating needs a complete article');
+  assert.ok(!gh.state.log.some((l) => /\.\.|Bad_Slug|a\.b/.test(l)), 'an invalid name never reaches GitHub');
   assert.equal(gh.state.writes.length, 0);
 });
 

@@ -114,8 +114,8 @@ test('validator: placeholder text, a wrong date, a missing article, a changed or
   expectFail(mutated('m-lorem', (d) => rewrite(d, A, (h) => h.replace(/(<section aria-labelledby="s1-h"[^>]*>[\s\S]*?<p[^>]*>)/, '$1Lorem ipsum dolor sit amet. '))), /no draft or placeholder text/);
   expectFail(mutated('m-todo', (d) => rewrite(d, B, (h) => h.replace(/<h2 id="s1-h"([^>]*)>/, '<h2 id="s1-h"$1>TODO '))), /no draft or placeholder text/);
   expectFail(mutated('m-date', (d) => rewrite(d, A, (h) => h.replace('<time datetime="2025-09-12"', '<time datetime="2025-09-13"'))), /the source date 2025-09-12 shown/);
-  expectFail(mutated('m-gone', (d) => fs.rmSync(path.join(d, 'insights', `${B}.html`))), /holds exactly the seven articles/);
-  expectFail(mutated('m-order', (d) => { const f = path.join(d, 'insights.html'); fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(`/insights/${A}"`, '/insights/TMP"').replace(`/insights/${B}"`, `/insights/${A}"`).replace('/insights/TMP"', `/insights/${B}"`)); }), /seven cards in source order/);
+  expectFail(mutated('m-gone', (d) => fs.rmSync(path.join(d, 'insights', `${B}.html`))), /holds exactly the 7 articles in content\/insights/);
+  expectFail(mutated('m-order', (d) => { const f = path.join(d, 'insights.html'); fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(`/insights/${A}"`, '/insights/TMP"').replace(`/insights/${B}"`, `/insights/${A}"`).replace('/insights/TMP"', `/insights/${B}"`)); }), /7 cards, newest first/);
   expectFail(mutated('m-el', (d) => fs.writeFileSync(path.join(d, 'el', 'insights.html'), '<html lang="el"></html>')), /no Greek Insights page is built/);
   expectFail(mutated('m-canon', (d) => rewrite(d, A, (h) => h.replace(/<link rel="canonical" href="[^"]*">/, '<link rel="canonical" href="https://techpi.eu/insights/other">'))), /self-referencing canonical/);
   expectFail(mutated('m-hreflang', (d) => rewrite(d, A, (h) => h.replace('</head>', '<link rel="alternate" hreflang="el" href="https://techpi.eu/el/insights/x"></head>'))), /no hreflang in the head/);

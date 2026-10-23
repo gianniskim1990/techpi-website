@@ -12,11 +12,11 @@ const read = (slug) => fs.readFileSync(path.join(dir, slug, 'index.json'), 'utf8
 const DOCS = Object.fromEntries(CONNECTED_SLUGS.map((s) => [s, JSON.parse(read(s))]));
 const edit = (slug, fn) => { const c = structuredClone(editableOf(DOCS[slug])); fn(c); return validateEditable(c, DOCS[slug]); };
 
-test('exactly 18 case studies: the allowlist, the folders and the public site list agree', () => {
+test('the 18 migrated case studies: every folder exists, and the public site reads the whole folder', () => {
   assert.equal(CONNECTED_SLUGS.length, 18);
-  assert.deepEqual(fs.readdirSync(dir).sort(), [...CONNECTED_SLUGS].sort());
-  const listed = [...fs.readFileSync(path.join(repo, 'src', 'content', 'case-studies.ts'), 'utf8').matchAll(/\{ slug: '([a-z0-9-]+)', doc:/g)].map((m) => m[1]);
-  assert.deepEqual(listed.sort(), [...CONNECTED_SLUGS].sort());
+  for (const s of CONNECTED_SLUGS) assert.ok(fs.existsSync(path.join(dir, s, 'index.json')), s);
+  // Since Task M5 a case study created in the admin is published by its file alone: the site lists the folder.
+  assert.match(fs.readFileSync(path.join(repo, 'src', 'content', 'case-studies.ts'), 'utf8'), /import\.meta\.glob[^;]*'\.\.\/\.\.\/content\/case-studies\/\*\/index\.json'/);
   const orders = CONNECTED_SLUGS.map((s) => DOCS[s].facts.order).sort((a, b) => a - b);
   assert.deepEqual(orders, Array.from({ length: 18 }, (_, i) => i + 1), 'display positions 1..18, no gaps or repeats');
   assert.deepEqual([...CONNECTED_SLUGS].sort((a, b) => DOCS[a].facts.order - DOCS[b].facts.order), CONNECTED_SLUGS, 'allowlist is in Work-page order');

@@ -68,8 +68,8 @@ test('the list shows exactly the 8 pages, in menu order, with names, URLs, both 
   assert.deepEqual(r.data.entries.filter((e) => e.kind === 'legal').map((e) => e.slug), ['privacy', 'cookies']);
   const s = await call('GET', '/api/session');
   assert.deepEqual(s.data.connected.pages, PAGE_KEYS);
-  assert.equal(s.data.connected.caseStudies.length, 18);
-  assert.equal(s.data.connected.insights.length, 7);
+  // Case studies and articles are listed live since Task M5 (they can be created); pages stay a fixed set.
+  assert.deepEqual(s.data.create, ['case-studies', 'insights']);
 });
 
 test('every one of the 8 pages loads with its real English and Greek content and version', async () => {
