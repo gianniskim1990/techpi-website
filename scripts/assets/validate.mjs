@@ -1,13 +1,15 @@
 // Asset validator. Run after a build:  node scripts/assets/validate.mjs
 //
 // 1. Project images (src/assets/projects, read as a whole by src/content/projects.ts; the admin uploads into it, Task M6),
-//    and article images (src/assets/insights, read by src/content/insights.ts, Task M7), each against its own content:
-//    every file is a real PNG, JPEG or WebP (read from its bytes, admin/shared/image-info.js), at most MAX_IMAGE_BYTES,
-//    with a unique id (its name without the extension); every image a case study references exists, with exactly the
-//    declared size (declared, not read from the import, so the full-size originals are not copied into dist/ unused; a
-//    replaced capture with stale numbers would otherwise be shown with the wrong proportions); and every file is used by
-//    some case study, so no unused upload is published with the repository.
-// 2. dist/ must not contain a full-size original of any file in src/assets/projects: every page uses
+//    article images (src/assets/insights, Task M7) and the media library (src/assets/media, Task M8), all read by
+//    src/content/image-files.ts: every file is a real PNG, JPEG or WebP (read from its bytes, admin/shared/image-info.js),
+//    at most MAX_IMAGE_BYTES, with an id (its name without the extension) unique across the three folders, since any
+//    entry may use any of them; every image a case study or article references exists, with exactly the declared size
+//    (declared, not read from the import, so the full-size originals are not copied into dist/ unused; a replaced capture
+//    with stale numbers would otherwise be shown with the wrong proportions); every file outside the library is used by
+//    some entry, so no unused upload is published with the repository; and the library's details belong to its images.
+// 2. dist/ must not contain a full-size original of any of these files (an unused library image not even a derivative,
+//    scripts/media/used-media.mjs): every page uses
 //    optimised WebP derivatives, so an original in dist/ is dead weight that is still uploaded to Cloudflare.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -24,50 +26,71 @@ let checks = 0;
 const failures = [];
 const check = (ok, msg) => { checks++; if (!ok) failures.push(msg); };
 
-// 1. Each image folder: the files, by id, and every reference to them with its declared size.
+// 1. The image folders: every file, by id (unique across the three folders, since any entry may use any of them), and
+// every reference to them with its declared size.
 const caseStudyRefs = (doc) => [doc.images?.image, doc.images?.cover, ...(doc.images?.gallery ?? [])];
 const articleRefs = (doc) => [doc.images?.cover, ...Object.values(doc.images?.sections ?? {})];
-const GROUPS = [
-  { folder: 'src/assets/projects', content: 'content/case-studies', refs: caseStudyRefs, user: 'case study', required: true },
-  { folder: 'src/assets/insights', content: 'content/insights', refs: articleRefs, user: 'article', required: false },
+// `library`: the media library (Task M8) keeps images no page uses yet; the other folders hold only images in use.
+const FOLDERS = [
+  { folder: 'src/assets/projects', required: true },
+  { folder: 'src/assets/insights' },
+  { folder: 'src/assets/media', library: true },
 ];
-for (const g of GROUPS) {
+const USERS = [
+  { content: 'content/case-studies', refs: caseStudyRefs },
+  { content: 'content/insights', refs: articleRefs },
+];
+const images = {};
+for (const g of FOLDERS) {
   const dir = path.join(root, g.folder);
   if (!fs.existsSync(dir)) { check(!g.required, `${g.folder} not found`); continue; }
-  const images = {};
-  for (const f of fs.readdirSync(dir)) {
+  const files = fs.readdirSync(dir);
+  if (g.required) check(files.length > 0, `no images found in ${g.folder}`);
+  for (const f of files) {
     const bytes = fs.readFileSync(path.join(dir, f));
     const info = imageInfo(bytes);
     const id = f.replace(/\.[a-z]+$/i, '');
     check(Boolean(info) && /\.(png|jpe?g|webp)$/.test(f), `${g.folder}/${f}: not a PNG, JPEG or WebP image`);
     check(!info || (info.ext === 'jpg' ? /\.jpe?g$/ : new RegExp(`\\.${info.ext}$`)).test(f), `${g.folder}/${f}: the extension does not match the content (${info?.type})`);
     check(bytes.length <= MAX_IMAGE_BYTES, `${g.folder}/${f}: ${bytes.length} bytes, at most ${MAX_IMAGE_BYTES}`);
-    check(!images[id], `${g.folder}: two files share the id "${id}"`);
-    images[id] = { file: f, info, used: false };
+    check(!images[id], `two images share the id "${id}": ${images[id] ? `${images[id].folder}/${images[id].file}` : ''} and ${g.folder}/${f}`);
+    if (!images[id]) images[id] = { file: f, folder: g.folder, library: Boolean(g.library), info, used: false };
   }
-  if (g.required) check(Object.keys(images).length > 0, `no images found in ${g.folder}`);
-  const contentDir = path.join(root, g.content);
+}
+for (const u of USERS) {
+  const contentDir = path.join(root, u.content);
   for (const d of fs.existsSync(contentDir) ? fs.readdirSync(contentDir) : []) {
     const file = path.join(contentDir, d, 'index.json');
     if (!fs.existsSync(file)) continue;
     const doc = JSON.parse(fs.readFileSync(file, 'utf8'));
-    for (const im of g.refs(doc).filter(Boolean)) {
+    for (const im of u.refs(doc).filter(Boolean)) {
       const found = images[im.id];
-      check(Boolean(found), `${g.content}/${d}: image "${im.id}" has no file in ${g.folder}`);
+      check(Boolean(found), `${u.content}/${d}: image "${im.id}" has no file in src/assets/projects, insights or media`);
       if (!found) continue;
       found.used = true;
       const real = found.info;
       check(Boolean(real) && real.width === im.width && real.height === im.height, `${found.file}: declared ${im.width}x${im.height}, file is ${real ? `${real.width}x${real.height}` : 'unreadable'}`);
     }
   }
-  for (const { file, used } of Object.values(images)) check(used, `${g.folder}/${file}: no ${g.user} uses this image`);
+}
+for (const { file, folder, used, library } of Object.values(images)) check(used || library, `${folder}/${file}: no case study or article uses this image`);
+// The library's details (content/media/<id>/index.json, written by the admin) belong to an image in src/assets/media.
+{
+  const dir = path.join(root, 'content/media');
+  for (const d of fs.existsSync(dir) ? fs.readdirSync(dir) : []) {
+    check(images[d]?.library === true, `content/media/${d}: no image "${d}" in src/assets/media`);
+    const file = path.join(dir, d, 'index.json');
+    let doc = null;
+    try { doc = JSON.parse(fs.readFileSync(file, 'utf8')); } catch {}
+    check(doc?.id === d, `content/media/${d}/index.json: missing, not valid JSON, or not about "${d}"`);
+  }
 }
 
 // 2. No original in dist/_astro (dist/ must exist: run a build first). Astro names an original <name>.<8-character hash>.<ext>
 // and a derivative <name>.<hash>_<hash>.<ext>; a hash may itself contain _ or -.
 check(fs.existsSync(distAstro), 'dist/_astro not found: run `npm run build` first');
 if (fs.existsSync(distAstro)) {
-  for (const f of GROUPS.flatMap((g) => (fs.existsSync(path.join(root, g.folder)) ? fs.readdirSync(path.join(root, g.folder)) : []))) {
+  for (const f of FOLDERS.flatMap((g) => (fs.existsSync(path.join(root, g.folder)) ? fs.readdirSync(path.join(root, g.folder)) : []))) {
     const base = path.parse(f).name;
     const leaked = fs.readdirSync(distAstro).filter((d) => d.startsWith(base + '.') && /^\.[A-Za-z0-9_-]{8}\.(png|jpe?g|webp)$/i.test(d.slice(base.length)));
     check(leaked.length === 0, `dist/_astro contains an unused original of ${f}: ${leaked.join(', ')}`);

@@ -174,13 +174,22 @@ export function createMockGitHub({ publicKey, appId = '123456', installationId =
       if (!buf) return json(404, { message: 'Not Found' });
       return json(200, { sha: m[1], size: buf.length, encoding: 'base64', content: buf.toString('base64').replace(/(.{60})/g, '$1\n') });
     }
+    // A whole tree, by branch name or commit SHA (the admin always asks for it recursively, Task M8).
+    if ((m = rest.match(/^\/git\/trees\/(.+)$/)) && method === 'GET') {
+      const ref = decodeURIComponent(m[1]);
+      const files = state.branches[ref]?.files ?? filesAt(ref);
+      if (!files) return json(404, { message: 'Not Found' });
+      return json(200, { sha: `tree${ref}`, truncated: false, tree: [...files.entries()].map(([p, c]) => ({ path: p, mode: '100644', type: 'blob', sha: gitSha(c) })) });
+    }
     if (rest === '/git/trees' && method === 'POST') {
       const base = state.trees.get(body.base_tree);
       if (!base) return json(422, { message: 'Invalid base_tree' });
       const files = new Map(base);
+      // A blob the admin created, or one already in the repository (a file reused by its SHA).
+      const existing = (sha) => [...Object.values(state.branches).flatMap((b) => [...b.files.values()]), ...[...state.commits.values()].flatMap((c) => [...c.files.values()])].map((c) => (Buffer.isBuffer(c) ? c : Buffer.from(c))).find((c) => gitSha(c) === sha);
       for (const e of body.tree) {
         if (e.sha === null) { files.delete(e.path); continue; }
-        const buf = state.blobs.get(e.sha);
+        const buf = state.blobs.get(e.sha) ?? existing(e.sha);
         if (!buf || e.mode !== '100644' || e.type !== 'blob') return json(422, { message: 'Invalid tree entry' });
         files.set(e.path, e.path.endsWith('.json') ? buf.toString('utf8') : buf);
       }

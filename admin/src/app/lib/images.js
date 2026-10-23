@@ -16,8 +16,15 @@ const asDataUrl = (blob) => new Promise((resolve, reject) => {
   r.readAsDataURL(blob);
 });
 
-/** Returns { data (base64), preview (data: URL), width, height, type, size } or throws an Error with a message to show. */
-export async function prepareImage(file) {
+/** The media library's small copy (Task M8): at most this many pixels a side, and bytes (worker/media.js checks both). */
+export const THUMB_SIDE = 480;
+const THUMB_BYTES = 200_000;
+
+/**
+ * Returns { data (base64), preview (data: URL), width, height, type, size } or throws an Error with a message to show.
+ * With { thumb: true }, also `thumb`: the base64 of a small copy for the media library.
+ */
+export async function prepareImage(file, { thumb = false } = {}) {
   if (!file || !TYPES.includes(file.type)) throw new Error('Choose a PNG, JPEG or WebP image.');
   if (file.size > 40_000_000) throw new Error('This file is too large to prepare (more than 40 MB). Export a smaller version first.');
   let bitmap;
@@ -40,5 +47,24 @@ export async function prepareImage(file) {
   }
   if (!blob) throw new Error('This image is still larger than 3 MB after compression. Try a smaller image.');
   const preview = await asDataUrl(blob);
-  return { data: preview.slice(preview.indexOf(',') + 1), preview, width, height, type: blob.type, size: blob.size };
+  const out = { data: preview.slice(preview.indexOf(',') + 1), preview, width, height, type: blob.type, size: blob.size };
+  if (thumb) out.thumb = await smallCopy(canvas);
+  return out;
+}
+
+/** A small copy of the prepared picture, drawn from its canvas (so it carries no metadata either). Base64. */
+async function smallCopy(source) {
+  const scale = Math.min(1, THUMB_SIDE / Math.max(source.width, source.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(source.width * scale));
+  canvas.height = Math.max(1, Math.round(source.height * scale));
+  canvas.getContext('2d').drawImage(source, 0, 0, canvas.width, canvas.height);
+  for (const [type, quality] of [['image/webp', 0.8], ['image/jpeg', 0.8], ['image/jpeg', 0.6]]) {
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, type, quality));
+    if (blob && blob.type === type && blob.size <= THUMB_BYTES) {
+      const url = await asDataUrl(blob);
+      return url.slice(url.indexOf(',') + 1);
+    }
+  }
+  throw new Error('The preview of this image could not be made.');
 }
