@@ -4,13 +4,6 @@ import type { CapabilityId } from './capabilities';
 import { projectsEl } from './projects.el';
 import { projectFrom } from './case-study-loader';
 import { managedCaseStudies } from './case-studies';
-import armansAdmin from '../assets/projects/armans-admin.png';
-import armansDevices from '../assets/projects/armans-devices.png';
-import logotherapiaSite from '../assets/projects/logotherapia-site.jpg';
-import rantevoBookingHome from '../assets/projects/rantevo-booking-home.png';
-import rantevoBusinessPage from '../assets/projects/rantevo-business-page.png';
-import rocketeerAdmin from '../assets/projects/rocketeer-admin-dashboard.png';
-import rocketeerSignIn from '../assets/projects/rocketeer-sign-in.png';
 
 /**
  * TechPi's v1 portfolio: the types and the functions the homepage, the Work index, the Capabilities page and the
@@ -95,18 +88,19 @@ export interface Project {
 }
 
 /**
- * The images of the case studies, by the id used in their content files (content/case-studies/<slug>/). Their declared
- * sizes live in those files and are checked against these files by scripts/assets/validate.mjs.
+ * The images of the case studies, by the id used in their content files (content/case-studies/<slug>/): every PNG, JPEG or
+ * WebP file in src/assets/projects, its id being the file name without its extension. Since Task M6 the admin uploads
+ * images for new case studies into that folder, so it is read as a whole rather than listed here. Declared sizes live
+ * in the content files and are checked against these files by scripts/assets/validate.mjs, which also refuses a file
+ * that no case study uses.
  */
-const managedImages = {
-  'rocketeer-admin-dashboard': rocketeerAdmin,
-  'rocketeer-sign-in': rocketeerSignIn,
-  'armans-devices': armansDevices,
-  'armans-admin': armansAdmin,
-  'logotherapia-site': logotherapiaSite,
-  'rantevo-booking-home': rantevoBookingHome,
-  'rantevo-business-page': rantevoBusinessPage,
-};
+const imageFiles = import.meta.glob<ImageMetadata>('../assets/projects/*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' });
+const managedImages: Record<string, ImageMetadata> = {};
+for (const [file, meta] of Object.entries(imageFiles)) {
+  const id = (file.split('/').at(-1) as string).replace(/\.[a-z]+$/, '');
+  if (managedImages[id]) throw new Error(`Two project images share the id "${id}": keep one file per name in src/assets/projects`);
+  managedImages[id] = meta;
+}
 
 /**
  * Every project, in Work-page order. Since Task M1B each one is managed in the admin: its text in both languages, its
