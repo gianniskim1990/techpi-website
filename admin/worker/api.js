@@ -6,6 +6,7 @@
  *   GET  /api/<collection>/<slug>           one entry: its draft version if a draft is open, otherwise the base version
  *   POST /api/<collection>/<slug>/draft     save the entry as a draft: commit to cms/<collection>/<slug>, open or update one
  *                                           draft pull request into the base branch
+ *   /api/case-studies/<slug>/images[...]     add, replace, remove and preview the images of a NEW case study (images.js)
  *   POST /api/<collection>                  create a new entry (case studies and articles only, Task M5): the file is written
  *                                           on a new cms/<collection>/<slug> branch and one draft pull request is opened.
  *                                           Nothing is published until that pull request is merged.
@@ -30,6 +31,7 @@ import * as study from '../shared/case-study-content.js';
 import * as insight from '../shared/insight-content.js';
 import * as page from '../shared/page-content.js';
 import { contentConfig } from './config.js';
+import { imageRoutes } from './images.js';
 
 const json = (status, data) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
 const fail = (status, message, extra = {}) => json(status, { error: { message, ...extra } });
@@ -416,6 +418,9 @@ async function saveDraft(env, base, col, slug, request, ctx) {
   return json(200, { slug, sha: newSha, changed: Boolean(commit), commit, baseBranch: base, draft: draft ? { branch, ...draft } : null });
 }
 
+/** The images of new case studies (images.js, Task M6), with the helpers above. */
+const images = imageRoutes({ json, fail, repoRequest, readFile, refSha, openDraftPr, assertDraftBranch, b64encode, qs, collection: COLLECTIONS[study.CASE_STUDY.name] });
+
 /** Routes an authenticated, same-origin API request. */
 export async function handleApi(request, env, identity) {
   const url = new URL(request.url);
@@ -439,6 +444,12 @@ export async function handleApi(request, env, identity) {
     const slug = parts[1];
     if (!demo.isSlug(slug)) return fail(400, 'Invalid entry name.');
     if (!col.allowed(slug)) return fail(404, col.notAvailable);
+    if (parts[0] === study.CASE_STUDY.name && parts[2] === 'images') {
+      if (parts.length === 3) return request.method === 'POST' ? await images.add(env, base, slug, request) : fail(405, 'Method not allowed.');
+      if (parts.length === 4 && parts[3] === 'remove' && request.method === 'POST') return await images.remove(env, base, slug, request);
+      if (parts.length === 4) return request.method === 'GET' ? await images.get(env, base, slug, parts[3]) : fail(405, 'Method not allowed.');
+      return fail(404, 'Not found.');
+    }
     if (parts.length === 2) return request.method === 'GET' ? await getEntry(env, base, col, slug, ctx) : fail(405, 'Method not allowed.');
     if (parts.length === 3 && parts[2] === 'draft') return request.method === 'POST' ? await saveDraft(env, base, col, slug, request, ctx) : fail(405, 'Method not allowed.');
     return fail(404, 'Not found.');

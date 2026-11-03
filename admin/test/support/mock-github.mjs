@@ -6,7 +6,11 @@ import http from 'node:http';
 
 const OWNER = 'gianniskim1990';
 const REPO = 'techpi-website';
-const gitSha = (text) => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\0${text}`).digest('hex');
+// A file's Git blob SHA, for text or binary content (identical to before for text).
+const gitSha = (content) => {
+  const buf = Buffer.isBuffer(content) ? content : Buffer.from(content);
+  return crypto.createHash('sha1').update(Buffer.concat([Buffer.from(`blob ${buf.length}\0`), buf])).digest('hex');
+};
 const commitSha = () => crypto.randomBytes(20).toString('hex');
 
 /**
@@ -30,7 +34,13 @@ export function createMockGitHub({ publicKey, appId = '123456', installationId =
     oauthCodes: new Map(), // code -> { challenge, redirectUri, user, used }
     userTokens: new Map(), // ghu_ token -> { user, revoked }
     oauthLog: [], // { step, ok, reason }
+    // Git Data API (Task M6): objects created by the admin. Text files are kept as strings, binary ones as Buffers.
+    blobs: new Map(), // sha -> Buffer
+    trees: new Map(), // sha -> Map(path -> content)
+    commits: new Map(), // sha -> { files, parent }
   };
+  /** The files of a commit: a branch head, or a commit created through the Git Data API. */
+  const filesAt = (sha) => Object.values(state.branches).find((b) => b.head === sha)?.files ?? state.commits.get(sha)?.files ?? null;
   for (const [name, files] of Object.entries(branches)) state.branches[name] = { head: commitSha(), files: new Map(Object.entries(files)) };
 
   const json = (status, data) => new Response(data === undefined ? null : JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
@@ -137,11 +147,53 @@ export function createMockGitHub({ publicKey, appId = '123456', installationId =
     }
     if ((m = rest.match(/^\/git\/refs\/heads\/(.+)$/)) && method === 'PATCH') {
       if (m[1] === 'main') return json(422, { message: 'Protected branch' });
-      const from = Object.values(state.branches).find((b) => b.head === body.sha);
+      const from = Object.values(state.branches).find((b) => b.head === body.sha) ?? state.commits.get(body.sha);
       if (!state.branches[m[1]] || !from) return json(422, { message: 'Reference does not exist' });
+      // Like GitHub: without force, the new commit must build on the branch's current head.
+      if (!body.force && state.commits.get(body.sha)?.parent !== state.branches[m[1]].head) return json(422, { message: 'Update is not a fast forward' });
       state.branches[m[1]] = { head: body.sha, files: new Map(from.files) };
       state.writes.push({ method, path: rest, branch: m[1] });
       return json(200, { ref: `refs/heads/${m[1]}`, object: { sha: body.sha } });
+    }
+    // ---------- Git Data API ----------
+    if ((m = rest.match(/^\/git\/commits\/([0-9a-f]{40})$/)) && method === 'GET') {
+      const files = filesAt(m[1]);
+      if (!files) return json(404, { message: 'Not Found' });
+      const tree = `tree${m[1]}`;
+      state.trees.set(tree, new Map(files));
+      return json(200, { sha: m[1], tree: { sha: tree } });
+    }
+    if (rest === '/git/blobs' && method === 'POST') {
+      const buf = Buffer.from(String(body.content), body.encoding === 'base64' ? 'base64' : 'utf8');
+      const sha = gitSha(buf);
+      state.blobs.set(sha, buf);
+      return json(201, { sha });
+    }
+    if ((m = rest.match(/^\/git\/blobs\/([0-9a-f]{40})$/)) && method === 'GET') {
+      const buf = state.blobs.get(m[1]) ?? [...Object.values(state.branches).flatMap((b) => [...b.files.values()])].map((c) => (Buffer.isBuffer(c) ? c : Buffer.from(c))).find((c) => gitSha(c) === m[1]);
+      if (!buf) return json(404, { message: 'Not Found' });
+      return json(200, { sha: m[1], size: buf.length, encoding: 'base64', content: buf.toString('base64').replace(/(.{60})/g, '$1\n') });
+    }
+    if (rest === '/git/trees' && method === 'POST') {
+      const base = state.trees.get(body.base_tree);
+      if (!base) return json(422, { message: 'Invalid base_tree' });
+      const files = new Map(base);
+      for (const e of body.tree) {
+        if (e.sha === null) { files.delete(e.path); continue; }
+        const buf = state.blobs.get(e.sha);
+        if (!buf || e.mode !== '100644' || e.type !== 'blob') return json(422, { message: 'Invalid tree entry' });
+        files.set(e.path, e.path.endsWith('.json') ? buf.toString('utf8') : buf);
+      }
+      const sha = `tree${crypto.randomBytes(18).toString('hex')}`;
+      state.trees.set(sha, files);
+      return json(201, { sha });
+    }
+    if (rest === '/git/commits' && method === 'POST') {
+      const files = state.trees.get(body.tree);
+      if (!files || !Array.isArray(body.parents) || body.parents.length !== 1) return json(422, { message: 'Invalid commit' });
+      const sha = commitSha();
+      state.commits.set(sha, { files, parent: body.parents[0], message: body.message });
+      return json(201, { sha, html_url: `https://github.com/${OWNER}/${REPO}/commit/${sha}` });
     }
     if ((m = rest.match(/^\/contents\/(.+)$/))) {
       const file = decodeURIComponent(m[1]);
@@ -151,7 +203,8 @@ export function createMockGitHub({ publicKey, appId = '123456', installationId =
         if (b.files.has(file)) { const text = b.files.get(file); return json(200, { type: 'file', path: file, sha: gitSha(text), content: Buffer.from(text).toString('base64').replace(/(.{60})/g, '$1\n') }); }
         const children = new Set([...b.files.keys()].filter((p) => p.startsWith(file + '/')).map((p) => p.slice(file.length + 1).split('/')[0]));
         if (!children.size) return json(404, { message: 'Not Found' });
-        return json(200, [...children].map((name) => ({ type: [...b.files.keys()].includes(`${file}/${name}`) ? 'file' : 'dir', name, path: `${file}/${name}` })));
+        // Like GitHub, a file entry carries its blob SHA.
+        return json(200, [...children].map((name) => { const p = `${file}/${name}`; const isFile = b.files.has(p); return { type: isFile ? 'file' : 'dir', name, path: p, ...(isFile ? { sha: gitSha(b.files.get(p)) } : {}) }; }));
       }
       if (method === 'PUT') {
         if (body.branch === 'main') return json(409, { message: 'Repository rule violations found: Changes must be made through a pull request.' });

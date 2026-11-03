@@ -35,6 +35,22 @@ async function request(method, path, body) {
   return data;
 }
 
+/**
+ * An image of a case study, as a data: URL for a preview. The admin's policy allows images from itself and data: only,
+ * and the request carries the admin's header like every API call, so it cannot be a plain <img src>.
+ */
+async function getCaseStudyImage(slug, id) {
+  const res = await fetch(`/api/case-studies/${encodeURIComponent(slug)}/images/${encodeURIComponent(id)}`, { credentials: 'same-origin', cache: 'no-store', headers: { 'X-TechPi-Admin': '1' } });
+  if (!res.ok) throw new ApiError(res.status, 'The image could not be loaded.');
+  const blob = await res.blob();
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = () => reject(new ApiError(0, 'The image could not be read.'));
+    r.readAsDataURL(blob);
+  });
+}
+
 export const api = {
   session: () => request('GET', 'session'),
   listDemo: () => request('GET', 'm0-demo'),
@@ -42,6 +58,9 @@ export const api = {
   listCaseStudies: () => request('GET', 'case-studies'),
   getCaseStudy: (slug) => request('GET', `case-studies/${encodeURIComponent(slug)}`),
   createCaseStudy: (content) => request('POST', 'case-studies', { content }),
+  addCaseStudyImage: (slug, body) => request('POST', `case-studies/${encodeURIComponent(slug)}/images`, body),
+  removeCaseStudyImage: (slug, body) => request('POST', `case-studies/${encodeURIComponent(slug)}/images/remove`, body),
+  getCaseStudyImage,
   createInsight: (content) => request('POST', 'insights', { content }),
   saveCaseStudyDraft: (slug, content, expectedSha) => request('POST', `case-studies/${encodeURIComponent(slug)}/draft`, { content, expectedSha }),
   listInsights: () => request('GET', 'insights'),

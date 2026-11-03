@@ -11,6 +11,7 @@
   import SeoSnippet from '../components/SeoSnippet.svelte';
   import Dialog from '../components/Dialog.svelte';
   import ListEditor from '../components/ListEditor.svelte';
+  import CaseStudyImages from '../components/CaseStudyImages.svelte';
   import { api } from '../lib/api.js';
   import { toast } from '../lib/store.svelte.js';
   import { caseStudies, loadCaseStudies } from '../lib/case-studies.svelte.js';
@@ -19,7 +20,9 @@
   let { slug } = $props();
   // Thumbnails of the project captures (480 px WebP copies of src/assets/projects, made for the admin).
   const thumbs = import.meta.glob('../thumbs/*.webp', { eager: true, query: '?url', import: 'default' });
-  const media = (id) => thumbs[`../thumbs/${id}.webp`] ?? null;
+  // Images uploaded in the admin (Task M6) have no bundled thumbnail: they are fetched from the draft for preview.
+  let previews = $state({});
+  const media = (id) => thumbs[`../thumbs/${id}.webp`] ?? previews[id] ?? null;
   const CAPABILITY = { 'digital-products': 'Digital products', 'web-experiences': 'Web experiences', intelligence: 'Intelligence', 'digital-visibility': 'Digital visibility' };
 
   let load = $state({ loading: true, error: null });
@@ -63,6 +66,27 @@
   if (!caseStudies.loaded) loadCaseStudies(); // how many case studies there are, for the position
 
   const dirty = $derived(form ? JSON.stringify(form) !== baseline : false);
+  const refsOf = (d) => [d.images.image, d.images.cover, ...(d.images.gallery ?? [])].filter(Boolean);
+  $effect(() => {
+    if (!doc) return;
+    for (const ref of refsOf(doc)) {
+      if (thumbs[`../thumbs/${ref.id}.webp`] || previews[ref.id] !== undefined) continue;
+      previews[ref.id] = null; // loading
+      api.getCaseStudyImage(slug, ref.id).then((url) => { previews[ref.id] = url; }).catch(() => {});
+    }
+  });
+  /** After an image was added, replaced or removed (CaseStudyImages): the saved case study is the new starting point. */
+  function imagesChanged(r, preview) {
+    const before = new Set(refsOf(doc).map((x) => x.id));
+    doc = r.content;
+    sha = r.sha;
+    draft = r.draft ?? draft;
+    source = 'draft';
+    form = Object.fromEntries(LOCALES.map((l) => [l, copy(r.content[l])]));
+    baseline = JSON.stringify(form);
+    if (preview) for (const ref of refsOf(doc)) if (!before.has(ref.id)) previews[ref.id] = preview;
+    loadCaseStudies();
+  }
   const check = $derived(form && doc ? validateEditable(form, doc) : { ok: true, errors: {} });
   const errors = $derived(tried ? { ...check.errors, ...serverErrors } : {});
   const c = $derived(form?.[lang]);
@@ -222,9 +246,12 @@
       </section>
 
       <section class="card" aria-labelledby="img-h">
-        <div class="card-head"><h2 id="img-h">Images</h2>{#if hasImages}<span class="lock"><Icon name="lock" size={14} />Files are locked; alt text is editable</span>{/if}</div>
+        <div class="card-head"><h2 id="img-h">Images</h2>{#if hasImages && !isNew}<span class="lock"><Icon name="lock" size={14} />Files are locked; alt text is editable</span>{/if}</div>
+        {#if isNew}
+          <div class="card-body"><CaseStudyImages {slug} {doc} {sha} {previews} disabled={dirty || saving} onchange={imagesChanged} /></div>
+        {/if}
         {#if !hasImages}
-          <div class="card-body"><p class="hint">This case study has no images: its page is led by typography. Adding images arrives with the media library.</p></div>
+          {#if !isNew}<div class="card-body"><p class="hint">This case study has no images: its page is led by typography. Images can be added only while a case study is new, before its draft is merged.</p></div>{/if}
         {:else}
           <div class="card-body images">
             {#if doc.images.image || doc.images.cover}
