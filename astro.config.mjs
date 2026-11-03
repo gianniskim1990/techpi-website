@@ -62,9 +62,23 @@ export default defineConfig({
   // attributes (build-time layout values such as --i, --x, left, width) are allowed through style-src-attr alone, so
   // no inline <style> element or script runs without a hash. frame-ancestors cannot be set in a
   // <meta> policy, so it is sent as a header (public/_headers), with the rest of the security headers.
+  //
+  // Google Analytics 4 (src/scripts/consent.ts) runs only after consent, but the policy is static, so every page allows
+  // Google's tag script and its measurement requests, with the host patterns Google documents for GA4 (regional
+  // endpoints such as region1.google-analytics.com). Nothing else from another origin.
   security: {
     csp: {
-      directives: ["default-src 'self'", "object-src 'none'", "base-uri 'self'", "form-action 'self'"],
+      directives: [
+        "default-src 'self'",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+        "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
+        "img-src 'self' https://*.google-analytics.com https://*.googletagmanager.com",
+      ],
+      scriptDirective: {
+        resources: ["'self'", 'https://www.googletagmanager.com'],
+      },
       styleDirective: {
         resources: ["'self'", { resource: "'unsafe-inline'", kind: 'attribute' }],
       },

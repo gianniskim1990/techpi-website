@@ -43,3 +43,12 @@ export const registrationFacts: { gemi: string | null; vat: string | null } = {
   gemi: '151838746000',
   vat: '142536715',
 };
+
+/**
+ * Google Analytics 4, approved by the owner on 2026-11-03 (replacing decision O16, "Search Console only"). It loads only
+ * after a visitor accepts it in the consent banner (src/components/Consent.astro, src/scripts/consent.ts), without
+ * Google signals or advertising features. The Cookies and Privacy pages describe it.
+ */
+export const analyticsFacts = {
+  measurementId: 'G-M3FF84P32D',
+} as const;

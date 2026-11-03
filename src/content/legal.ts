@@ -8,8 +8,9 @@ import { copyOf, pageDocs } from './pages-content';
  *
  * Written from the confirmed facts only (docs/launch/LEGAL_CONTENT_DRAFTS.md, docs/launch/OWNER_DECISIONS_REQUIRED.md):
  * - Operator: the owner's sole proprietorship (site.ts, operatorFacts). TechPi is its brand, not a separate company.
- * - The website sets no cookies of its own, uses no browser storage, no analytics, advertising or tracking, and has no
- *   forms. Contact is by email and telephone only.
+ * - Analytics: Google Analytics 4, only after consent in the banner (owner decision 2026-11-03, replacing "Search
+ *   Console only"), without Google signals or advertising features; data retention 2 months (the GA4 property
+ *   setting). The consent choice is kept in localStorage. No advertising or tracking otherwise.
  * - Hosting, DNS and security: Cloudflare (Free plan; Bot Fight Mode off; Browser Integrity Check, the Managed Ruleset
  *   and HTTP DDoS protection on). Cloudflare may set strictly necessary security cookies, such as `cf_clearance`, when a
  *   visitor is shown a security check. Never claimed as always present, never claimed as impossible.
@@ -64,6 +65,7 @@ const registration = (locale: Locale): LegalBlock[] => {
 };
 const cloudflarePrivacy = 'https://www.cloudflare.com/privacypolicy/';
 const cloudflareCookies = 'https://developers.cloudflare.com/fundamentals/reference/policies-compliances/cloudflare-cookies/';
+const googlePartners = 'https://policies.google.com/technologies/partner-sites';
 const dpa = 'https://www.dpa.gr/';
 const dpaComplaint = 'https://www.dpa.gr/el/polites/katagelia_stin_arxi';
 
@@ -85,6 +87,7 @@ const tokens = (locale: Locale): Record<string, string> => ({
   'path.cookies': pathFor('cookies', locale),
   'url.cloudflarePrivacy': cloudflarePrivacy,
   'url.cloudflareCookies': cloudflareCookies,
+  'url.googlePartners': googlePartners,
   'url.dpa': dpa,
   'url.dpaComplaint': dpaComplaint,
 });

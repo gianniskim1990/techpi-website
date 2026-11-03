@@ -172,6 +172,7 @@ export const TOKENS = {
   'path.cookies': 'The Cookies Policy, in this language',
   'url.cloudflarePrivacy': 'Cloudflare’s privacy policy',
   'url.cloudflareCookies': 'Cloudflare’s cookie documentation',
+  'url.googlePartners': 'Google’s page on how it uses information from sites that use its services',
   'url.dpa': 'The Hellenic Data Protection Authority',
   'url.dpaComplaint': 'The Authority’s complaint page',
 };
@@ -188,8 +189,6 @@ export const RETIRED = [
   /sitemap[^.]*(has been|was|is) submitted/i,
   /(already|is|has been) indexed (by|in) Google/i,
   /ευρετηριασ|έχει υποβληθεί[^.]*sitemap|sitemap[^.]*έχει υποβληθεί/i,
-  /(we use|we have installed|uses) Google Analytics/i,
-  /Χρησιμοποιούμε (το )?Google Analytics/,
   /Search Console[^.]*(identifies|tells us who)/i,
   /Search Console[^.]*(reports show|has (shown|reported))/i,
   /do not transfer your personal data outside/i,

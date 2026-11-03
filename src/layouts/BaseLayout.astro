@@ -4,6 +4,7 @@ import commissionerGreek from '../assets/fonts/commissioner-greek.woff2?url';
 import commissionerLatin from '../assets/fonts/commissioner-latin.woff2?url';
 import '../styles/tokens.css';
 import '../styles/base.css';
+import Consent from '../components/Consent.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { getDictionary } from '../i18n';
@@ -233,6 +234,7 @@ const introPreload = intro
       languageFallbacks={languageFallbacks}
       currentPath={paths ? paths[locale] : undefined}
     />
+    <Consent locale={locale} />
     <script>
       import '../scripts/motion';
     </script>

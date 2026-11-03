@@ -73,7 +73,7 @@ The application-ownership question O12 is decided (client projects). «Χτισ�
 
 | # | Question | Unblocks |
 |---|---|---|
-| ✓ O16 | Analytics: **Google Search Console only** (no GA4, no Meta Pixel, no advertising trackers, no profiling, no other analytics) | Done |
+| ✓ O16 | Analytics: ~~Google Search Console only~~ **changed 2026-11-03:** Search Console plus **Google Analytics 4** (`G-M3FF84P32D`), loaded only after consent in a banner, without Google signals or advertising features; still no Meta Pixel, no advertising trackers, no profiling (`docs/production/analytics.md`) | Done |
 | ◐ O17 | Search Console ownership. **2026-10-16 (owner):** `techpi.eu` Domain property verified; access to the `pigiota314.eu` and `pigiota314.gr` properties confirmed; historical exports saved (P0-10 done). Still open: a second owner account | Change of Address |
 | O18 | Training-crawler policy for `robots.txt` (allow all, or block specific AI training agents) | Launch blocker 12 |
 | O19 | Launch date / explicit authorisation to enable indexing | P2 |

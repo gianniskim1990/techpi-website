@@ -26,6 +26,14 @@ export const en = {
     /** The accessible name of the footer's legal links. */
     legalLabel: 'Legal',
   },
+  /** The analytics consent banner and the footer button that reopens it (src/components/Consent.astro). */
+  consent: {
+    label: 'Cookie consent',
+    text: 'We would like to use Google Analytics cookies to understand how visitors use this website. They are set only if you accept. You can change your choice at any time under “Cookie settings”.',
+    accept: 'Accept',
+    reject: 'Reject',
+    settings: 'Cookie settings',
+  },
   language: {
     label: 'Language',
     en: { short: 'EN', name: 'English' },

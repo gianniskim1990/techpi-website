@@ -167,7 +167,7 @@ test('legal: the Search Console statement, the operator name and the retired cla
   }
   const elWho = DOCS.cookies.el.sections.findIndex((x) => x.id === 'who-we-are');
   bad('cookies', (c) => { c.el.sections[elWho].blocks[0].p = c.el.sections[elWho].blocks[0].p.replace('Ιωάννη Κιμούντρη', 'Γιάννη Κιμούντρη'); }, `el.sections.${elWho}.references`);
-  bad('privacy', (c) => { c.en.sections[1].blocks[0].p = 'We use Google Analytics to measure visits.'; }, 'en.sections.1.blocks.0.p');
+  bad('privacy', (c) => { c.en.sections[1].blocks[0].p = 'The website is already indexed by Google.'; }, 'en.sections.1.blocks.0.p');
   bad('privacy', (c) => { c.en.sections[1].blocks[0].p = 'We do not transfer your personal data outside the EU.'; }, 'en.sections.1.blocks.0.p');
 });
 

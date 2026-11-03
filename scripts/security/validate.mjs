@@ -67,13 +67,18 @@ for (const f of pages) {
     check(v.includes("'self'"), f, `${d} allows 'self'`);
     check(!v.some((x) => /unsafe-(inline|eval|hashes)|^\*$|^https?:$|^data:$/.test(x)), f, `${d} has no unsafe or wildcard source: ${v.join(' ')}`);
   }
-  // One exception to 'self': the two contact pages load Cloudflare Turnstile (script and iframe) for the contact form,
-  // from exactly one origin. No other page allows any other origin or any frame (docs/production/contact-form.md).
+  // Exceptions to 'self', each from exactly the origins listed. Every page: Google Analytics 4, loaded by
+  // src/scripts/consent.ts only after consent (the tag script, and its measurement requests and pixels). The two
+  // contact pages also load Cloudflare Turnstile (script and iframe) for the contact form
+  // (docs/production/contact-form.md). No page allows any other origin or any other frame.
   const contactPage = f === 'contact.html' || f === 'el/contact.html';
-  const hosts = (policy['script-src'] || []).filter((x) => /^https?:/.test(x));
-  check(contactPage ? hosts.join(' ') === 'https://challenges.cloudflare.com' : hosts.length === 0, f, `script-src origins: ${hosts.join(' ') || 'none'}`);
+  const hosts = (policy['script-src'] || []).filter((x) => /^https?:/.test(x)).sort();
+  const expectHosts = ['https://www.googletagmanager.com', ...(contactPage ? ['https://challenges.cloudflare.com'] : [])].sort();
+  check(hosts.join(' ') === expectHosts.join(' '), f, `script-src origins: ${hosts.join(' ') || 'none'}`);
   check(contactPage ? policy['frame-src']?.join(' ') === 'https://challenges.cloudflare.com' : !policy['frame-src'], f, `frame-src: ${policy['frame-src']?.join(' ') || 'none'}`);
-  check(!policy['connect-src'] && !policy['form-action']?.some((x) => x !== "'self'"), f, "connect-src and form-action stay 'self'");
+  check(policy['connect-src']?.join(' ') === "'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com", f, `connect-src: ${policy['connect-src']?.join(' ')}`);
+  check(policy['img-src']?.join(' ') === "'self' https://*.google-analytics.com https://*.googletagmanager.com", f, `img-src: ${policy['img-src']?.join(' ')}`);
+  check(!policy['form-action']?.some((x) => x !== "'self'"), f, "form-action stays 'self'");
   check(!policy['script-src-attr'] && !policy['script-src-elem'] && !policy['style-src-elem'], f, 'no script/style element or script attribute override');
   check(policy['style-src-attr']?.join(' ') === "'unsafe-inline'", f, "style-src-attr 'unsafe-inline' (build-time style attributes)");
   // The meta comes before the body, and every executable inline script after it, and every <style>, is hashed.
@@ -85,8 +90,14 @@ for (const f of pages) {
   }
   for (const m of html.matchAll(/<style>([\s\S]*?)<\/style>/g)) check(policy['style-src'].includes(sha(m[1])), f, `<style> not hashed: ${m[1].slice(0, 50)}`);
   check(!/\son[a-z]+="/.test(html), f, 'no inline event handler attribute');
+  // Google's tag is never in the page itself: consent.ts adds it after consent.
   check(!/<script[^>]+src="(https?:)?\/\//.test(html), f, 'no third-party script');
-  check(!/fonts\.(googleapis|gstatic)\.com|googletagmanager|google-analytics|gtag\(|fbq\(|plausible|hotjar|clarity\.ms/.test(html), f, 'no third-party font, analytics or pixel');
+  check(!/fonts\.(googleapis|gstatic)\.com|fbq\(|plausible|hotjar|clarity\.ms/.test(html), f, 'no third-party font, other analytics or pixel');
+  const outside = html
+    .replace(/<meta http-equiv="content-security-policy"[^>]*>/, '')
+    .replace(/<script type="module">(?:(?!<\/script>)[\s\S])*techpi-analytics-consent[\s\S]*?<\/script>/, '');
+  check(!/googletagmanager|google-analytics|gtag\(/.test(outside), f, 'Google Analytics only in the CSP policy and the consent script');
+  check((html.match(/<section class="consent[^"]*"[^>]*data-consent[^>]*hidden/g) || []).length === 1, f, 'one consent banner, hidden until the script decides');
 }
 
 // --- _headers ---
