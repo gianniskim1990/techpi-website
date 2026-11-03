@@ -97,6 +97,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .btn-ghost:hover:not(:disabled) { background: var(--rule-soft); color: var(--ink); }
 .btn-danger { background: var(--white); border-color: #e7b4ae; color: var(--danger); }
 .btn:disabled { cursor: not-allowed; opacity: 0.55; }
+/* A choice of two or three, e.g. the source of an image (upload or media library). */
+.segmented { display: inline-flex; justify-self: start; gap: 2px; padding: 2px; margin-bottom: 8px; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--white); }
+.segmented button { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border: 0; border-radius: 4px; background: none; font: inherit; font-size: var(--text-sm); color: var(--graphite); cursor: pointer; }
+.segmented button[aria-checked='true'] { background: var(--ink); color: var(--sheet); }
+.segmented button:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
 .btn-sm { min-height: 30px; padding: 0 10px; font-size: var(--text-sm); }
 
 /* Form controls */

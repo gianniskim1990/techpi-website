@@ -4,12 +4,15 @@
    * a gallery of up to eight images. Each upload, replacement or removal is saved to the draft on GitHub at once, as one
    * commit with the image file and the updated case study (worker/images.js). Alt text is required in English and Greek.
    * Disabled while the text has unsaved changes, so an image change never conflicts with them.
+   * Each place takes a new upload or an image from the media library (Task M8), which is referred to, not copied.
    */
   import Icon from './Icon.svelte';
   import Dialog from './Dialog.svelte';
   import { api } from '../lib/api.js';
   import { toast } from '../lib/store.svelte.js';
   import { prepareImage, MAX_SIDE } from '../lib/images.js';
+  import MediaPicker from './MediaPicker.svelte';
+  import { thumbs } from '../lib/media.svelte.js';
 
   let { slug, doc, sha, previews = {}, disabled = false, onchange } = $props();
 
@@ -30,6 +33,8 @@
   let errors = $state({});
   let busy = $state(false);
   let removing = $state(null);
+  let source = $state('upload'); // or 'library'
+  let picked = $state(null);
 
   function start(s) {
     slot = s;
@@ -38,7 +43,18 @@
     errors = {};
     alt = { en: '', el: '' };
     caption = { en: '', el: '' };
+    source = 'upload';
+    picked = null;
     open = true;
+  }
+  /** A library image: its default alt text and caption fill the fields that are still empty. */
+  function pick(item) {
+    picked = item;
+    fileError = null;
+    for (const l of ['en', 'el']) {
+      if (!alt[l].trim() && item.alt?.[l]) alt[l] = item.alt[l];
+      if (slot === 'cover' && !caption[l].trim() && item.caption?.[l]) caption[l] = item.caption[l];
+    }
   }
   async function choose(e) {
     const file = e.currentTarget.files?.[0];
@@ -50,15 +66,16 @@
   }
   async function upload() {
     errors = {};
-    if (!prepared) { fileError = fileError ?? 'Choose an image file.'; return; }
+    const fromLibrary = source === 'library';
+    if (fromLibrary ? !picked : !prepared) { fileError = fromLibrary ? 'Choose an image from the library.' : fileError ?? 'Choose an image file.'; return; }
     busy = true;
     try {
-      const body = { expectedSha: sha, slot, data: prepared.data, alt };
+      const body = { expectedSha: sha, slot, alt, ...(fromLibrary ? { id: picked.id } : { data: prepared.data }) };
       if (slot === 'cover' && (caption.en.trim() || caption.el.trim())) body.caption = caption;
-      const r = await api.addCaseStudyImage(slug, body);
+      const r = fromLibrary ? await api.useCaseStudyImage(slug, body) : await api.addCaseStudyImage(slug, body);
       open = false;
       toast('success', 'Image saved to the draft', 'Committed to the draft branch with the case study. The website is not changed.');
-      onchange?.(r, prepared.preview);
+      onchange?.(r, fromLibrary ? thumbs[picked.file] ?? thumbs[picked.thumb] ?? null : prepared.preview);
     } catch (e) {
       if (e.fields) { errors = e.fields; if (e.fields.file) fileError = e.fields.file; }
       toast('error', 'Image not saved', e.message);
@@ -86,7 +103,7 @@
 {/snippet}
 
 <div class="manager">
-  <p class="hint lead">Upload images for this new case study. Each change is saved to the draft on GitHub at once; the website is not changed until the draft is merged. Images are resized to at most {MAX_SIDE} pixels and cleaned of location and camera data before upload.</p>
+  <p class="hint lead">Add images to this new case study: upload them, or choose them from the media library. Each change is saved to the draft on GitHub at once; the website is not changed until the draft is merged. Images are resized to at most {MAX_SIDE} pixels and cleaned of location and camera data before upload.</p>
   {#if disabled}<p class="note" role="status"><Icon name="info" size={15} />Save or discard your text changes before changing images.</p>{/if}
 
   {#each ['image', 'cover'] as s (s)}
@@ -98,7 +115,7 @@
         <span class="hint">{ref ? `${ref.width} × ${ref.height}` : 'None'} · {PLACE[s].hint}</span>
       </div>
       <div class="acts">
-        <button class="btn btn-secondary btn-sm" type="button" {disabled} onclick={() => start(s)}>{ref ? 'Replace' : 'Upload'}</button>
+        <button class="btn btn-secondary btn-sm" type="button" {disabled} onclick={() => start(s)}>{ref ? 'Replace' : 'Add'}</button>
         {#if ref}<button class="btn btn-ghost btn-sm" type="button" disabled={disabled || removing !== null} aria-busy={removing === `${s}-`} onclick={() => remove(s)}>Remove</button>{/if}
       </div>
     </div>
@@ -124,8 +141,17 @@
   {/if}
 </div>
 
-<Dialog bind:open title={slot === 'gallery' ? 'Add a gallery image' : `${doc.images[slot] ? 'Replace' : 'Upload'} the ${PLACE[slot].label.toLowerCase()}`} wide>
+<Dialog bind:open title={slot === 'gallery' ? 'Add a gallery image' : `${doc.images[slot] ? 'Replace' : 'Add'} the ${PLACE[slot].label.toLowerCase()}`} wide>
   <div class="form">
+    <div class="segmented" role="radiogroup" aria-label="Image source">
+      <button type="button" role="radio" aria-checked={source === 'upload'} onclick={() => { source = 'upload'; fileError = null; }}><Icon name="upload" size={14} />Upload a file</button>
+      <button type="button" role="radio" aria-checked={source === 'library'} onclick={() => { source = 'library'; fileError = null; }}><Icon name="media" size={14} />Media library</button>
+    </div>
+    {#if source === 'library'}
+      <MediaPicker selected={picked?.id ?? null} onpick={pick} />
+      {#if fileError}<p class="error-text">{fileError}</p>{/if}
+      {#if picked}<p class="hint">Chosen: <strong>{picked.title}</strong>{picked.width ? ` · ${picked.width} × ${picked.height}` : ''}. The page refers to the library image; nothing is uploaded again.</p>{/if}
+    {:else}
     <div class="field">
       <label class="label" for="img-file"><span>Image</span><span class="meta">PNG, JPEG or WebP</span></label>
       <input class="input" id="img-file" type="file" accept="image/png,image/jpeg,image/webp" onchange={choose} aria-invalid={fileError ? 'true' : undefined} />
@@ -135,6 +161,7 @@
         <div class="chosen"><img src={prepared.preview} alt="" /><p class="hint">{prepared.width} × {prepared.height} · {(prepared.size / 1024).toFixed(0)} KB · {prepared.type === 'image/webp' ? 'WebP' : 'JPEG'}</p></div>
       {/if}
     </div>
+    {/if}
     <div class="two">
       <div class="field">
         <label class="label" for="img-alt-en"><span>Alt text, English</span><span class="meta">{alt.en.trim().length}/300</span></label>
@@ -184,7 +211,8 @@
   .grid li { display: grid; gap: 4px; justify-items: start; }
   .grid .pic img, .grid .ph { width: 100%; }
   .form { display: grid; gap: 4px; }
-  .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+  .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; align-items: start; }
+  .two > .field + .field { margin-top: 0; }
   .chosen { display: grid; gap: 4px; margin-top: 10px; }
   .chosen img { max-width: 100%; max-height: 220px; object-fit: contain; border-radius: var(--radius); border: 1px solid var(--rule-soft); background: var(--rule-soft); }
   .opt { color: var(--slate); font-weight: 400; }

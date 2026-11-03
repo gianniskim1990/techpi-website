@@ -4,6 +4,7 @@ import type { CapabilityId } from './capabilities';
 import { projectsEl } from './projects.el';
 import { projectFrom } from './case-study-loader';
 import { managedCaseStudies } from './case-studies';
+import { siteImages } from './image-files';
 
 /**
  * TechPi's v1 portfolio: the types and the functions the homepage, the Work index, the Capabilities page and the
@@ -88,21 +89,6 @@ export interface Project {
 }
 
 /**
- * The images of the case studies, by the id used in their content files (content/case-studies/<slug>/): every PNG, JPEG or
- * WebP file in src/assets/projects, its id being the file name without its extension. Since Task M6 the admin uploads
- * images for new case studies into that folder, so it is read as a whole rather than listed here. Declared sizes live
- * in the content files and are checked against these files by scripts/assets/validate.mjs, which also refuses a file
- * that no case study uses.
- */
-const imageFiles = import.meta.glob<ImageMetadata>('../assets/projects/*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' });
-const managedImages: Record<string, ImageMetadata> = {};
-for (const [file, meta] of Object.entries(imageFiles)) {
-  const id = (file.split('/').at(-1) as string).replace(/\.[a-z]+$/, '');
-  if (managedImages[id]) throw new Error(`Two project images share the id "${id}": keep one file per name in src/assets/projects`);
-  managedImages[id] = meta;
-}
-
-/**
  * Every project, in Work-page order. Since Task M1B each one is managed in the admin: its text in both languages, its
  * locked facts and its images come from content/case-studies/<slug>/index.json (see case-studies.ts). Positions are
  * whole numbers from 1; a case study created in the admin takes the next free one. The build fails if two share one.
@@ -112,7 +98,7 @@ export const projects: readonly Project[] = (() => {
   list.forEach((x, i) => {
     if (i > 0 && x.doc.facts.order === list[i - 1].doc.facts.order) throw new Error(`Two case studies share display position ${x.doc.facts.order}: ${list[i - 1].slug} and ${x.slug}`);
   });
-  return list.map((x) => projectFrom(x.doc, x.slug, managedImages));
+  return list.map((x) => projectFrom(x.doc, x.slug, siteImages));
 })();
 
 /** The portfolio in a language. English is the source; Greek takes its editorial text from projects.el.ts. */

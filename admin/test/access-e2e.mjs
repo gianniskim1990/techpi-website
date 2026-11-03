@@ -31,8 +31,11 @@ const csSample = read(CS_FILE);
 const pgFiles = Object.fromEntries(PAGE_KEYS.map((key) => [`content/pages/${key}/index.json`, read(`content/pages/${key}/index.json`)]));
 const inFiles = Object.fromEntries(INSIGHT_SLUGS.map((slug) => [`content/insights/${slug}/index.json`, read(`content/insights/${slug}/index.json`)]));
 const csFiles = Object.fromEntries(CONNECTED_SLUGS.map((slug) => [`content/case-studies/${slug}/index.json`, read(`content/case-studies/${slug}/index.json`)]));
+// The case studies' images, so the media library (Task M8) and image previews have real files.
+const imgDir = path.join(root, '..', 'src', 'assets', 'projects');
+const imgFiles = Object.fromEntries(fs.readdirSync(imgDir).map((f) => [`src/assets/projects/${f}`, fs.readFileSync(path.join(imgDir, f))]));
 const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
-const gh = createMockGitHub({ publicKey, branches: { main: { 'README.md': 'main' }, [BASE]: { [FILE]: sample, ...csFiles, ...inFiles, ...pgFiles } } });
+const gh = createMockGitHub({ publicKey, branches: { main: { 'README.md': 'main' }, [BASE]: { [FILE]: sample, ...csFiles, ...inFiles, ...pgFiles, ...imgFiles } } });
 const MOCK_PORT = 8920;
 const mockServer = await gh.listen(MOCK_PORT);
 const TEST_PASSWORD = 'e2e only: a long test password 9';

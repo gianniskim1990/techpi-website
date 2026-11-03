@@ -40,7 +40,13 @@ async function request(method, path, body) {
  * and the request carries the admin's header like every API call, so it cannot be a plain <img src>.
  */
 async function getImage(collection, slug, id) {
-  const res = await fetch(`/api/${collection}/${encodeURIComponent(slug)}/images/${encodeURIComponent(id)}`, { credentials: 'same-origin', cache: 'no-store', headers: { 'X-TechPi-Admin': '1' } });
+  return imageAt(`/api/${collection}/${encodeURIComponent(slug)}/images/${encodeURIComponent(id)}`, 'no-store');
+}
+/** A media library image or small copy by its content hash (the same hash is always the same bytes). */
+const getMediaBlob = (sha) => imageAt(`/api/media/blobs/${encodeURIComponent(sha)}`, 'default');
+
+async function imageAt(url, cache) {
+  const res = await fetch(url, { credentials: 'same-origin', cache, headers: { 'X-TechPi-Admin': '1' } });
   if (!res.ok) throw new ApiError(res.status, 'The image could not be loaded.');
   const blob = await res.blob();
   return new Promise((resolve, reject) => {
@@ -64,6 +70,13 @@ export const api = {
   addInsightImage: (slug, body) => request('POST', `insights/${encodeURIComponent(slug)}/images`, body),
   removeInsightImage: (slug, body) => request('POST', `insights/${encodeURIComponent(slug)}/images/remove`, body),
   getInsightImage: (slug, id) => getImage('insights', slug, id),
+  useCaseStudyImage: (slug, body) => request('POST', `case-studies/${encodeURIComponent(slug)}/images/use`, body),
+  useInsightImage: (slug, body) => request('POST', `insights/${encodeURIComponent(slug)}/images/use`, body),
+  listMedia: () => request('GET', 'media'),
+  uploadMedia: (body) => request('POST', 'media', body),
+  editMedia: (id, body) => request('POST', `media/${encodeURIComponent(id)}`, body),
+  deleteMedia: (id) => request('POST', `media/${encodeURIComponent(id)}/delete`, {}),
+  getMediaBlob,
   createInsight: (content) => request('POST', 'insights', { content }),
   saveCaseStudyDraft: (slug, content, expectedSha) => request('POST', `case-studies/${encodeURIComponent(slug)}/draft`, { content, expectedSha }),
   listInsights: () => request('GET', 'insights'),

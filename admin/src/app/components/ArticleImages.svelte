@@ -5,12 +5,15 @@
    * image file and the updated article (worker/images.js). Alt text is required (English: articles are English only);
    * a caption is optional. Alt text and captions are then edited with the article's other text.
    * Disabled while the text has unsaved changes, so an image change never conflicts with them.
+   * Each place takes a new upload or an image from the media library (Task M8), which is referred to, not copied.
    */
   import Icon from './Icon.svelte';
   import Dialog from './Dialog.svelte';
   import { api } from '../lib/api.js';
   import { toast } from '../lib/store.svelte.js';
   import { prepareImage, MAX_SIDE } from '../lib/images.js';
+  import MediaPicker from './MediaPicker.svelte';
+  import { thumbs } from '../lib/media.svelte.js';
 
   let { slug, doc, sha, previews = {}, disabled = false, onchange } = $props();
 
@@ -24,6 +27,8 @@
   let errors = $state({});
   let busy = $state(false);
   let removing = $state(null);
+  let source = $state('upload'); // or 'library'
+  let picked = $state(null);
 
   const refOf = (slot, index) => (slot === 'cover' ? doc.images?.cover : doc.images?.sections?.[String(index)]) ?? null;
   const places = $derived([
@@ -39,7 +44,16 @@
     errors = {};
     alt = '';
     caption = '';
+    source = 'upload';
+    picked = null;
     open = true;
+  }
+  /** A library image: its default English alt text and caption fill the fields that are still empty. */
+  function pick(item) {
+    picked = item;
+    fileError = null;
+    if (!alt.trim() && item.alt?.en) alt = item.alt.en;
+    if (!caption.trim() && item.caption?.en) caption = item.caption.en;
   }
   async function choose(e) {
     const file = e.currentTarget.files?.[0];
@@ -51,14 +65,15 @@
   }
   async function upload() {
     errors = {};
-    if (!prepared) { fileError = fileError ?? 'Choose an image file.'; return; }
+    const fromLibrary = source === 'library';
+    if (fromLibrary ? !picked : !prepared) { fileError = fromLibrary ? 'Choose an image from the library.' : fileError ?? 'Choose an image file.'; return; }
     busy = true;
     try {
-      const body = { expectedSha: sha, slot: place.slot, index: place.index, data: prepared.data, alt, ...(caption.trim() ? { caption } : {}) };
-      const r = await api.addInsightImage(slug, body);
+      const body = { expectedSha: sha, slot: place.slot, index: place.index, alt, ...(caption.trim() ? { caption } : {}), ...(fromLibrary ? { id: picked.id } : { data: prepared.data }) };
+      const r = fromLibrary ? await api.useInsightImage(slug, body) : await api.addInsightImage(slug, body);
       open = false;
       toast('success', 'Image saved to the draft', 'Committed to the draft branch with the article. The website is not changed.');
-      onchange?.(r, prepared.preview);
+      onchange?.(r, fromLibrary ? thumbs[picked.file] ?? thumbs[picked.thumb] ?? null : prepared.preview);
     } catch (e) {
       if (e.fields) { errors = e.fields; if (e.fields.file) fileError = e.fields.file; }
       toast('error', 'Image not saved', e.message);
@@ -81,7 +96,7 @@
 </script>
 
 <div class="manager">
-  <p class="hint lead">Add a cover and images after any section of this new article. Each change is saved to the draft on GitHub at once; the website is not changed until the draft is merged. Images are resized to at most {MAX_SIDE} pixels and cleaned of location and camera data before upload.</p>
+  <p class="hint lead">Add a cover and images after any section of this new article: upload them, or choose them from the media library. Each change is saved to the draft on GitHub at once; the website is not changed until the draft is merged. Images are resized to at most {MAX_SIDE} pixels and cleaned of location and camera data before upload.</p>
   {#if disabled}<p class="note" role="status"><Icon name="info" size={15} />Save or discard your text changes before changing images.</p>{/if}
   {#each places as p (keyOf(p))}
     {@const ref = refOf(p.slot, p.index)}
@@ -94,7 +109,7 @@
         <span class="hint">{ref ? `${ref.width} × ${ref.height}` : 'None'} · {p.hint}</span>
       </div>
       <div class="acts">
-        <button class="btn btn-secondary btn-sm" type="button" {disabled} onclick={() => start(p)}>{ref ? 'Replace' : 'Upload'}</button>
+        <button class="btn btn-secondary btn-sm" type="button" {disabled} onclick={() => start(p)}>{ref ? 'Replace' : 'Add'}</button>
         {#if ref}<button class="btn btn-ghost btn-sm" type="button" disabled={disabled || removing !== null} aria-busy={removing === keyOf(p)} aria-label="Remove the image of {p.label}" onclick={() => remove(p)}>Remove</button>{/if}
       </div>
     </div>
@@ -103,6 +118,15 @@
 
 <Dialog bind:open title={`${refOf(place.slot, place.index) ? 'Replace' : 'Add'} the image: ${place.label ?? ''}`} wide>
   <div class="form">
+    <div class="segmented" role="radiogroup" aria-label="Image source">
+      <button type="button" role="radio" aria-checked={source === 'upload'} onclick={() => { source = 'upload'; fileError = null; }}><Icon name="upload" size={14} />Upload a file</button>
+      <button type="button" role="radio" aria-checked={source === 'library'} onclick={() => { source = 'library'; fileError = null; }}><Icon name="media" size={14} />Media library</button>
+    </div>
+    {#if source === 'library'}
+      <MediaPicker selected={picked?.id ?? null} onpick={pick} />
+      {#if fileError}<p class="error-text">{fileError}</p>{/if}
+      {#if picked}<p class="hint">Chosen: <strong>{picked.title}</strong>{picked.width ? ` · ${picked.width} × ${picked.height}` : ''}. The article refers to the library image; nothing is uploaded again.</p>{/if}
+    {:else}
     <div class="field">
       <label class="label" for="aimg-file"><span>Image</span><span class="meta">PNG, JPEG or WebP</span></label>
       <input class="input" id="aimg-file" type="file" accept="image/png,image/jpeg,image/webp" onchange={choose} aria-invalid={fileError ? 'true' : undefined} />
@@ -112,6 +136,7 @@
         <div class="chosen"><img src={prepared.preview} alt="" /><p class="hint">{prepared.width} × {prepared.height} · {(prepared.size / 1024).toFixed(0)} KB · {prepared.type === 'image/webp' ? 'WebP' : 'JPEG'}</p></div>
       {/if}
     </div>
+    {/if}
     <div class="field">
       <label class="label" for="aimg-alt"><span>Alt text</span><span class="meta">{alt.trim().length}/300</span></label>
       <textarea class="textarea" id="aimg-alt" lang="en" rows="2" bind:value={alt} aria-invalid={errors.alt ? 'true' : undefined}></textarea>

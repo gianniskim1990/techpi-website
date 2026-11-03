@@ -4,6 +4,8 @@
  *
  *   POST /api/<collection>/<slug>/images          { expectedSha, slot, index?, data, alt, caption? }
  *   POST /api/<collection>/<slug>/images/remove   { expectedSha, slot, index? }
+ *   POST /api/<collection>/<slug>/images/use      { expectedSha, slot, index?, id, alt, caption? }: an image already in
+ *                                                 the repository, from the media library (Task M8, media.js)
  *   GET  /api/<collection>/<slug>/images/<id>     the image file, for the editor's preview
  *
  * Case studies (`alt` and `caption` in English and Greek): slot `image` (Work-page row), `cover` (top of the page, with an
@@ -24,6 +26,9 @@ import { imageInfo } from '../shared/image-info.js';
 import * as study from '../shared/case-study-content.js';
 import * as insight from '../shared/insight-content.js';
 
+/** Where images live (src/content/image-files.ts): any entry may use an image from any of them. */
+const IMAGE_FOLDERS = ['src/assets/projects', 'src/assets/insights', 'src/assets/media'];
+const MEDIA_FOLDER = 'src/assets/media';
 export const IMAGE_LIMITS = { bytes: 3_000_000, minSide: 320, maxSide: 8000, gallery: 8 };
 const MAX_BODY = 4_300_000; // base64 of 3 MB, plus the rest of the request
 const CONTENT_TYPE = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp' };
@@ -128,12 +133,64 @@ const KINDS = {
 };
 
 /**
+ * One commit on a draft branch with every change (Git Data API): { path: base64 content | { sha } of a blob already in
+ * the repository | null to delete }. The branch moves only as a fast-forward from `head`: null when it moved meanwhile.
+ * `h`: helpers from api.js. Used for entry images here and for the media library (media.js).
+ */
+export async function commitChanges(h, env, base, branch, head, message, changes) {
+  h.assertDraftBranch(branch, base);
+  const parent = await h.repoRequest(env, 'GET', `/git/commits/${head}`);
+  const tree = [];
+  const shas = {};
+  for (const [path, content] of Object.entries(changes)) {
+    if (content === null) { tree.push({ path, mode: '100644', type: 'blob', sha: null }); continue; }
+    const sha = typeof content === 'object' ? content.sha : (await h.repoRequest(env, 'POST', '/git/blobs', { body: { content, encoding: 'base64' } })).data.sha;
+    shas[path] = sha;
+    tree.push({ path, mode: '100644', type: 'blob', sha });
+  }
+  const t = await h.repoRequest(env, 'POST', '/git/trees', { body: { base_tree: parent.data.tree.sha, tree } });
+  const c = await h.repoRequest(env, 'POST', '/git/commits', { body: { message, tree: t.data.sha, parents: [head] } });
+  // Not forced: GitHub refuses the update if the branch no longer points at `head`, so a concurrent save is never lost.
+  const moved = await h.repoRequest(env, 'PATCH', `/git/refs/heads/${h.assertDraftBranch(branch, base)}`, { body: { sha: c.data.sha, force: false }, expect: [409, 422] });
+  return moved.status === 200 ? { sha: c.data.sha, url: c.data.html_url ?? null, shas } : null;
+}
+
+/** Reads an upload's JSON body (an image as base64 and its text), refusing anything larger than an image allows. */
+export async function readImageBody(h, request, max = MAX_BODY) {
+  if (Number(request.headers.get('Content-Length')) > max) return { error: h.fail(413, 'The image is too large: at most 3 MB.') };
+  const raw = await request.text();
+  if (raw.length > max) return { error: h.fail(413, 'The image is too large: at most 3 MB.') };
+  try { return { body: JSON.parse(raw) }; } catch { return { error: h.fail(400, 'The request is not valid JSON.') }; }
+}
+
+/** The bytes of a base64 upload checked as an image (see the top of this file): { bytes, info } or { error } (a message). */
+export function checkUpload(data) {
+  if (typeof data !== 'string' || !data || data.length % 4 !== 0 || !/^[A-Za-z0-9+/]+={0,2}$/.test(data)) return { error: 'Choose an image file.' };
+  const bytes = Uint8Array.from(atob(data), (ch) => ch.charCodeAt(0));
+  const info = imageInfo(bytes);
+  if (bytes.length > IMAGE_LIMITS.bytes) return { error: 'The image is too large: at most 3 MB.' };
+  if (!info) return { error: 'This is not a PNG, JPEG or WebP image.' };
+  if (info.metadata.length) return { error: `This image contains embedded data (${info.metadata.join(', ')}), which can include where a photo was taken. Upload it through the admin, which removes it.` };
+  if (Math.min(info.width, info.height) < IMAGE_LIMITS.minSide || Math.max(info.width, info.height) > IMAGE_LIMITS.maxSide) return { error: `The image must be ${IMAGE_LIMITS.minSide} to ${IMAGE_LIMITS.maxSide} pixels on each side (it is ${info.width} × ${info.height}).` };
+  return { bytes, info };
+}
+
+/** A stored blob's bytes. */
+export async function blobBytes(h, env, sha) {
+  const blob = await h.repoRequest(env, 'GET', `/git/blobs/${sha}`);
+  return Uint8Array.from(atob(String(blob.data?.content ?? '').replace(/\s+/g, '')), (ch) => ch.charCodeAt(0));
+}
+export { CONTENT_TYPE };
+
+/**
  * `h`: helpers from api.js (json, fail, repoRequest, readFile, refSha, openDraftPr, assertDraftBranch, b64encode, qs);
  * `name`, `col`: the collection (case-studies or insights) and its definition in api.js.
  */
 export function imageRoutes(h, name, col) {
   const kind = KINDS[name];
   const noun = name === 'insights' ? 'article' : 'case study';
+  /** This entry's own uploads: <slug>-<slot>-<n> (never a library image: shared/media-content.js isMediaId). */
+  const ownUpload = (slug) => new RegExp(`^${slug}-(?:${kind.slots.join('|')})-\\d+$`);
 
   /** The draft of a new entry, or an error response. */
   async function newDraft(env, base, slug) {
@@ -149,39 +206,15 @@ export function imageRoutes(h, name, col) {
     return { branch, head, file, doc, pr };
   }
 
-  /** The image files on a ref, by id (file name without extension). */
-  async function filesOn(env, ref) {
-    const dir = await h.repoRequest(env, 'GET', `/contents/${kind.folder}?${h.qs({ ref })}`, { expect: [404] });
+  /** The image files of a folder (this collection's by default) on a ref, by id (file name without extension). */
+  async function filesOn(env, ref, folder = kind.folder) {
+    const dir = await h.repoRequest(env, 'GET', `/contents/${folder}?${h.qs({ ref })}`, { expect: [404] });
     const out = {};
     for (const f of Array.isArray(dir.data) ? dir.data : []) if (f.type === 'file') out[f.name.replace(/\.[a-z]+$/i, '')] = { name: f.name, sha: f.sha };
     return out;
   }
 
-  /** One commit with every change: { path: base64 content | null to delete }. Null when the branch moved meanwhile. */
-  async function commit(env, base, branch, head, message, changes) {
-    h.assertDraftBranch(branch, base);
-    const parent = await h.repoRequest(env, 'GET', `/git/commits/${head}`);
-    const tree = [];
-    const shas = {};
-    for (const [path, content] of Object.entries(changes)) {
-      if (content === null) { tree.push({ path, mode: '100644', type: 'blob', sha: null }); continue; }
-      const blob = await h.repoRequest(env, 'POST', '/git/blobs', { body: { content, encoding: 'base64' } });
-      shas[path] = blob.data.sha;
-      tree.push({ path, mode: '100644', type: 'blob', sha: blob.data.sha });
-    }
-    const t = await h.repoRequest(env, 'POST', '/git/trees', { body: { base_tree: parent.data.tree.sha, tree } });
-    const c = await h.repoRequest(env, 'POST', '/git/commits', { body: { message, tree: t.data.sha, parents: [head] } });
-    // Not forced: GitHub refuses the update if the branch no longer points at `head`, so a concurrent save is never lost.
-    const moved = await h.repoRequest(env, 'PATCH', `/git/refs/heads/${h.assertDraftBranch(branch, base)}`, { body: { sha: c.data.sha, force: false }, expect: [409, 422] });
-    return moved.status === 200 ? { sha: c.data.sha, url: c.data.html_url ?? null, shas } : null;
-  }
-
-  async function readJsonBody(request) {
-    if (Number(request.headers.get('Content-Length')) > MAX_BODY) return { error: h.fail(413, 'The image is too large: at most 3 MB.') };
-    const raw = await request.text();
-    if (raw.length > MAX_BODY) return { error: h.fail(413, 'The image is too large: at most 3 MB.') };
-    try { return { body: JSON.parse(raw) }; } catch { return { error: h.fail(400, 'The request is not valid JSON.') }; }
-  }
+  const readJsonBody = (request) => readImageBody(h, request);
 
   /** Plain text per language (articles: one English string). Returns { en, el? } or adds errors. */
   function texts(input, prefix, max, required, errors) {
@@ -204,12 +237,22 @@ export function imageRoutes(h, name, col) {
     const problems = kind.valid(next, slug);
     if (problems.length) return h.fail(422, `The ${noun} would not be valid.`, { fields: { entry: problems.join(' ') } });
     const jsonPath = col.path(slug);
-    // Image files no longer used by this entry are deleted in the same commit.
+    // Image files no longer used by this entry are deleted in the same commit: its own uploads (named after it), and a
+    // library image it brought into its draft that is not on the base branch (Task M8). Library and other entries' images
+    // on the base branch are never touched.
     const after = new Set(kind.refs(next).map((x) => x.id));
-    const files = await filesOn(env, d.branch);
-    for (const ref of kind.refs(d.doc)) if (!after.has(ref.id) && files[ref.id] && ref.id.startsWith(`${slug}-`)) changes[`${kind.folder}/${files[ref.id].name}`] = null;
+    const dropped = [...new Set(kind.refs(d.doc).map((x) => x.id))].filter((id) => !after.has(id));
+    if (dropped.length) {
+      const own = ownUpload(slug);
+      const files = await filesOn(env, d.branch);
+      for (const id of dropped) if (own.test(id) && files[id]) changes[`${kind.folder}/${files[id].name}`] = null;
+      if (dropped.some((id) => !own.test(id))) {
+        const [onBranch, onBase] = await Promise.all([filesOn(env, d.branch, MEDIA_FOLDER), filesOn(env, base, MEDIA_FOLDER)]);
+        for (const id of dropped) if (!own.test(id) && onBranch[id] && !onBase[id]) changes[`${MEDIA_FOLDER}/${onBranch[id].name}`] = null;
+      }
+    }
     changes[jsonPath] = h.b64encode(kind.serialize(next));
-    const c = await commit(env, base, d.branch, d.head, message, changes);
+    const c = await commitChanges(h, env, base, d.branch, d.head, message, changes);
     if (!c) return h.fail(409, `This ${noun} changed on GitHub while the image was being saved. Reload and try again. Nothing was changed.`, { conflict: true });
     return h.json(200, { slug, sha: c.shas[jsonPath], content: next, commit: { sha: c.sha, url: c.url }, draft: { branch: d.branch, ...d.pr }, isNew: true });
   }
@@ -229,21 +272,16 @@ export function imageRoutes(h, name, col) {
     const errors = {};
     const full = kind.full(d.doc, body.slot, body.index);
     if (full) errors.file = full;
-    let bytes = null;
-    if (typeof body.data !== 'string' || !body.data || body.data.length % 4 !== 0 || !/^[A-Za-z0-9+/]+={0,2}$/.test(body.data)) errors.file = errors.file ?? 'Choose an image file.';
-    else bytes = Uint8Array.from(atob(body.data), (ch) => ch.charCodeAt(0));
-    const info = bytes && imageInfo(bytes);
-    if (bytes && bytes.length > IMAGE_LIMITS.bytes) errors.file = 'The image is too large: at most 3 MB.';
-    else if (bytes && !info) errors.file = 'This is not a PNG, JPEG or WebP image.';
-    else if (info && info.metadata.length) errors.file = `This image contains embedded data (${info.metadata.join(', ')}), which can include where a photo was taken. Upload it through the admin, which removes it.`;
-    else if (info && (Math.min(info.width, info.height) < IMAGE_LIMITS.minSide || Math.max(info.width, info.height) > IMAGE_LIMITS.maxSide)) errors.file = `The image must be ${IMAGE_LIMITS.minSide} to ${IMAGE_LIMITS.maxSide} pixels on each side (it is ${info.width} × ${info.height}).`;
+    const upload = checkUpload(body.data);
+    const info = upload.info;
+    if (upload.error) errors.file = full ?? upload.error;
     const alt = texts(body.alt, 'alt', kind.altMax, true, errors);
     const caption = kind.captioned(body.slot) && hasText(body.caption) ? texts(body.caption, 'caption', kind.captionMax, true, errors) : null;
     if (Object.keys(errors).length) return h.fail(422, 'Some fields need attention.', { fields: errors });
 
     // A new file name for every upload: <slug>-<slot>-<n>, n one more than any this entry has used on the branch.
     const files = await filesOn(env, d.branch);
-    const used = Object.keys(files).map((id) => id.match(new RegExp(`^${slug}-(?:${kind.slots.join('|')})-(\\d+)$`))?.[1]).filter(Boolean).map(Number);
+    const used = Object.keys(files).filter((id) => ownUpload(slug).test(id)).map((id) => Number(id.slice(id.lastIndexOf('-') + 1)));
     const id = `${slug}-${body.slot}-${Math.max(0, ...used) + 1}`;
     const ref = { id, width: info.width, height: info.height };
     const next = structuredClone(d.doc);
@@ -278,14 +316,53 @@ export function imageRoutes(h, name, col) {
     const file = await h.readFile(env, col.path(slug), ref);
     const doc = file && col.parse(file.text, slug);
     if (!doc || !kind.refs(doc).some((x) => x.id === id)) return h.fail(404, `This ${noun} has no such image.`);
-    const found = (await filesOn(env, ref))[id];
+    // Its own upload, or an image from another folder (the library, or another entry's) that it uses.
+    let found = (await filesOn(env, ref))[id];
+    for (const folder of IMAGE_FOLDERS) if (!found && folder !== kind.folder) found = (await filesOn(env, ref, folder))[id];
     if (!found) return h.fail(404, 'The image file is missing.');
-    const blob = await h.repoRequest(env, 'GET', `/git/blobs/${found.sha}`);
-    const bytes = Uint8Array.from(atob(String(blob.data?.content ?? '').replace(/\s+/g, '')), (ch) => ch.charCodeAt(0));
+    const bytes = await blobBytes(h, env, found.sha);
     const info = imageInfo(bytes);
     if (!info) return h.fail(502, 'The stored file is not an image.');
     return new Response(bytes, { status: 200, headers: { 'Content-Type': CONTENT_TYPE[info.ext], 'Content-Disposition': 'inline' } });
   }
 
-  return { add, remove, get };
+  /**
+   * Uses an image already in the repository (Task M8): from the media library (also one still in the library's draft),
+   * or another case study's or article's. { expectedSha, slot, index?, id, alt, caption? }, like `add` without the file.
+   * The file itself is not copied: the entry refers to it by id. When the draft branch does not have it yet (a library
+   * image not merged yet, or merged after this draft began), it is added to the draft in the same commit, unchanged, so
+   * the draft builds on its own.
+   */
+  async function use(env, base, slug, request) {
+    const { body, error } = await readJsonBody(request);
+    if (error) return error;
+    const expectedSha = version(body);
+    if (!expectedSha) return h.fail(400, `The version you edited is missing. Reload the ${noun} and try again.`);
+    if (!kind.slots.includes(body.slot)) return h.fail(400, 'Unknown image place.');
+    const d = await newDraft(env, base, slug);
+    if (d.error) return d.error;
+    if (d.file.sha !== expectedSha) return h.fail(409, `This ${noun} changed since you opened it. Reload, then choose the image again.`, { conflict: true });
+
+    const errors = {};
+    const full = kind.full(d.doc, body.slot, body.index);
+    if (full) errors.file = full;
+    const found = typeof body.id === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(body.id) ? await h.locateImage(env, base, body.id) : null;
+    if (!found) errors.file = errors.file ?? 'This image is not in the media library (any more). Reload the library and choose again.';
+    const alt = texts(body.alt, 'alt', kind.altMax, true, errors);
+    const caption = kind.captioned(body.slot) && hasText(body.caption) ? texts(body.caption, 'caption', kind.captionMax, true, errors) : null;
+    if (Object.keys(errors).length) return h.fail(422, 'Some fields need attention.', { fields: errors });
+
+    const info = imageInfo(await blobBytes(h, env, found.sha));
+    if (!info) return h.fail(502, 'The stored file is not an image.');
+    const changes = {};
+    const onDraft = await h.repoRequest(env, 'GET', `/contents/${found.path}?${h.qs({ ref: d.branch })}`, { expect: [404] });
+    if (onDraft.status === 404) changes[found.path] = { sha: found.sha };
+    const next = structuredClone(d.doc);
+    const replacing = kind.has(d.doc, body.slot, body.index);
+    kind.set(next, body.slot, body.index, { id: found.id, width: info.width, height: info.height }, alt, caption);
+    const what = kind.label[body.slot];
+    return finish(env, base, slug, d, next, changes, `Draft: use ${found.id} from the media library as ${replacing ? 'the new' : 'a'} ${what} of ${slug} (TechPi Admin)`);
+  }
+
+  return { add, remove, get, use };
 }

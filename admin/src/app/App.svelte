@@ -12,8 +12,10 @@
   import PageEditor from './views/PageEditor.svelte';
   import NewCaseStudy from './views/NewCaseStudy.svelte';
   import NewArticle from './views/NewArticle.svelte';
+  import MediaLibrary from './views/MediaLibrary.svelte';
   import { caseStudies } from './lib/case-studies.svelte.js';
   import { insights } from './lib/insights.svelte.js';
+  import { library } from './lib/media.svelte.js';
   import { route, parts } from './lib/router.svelte.js';
   import { session, loadSession, signOut } from './lib/session.svelte.js';
 
@@ -26,6 +28,7 @@
     { section: 'pages', label: 'Website pages', icon: 'pages', count: connected?.pages?.length },
     { section: 'case-studies', label: 'Case studies', icon: 'portfolio', count: caseStudies.loaded ? caseStudies.entries.length : undefined },
     { section: 'articles', label: 'Articles', icon: 'articles', count: insights.loaded ? insights.entries.length : undefined },
+    { section: 'media', label: 'Media', icon: 'media', count: library.loaded ? library.items.length : undefined },
     ...(connected?.testContent ? [{ section: 'test-content', label: 'Test content', icon: 'branch', test: true }] : []),
   ]);
   let menuOpen = $state(false);
@@ -122,6 +125,8 @@
         {#key route.path}<NewArticle />{/key}
       {:else if current.section === 'articles' && isEntry(current.slug)}
         {#key route.path}<InsightEditor slug={current.slug} />{/key}
+      {:else if current.section === 'media' && !current.slug}
+        <MediaLibrary />
       {:else if current.section === 'test-content' && connected.testContent && current.slug}
         {#key route.path}<DraftEditor slug={current.slug} />{/key}
       {:else if current.section === 'test-content' && connected.testContent}

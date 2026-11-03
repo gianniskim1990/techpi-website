@@ -18,8 +18,8 @@
  */
 
 import { validateDocument } from '../../admin/shared/insight-content.js';
-import type { ImageMetadata } from 'astro';
 import { managedCaseStudies } from './case-studies';
+import { siteImages } from './image-files';
 import type { ProjectImage } from './projects';
 
 export interface InsightSection {
@@ -72,18 +72,9 @@ interface ManagedInsight {
   images?: { cover?: ImageRef; sections?: Record<string, ImageRef> };
   en: Pick<Insight, 'category' | 'title' | 'lead' | 'note' | 'related' | 'meta'> & { sections: ManagedSection[]; coverAlt?: string; coverCaption?: string };
 }
-/**
- * The article images, by id (file name without extension): every PNG, JPEG or WebP in src/assets/insights, where the
- * admin uploads them (Task M7). Declared sizes live in the content files and are checked by scripts/assets/validate.mjs,
- * which also refuses a file that no article uses.
- */
-const imageFiles = import.meta.glob<ImageMetadata>('../assets/insights/*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' });
-const articleImages: Record<string, ImageMetadata> = Object.fromEntries(
-  Object.entries(imageFiles).map(([file, meta]) => [(file.split('/').at(-1) as string).replace(/\.[a-z]+$/, ''), meta]),
-);
 function articleImage(ref: ImageRef | undefined, alt: string | undefined, caption: string | undefined, slug: string): ProjectImage | undefined {
   if (!ref) return undefined;
-  const src = articleImages[ref.id];
+  const src = siteImages[ref.id];
   if (!src) throw new Error(`Article "${slug}" uses an image with no file in src/assets/insights: ${ref.id}`);
   return { src, width: ref.width, height: ref.height, alt: alt as string, ...(caption ? { caption } : {}) };
 }
