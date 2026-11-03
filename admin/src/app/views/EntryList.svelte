@@ -44,6 +44,7 @@
       Each is edited as a draft pull request on GitHub; saving does not change the website.
     </p>
   </div>
+  <a class="btn btn-primary btn-sm new" href="#/{type}/new"><Icon name="plus" size={15} />{isCase ? 'New case study' : 'New article'}</a>
 </header>
 
 <div class="card">
@@ -92,7 +93,7 @@
               <td>
                 <div class="tt">
                   <a href="#/{type}/{e.slug}" onclick={(ev) => ev.stopPropagation()}>{titleOf(e)}</a>
-                  <span class="slug">/{isCase ? 'work' : 'insights'}/{e.slug}{#if e.featured}<span class="feat" title="Featured on the homepage"><Icon name="star" size={13} />Featured</span>{/if}</span>
+                  <span class="slug">/{isCase ? 'work' : 'insights'}/{e.slug}{#if e.isNew}<span class="newtag" title="Not on the website yet: published when its draft pull request is merged">New</span>{/if}{#if e.featured}<span class="feat" title="Featured on the homepage"><Icon name="star" size={13} />Featured</span>{/if}</span>
                 </div>
               </td>
               <td class="c-cat">{e.category || '—'}</td>
@@ -114,7 +115,9 @@
 <p class="hint foot">“Published” means saved on the content branch the admin reads. An open draft is published only when its pull request is reviewed and merged on GitHub.</p>
 
 <style>
-  .head { margin-bottom: 20px; }
+  .head { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: flex-start; justify-content: space-between; }
+  .new { display: inline-flex; align-items: center; gap: 6px; flex: none; }
+  .newtag { display: inline-flex; padding: 0 6px; border-radius: 4px; font-size: var(--text-xs); font-weight: 600; color: var(--ink); background: var(--cyan); }
   .sub { color: var(--slate); margin-top: 4px; font-size: var(--text-md); max-width: 64ch; }
   .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--rule-soft); }
   .search { display: flex; align-items: center; gap: 8px; flex: 1 1 260px; max-width: 420px; padding: 0 11px; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--white); color: var(--slate); }

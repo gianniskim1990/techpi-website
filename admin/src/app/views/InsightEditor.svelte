@@ -14,7 +14,8 @@
   import { api } from '../lib/api.js';
   import { toast } from '../lib/store.svelte.js';
   import { loadInsights, insights } from '../lib/insights.svelte.js';
-  import { RULES, INSIGHT_SLUGS, INTERNAL_PATHS, validateEditable } from '../../../shared/insight-content.js';
+  import { RULES, internalPaths, validateEditable, withReferencesOf } from '../../../shared/insight-content.js';
+  import { caseStudies, loadCaseStudies } from '../lib/case-studies.svelte.js';
 
   let { slug } = $props();
   const PART = {
@@ -30,7 +31,8 @@
   let sha = $state(null);
   let source = $state('published');
   let draft = $state(null);
-  let elsewhere = $state(null); // an open draft PR for this item that targets another branch
+  let elsewhere = $state(null);
+  let isNew = $state(false); // created in the admin, not on the content branch yet (Task M5) // an open draft PR for this item that targets another branch
   let tried = $state(false);
   let saving = $state(false);
   let saveError = $state(null);
@@ -49,6 +51,7 @@
       source = r.source;
       draft = r.draft;
       elsewhere = r.elsewhere ?? null;
+      isNew = Boolean(r.isNew);
       tried = false;
       serverErrors = {};
       saveError = null;
@@ -59,9 +62,20 @@
   }
   fetchEntry();
   if (!insights.loaded) loadInsights(); // titles for the related-articles picker
+  if (!caseStudies.loaded) loadCaseStudies(); // pages a note may link to
+
+  // What is on the content branch (new, unmerged entries are not): a newly added related article or note link must point
+  // there. References the article already has may stay, exactly as the Worker checks a save.
+  const known = $derived(
+    insights.loaded && caseStudies.loaded
+      ? { insights: insights.entries.filter((e) => !e.isNew).map((e) => e.slug), caseStudies: caseStudies.entries.filter((e) => !e.isNew).map((e) => e.slug) }
+      : null,
+  );
+  const allowedRefs = $derived(known && doc ? withReferencesOf(known, doc) : null);
 
   const dirty = $derived(form ? JSON.stringify(form) !== baseline : false);
-  const check = $derived(form && doc ? validateEditable({ en: form }, doc) : { ok: true, errors: {} });
+  // Until the lists have loaded, the Worker remains the check for related articles and links.
+  const check = $derived(form && doc && allowedRefs ? validateEditable({ en: form }, doc, allowedRefs) : { ok: true, errors: {} });
   const errors = $derived(tried ? { ...check.errors, ...serverErrors } : {});
   const err = (k) => errors[`en.${k}`];
   const partErrors = (i, part) => {
@@ -74,7 +88,7 @@
 
   // Related articles: titles from the list; any of the other six, each once, at most four.
   const titleOf = (s) => insights.entries.find((e) => e.slug === s)?.title ?? s;
-  const others = $derived(INSIGHT_SLUGS.filter((s) => s !== slug));
+  const others = $derived((allowedRefs?.insights ?? []).filter((s) => s !== slug));
   const moveRelated = (i, d) => { const j = i + d; if (j < 0 || j >= form.related.length) return; [form.related[i], form.related[j]] = [form.related[j], form.related[i]]; };
   const addRelated = () => { const next = others.find((s) => !form.related.includes(s)); if (next && form.related.length < RULES.related.max) form.related.push(next); };
 
@@ -85,7 +99,7 @@
     let last = 0;
     for (const m of t.matchAll(/\[([^\]]+)\]\(([^)]*)\)/g)) {
       if (m.index > last) parts.push({ text: t.slice(last, m.index) });
-      parts.push({ text: m[1], href: m[2], ok: INTERNAL_PATHS.includes(m[2]) });
+      parts.push({ text: m[1], href: m[2], ok: internalPaths(allowedRefs ?? undefined).includes(m[2]) });
       last = m.index + m[0].length;
     }
     if (last < t.length) parts.push({ text: t.slice(last) });
@@ -159,6 +173,7 @@
       <StatusBadge status={draft ? 'changes' : 'published'} />
       <span class="connected"><Icon name="branch" size={13} />Connected to GitHub</span>
       <span class="lang"><Icon name="globe" size={13} />English only</span>
+      {#if isNew}<span class="newtag" title="Published when its draft pull request is merged">New, not on the website yet</span>{/if}
       <span class="hint">{source === 'draft' ? 'Showing the saved draft' : 'Showing the version on the development branch'}</span>
       {#if dirty}<span class="unsaved"><span class="dot" aria-hidden="true"></span>Unsaved changes</span>{/if}
     </div>
@@ -301,10 +316,10 @@
             <div><dt>Published</dt><dd><time datetime={doc.facts.published}>{doc.facts.publishedText}</time></dd></div>
             <div><dt>Position</dt><dd>{doc.facts.order} of 7 on the Insights page (newest first)</dd></div>
             <div><dt>Language</dt><dd>English only</dd></div>
-            <div><dt>Source</dt><dd><span class="dim">{doc.facts.source.replace('https://', '')}</span><br /><span class="dim">Legacy address, kept for the redirect; not shown on the site.</span></dd></div>
+            {#if doc.facts.source}<div><dt>Source</dt><dd><span class="dim">{doc.facts.source.replace('https://', '')}</span><br /><span class="dim">Legacy address, kept for the redirect; not shown on the site.</span></dd></div>{/if}
           </dl>
           <p class="hint">The address, date and source are not editable. No author, modified date or reading time is recorded for these articles.</p>
-          <a class="live" href="https://techpi.eu/insights/{slug}" target="_blank" rel="noopener"><Icon name="external" size={15} />View the live page</a>
+          {#if !isNew}<a class="live" href="https://techpi.eu/insights/{slug}" target="_blank" rel="noopener"><Icon name="external" size={15} />View the live page</a>{/if}
         </div>
       </section>
     </aside>
@@ -334,6 +349,7 @@
   .head { margin: 8px 0 20px; }
   .sub { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 8px; }
   .connected, .lang { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 999px; font-size: var(--text-xs); font-weight: 600; }
+  .newtag { display: inline-flex; padding: 2px 9px; border-radius: 999px; background: var(--cyan); color: var(--ink); font-size: var(--text-xs); font-weight: 600; }
   .connected { background: var(--ok-soft); color: var(--ok); }
   .lang { background: var(--blue-soft); color: var(--blue); }
   .unsaved { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-sm); color: var(--warn); font-weight: 500; }

@@ -55,9 +55,11 @@ test('the list shows all 18 case studies in Work-page order, with no drafts yet'
   const r = await call('GET', '/api/case-studies');
   assert.equal(r.status, 200);
   assert.deepEqual(r.data.entries.map((x) => x.slug), CONNECTED_SLUGS);
-  assert.ok(r.data.entries.every((x) => x.draft === null && x.hasGreek && x.name));
+  assert.ok(r.data.entries.every((x) => x.draft === null && x.hasGreek && x.name && x.isNew === false));
+  // Since Task M5 the list is read live from the content branch (new case studies can be created), not fixed in the session.
   const s = await call('GET', '/api/session');
-  assert.deepEqual(s.data.connected.caseStudies, CONNECTED_SLUGS);
+  assert.equal(s.data.connected.caseStudies, undefined);
+  assert.ok(s.data.create.includes('case-studies'));
 });
 
 test('every one of the 18 loads with its real content, version and locked facts', async () => {
@@ -179,16 +181,17 @@ test('facts, images and sections cannot be changed through a save', async () => 
   assert.ok(gh.state.writes.every((w) => w.branch === draftOf('saloon')));
 });
 
-test('only the 18 published case studies exist; everything else is refused before GitHub is asked', async () => {
+test('a case study that does not exist is 404; an invalid name is refused before GitHub is asked; nothing is written', async () => {
+  // Since Task M5 which case studies exist is decided by the files on the content branch, not by a fixed list.
   for (const slug of ['new-project', 'main', 'rocketeer-2', 'm0-sample-article']) {
     assert.equal((await call('GET', `/api/case-studies/${slug}`)).status, 404, slug);
     assert.equal((await save(slug, editableOf(DOC.rocketeer), gitSha(TEXT.rocketeer))).status, 404, slug);
   }
   for (const p of ['/api/case-studies/..%2F..%2Fsrc', '/api/case-studies/Bad_Slug', '/api/case-studies/a.b']) assert.equal((await call('GET', p)).status, 400, p);
+  assert.ok(!gh.state.log.some((l) => /\.\.|Bad_Slug|a\.b/.test(l)), 'an invalid name never reaches GitHub');
   assert.equal((await call('POST', '/api/case-studies/rocketeer/publish', { body: {} })).status, 404, 'no publish endpoint');
   assert.equal((await call('DELETE', '/api/case-studies/rocketeer', { body: {} })).status, 405);
-  assert.equal((await call('POST', '/api/case-studies', { body: {} })).status, 405, 'no create endpoint');
-  assert.ok(!gh.state.log.some((l) => /new-project|rocketeer-2|m0-sample/.test(l)));
+  assert.equal((await call('POST', '/api/case-studies', { body: {} })).status, 422, 'creating needs a complete case study');
   assert.equal(gh.state.writes.length, 0);
 });
 

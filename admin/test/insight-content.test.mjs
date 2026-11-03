@@ -17,11 +17,13 @@ const DOCS = Object.fromEntries(INSIGHT_SLUGS.map((s) => [s, JSON.parse(read(s))
 const NOTE = 'how-analytics-can-support-dissemination-reporting';
 const edit = (slug, fn) => { const c = structuredClone(editableOf(DOCS[slug])); fn(c.en, c); return validateEditable(c, DOCS[slug]); };
 
-test('exactly 7 articles: the allowlist, the folders and the site list agree, positions 1 to 7', () => {
+test('the 7 migrated articles: every folder exists, positions 1 to 7, and the public site reads the whole folder', () => {
   assert.equal(INSIGHT_SLUGS.length, 7);
-  assert.deepEqual(fs.readdirSync(dir).sort(), [...INSIGHT_SLUGS].sort());
-  const listed = [...fs.readFileSync(path.join(repo, 'src', 'content', 'insights.ts'), 'utf8').matchAll(/\{ slug: '([a-z0-9-]+)', doc:/g)].map((m) => m[1]);
-  assert.deepEqual(listed, INSIGHT_SLUGS);
+  for (const s of INSIGHT_SLUGS) assert.ok(fs.existsSync(path.join(dir, s, 'index.json')), s);
+  // Since Task M5 an article created in the admin is published by its file alone: the site lists the folder.
+  assert.match(fs.readFileSync(path.join(repo, 'src', 'content', 'insights.ts'), 'utf8'), /import\.meta\.glob[^;]*'\.\.\/\.\.\/content\/insights\/\*\/index\.json'/);
+  // Newest first by date is the migrated index order.
+  assert.deepEqual([...INSIGHT_SLUGS].sort((a, b) => DOCS[b].facts.published.localeCompare(DOCS[a].facts.published)), INSIGHT_SLUGS);
   assert.deepEqual(INSIGHT_SLUGS.map((s) => DOCS[s].facts.order), [1, 2, 3, 4, 5, 6, 7]);
 });
 

@@ -110,13 +110,13 @@ const managedImages = {
 
 /**
  * Every project, in Work-page order. Since Task M1B each one is managed in the admin: its text in both languages, its
- * locked facts and its images come from content/case-studies/<slug>/index.json (see case-studies.ts). The build fails if
- * the recorded positions are not exactly 1 to N.
+ * locked facts and its images come from content/case-studies/<slug>/index.json (see case-studies.ts). Positions are
+ * whole numbers from 1; a case study created in the admin takes the next free one. The build fails if two share one.
  */
 export const projects: readonly Project[] = (() => {
   const list = [...managedCaseStudies].sort((x, y) => x.doc.facts.order - y.doc.facts.order);
   list.forEach((x, i) => {
-    if (x.doc.facts.order !== i + 1) throw new Error(`Case study display order must be 1 to ${list.length} without gaps or repeats (${x.slug}: ${x.doc.facts.order})`);
+    if (i > 0 && x.doc.facts.order === list[i - 1].doc.facts.order) throw new Error(`Two case studies share display position ${x.doc.facts.order}: ${list[i - 1].slug} and ${x.slug}`);
   });
   return list.map((x) => projectFrom(x.doc, x.slug, managedImages));
 })();

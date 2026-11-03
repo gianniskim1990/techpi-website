@@ -10,22 +10,29 @@
   import InsightEditor from './views/InsightEditor.svelte';
   import PagesList from './views/PagesList.svelte';
   import PageEditor from './views/PageEditor.svelte';
+  import NewCaseStudy from './views/NewCaseStudy.svelte';
+  import NewArticle from './views/NewArticle.svelte';
+  import { caseStudies } from './lib/case-studies.svelte.js';
+  import { insights } from './lib/insights.svelte.js';
   import { route, parts } from './lib/router.svelte.js';
   import { session, loadSession, signOut } from './lib/session.svelte.js';
 
   loadSession();
   const connected = $derived(session.data?.connected ?? null);
-  // Only what works is in the menu. Counts are the items the admin manages (from the Worker), not a snapshot.
+  // Only what works is in the menu. Counts are the items the admin manages (from the Worker), not a snapshot. Case studies
+  // and articles can be created (Task M5), so their counts come from their live lists once loaded.
   const nav = $derived([
     { section: '', label: 'Dashboard', icon: 'dashboard' },
     { section: 'pages', label: 'Website pages', icon: 'pages', count: connected?.pages?.length },
-    { section: 'case-studies', label: 'Case studies', icon: 'portfolio', count: connected?.caseStudies?.length },
-    { section: 'articles', label: 'Articles', icon: 'articles', count: connected?.insights?.length },
+    { section: 'case-studies', label: 'Case studies', icon: 'portfolio', count: caseStudies.loaded ? caseStudies.entries.length : undefined },
+    { section: 'articles', label: 'Articles', icon: 'articles', count: insights.loaded ? insights.entries.length : undefined },
     ...(connected?.testContent ? [{ section: 'test-content', label: 'Test content', icon: 'branch', test: true }] : []),
   ]);
   let menuOpen = $state(false);
   const current = $derived(parts());
   const allowed = (list, slug) => Boolean(list?.includes(slug));
+  // Case studies and articles: any valid address opens the editor, which says so if the entry does not exist.
+  const isEntry = (slug) => slug !== 'new' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug);
   const mode = $derived(session.data?.mode ?? null);
   $effect(() => { route.path; menuOpen = false; });
 </script>
@@ -105,11 +112,15 @@
         {#key route.path}<PageEditor pageKey={current.slug} />{/key}
       {:else if current.section === 'case-studies' && !current.slug}
         {#key current.section}<EntryList type="case-studies" />{/key}
-      {:else if current.section === 'case-studies' && allowed(connected.caseStudies, current.slug)}
+      {:else if current.section === 'case-studies' && current.slug === 'new'}
+        {#key route.path}<NewCaseStudy />{/key}
+      {:else if current.section === 'case-studies' && isEntry(current.slug)}
         {#key route.path}<CaseStudyEditor slug={current.slug} />{/key}
       {:else if current.section === 'articles' && !current.slug}
         {#key current.section}<EntryList type="articles" />{/key}
-      {:else if current.section === 'articles' && allowed(connected.insights, current.slug)}
+      {:else if current.section === 'articles' && current.slug === 'new'}
+        {#key route.path}<NewArticle />{/key}
+      {:else if current.section === 'articles' && isEntry(current.slug)}
         {#key route.path}<InsightEditor slug={current.slug} />{/key}
       {:else if current.section === 'test-content' && connected.testContent && current.slug}
         {#key route.path}<DraftEditor slug={current.slug} />{/key}

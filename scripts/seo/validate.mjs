@@ -9,6 +9,9 @@
  * No dependency: plain string and regular-expression parsing of Astro's own output, which is regular. Exits 1 on
  * any failure. The expected route list is written out here on purpose, independent of src/i18n/routes.ts, so a
  * route that disappears or appears by accident is caught. Rules: docs/production/seo.md.
+ * The migrated case studies and articles are pinned below. Since Task M5 the admin can create more: those are expected
+ * from their content files (content/case-studies/<slug>/, content/insights/<slug>/), so a page that exists without its
+ * file, or a file without its page, still fails.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -20,16 +23,19 @@ const DIST = distIndex >= 0 ? args[distIndex + 1] : 'dist';
 const ORIGIN = 'https://techpi.eu';
 
 // Every project on the Work page has a case study, in the order of the Work page (src/content/projects.ts).
-const CASE_STUDIES = [
+const contentSlugs = (dir) =>
+  fs.existsSync(dir) ? fs.readdirSync(dir, { withFileTypes: true }).filter((e) => e.isDirectory() && fs.existsSync(path.join(dir, e.name, 'index.json'))).map((e) => e.name).sort() : [];
+const PINNED_CASE_STUDIES = [
   'rocketeer', 'armans', 'logotherapia-xanthi', 'mavie', 'iliastech', 'alexandra-apartment', 'blackjack-streetwear',
   'saloon', 'physio', 'project4you', 'rantevo',
   'level-up-education-app',
   'level-up-education', 'itsallaboutxanthi', 'local-xanthi', 'juliette-coffee-roasters', 'apox-fc', 'emoved',
 ];
+const CASE_STUDIES = [...PINNED_CASE_STUDIES, ...contentSlugs('content/case-studies').filter((s) => !PINNED_CASE_STUDIES.includes(s))];
 const CONTENT = ['/', '/work', ...CASE_STUDIES.map((slug) => `/work/${slug}`), '/capabilities', '/eu-projects', '/about', '/contact', '/privacy', '/cookies'];
 // English-only content (docs/production/routes.md, section 4.1): the Insights index and its seven articles, migrated
 // from pigiota314.eu with their slugs unchanged. No Greek version exists, so these have no hreflang and no counterpart.
-const INSIGHTS = [
+const PINNED_INSIGHTS = [
   'what-every-eu-project-website-should-include',
   'common-mistakes-in-horizon-europe-project-websites',
   'how-to-structure-deliverables-and-publications',
@@ -38,6 +44,7 @@ const INSIGHTS = [
   'what-communication-partners-should-ask-a-web-development-supplier',
   'how-analytics-can-support-dissemination-reporting',
 ];
+const INSIGHTS = [...PINNED_INSIGHTS, ...contentSlugs('content/insights').filter((s) => !PINNED_INSIGHTS.includes(s))];
 const EN_ONLY = ['/insights', ...INSIGHTS.map((slug) => `/insights/${slug}`)];
 const ROUTES = [
   ...CONTENT.map((p) => ({ path: p, locale: 'en' })),

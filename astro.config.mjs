@@ -1,8 +1,23 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { writePageRules } from './scripts/redirects/page-rules.mjs';
 
 // Phase 3A foundation. Verified against Astro 7.3.5.
 export default defineConfig({
+  // The 301 rules of the case-study and Insights pages are written from the finished build (scripts/redirects/page-rules.mjs),
+  // because those pages come from content files the admin can create.
+  integrations: [
+    {
+      name: 'techpi-content-redirects',
+      hooks: {
+        'astro:build:done': ({ dir, logger }) => {
+          const n = writePageRules(dir);
+          logger.info(`${n} canonical redirect rules for case studies and Insights articles`);
+        },
+      },
+    },
+  ],
+
   // Used to build absolute canonical and hreflang URLs from the route map.
   site: 'https://techpi.eu',
 

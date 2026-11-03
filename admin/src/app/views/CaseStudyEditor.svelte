@@ -13,7 +13,7 @@
   import ListEditor from '../components/ListEditor.svelte';
   import { api } from '../lib/api.js';
   import { toast } from '../lib/store.svelte.js';
-  import { loadCaseStudies } from '../lib/case-studies.svelte.js';
+  import { caseStudies, loadCaseStudies } from '../lib/case-studies.svelte.js';
   import { FIELDS, LOCALES, validateEditable } from '../../../shared/case-study-content.js';
 
   let { slug } = $props();
@@ -30,6 +30,7 @@
   let source = $state('published');
   let draft = $state(null);
   let elsewhere = $state(null); // an open draft PR for this item that targets another branch
+  let isNew = $state(false); // created in the admin, not on the content branch yet (Task M5)
   let lang = $state('en');
   let tried = $state(false);
   let saving = $state(false);
@@ -49,6 +50,7 @@
       source = r.source;
       draft = r.draft;
       elsewhere = r.elsewhere ?? null;
+      isNew = Boolean(r.isNew);
       tried = false;
       serverErrors = {};
       saveError = null;
@@ -58,6 +60,7 @@
     }
   }
   fetchEntry();
+  if (!caseStudies.loaded) loadCaseStudies(); // how many case studies there are, for the position
 
   const dirty = $derived(form ? JSON.stringify(form) !== baseline : false);
   const check = $derived(form && doc ? validateEditable(form, doc) : { ok: true, errors: {} });
@@ -175,6 +178,7 @@
     <div class="sub">
       <StatusBadge status={draft ? 'changes' : 'published'} />
       <span class="connected"><Icon name="branch" size={13} />Connected to GitHub</span>
+      {#if isNew}<span class="newtag" title="Published when its draft pull request is merged">New, not on the website yet</span>{/if}
       <span class="hint">{source === 'draft' ? 'Showing the saved draft' : 'Showing the version on the development branch'}</span>
       {#if dirty}<span class="unsaved"><span class="dot" aria-hidden="true"></span>Unsaved changes</span>{/if}
     </div>
@@ -306,12 +310,12 @@
             <div><dt>Year</dt><dd>{doc.facts.year}</dd></div>
             <div><dt>Group</dt><dd>{doc.facts.workGroup === 'client' ? 'Client project' : 'Earlier work by pigiota314'}</dd></div>
             <div><dt>Featured</dt><dd>{doc.facts.featured ? 'Yes, on the homepage' : 'No'}</dd></div>
-            <div><dt>Position</dt><dd>{doc.facts.order} of 18 on the Work page</dd></div>
+            <div><dt>Position</dt><dd>{doc.facts.order}{#if caseStudies.loaded} of {caseStudies.entries.length}{/if} in Work-page order</dd></div>
             <div><dt>Capabilities</dt><dd>{doc.facts.capabilities.length ? doc.facts.capabilities.map((x) => CAPABILITY[x] ?? x).join(', ') : 'None'}</dd></div>
             {#if doc.facts.liveUrl}<div><dt>Live site</dt><dd><a href={doc.facts.liveUrl} target="_blank" rel="noopener">{doc.facts.liveUrl.replace('https://', '')}</a></dd></div>{/if}
           </dl>
           <p class="hint">These are not editable here. Changing an address needs a redirect, which arrives with publishing.</p>
-          <a class="live" href="https://techpi.eu/work/{slug}" target="_blank" rel="noopener"><Icon name="external" size={15} />View the live page</a>
+          {#if !isNew}<a class="live" href="https://techpi.eu/work/{slug}" target="_blank" rel="noopener"><Icon name="external" size={15} />View the live page</a>{/if}
         </div>
       </section>
     </aside>
@@ -340,6 +344,7 @@
   .msg { padding: 20px; display: grid; gap: 12px; justify-items: start; margin-top: 16px; }
   .head { margin: 8px 0 20px; }
   .sub { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 8px; }
+  .newtag { display: inline-flex; padding: 2px 9px; border-radius: 999px; background: var(--cyan); color: var(--ink); font-size: var(--text-xs); font-weight: 600; }
   .connected { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); font-size: var(--text-xs); font-weight: 600; }
   .unsaved { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-sm); color: var(--warn); font-weight: 500; }
   .unsaved .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
