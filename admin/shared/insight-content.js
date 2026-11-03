@@ -17,6 +17,11 @@
  * the structure (sections, their parts, a note), which are then locked like those of every other article. A new article
  * has no legacy source, so it carries no "first published under the pigiota314 name" line.
  *
+ * Images (Task M7): an article may have `images` { cover?, sections?: { "<section index>": image } }, each { id, width,
+ * height } of a file in src/assets/insights (added in the admin while the article is new). The cover's alt text and
+ * optional caption are `en.coverAlt` and `en.coverCaption`; a section image's are `imageAlt` and `imageCaption` on that
+ * section. Alt text is required exactly when the image exists; a caption is optional, and an empty one is left out.
+ *
  * Which articles and case studies exist is not fixed here: callers pass `known` ({ insights, caseStudies }: the slugs
  * that exist). The site's build passes what is in content/; the admin Worker passes what is on the content branch.
  * Without it, the migrated lists below are used.
@@ -73,7 +78,13 @@ const PARTS = ['paragraphs', 'list', 'after'];
 /** Words of body text a section needs under its heading. The site's validator uses the same number on the built page. */
 export const MIN_SECTION_WORDS = 10;
 const FACT_KEYS = ['slug', 'order', 'published', 'publishedText', 'source'];
-const EN_KEYS = ['category', 'title', 'lead', 'sections', 'note', 'related', 'meta'];
+const EN_KEYS = ['category', 'title', 'lead', 'coverAlt', 'coverCaption', 'sections', 'note', 'related', 'meta'];
+/** Text that belongs to an image: alt text (required with the image) and an optional caption. */
+const IMAGE_TEXT = ['imageAlt', 'imageCaption'];
+export const IMAGE_RULES = { alt: { min: 1, max: 300 }, caption: { min: 1, max: 200 } };
+const imageRef = (x) => x && typeof x === 'object' && !Array.isArray(x) && Object.keys(x).every((k) => ['id', 'width', 'height'].includes(k)) && typeof x.id === 'string' && /^[a-z0-9][a-z0-9-]*$/.test(x.id) && Number.isInteger(x.width) && Number.isInteger(x.height) && x.width > 0 && x.height > 0;
+/** The images of a stored article: the cover and the image of each section, by index. */
+export const imagesOf = (doc) => ({ cover: doc?.images?.cover ?? null, sections: doc?.images?.sections ?? {} });
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 export const entryPath = (slug) => `${INSIGHT.folder}/${slug}/${INSIGHT.file}`;
@@ -132,9 +143,27 @@ export function validateEditable(input, current, known = DEFAULT_KNOWN) {
     const e = checkText(en[key], { ...rule, ...opts });
     if (e) errors[`en.${key}`] = e; else out[key] = en[key].trim();
   };
+  /** Alt text (required exactly when the image exists) and an optional caption (empty: left out). */
+  function imageText(obj, at, has, into, altKey, captionKey) {
+    const alt = obj?.[altKey];
+    const cap = obj?.[captionKey];
+    if (!has) {
+      if (alt !== undefined) errors[`${at}.${altKey}`] = 'There is no image to describe.';
+      if (cap !== undefined && String(cap).trim()) errors[`${at}.${captionKey}`] = 'There is no image to caption.';
+      return;
+    }
+    const a = checkText(alt, IMAGE_RULES.alt);
+    if (a) errors[`${at}.${altKey}`] = alt === undefined || !String(alt).trim() ? 'Describe the image.' : a;
+    else into[altKey] = alt.trim();
+    if (typeof cap === 'string' && cap.trim()) {
+      const c = checkText(cap, IMAGE_RULES.caption);
+      if (c) errors[`${at}.${captionKey}`] = c; else into[captionKey] = cap.trim();
+    } else if (cap !== undefined && typeof cap !== 'string') errors[`${at}.${captionKey}`] = 'Must be text.';
+  }
   text('category', RULES.category);
   text('title', RULES.title);
   text('lead', RULES.lead);
+  imageText(en, 'en', Boolean(imagesOf(current).cover), out, 'coverAlt', 'coverCaption');
 
   if (!Array.isArray(en.sections)) errors['en.sections'] = 'Must be a list of sections.';
   else if (en.sections.length !== want.sections.length) errors['en.sections'] = `This article has ${want.sections.length} ${want.sections.length === 1 ? 'section' : 'sections'}; sections cannot be added or removed here.`;
@@ -143,7 +172,8 @@ export function validateEditable(input, current, known = DEFAULT_KNOWN) {
       const at = `en.sections.${i}`;
       const sec = {};
       if (!s || typeof s !== 'object' || Array.isArray(s)) { errors[at] = 'Invalid section.'; return sec; }
-      for (const key of Object.keys(s)) if (key !== 'heading' && !PARTS.includes(key)) errors[`${at}.${key}`] = `Unknown part "${key}".`;
+      for (const key of Object.keys(s)) if (key !== 'heading' && !PARTS.includes(key) && !IMAGE_TEXT.includes(key)) errors[`${at}.${key}`] = `Unknown part "${key}".`;
+      imageText(s, at, Boolean(imagesOf(current).sections[String(i)]), sec, 'imageAlt', 'imageCaption');
       const h = checkText(s.heading, RULES.heading);
       if (h) errors[`${at}.heading`] = h; else sec.heading = s.heading.trim();
       for (const part of PARTS) {
@@ -227,13 +257,27 @@ export function checkLocked(doc, slug) {
   else if (f.publishedText !== dateText(f.published)) problems.push('publishedText must be the published date as the page writes it');
   // Only the migrated articles have a source: their legacy pigiota314.eu URL (for the redirect map, never rendered).
   if ('source' in f && (typeof f.source !== 'string' || !/^https:\/\/pigiota314\.eu\/insights\/[a-z0-9-]+\/?$/.test(f.source))) problems.push('source must be the legacy pigiota314.eu/insights URL');
+  if ('images' in doc) {
+    const im = doc.images;
+    const sections = Array.isArray(doc.en?.sections) ? doc.en.sections.length : 0;
+    if (!im || typeof im !== 'object' || Array.isArray(im)) problems.push('images must be an object');
+    else {
+      for (const k of Object.keys(im)) if (!['cover', 'sections'].includes(k)) problems.push(`images: unknown key "${k}"`);
+      if ('cover' in im && !imageRef(im.cover)) problems.push('images.cover is invalid');
+      if ('sections' in im) {
+        if (!im.sections || typeof im.sections !== 'object' || Array.isArray(im.sections) || !Object.keys(im.sections).length) problems.push('images.sections must be a non-empty object when present');
+        else for (const [k, v] of Object.entries(im.sections)) if (!/^(0|[1-9]\d*)$/.test(k) || Number(k) >= sections || !imageRef(v)) problems.push(`images.sections.${k} is invalid`);
+      }
+      if (!Object.keys(im).length) problems.push('images must not be empty when present');
+    }
+  }
   return problems;
 }
 
 /** Validates a whole file (as stored). */
 export function validateDocument(doc, slug, known = DEFAULT_KNOWN) {
   const problems = checkLocked(doc, slug);
-  for (const k of Object.keys(doc ?? {})) if (!['facts', 'en'].includes(k)) problems.push(k === 'el' ? 'Insights articles are English only' : `unknown top-level key "${k}"`);
+  for (const k of Object.keys(doc ?? {})) if (!['facts', 'images', 'en'].includes(k)) problems.push(k === 'el' ? 'Insights articles are English only' : `unknown top-level key "${k}"`);
   const editable = validateEditable({ en: doc?.en }, doc, known);
   for (const [k, msg] of Object.entries(editable.errors)) problems.push(`${k}: ${msg}`);
   return { ok: problems.length === 0, problems };
@@ -246,12 +290,15 @@ export function serializeDocument(current, editable) {
     category: en.category,
     title: en.title,
     lead: en.lead,
-    sections: en.sections.map((s) => Object.fromEntries(['heading', ...PARTS].filter((k) => s[k] !== undefined).map((k) => [k, s[k]]))),
+    ...(en.coverAlt !== undefined ? { coverAlt: en.coverAlt } : {}),
+    ...(en.coverCaption !== undefined ? { coverCaption: en.coverCaption } : {}),
+    sections: en.sections.map((s) => Object.fromEntries(['heading', ...PARTS, ...IMAGE_TEXT].filter((k) => s[k] !== undefined).map((k) => [k, s[k]]))),
     ...(en.note !== undefined ? { note: en.note } : {}),
     related: en.related,
     meta: { title: en.meta.title, description: en.meta.description },
   };
-  return JSON.stringify({ facts: current.facts, en: article }, null, 2) + '\n';
+  const images = current.images && Object.keys(current.images).length ? { images: current.images } : {};
+  return JSON.stringify({ facts: current.facts, ...images, en: article }, null, 2) + '\n';
 }
 
 /** The editable part of a stored document, for the editor. */

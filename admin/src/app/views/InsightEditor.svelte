@@ -11,6 +11,7 @@
   import SeoSnippet from '../components/SeoSnippet.svelte';
   import Dialog from '../components/Dialog.svelte';
   import ListEditor from '../components/ListEditor.svelte';
+  import ArticleImages from '../components/ArticleImages.svelte';
   import { api } from '../lib/api.js';
   import { toast } from '../lib/store.svelte.js';
   import { loadInsights, insights } from '../lib/insights.svelte.js';
@@ -40,6 +41,30 @@
   let serverErrors = $state({});
 
   const copy = (v) => JSON.parse(JSON.stringify(v));
+  // Where the article sits on the Insights page: the list is newest first (by date, then position), like the site.
+  const rank = $derived(insights.entries.findIndex((e) => e.slug === slug) + 1);
+  // Images (Task M7): previews are fetched from the draft (they have no bundled thumbnail).
+  let previews = $state({});
+  const refsOf = (d) => [d?.images?.cover, ...Object.values(d?.images?.sections ?? {})].filter(Boolean);
+  $effect(() => {
+    for (const ref of refsOf(doc)) {
+      if (previews[ref.id] !== undefined) continue;
+      previews[ref.id] = null; // loading
+      api.getInsightImage(slug, ref.id).then((url) => { previews[ref.id] = url; }).catch(() => {});
+    }
+  });
+  /** After an image was added, replaced or removed (ArticleImages): the saved article is the new starting point. */
+  function imagesChanged(r, preview) {
+    const before = new Set(refsOf(doc).map((x) => x.id));
+    doc = r.content;
+    sha = r.sha;
+    draft = r.draft ?? draft;
+    source = 'draft';
+    form = copy(r.content.en);
+    baseline = JSON.stringify(form);
+    if (preview) for (const ref of refsOf(doc)) if (!before.has(ref.id)) previews[ref.id] = preview;
+    loadInsights();
+  }
   async function fetchEntry() {
     load = { loading: true, error: null };
     try {
@@ -143,6 +168,24 @@
   });
 </script>
 
+{#snippet imageText(ref, target, altKey, captionKey, at)}
+  <div class="imgtext">
+    <div class="shot">{#if previews[ref.id]}<img src={previews[ref.id]} alt="" />{/if}<p class="hint">{ref.width} × {ref.height}</p></div>
+    <div>
+      <div class="field">
+        <label class="label" for="f-{at}-alt"><span>Alt text</span><span class="meta" class:over={len(target[altKey]) > 300}>{len(target[altKey])}/300</span></label>
+        <textarea class="textarea" id="f-{at}-alt" lang="en" rows="2" bind:value={target[altKey]} aria-invalid={errors[`en.${at}${altKey}`] ? 'true' : undefined}></textarea>
+        {#if errors[`en.${at}${altKey}`]}<p class="error-text">{errors[`en.${at}${altKey}`]}</p>{/if}
+      </div>
+      <div class="field">
+        <label class="label" for="f-{at}-cap"><span>Caption <span class="dim">(optional)</span></span><span class="meta" class:over={len(target[captionKey]) > 200}>{len(target[captionKey])}/200</span></label>
+        <input class="input" id="f-{at}-cap" lang="en" bind:value={target[captionKey]} aria-invalid={errors[`en.${at}${captionKey}`] ? 'true' : undefined} />
+        {#if errors[`en.${at}${captionKey}`]}<p class="error-text">{errors[`en.${at}${captionKey}`]}</p>{:else}<p class="hint">Empty: no caption.</p>{/if}
+      </div>
+    </div>
+  </div>
+{/snippet}
+
 {#snippet textField(key, label, hint, rule, rows = 0)}
   <div class="field">
     <label class="label" for="f-{key}"><span>{label}</span><span class="meta" class:over={len(form[key]) > rule.max}>{len(form[key])}/{rule.max}</span></label>
@@ -194,8 +237,16 @@
           {@render textField('category', 'Category', 'The topic label above the title and on the Insights page.', RULES.category)}
           {@render textField('title', 'Title', 'The page heading, and the headline in the article’s structured data.', RULES.title)}
           {@render textField('lead', 'Lead', 'Shown under the title and as the excerpt on the Insights page.', RULES.lead, 3)}
+          {#if doc.images?.cover}<p class="label sub-h">Cover image</p>{@render imageText(doc.images.cover, form, 'coverAlt', 'coverCaption', '')}{/if}
         </div>
       </section>
+
+      {#if isNew}
+        <section class="card" aria-labelledby="img-h">
+          <div class="card-head"><h2 id="img-h">Images</h2></div>
+          <div class="card-body"><ArticleImages {slug} {doc} {sha} {previews} disabled={dirty || saving} onchange={imagesChanged} /></div>
+        </section>
+      {/if}
 
       {#each form.sections as s, i (i)}
         <section class="card" aria-labelledby="sec-{i}-h">
@@ -211,6 +262,7 @@
                 <ListEditor bind:items={form.sections[i][part]} label={PART[part].label} id="f-{i}-{part}" lang="en" multiline={PART[part].multiline} itemMax={PART[part].itemMax} min={PART[part].rule.min} max={PART[part].rule.max} errors={partErrors(i, part)} addLabel={PART[part].add} />
               </div>
             {/each}
+            {#if doc.images?.sections?.[String(i)]}<p class="label sub-h">Image after this section</p>{@render imageText(doc.images.sections[String(i)], form.sections[i], 'imageAlt', 'imageCaption', `sections.${i}.`)}{/if}
           </div>
         </section>
       {/each}
@@ -314,7 +366,7 @@
           <dl class="facts">
             <div><dt>URL</dt><dd><Icon name="lock" size={13} /> /insights/{slug}</dd></div>
             <div><dt>Published</dt><dd><time datetime={doc.facts.published}>{doc.facts.publishedText}</time></dd></div>
-            <div><dt>Position</dt><dd>{doc.facts.order} of 7 on the Insights page (newest first)</dd></div>
+            {#if insights.loaded && rank}<div><dt>Position</dt><dd>{rank} of {insights.entries.length} on the Insights page (newest first)</dd></div>{/if}
             <div><dt>Language</dt><dd>English only</dd></div>
             {#if doc.facts.source}<div><dt>Source</dt><dd><span class="dim">{doc.facts.source.replace('https://', '')}</span><br /><span class="dim">Legacy address, kept for the redirect; not shown on the site.</span></dd></div>{/if}
           </dl>
@@ -350,6 +402,12 @@
   .sub { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 8px; }
   .connected, .lang { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 999px; font-size: var(--text-xs); font-weight: 600; }
   .newtag { display: inline-flex; padding: 2px 9px; border-radius: 999px; background: var(--cyan); color: var(--ink); font-size: var(--text-xs); font-weight: 600; }
+  .sub-h { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--rule-soft); }
+  .imgtext { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; align-items: start; margin-top: 8px; }
+  .imgtext .shot img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--rule-soft); background: var(--rule-soft); }
+  .imgtext .field:first-child { margin-top: 0; }
+  .dim { color: var(--slate); font-weight: 400; }
+  @media (max-width: 640px) { .imgtext { grid-template-columns: minmax(0, 1fr); } }
   .connected { background: var(--ok-soft); color: var(--ok); }
   .lang { background: var(--blue-soft); color: var(--blue); }
   .unsaved { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-sm); color: var(--warn); font-weight: 500; }

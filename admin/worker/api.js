@@ -6,7 +6,8 @@
  *   GET  /api/<collection>/<slug>           one entry: its draft version if a draft is open, otherwise the base version
  *   POST /api/<collection>/<slug>/draft     save the entry as a draft: commit to cms/<collection>/<slug>, open or update one
  *                                           draft pull request into the base branch
- *   /api/case-studies/<slug>/images[...]     add, replace, remove and preview the images of a NEW case study (images.js)
+ *   /api/<collection>/<slug>/images[...]     add, replace, remove and preview the images of a NEW case study or article
+ *                                           (images.js)
  *   POST /api/<collection>                  create a new entry (case studies and articles only, Task M5): the file is written
  *                                           on a new cms/<collection>/<slug> branch and one draft pull request is opened.
  *                                           Nothing is published until that pull request is merged.
@@ -418,8 +419,12 @@ async function saveDraft(env, base, col, slug, request, ctx) {
   return json(200, { slug, sha: newSha, changed: Boolean(commit), commit, baseBranch: base, draft: draft ? { branch, ...draft } : null });
 }
 
-/** The images of new case studies (images.js, Task M6), with the helpers above. */
-const images = imageRoutes({ json, fail, repoRequest, readFile, refSha, openDraftPr, assertDraftBranch, b64encode, qs, collection: COLLECTIONS[study.CASE_STUDY.name] });
+/** The images of new case studies (Task M6) and new articles (Task M7): images.js, with the helpers above. */
+const helpers = { json, fail, repoRequest, readFile, refSha, openDraftPr, assertDraftBranch, b64encode, qs };
+const IMAGES = {
+  [study.CASE_STUDY.name]: imageRoutes(helpers, study.CASE_STUDY.name, COLLECTIONS[study.CASE_STUDY.name]),
+  [insight.INSIGHT.name]: imageRoutes(helpers, insight.INSIGHT.name, COLLECTIONS[insight.INSIGHT.name]),
+};
 
 /** Routes an authenticated, same-origin API request. */
 export async function handleApi(request, env, identity) {
@@ -444,7 +449,8 @@ export async function handleApi(request, env, identity) {
     const slug = parts[1];
     if (!demo.isSlug(slug)) return fail(400, 'Invalid entry name.');
     if (!col.allowed(slug)) return fail(404, col.notAvailable);
-    if (parts[0] === study.CASE_STUDY.name && parts[2] === 'images') {
+    const images = IMAGES[parts[0]];
+    if (images && parts[2] === 'images') {
       if (parts.length === 3) return request.method === 'POST' ? await images.add(env, base, slug, request) : fail(405, 'Method not allowed.');
       if (parts.length === 4 && parts[3] === 'remove' && request.method === 'POST') return await images.remove(env, base, slug, request);
       if (parts.length === 4) return request.method === 'GET' ? await images.get(env, base, slug, parts[3]) : fail(405, 'Method not allowed.');

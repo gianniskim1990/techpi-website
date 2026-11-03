@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectMedia from '../ProjectMedia.astro';
 import { insightBySlug, insightsCopy, type Insight } from '../../content/insights';
 import { getDictionary } from '../../i18n';
 import { homePathFor, insightsLocale, insightsPath, pathFor } from '../../i18n/routes';
@@ -41,7 +42,10 @@ function inline(text: string): Part[] {
 
 {/* One Insights article: a quiet editorial page. The head (back link, topic, title, lead, the date the article was
     first published and where), then the text at a reading measure, related reading and a restrained invitation.
-    The text is never hidden by the reveal system: it is read, not revealed. No image, author or reading time. */}
+    The text is never hidden by the reveal system: it is read, not revealed. No author or reading time. An article
+    written in the admin may have a cover after the head and an image after a section's text (Task M7), each with its
+    alt text and an optional caption; the migrated articles have none. The structured data and the sharing image stay
+    the site's own (the SEO validator checks both). */}
 <BaseLayout
   locale={locale}
   title={article.meta.title}
@@ -74,6 +78,14 @@ function inline(text: string): Part[] {
 
     <div class="body">
       {
+        article.cover && (
+          <figure class="a-cover">
+            <ProjectMedia image={article.cover} sizes="(min-width: 1024px) 66vw, 100vw" loading="eager" />
+            {article.cover.caption && <figcaption>{article.cover.caption}</figcaption>}
+          </figure>
+        )
+      }
+      {
         article.sections.map((s, i) => (
           <section aria-labelledby={`s${i + 1}-h`}>
             <h2 id={`s${i + 1}-h`}>{s.heading}</h2>
@@ -90,6 +102,12 @@ function inline(text: string): Part[] {
             {s.after?.map((p) => (
               <p>{p}</p>
             ))}
+            {s.image && (
+              <figure class="a-fig">
+                <ProjectMedia image={s.image} sizes="(min-width: 1024px) 50vw, 100vw" />
+                {s.image.caption && <figcaption>{s.image.caption}</figcaption>}
+              </figure>
+            )}
           </section>
         ))
       }
@@ -211,6 +229,26 @@ function inline(text: string): Part[] {
   .body > * {
     grid-column: 4 / span 7;
     max-width: 68ch;
+  }
+  /* Images (Task M7): the cover a little wider than the text, a section's image at the text's width. */
+  .body > .a-cover {
+    grid-column: 3 / span 9;
+    max-width: none;
+    margin-bottom: clamp(40px, 4.4vw, 64px);
+  }
+  .a-fig {
+    margin-top: 28px;
+  }
+  figcaption {
+    margin-top: 10px;
+    font-size: var(--text-small);
+    line-height: 1.5;
+    color: var(--ter);
+  }
+  @media (max-width: 1023px) {
+    .body > .a-cover {
+      grid-column: 1 / -1;
+    }
   }
   .body section + section,
   .body .note {

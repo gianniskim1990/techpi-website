@@ -36,11 +36,11 @@ async function request(method, path, body) {
 }
 
 /**
- * An image of a case study, as a data: URL for a preview. The admin's policy allows images from itself and data: only,
+ * An image of a case study or an article, as a data: URL for a preview. The admin's policy allows images from itself and data: only,
  * and the request carries the admin's header like every API call, so it cannot be a plain <img src>.
  */
-async function getCaseStudyImage(slug, id) {
-  const res = await fetch(`/api/case-studies/${encodeURIComponent(slug)}/images/${encodeURIComponent(id)}`, { credentials: 'same-origin', cache: 'no-store', headers: { 'X-TechPi-Admin': '1' } });
+async function getImage(collection, slug, id) {
+  const res = await fetch(`/api/${collection}/${encodeURIComponent(slug)}/images/${encodeURIComponent(id)}`, { credentials: 'same-origin', cache: 'no-store', headers: { 'X-TechPi-Admin': '1' } });
   if (!res.ok) throw new ApiError(res.status, 'The image could not be loaded.');
   const blob = await res.blob();
   return new Promise((resolve, reject) => {
@@ -60,7 +60,10 @@ export const api = {
   createCaseStudy: (content) => request('POST', 'case-studies', { content }),
   addCaseStudyImage: (slug, body) => request('POST', `case-studies/${encodeURIComponent(slug)}/images`, body),
   removeCaseStudyImage: (slug, body) => request('POST', `case-studies/${encodeURIComponent(slug)}/images/remove`, body),
-  getCaseStudyImage,
+  getCaseStudyImage: (slug, id) => getImage('case-studies', slug, id),
+  addInsightImage: (slug, body) => request('POST', `insights/${encodeURIComponent(slug)}/images`, body),
+  removeInsightImage: (slug, body) => request('POST', `insights/${encodeURIComponent(slug)}/images/remove`, body),
+  getInsightImage: (slug, id) => getImage('insights', slug, id),
   createInsight: (content) => request('POST', 'insights', { content }),
   saveCaseStudyDraft: (slug, content, expectedSha) => request('POST', `case-studies/${encodeURIComponent(slug)}/draft`, { content, expectedSha }),
   listInsights: () => request('GET', 'insights'),
