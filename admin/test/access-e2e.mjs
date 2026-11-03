@@ -196,6 +196,21 @@ for (const c of serve ? configs.filter((x) => x.name === 'owner') : configs) {
     check(`admin: Privacy saved with moved references -> ${p4.status}, PR #${pd4.draft?.number} flags owner legal review`, p4.status === 200 && /owner’s review/.test(pr4?.body ?? ''));
     check('admin: page drafts hold only their own change; the base pages are unchanged', Object.entries(pgFiles).every(([f, t]) => gh.fileOn(BASE, f) === t) && gh.fileOn('cms/pages/about', 'content/pages/privacy/index.json') === pgFiles['content/pages/privacy/index.json'] && gh.fileOn('cms/pages/privacy', CS_FILE) === csSample);
     check('admin: main and the base still unchanged after Rocketeer saves', gh.fileOn('main', 'README.md') === 'main' && Object.entries(csFiles).every(([f, t]) => gh.fileOn(BASE, f) === t));
+    // Clients and billing (Task C1) on the real ClientBook Durable Object (SQLite) in the local runtime; GitHub untouched.
+    const writesBefore = gh.state.writes.length;
+    const cl = (p, body) => fetch(`${origin}/api/clients${p}`, { method: 'POST', headers: { ...api, Origin: origin, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(async (r) => ({ status: r.status, data: await r.json() }));
+    const nc = await cl('', { name: 'Λιμάνι Α.Ε.', vatNumber: '099999999' });
+    const cid = nc.data.client?.id;
+    const sv = await cl(`/${cid}/services`, { domain: 'limani.gr', description: 'Hosting', period: 'yearly', price: '240', startDate: '2026-01-01', expiresOn: '2027-01-01' });
+    const pay = await cl(`/${cid}/payments`, { date: '2026-01-05', amount: '100,50', method: 'bank' });
+    const ren = await cl(`/${cid}/services/${sv.data.services?.[0]?.id}/renew`, {});
+    check(`admin: clients ledger in the Durable Object -> ${nc.status}/${sv.status}/${pay.status}/${ren.status}, balance ${ren.data.totals?.balanceCents}`, nc.status === 200 && ren.status === 200 && ren.data.totals?.balanceCents === 48000 - 10050 && ren.data.services[0].expiresOn === '2028-01-01');
+    const bad = await cl(`/${cid}/payments`, { date: '2026-01-05', amount: '0', method: 'bank' });
+    const allClients = await (await fetch(`${origin}/api/clients`, { headers: api })).json();
+    check(`admin: an invalid payment is refused (${bad.status}) and nothing else was written; the list reads it back`, bad.status === 422 && allClients.clients.length === 1 && allClients.clients[0].balanceCents === 37950);
+    const csv = await fetch(`${origin}/api/clients/export.csv`, { headers: api });
+    check(`admin: CSV export -> ${csv.status}`, csv.status === 200 && /attachment/.test(csv.headers.get('content-disposition') ?? '') && (await csv.text()).includes('Λιμάνι Α.Ε.'));
+    check('admin: clients never touch GitHub', gh.state.writes.length === writesBefore);
     // Logout ends the session in the browser.
     const out = await fetch(`${origin}/auth/logout`, { method: 'POST', headers: { ...api, Origin: origin, 'Content-Type': 'application/json' }, body: '{}' });
     const cleared = out.headers.getSetCookie();

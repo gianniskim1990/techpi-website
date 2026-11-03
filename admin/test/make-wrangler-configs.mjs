@@ -41,8 +41,8 @@ export function writeConfigs({ assetsDir = '../dist', github, passwordHash } = {
       assets: { directory: path.posix.join('..', assetsDir), binding: 'ASSETS', run_worker_first: true, not_found_handling: 'single-page-application' },
       workers_dev: false,
       preview_urls: false,
-      durable_objects: { bindings: [{ name: 'LOGIN_LIMITER', class_name: 'LoginLimiter' }] },
-      migrations: [{ tag: 'v1', new_sqlite_classes: ['LoginLimiter'] }],
+      durable_objects: { bindings: [{ name: 'LOGIN_LIMITER', class_name: 'LoginLimiter' }, { name: 'CLIENT_BOOK', class_name: 'ClientBook' }] },
+      migrations: [{ tag: 'v1', new_sqlite_classes: ['LoginLimiter'] }, { tag: 'v2', new_sqlite_classes: ['ClientBook'] }],
       vars: { ...c.vars, ...gh, ...(c.password && passwordHash ? { ADMIN_PASSWORD_HASH: passwordHash } : {}), ...(c.override ?? {}) },
       dev: { port: c.port, ip: '127.0.0.1' },
     };

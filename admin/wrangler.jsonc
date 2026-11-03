@@ -17,8 +17,8 @@
   "preview_urls": false,
   // Counts password sign-in attempts (worker/password.js): one SQLite-backed Durable Object, free on the Workers Free
   // plan. Used only when ADMIN_PASSWORD_HASH is set; GitHub sign-in does not need it.
-  "durable_objects": { "bindings": [{ "name": "LOGIN_LIMITER", "class_name": "LoginLimiter" }] },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["LoginLimiter"] }],
+  "durable_objects": { "bindings": [{ "name": "LOGIN_LIMITER", "class_name": "LoginLimiter" }, { "name": "CLIENT_BOOK", "class_name": "ClientBook" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["LoginLimiter"] }, { "tag": "v2", "new_sqlite_classes": ["ClientBook"] }],
   // Empty on purpose: the Worker refuses every request (503) until the owner sets them.
   // GITHUB_OAUTH_CLIENT_ID = the GitHub App's Client ID (used for "Sign in with GitHub");
   // ADMIN_GITHUB_USER_ID = the owner's numeric GitHub user ID, the only account allowed in;

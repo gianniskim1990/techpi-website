@@ -77,6 +77,31 @@ export const api = {
   editMedia: (id, body) => request('POST', `media/${encodeURIComponent(id)}`, body),
   deleteMedia: (id) => request('POST', `media/${encodeURIComponent(id)}/delete`, {}),
   getMediaBlob,
+  listClients: () => request('GET', 'clients'),
+  createClient: (body) => request('POST', 'clients', body),
+  getClient: (id) => request('GET', `clients/${id}`),
+  updateClient: (id, body) => request('POST', `clients/${id}`, body),
+  deleteClient: (id) => request('POST', `clients/${id}/delete`, {}),
+  addService: (id, body) => request('POST', `clients/${id}/services`, body),
+  updateService: (id, sid, body) => request('POST', `clients/${id}/services/${sid}`, body),
+  renewService: (id, sid, body) => request('POST', `clients/${id}/services/${sid}/renew`, body),
+  deleteService: (id, sid) => request('POST', `clients/${id}/services/${sid}/delete`, {}),
+  addCharge: (id, body) => request('POST', `clients/${id}/charges`, body),
+  deleteCharge: (id, cid) => request('POST', `clients/${id}/charges/${cid}/delete`, {}),
+  addPayment: (id, body) => request('POST', `clients/${id}/payments`, body),
+  deletePayment: (id, pid) => request('POST', `clients/${id}/payments/${pid}/delete`, {}),
+  /** The CSV export, saved through a temporary link (the request carries the admin's header, so it is fetched). */
+  async exportClients() {
+    const res = await fetch('/api/clients/export.csv', { credentials: 'same-origin', cache: 'no-store', headers: { 'X-TechPi-Admin': '1' } });
+    if (!res.ok) throw new ApiError(res.status, 'The export could not be made.');
+    const name = res.headers.get('Content-Disposition')?.match(/filename="([^"]+)"/)?.[1] ?? 'techpi-clients.csv';
+    const url = URL.createObjectURL(await res.blob());
+    const a = Object.assign(document.createElement('a'), { href: url, download: name });
+    document.body.append(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  },
   createInsight: (content) => request('POST', 'insights', { content }),
   saveCaseStudyDraft: (slug, content, expectedSha) => request('POST', `case-studies/${encodeURIComponent(slug)}/draft`, { content, expectedSha }),
   listInsights: () => request('GET', 'insights'),

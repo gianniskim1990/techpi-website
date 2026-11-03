@@ -22,8 +22,8 @@
   "routes": [{ "pattern": "admin.techpi.eu", "custom_domain": true }],
   // Counts password sign-in attempts (worker/password.js): one SQLite-backed Durable Object, free on the Workers Free
   // plan. Used only when ADMIN_PASSWORD_HASH is set; GitHub sign-in does not need it.
-  "durable_objects": { "bindings": [{ "name": "LOGIN_LIMITER", "class_name": "LoginLimiter" }] },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["LoginLimiter"] }],
+  "durable_objects": { "bindings": [{ "name": "LOGIN_LIMITER", "class_name": "LoginLimiter" }, { "name": "CLIENT_BOOK", "class_name": "ClientBook" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["LoginLimiter"] }, { "tag": "v2", "new_sqlite_classes": ["ClientBook"] }],
   "vars": {
     // The GitHub App's Client ID (GitHub, Settings, Developer settings, GitHub Apps, the app, General). Not secret.
     "GITHUB_OAUTH_CLIENT_ID": "",
