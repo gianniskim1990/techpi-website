@@ -9,6 +9,8 @@
  *   /api/<collection>/<slug>/images[...]     add, replace, remove and preview the images of a NEW case study or article
  *                                           (images.js)
  *   /api/media[...]                         the media library (media.js): upload, browse, edit and remove library images
+ *   /api/clients[...]                       clients and billing (clients.js): private records in the admin's own
+ *                                           database, never in the repository
  *   POST /api/<collection>                  create a new entry (case studies and articles only, Task M5): the file is written
  *                                           on a new cms/<collection>/<slug> branch and one draft pull request is opened.
  *                                           Nothing is published until that pull request is merged.
@@ -36,6 +38,7 @@ import { contentConfig } from './config.js';
 import { imageRoutes } from './images.js';
 import { mediaRoutes } from './media.js';
 import { isMediaId } from '../shared/media-content.js';
+import { handleClients } from './clients.js';
 
 const json = (status, data) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
 const fail = (status, message, extra = {}) => json(status, { error: { message, ...extra } });
@@ -461,6 +464,8 @@ export async function handleApi(request, env, identity) {
   const parts = url.pathname.replace(/\/+$/, '').split('/').slice(2); // after /api
   try {
     if (parts[0] === 'session' && parts.length === 1) return request.method === 'GET' ? await session(env, identity) : fail(405, 'Method not allowed.');
+    // Clients and billing live in the admin's own database, not on GitHub: no content branch needed.
+    if (parts[0] === 'clients') return await handleClients(request, env, parts);
     const cfg = contentConfig(env);
     if (parts[0] === 'media') return await handleMedia(request, env, cfg, parts);
     const col = Object.hasOwn(COLLECTIONS, parts[0]) ? COLLECTIONS[parts[0]] : null;

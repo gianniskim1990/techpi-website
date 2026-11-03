@@ -19,6 +19,8 @@ import { authConfig, productionProblems } from './config.js';
 
 // The Durable Object class that counts password sign-in attempts (password.js) must be exported by the main module.
 export { LoginLimiter } from './password.js';
+// The clients and billing database (clients.js, Task C1).
+export { ClientBook } from './clients.js';
 
 const CSP = [
   "default-src 'none'",

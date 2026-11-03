@@ -13,6 +13,8 @@
   import NewCaseStudy from './views/NewCaseStudy.svelte';
   import NewArticle from './views/NewArticle.svelte';
   import MediaLibrary from './views/MediaLibrary.svelte';
+  import ClientsList from './views/ClientsList.svelte';
+  import ClientView from './views/ClientView.svelte';
   import { caseStudies } from './lib/case-studies.svelte.js';
   import { insights } from './lib/insights.svelte.js';
   import { library } from './lib/media.svelte.js';
@@ -29,6 +31,7 @@
     { section: 'case-studies', label: 'Case studies', icon: 'portfolio', count: caseStudies.loaded ? caseStudies.entries.length : undefined },
     { section: 'articles', label: 'Articles', icon: 'articles', count: insights.loaded ? insights.entries.length : undefined },
     { section: 'media', label: 'Media', icon: 'media', count: library.loaded ? library.items.length : undefined },
+    { section: 'clients', label: 'Clients', icon: 'clients' },
     ...(connected?.testContent ? [{ section: 'test-content', label: 'Test content', icon: 'branch', test: true }] : []),
   ]);
   let menuOpen = $state(false);
@@ -127,6 +130,10 @@
         {#key route.path}<InsightEditor slug={current.slug} />{/key}
       {:else if current.section === 'media' && !current.slug}
         <MediaLibrary />
+      {:else if current.section === 'clients' && !current.slug}
+        <ClientsList />
+      {:else if current.section === 'clients' && /^[1-9][0-9]{0,9}$/.test(current.slug)}
+        {#key route.path}<ClientView id={Number(current.slug)} />{/key}
       {:else if current.section === 'test-content' && connected.testContent && current.slug}
         {#key route.path}<DraftEditor slug={current.slug} />{/key}
       {:else if current.section === 'test-content' && connected.testContent}
