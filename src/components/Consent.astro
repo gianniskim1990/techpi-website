@@ -42,18 +42,19 @@ const t = getDictionary(locale);
     /* Above the header (50), below the homepage intro (60, 70), which ends on its own within seconds. */
     z-index: 55;
     left: var(--space-margin);
-    bottom: 20px;
-    max-width: min(560px, calc(100vw - 2 * var(--space-margin)));
-    padding: 22px 24px 24px;
+    bottom: 24px;
+    max-width: min(720px, calc(100vw - 2 * var(--space-margin)));
+    padding: 32px 36px 34px;
     border: 1px solid var(--line);
-    font-size: var(--text-small);
-    box-shadow: 0 18px 48px rgba(8, 14, 30, 0.28);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    box-shadow: 0 24px 64px rgba(8, 14, 30, 0.36);
   }
   .consent[hidden] {
     display: none;
   }
   p {
-    color: var(--sec-c);
+    color: var(--color-paper);
   }
   a {
     color: var(--color-paper);
@@ -61,28 +62,37 @@ const t = getDictionary(locale);
     text-decoration-thickness: 1px;
     text-underline-offset: 4px;
   }
+  /* Accept and Reject: the same size, style and weight, so neither is the easier choice. */
   .actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 18px;
+    gap: 14px;
+    margin-top: 24px;
   }
   .btn {
-    min-height: 46px;
-    padding: 0 26px;
+    min-width: 180px;
+    min-height: 58px;
+    padding: 0 36px;
     font: inherit;
+    font-size: 1.0625rem;
     font-weight: var(--weight-ui);
     border: 0;
     cursor: pointer;
   }
-  @media (max-width: 480px) {
+  /* Phones: a full-width sheet at the bottom of the window, with the two buttons sharing the width. */
+  @media (max-width: 600px) {
     .consent {
-      right: var(--space-margin);
-      bottom: 12px;
-      padding: 18px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      max-width: none;
+      padding: 24px var(--space-margin) calc(24px + env(safe-area-inset-bottom));
+      border-width: 1px 0 0;
     }
     .actions .btn {
       flex: 1 1 0;
+      min-width: 0;
+      padding: 0 16px;
     }
   }
 </style>
