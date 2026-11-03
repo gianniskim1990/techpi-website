@@ -1,6 +1,8 @@
 # Analytics recommendation
 
-Status: recommendation for owner decision (launch blocker 3). **Nothing is installed.** 2026-10-13.
+Status: recommendation for owner decision (launch blocker 3), 2026-10-13. The owner first chose Option A; on 2026-11-03
+the owner chose **Option C (GA4 with consent)**, implemented as described in `docs/production/analytics.md`. The
+"current state" below is the state of 2026-10-13.
 
 ## Current state (verified)
 

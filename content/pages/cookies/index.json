@@ -7,19 +7,19 @@
       "el": "/el/cookies"
     },
     "kind": "legal",
-    "updated": "2026-10-22",
+    "updated": "2026-11-03",
     "updatedText": {
-      "en": "22 October 2026",
-      "el": "22 Οκτωβρίου 2026"
+      "en": "3 November 2026",
+      "el": "3 Νοεμβρίου 2026"
     }
   },
   "en": {
     "seo": {
       "title": "Cookies Policy | TechPi",
-      "description": "TechPi uses no analytics, advertising or tracking cookies. This policy explains the security cookies Cloudflare may set and how you can control cookies."
+      "description": "TechPi uses Google Analytics cookies only if you accept them, and no advertising cookies. How these and Cloudflare’s security cookies work, and how to control them."
     },
     "heading": "Cookies Policy",
-    "lead": "TechPi does not use cookies for analytics, advertising or tracking. This page explains the security cookies our hosting provider may set, and how you can control cookies.",
+    "lead": "TechPi uses analytics cookies only with your consent, and no advertising or tracking cookies. This page explains the cookies that may be set when you visit techpi.eu, and how you can control them.",
     "updatedLabel": "Last updated",
     "contentsLabel": "On this page",
     "sections": [
@@ -37,17 +37,41 @@
         "heading": "Cookies used by TechPi",
         "blocks": [
           {
-            "p": "techpi.eu does not set cookies of its own and does not store information on your device through local or session storage."
+            "p": "techpi.eu sets no cookies until you make a choice in the cookie banner. It keeps that choice in your browser’s local storage (`techpi-analytics-consent`) for 12 months, so that it does not ask again on every page."
           },
           {
             "ul": [
-              "No analytics: we do not use Google Analytics or any other analytics service.",
-              "No advertising or social tracking: no Meta Pixel, no advertising networks, no tracking or profiling.",
-              "No fonts, scripts or embedded content loaded from other companies, except Cloudflare Turnstile on the Contact page (see below)."
+              "Analytics only with your consent: Google Analytics, described below.",
+              "No advertising or social tracking: no Meta Pixel and no advertising networks. Google Analytics runs with Google signals and advertising features turned off.",
+              "No fonts or embedded content from other companies. Scripts from other companies: Google Analytics, only after you accept it, and Cloudflare Turnstile on the Contact page (see below)."
             ]
           },
           {
-            "p": "The domain techpi.eu has been verified in Google Search Console, which we can use to review aggregated information about how the website performs in Google Search when data is available. It is set up through our domain settings, not through code on this website, so it adds no analytics script or cookie here."
+            "p": "The domain techpi.eu has been verified in Google Search Console, which we can use to review aggregated information about how the website performs in Google Search when data is available. It is set up through our domain settings, not through code on this website, so it adds no script or cookie here."
+          }
+        ]
+      },
+      {
+        "id": "analytics",
+        "heading": "Google Analytics, only with your consent",
+        "blocks": [
+          {
+            "p": "If you select “Accept” in the cookie banner, we use Google Analytics 4, a service of Google Ireland Limited, to see how the website is used: which pages are visited, how visitors arrive (for example from a search or a link), and general information such as the country, the device and the browser. We look at the results only in aggregated form, to improve the website."
+          },
+          {
+            "p": "Google Analytics then sets these cookies on techpi.eu:"
+          },
+          {
+            "ul": [
+              "`_ga`: tells one browser apart from another, so that visits are counted correctly. It expires after 2 years.",
+              "`_ga_M3FF84P32D`: keeps the state of the current visit. It expires after 2 years."
+            ]
+          },
+          {
+            "p": "Google signals and advertising features are turned off, so the data is not used for advertising or to connect your visits with a Google account. Google Analytics does not log or store IP addresses. More in our [Privacy Policy]({{path.privacy}}) and in Google’s explanation of [how it uses information from sites that use its services]({{url.googlePartners}})."
+          },
+          {
+            "p": "If you select “Reject”, or make no choice, Google Analytics is not loaded and no analytics cookie is set."
           }
         ]
       },
@@ -70,11 +94,11 @@
         ]
       },
       {
-        "id": "banner",
-        "heading": "Why there is no cookie banner",
+        "id": "consent",
+        "heading": "Your choice",
         "blocks": [
           {
-            "p": "A consent banner is needed for cookies that are not strictly necessary, such as analytics or advertising cookies. techpi.eu uses none, so it does not show one."
+            "p": "The banner asks for your consent the first time you visit, with “Accept” and “Reject” as equal choices. You can change your choice at any time with “Cookie settings” at the bottom of every page. If you withdraw your consent, measurement stops and the website deletes the Google Analytics cookies on techpi.eu. Withdrawing consent does not affect measurement that took place before. After 12 months we ask again."
           }
         ]
       },
@@ -101,7 +125,7 @@
         "heading": "Future changes",
         "blocks": [
           {
-            "p": "If we ever add analytics or any other technology that stores information on your device and is not strictly necessary, we will update this policy first and, where the law requires it, ask for your consent before it is used."
+            "p": "If we add another technology that stores information on your device and is not strictly necessary, we will update this policy first and, where the law requires it, ask for your consent before it is used."
           }
         ]
       },
@@ -119,10 +143,10 @@
   "el": {
     "seo": {
       "title": "Πολιτική Cookies | TechPi",
-      "description": "Η TechPi δεν χρησιμοποιεί cookies στατιστικών, διαφήμισης ή παρακολούθησης. Εξηγούμε τα cookies ασφαλείας που μπορεί να ορίσει η Cloudflare και πώς τα ελέγχετε."
+      "description": "Η TechPi χρησιμοποιεί cookies του Google Analytics μόνο αν τα αποδεχτείτε, και κανένα cookie διαφήμισης. Πώς λειτουργούν αυτά και τα cookies ασφαλείας της Cloudflare."
     },
     "heading": "Πολιτική Cookies",
-    "lead": "Η TechPi δεν χρησιμοποιεί cookies για στατιστικά, διαφήμιση ή παρακολούθηση. Εδώ εξηγούμε τα cookies ασφαλείας που μπορεί να ορίσει ο πάροχος φιλοξενίας μας και πώς ελέγχετε τα cookies.",
+    "lead": "Η TechPi χρησιμοποιεί cookies στατιστικών μόνο με τη συγκατάθεσή σας, και κανένα cookie διαφήμισης ή παρακολούθησης. Εδώ εξηγούμε ποια cookies μπορεί να οριστούν όταν επισκέπτεστε το techpi.eu και πώς τα ελέγχετε.",
     "updatedLabel": "Τελευταία ενημέρωση",
     "contentsLabel": "Σε αυτή τη σελίδα",
     "sections": [
@@ -140,17 +164,41 @@
         "heading": "Cookies που χρησιμοποιεί η TechPi",
         "blocks": [
           {
-            "p": "Το techpi.eu δεν ορίζει δικά του cookies και δεν αποθηκεύει πληροφορίες στη συσκευή σας μέσω τοπικής αποθήκευσης ή αποθήκευσης συνεδρίας."
+            "p": "Το techpi.eu δεν ορίζει κανένα cookie πριν κάνετε μια επιλογή στο μήνυμα για τα cookies. Κρατά αυτή την επιλογή στην τοπική αποθήκευση (local storage) του προγράμματος περιήγησής σας (`techpi-analytics-consent`) για 12 μήνες, ώστε να μη σας ρωτά ξανά σε κάθε σελίδα."
           },
           {
             "ul": [
-              "Χωρίς στατιστικά: δεν χρησιμοποιούμε το Google Analytics ή άλλη υπηρεσία στατιστικών.",
-              "Χωρίς διαφήμιση ή παρακολούθηση: χωρίς Meta Pixel, χωρίς διαφημιστικά δίκτυα, χωρίς παρακολούθηση ή δημιουργία προφίλ.",
-              "Χωρίς γραμματοσειρές, scripts ή ενσωματωμένο περιεχόμενο από άλλες εταιρείες, εκτός από το Cloudflare Turnstile στη σελίδα Επικοινωνίας (δείτε παρακάτω)."
+              "Στατιστικά μόνο με τη συγκατάθεσή σας: το Google Analytics, που περιγράφεται παρακάτω.",
+              "Χωρίς διαφήμιση ή παρακολούθηση στα μέσα κοινωνικής δικτύωσης: χωρίς Meta Pixel και χωρίς διαφημιστικά δίκτυα. Το Google Analytics λειτουργεί με απενεργοποιημένα τα Google signals και τις διαφημιστικές λειτουργίες.",
+              "Χωρίς γραμματοσειρές ή ενσωματωμένο περιεχόμενο από άλλες εταιρείες. Scripts από άλλες εταιρείες: το Google Analytics, μόνο αφού το αποδεχτείτε, και το Cloudflare Turnstile στη σελίδα Επικοινωνίας (δείτε παρακάτω)."
             ]
           },
           {
-            "p": "Ο τομέας techpi.eu έχει επαληθευτεί στο Google Search Console, το οποίο μπορούμε να χρησιμοποιούμε για να βλέπουμε συγκεντρωτικά στοιχεία για την απόδοση του ιστότοπου στην Αναζήτηση Google, όταν υπάρχουν διαθέσιμα δεδομένα. Ρυθμίζεται μέσω των ρυθμίσεων του τομέα μας και όχι με κώδικα σε αυτόν τον ιστότοπο, επομένως δεν προσθέτει εδώ script ανάλυσης επισκεψιμότητας ή cookie."
+            "p": "Ο τομέας techpi.eu έχει επαληθευτεί στο Google Search Console, το οποίο μπορούμε να χρησιμοποιούμε για να βλέπουμε συγκεντρωτικά στοιχεία για την απόδοση του ιστότοπου στην Αναζήτηση Google, όταν υπάρχουν διαθέσιμα δεδομένα. Ρυθμίζεται μέσω των ρυθμίσεων του τομέα μας και όχι με κώδικα σε αυτόν τον ιστότοπο, επομένως δεν προσθέτει εδώ script ή cookie."
+          }
+        ]
+      },
+      {
+        "id": "analytics",
+        "heading": "Google Analytics, μόνο με τη συγκατάθεσή σας",
+        "blocks": [
+          {
+            "p": "Αν επιλέξετε «Αποδοχή» στο μήνυμα για τα cookies, χρησιμοποιούμε το Google Analytics 4, υπηρεσία της Google Ireland Limited, για να βλέπουμε πώς χρησιμοποιείται ο ιστότοπος: ποιες σελίδες προβάλλονται, πώς φτάνουν οι επισκέπτες (για παράδειγμα από μια αναζήτηση ή έναν σύνδεσμο) και γενικές πληροφορίες όπως η χώρα, η συσκευή και το πρόγραμμα περιήγησης. Εξετάζουμε τα αποτελέσματα μόνο συγκεντρωτικά, για να βελτιώνουμε τον ιστότοπο."
+          },
+          {
+            "p": "Τότε το Google Analytics ορίζει στο techpi.eu τα εξής cookies:"
+          },
+          {
+            "ul": [
+              "`_ga`: ξεχωρίζει ένα πρόγραμμα περιήγησης από ένα άλλο, ώστε οι επισκέψεις να μετρώνται σωστά. Λήγει μετά από 2 χρόνια.",
+              "`_ga_M3FF84P32D`: κρατά την κατάσταση της τρέχουσας επίσκεψης. Λήγει μετά από 2 χρόνια."
+            ]
+          },
+          {
+            "p": "Τα Google signals και οι διαφημιστικές λειτουργίες είναι απενεργοποιημένα, επομένως τα δεδομένα δεν χρησιμοποιούνται για διαφήμιση ούτε για να συνδεθούν οι επισκέψεις σας με λογαριασμό Google. Το Google Analytics δεν καταγράφει ούτε αποθηκεύει διευθύνσεις IP. Περισσότερα στην [Πολιτική Απορρήτου]({{path.privacy}}) μας και στην εξήγηση της Google για το [πώς χρησιμοποιεί πληροφορίες από ιστότοπους που χρησιμοποιούν τις υπηρεσίες της]({{url.googlePartners}})."
+          },
+          {
+            "p": "Αν επιλέξετε «Απόρριψη» ή δεν κάνετε καμία επιλογή, το Google Analytics δεν φορτώνεται και δεν ορίζεται κανένα cookie στατιστικών."
           }
         ]
       },
@@ -173,11 +221,11 @@
         ]
       },
       {
-        "id": "banner",
-        "heading": "Γιατί δεν εμφανίζεται μήνυμα για cookies",
+        "id": "consent",
+        "heading": "Η επιλογή σας",
         "blocks": [
           {
-            "p": "Μήνυμα συγκατάθεσης χρειάζεται για cookies που δεν είναι απολύτως απαραίτητα, όπως τα cookies στατιστικών ή διαφήμισης. Το techpi.eu δεν χρησιμοποιεί τέτοια cookies, γι' αυτό δεν εμφανίζει τέτοιο μήνυμα."
+            "p": "Το μήνυμα ζητά τη συγκατάθεσή σας την πρώτη φορά που επισκέπτεστε τον ιστότοπο, με την «Αποδοχή» και την «Απόρριψη» ως ισότιμες επιλογές. Μπορείτε να αλλάξετε την επιλογή σας οποτεδήποτε από τις «Ρυθμίσεις cookies» στο κάτω μέρος κάθε σελίδας. Αν ανακαλέσετε τη συγκατάθεσή σας, η μέτρηση σταματά και ο ιστότοπος διαγράφει τα cookies του Google Analytics στο techpi.eu. Η ανάκληση δεν επηρεάζει τη μέτρηση που έγινε πριν από αυτήν. Μετά από 12 μήνες σας ρωτάμε ξανά."
           }
         ]
       },
@@ -204,7 +252,7 @@
         "heading": "Μελλοντικές αλλαγές",
         "blocks": [
           {
-            "p": "Αν προσθέσουμε ποτέ εργαλείο στατιστικών ή άλλη τεχνολογία που αποθηκεύει πληροφορίες στη συσκευή σας και δεν είναι απολύτως απαραίτητη, θα ενημερώσουμε πρώτα αυτή την πολιτική και, όπου το απαιτεί ο νόμος, θα ζητήσουμε τη συγκατάθεσή σας πριν τη χρησιμοποιήσουμε."
+            "p": "Αν προσθέσουμε άλλη τεχνολογία που αποθηκεύει πληροφορίες στη συσκευή σας και δεν είναι απολύτως απαραίτητη, θα ενημερώσουμε πρώτα αυτή την πολιτική και, όπου το απαιτεί ο νόμος, θα ζητήσουμε τη συγκατάθεσή σας πριν τη χρησιμοποιήσουμε."
           }
         ]
       },

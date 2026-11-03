@@ -156,7 +156,7 @@ test('legal: references survive a save as references; locked facts and anchors c
     (c) => { c.el.sections[0].id = 'poioi-eimaste'; },
     (c) => { c.en.heading = 'Our privacy'; },
     (c) => { c.facts = { updated: '2027-01-01' }; },
-    (c) => { c.en.sections[1].blocks[0].p = 'We use Google Analytics.'; },
+    (c) => { c.en.sections[1].blocks[0].p = 'The website is already indexed by Google.'; },
   ]) assert.equal((await save('privacy', edit(l2.content, fn), l2.sha)).status, 422, fn.toString());
   assert.equal(gh.state.writes.filter((w) => w.path.startsWith('/contents/')).length, 1, 'only the valid save wrote');
 });

@@ -26,6 +26,13 @@ export const el: Dictionary = {
     note: 'TechPi — η εξέλιξη της pigiota314.',
     legalLabel: 'Νομικές πληροφορίες',
   },
+  consent: {
+    label: 'Συγκατάθεση για cookies',
+    text: 'Θα θέλαμε να χρησιμοποιούμε cookies του Google Analytics, για να καταλαβαίνουμε πώς χρησιμοποιείται ο ιστότοπος. Ορίζονται μόνο αν τα αποδεχτείτε. Μπορείτε να αλλάξετε την επιλογή σας οποτεδήποτε από τις «Ρυθμίσεις cookies».',
+    accept: 'Αποδοχή',
+    reject: 'Απόρριψη',
+    settings: 'Ρυθμίσεις cookies',
+  },
   language: {
     label: 'Γλώσσα',
     en: { short: 'EN', name: 'English' },

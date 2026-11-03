@@ -7,10 +7,10 @@
       "el": "/el/privacy"
     },
     "kind": "legal",
-    "updated": "2026-10-22",
+    "updated": "2026-11-03",
     "updatedText": {
-      "en": "22 October 2026",
-      "el": "22 Οκτωβρίου 2026"
+      "en": "3 November 2026",
+      "el": "3 Νοεμβρίου 2026"
     }
   },
   "en": {
@@ -70,7 +70,10 @@
             "p": "**When you visit the website.** To deliver the website and protect it from abuse, our hosting and security provider processes technical information about each request: your IP address, the date and time, the page requested, information your browser sends (such as its type and language) and security signals derived from these. We do not use this information to identify you or to build a profile."
           },
           {
-            "p": "**What we do not do.** Apart from the contact form, the website has no forms, and it has no user accounts. It does not use analytics, advertising, tracking or profiling tools, and it does not load fonts or scripts from other companies, except Cloudflare Turnstile on the Contact page. See the [Cookies Policy]({{path.cookies}})."
+            "p": "**Analytics, only with your consent.** If you accept analytics cookies in the cookie banner, Google Analytics collects information about your visit: the pages you view, how you arrived, the time of the visit, your approximate location (country and city, derived from your IP address), your device, browser and screen size, and an online identifier kept in a cookie. Google Analytics does not log or store IP addresses. If you reject analytics cookies, or make no choice, none of this is collected."
+          },
+          {
+            "p": "**What we do not do.** Apart from the contact form, the website has no forms, and it has no user accounts. It does not use advertising, tracking or profiling tools, and it does not load fonts or scripts from other companies, except Google Analytics after your consent and Cloudflare Turnstile on the Contact page. See the [Cookies Policy]({{path.cookies}})."
           }
         ]
       },
@@ -82,12 +85,13 @@
             "ul": [
               "To answer your enquiry, prepare a proposal or quotation and discuss a possible project: steps taken at your request before entering into a contract (Article 6(1)(b) GDPR). Where an enquiry does not concern a possible contract, our legitimate interest in replying to messages sent to us (Article 6(1)(f) GDPR).",
               "To deliver the website and keep it secure, including protection against automated attacks and protecting the contact form against spam with Cloudflare Turnstile: our legitimate interest in operating a secure website (Article 6(1)(f) GDPR).",
+              "To measure, in aggregated form, how the website is used, with Google Analytics: your consent (Article 6(1)(a) GDPR, and Article 4(5) of Greek Law 3471/2006 for the cookies). You can withdraw it at any time with “Cookie settings” at the bottom of every page; this does not affect the lawfulness of processing before the withdrawal.",
               "If we work together: performing our contract with you or your organisation (Article 6(1)(b) GDPR), and keeping invoices, accounting records and related correspondence as tax and commercial law require (Article 6(1)(c) GDPR).",
               "Where necessary, to establish, exercise or defend legal claims: our legitimate interest (Article 6(1)(f) GDPR)."
             ]
           },
           {
-            "p": "We do not rely on your consent for any of this processing, we do not make decisions about you by automated means, and we do not use your data for marketing."
+            "p": "Apart from analytics, none of this processing relies on your consent. We do not make decisions about you by automated means, and we do not use your data for marketing."
           },
           {
             "p": "You do not have to give us personal data. Without contact details, however, we cannot reply to you."
@@ -105,7 +109,8 @@
             "ul": [
               "**Cloudflare** hosts the website and provides its network, domain name (DNS) and security services, for techpi.eu and techpi.gr. It processes the technical information described above. It also provides Turnstile, the check that protects the contact form, and runs the small program that receives the form and passes it on for delivery. Cloudflare explains its own processing in its [privacy policy]({{url.cloudflarePrivacy}}).",
               "**Resend** delivers the messages sent through the contact form to our mailbox. It receives the details you enter in the form and keeps records of each delivery for a limited time. Resend explains its own processing in its privacy policy, published on resend.com, and we use it under its data processing agreement.",
-              "**Pointer.gr** hosts our email. Messages sent to and from @techpi.eu addresses are stored on its servers. We read our mail through the provider's webmail and through an email program on our own computer, which keeps a copy of the messages it downloads."
+              "**Pointer.gr** hosts our email. Messages sent to and from @techpi.eu addresses are stored on its servers. We read our mail through the provider's webmail and through an email program on our own computer, which keeps a copy of the messages it downloads.",
+              "**Google** (Google Ireland Limited) provides Google Analytics, which runs only if you accept analytics cookies. It processes the visit data described above on our behalf, with Google signals and advertising features turned off. Google explains [how it uses information from sites that use its services]({{url.googlePartners}})."
             ]
           },
           {
@@ -125,6 +130,9 @@
           },
           {
             "p": "Resend, which delivers the messages sent through the contact form, is also a United States company, so the details you enter in the form are processed in the United States. Resend states that it relies on standard contractual clauses, included in its data processing agreement, and on its participation in the EU–U.S. Data Privacy Framework."
+          },
+          {
+            "p": "If you accept analytics cookies, Google Analytics data may be processed by Google LLC in the United States. Google states that for such transfers it relies on its certification under the EU–U.S. Data Privacy Framework and on standard contractual clauses."
           }
         ]
       },
@@ -137,7 +145,8 @@
               "**Enquiries that do not lead to a collaboration** (including requests for a quotation): 12 months after our most recent communication. After that we delete them, or anonymise them, unless a specific legal obligation or a justified need, such as an ongoing dispute, requires us to keep them longer.",
               "**Messages sent through the contact form** arrive in our mailbox and are kept as described above for enquiries. Resend keeps records of each delivery, including the message, for a limited period under its own practices; the website itself keeps no copy.",
               "**Clients:** contracts, invoices, accounting records and related correspondence are kept for as long as the collaboration lasts and afterwards for as long as applicable tax and commercial law requires. These periods are set by law and can be longer than 12 months.",
-              "**Technical data of website visits:** we do not run our own web server and do not keep our own visitor logs. Cloudflare processes request data under its own retention practices, described in its privacy policy."
+              "**Technical data of website visits:** we do not run our own web server and do not keep our own visitor logs. Cloudflare processes request data under its own retention practices, described in its privacy policy.",
+              "**Google Analytics:** visit data linked to the cookie identifier is kept in Google Analytics for 2 months and then deleted automatically; the aggregated reports we look at do not identify anyone. The cookies expire after 2 years at most and are deleted when you withdraw your consent."
             ]
           },
           {
@@ -159,7 +168,8 @@
               "have your data erased, where the law allows;",
               "restrict how we use your data in certain cases;",
               "object to processing based on our legitimate interests;",
-              "receive data you gave us in a structured, commonly used format, where processing is based on a contract."
+              "receive data you gave us in a structured, commonly used format, where processing is based on a contract;",
+              "withdraw your consent to analytics at any time, with “Cookie settings” at the bottom of every page."
             ]
           },
           {
@@ -253,7 +263,10 @@
             "p": "**Όταν επισκέπτεστε τον ιστότοπο.** Για να παρέχεται ο ιστότοπος και να προστατεύεται από κατάχρηση, ο πάροχος φιλοξενίας και ασφάλειας επεξεργάζεται τεχνικές πληροφορίες για κάθε αίτημα: τη διεύθυνση IP σας, την ημερομηνία και ώρα, τη σελίδα που ζητήθηκε, πληροφορίες που στέλνει το πρόγραμμα περιήγησής σας (όπως τον τύπο και τη γλώσσα του) και ενδείξεις ασφαλείας που προκύπτουν από αυτές. Δεν χρησιμοποιούμε αυτές τις πληροφορίες για να σας ταυτοποιήσουμε ή για να δημιουργήσουμε προφίλ."
           },
           {
-            "p": "**Τι δεν κάνουμε.** Εκτός από τη φόρμα επικοινωνίας, ο ιστότοπος δεν έχει φόρμες ούτε λογαριασμούς χρηστών. Δεν χρησιμοποιεί εργαλεία στατιστικών, διαφήμισης, παρακολούθησης ή δημιουργίας προφίλ και δεν φορτώνει γραμματοσειρές ή scripts από άλλες εταιρείες, εκτός από το Cloudflare Turnstile στη σελίδα Επικοινωνίας. Δείτε την [Πολιτική Cookies]({{path.cookies}})."
+            "p": "**Στατιστικά, μόνο με τη συγκατάθεσή σας.** Αν αποδεχτείτε τα cookies στατιστικών στο μήνυμα για τα cookies, το Google Analytics συλλέγει πληροφορίες για την επίσκεψή σας: τις σελίδες που βλέπετε, πώς φτάσατε στον ιστότοπο, την ώρα της επίσκεψης, την κατά προσέγγιση τοποθεσία σας (χώρα και πόλη, που προκύπτουν από τη διεύθυνση IP σας), τη συσκευή, το πρόγραμμα περιήγησης και το μέγεθος της οθόνης σας, καθώς και ένα επιγραμμικό αναγνωριστικό που φυλάσσεται σε cookie. Το Google Analytics δεν καταγράφει ούτε αποθηκεύει διευθύνσεις IP. Αν απορρίψετε τα cookies στατιστικών ή δεν κάνετε καμία επιλογή, δεν συλλέγεται τίποτα από αυτά."
+          },
+          {
+            "p": "**Τι δεν κάνουμε.** Εκτός από τη φόρμα επικοινωνίας, ο ιστότοπος δεν έχει φόρμες ούτε λογαριασμούς χρηστών. Δεν χρησιμοποιεί εργαλεία διαφήμισης, παρακολούθησης ή δημιουργίας προφίλ και δεν φορτώνει γραμματοσειρές ή scripts από άλλες εταιρείες, εκτός από το Google Analytics μετά τη συγκατάθεσή σας και το Cloudflare Turnstile στη σελίδα Επικοινωνίας. Δείτε την [Πολιτική Cookies]({{path.cookies}})."
           }
         ]
       },
@@ -265,12 +278,13 @@
             "ul": [
               "Για να απαντήσουμε στο μήνυμά σας, να ετοιμάσουμε πρόταση ή προσφορά και να συζητήσουμε ένα πιθανό έργο: ενέργειες κατόπιν αιτήματός σας πριν από τη σύναψη σύμβασης (άρθρο 6 παρ. 1 στοιχ. β΄ ΓΚΠΔ). Όταν ένα μήνυμα δεν αφορά πιθανή σύμβαση, το έννομο συμφέρον μας να απαντάμε στα μηνύματα που λαμβάνουμε (άρθρο 6 παρ. 1 στοιχ. στ΄ ΓΚΠΔ).",
               "Για να παρέχεται ο ιστότοπος με ασφάλεια, μαζί με την προστασία από αυτοματοποιημένες επιθέσεις και την προστασία της φόρμας επικοινωνίας από ανεπιθύμητα μηνύματα με το Cloudflare Turnstile: το έννομο συμφέρον μας για τη λειτουργία ενός ασφαλούς ιστότοπου (άρθρο 6 παρ. 1 στοιχ. στ΄ ΓΚΠΔ).",
+              "Για να μετράμε συγκεντρωτικά πώς χρησιμοποιείται ο ιστότοπος, με το Google Analytics: η συγκατάθεσή σας (άρθρο 6 παρ. 1 στοιχ. α΄ ΓΚΠΔ και, για τα cookies, άρθρο 4 παρ. 5 του ν. 3471/2006). Μπορείτε να την ανακαλέσετε οποτεδήποτε από τις «Ρυθμίσεις cookies» στο κάτω μέρος κάθε σελίδας· η ανάκληση δεν θίγει τη νομιμότητα της επεξεργασίας πριν από αυτήν.",
               "Αν συνεργαστούμε: την εκτέλεση της σύμβασης με εσάς ή τον οργανισμό σας (άρθρο 6 παρ. 1 στοιχ. β΄ ΓΚΠΔ) και την τήρηση τιμολογίων, λογιστικών αρχείων και της σχετικής αλληλογραφίας, όπως απαιτεί η φορολογική και εμπορική νομοθεσία (άρθρο 6 παρ. 1 στοιχ. γ΄ ΓΚΠΔ).",
               "Όπου χρειάζεται, για τη θεμελίωση, άσκηση ή υποστήριξη νομικών αξιώσεων: το έννομο συμφέρον μας (άρθρο 6 παρ. 1 στοιχ. στ΄ ΓΚΠΔ)."
             ]
           },
           {
-            "p": "Καμία από αυτές τις επεξεργασίες δεν βασίζεται στη συγκατάθεσή σας, δεν λαμβάνουμε αποφάσεις για εσάς με αυτοματοποιημένα μέσα και δεν χρησιμοποιούμε τα δεδομένα σας για σκοπούς προώθησης."
+            "p": "Εκτός από τα στατιστικά, καμία από αυτές τις επεξεργασίες δεν βασίζεται στη συγκατάθεσή σας. Δεν λαμβάνουμε αποφάσεις για εσάς με αυτοματοποιημένα μέσα και δεν χρησιμοποιούμε τα δεδομένα σας για σκοπούς προώθησης."
           },
           {
             "p": "Δεν είστε υποχρεωμένοι να μας δώσετε προσωπικά δεδομένα. Χωρίς στοιχεία επικοινωνίας, όμως, δεν μπορούμε να σας απαντήσουμε."
@@ -288,7 +302,8 @@
             "ul": [
               "Η **Cloudflare** φιλοξενεί τον ιστότοπο και παρέχει τις υπηρεσίες δικτύου, ονομάτων τομέα (DNS) και ασφάλειας για τα techpi.eu και techpi.gr. Επεξεργάζεται τις τεχνικές πληροφορίες που περιγράφονται παραπάνω. Παρέχει επίσης το Turnstile, τον έλεγχο που προστατεύει τη φόρμα επικοινωνίας, και εκτελεί το μικρό πρόγραμμα που λαμβάνει τη φόρμα και τη διαβιβάζει για αποστολή. Η Cloudflare εξηγεί τη δική της επεξεργασία στην [πολιτική απορρήτου]({{url.cloudflarePrivacy}}) της.",
               "Η **Resend** παραδίδει στο γραμματοκιβώτιό μας τα μηνύματα που στέλνονται μέσω της φόρμας επικοινωνίας. Λαμβάνει τα στοιχεία που συμπληρώνετε στη φόρμα και τηρεί στοιχεία κάθε αποστολής για περιορισμένο διάστημα. Η Resend εξηγεί τη δική της επεξεργασία στην πολιτική απορρήτου της, που δημοσιεύεται στο resend.com, και τη χρησιμοποιούμε βάσει της σύμβασης επεξεργασίας δεδομένων της.",
-              "Η **Pointer.gr** φιλοξενεί το email μας. Τα μηνύματα προς και από διευθύνσεις @techpi.eu αποθηκεύονται στους διακομιστές της. Διαβάζουμε την αλληλογραφία μας μέσω του webmail του παρόχου και μέσω προγράμματος email στον δικό μας υπολογιστή, το οποίο κρατά αντίγραφο των μηνυμάτων που κατεβάζει."
+              "Η **Pointer.gr** φιλοξενεί το email μας. Τα μηνύματα προς και από διευθύνσεις @techpi.eu αποθηκεύονται στους διακομιστές της. Διαβάζουμε την αλληλογραφία μας μέσω του webmail του παρόχου και μέσω προγράμματος email στον δικό μας υπολογιστή, το οποίο κρατά αντίγραφο των μηνυμάτων που κατεβάζει.",
+              "Η **Google** (Google Ireland Limited) παρέχει το Google Analytics, που λειτουργεί μόνο αν αποδεχτείτε τα cookies στατιστικών. Επεξεργάζεται για λογαριασμό μας τα δεδομένα επισκέψεων που περιγράφονται παραπάνω, με απενεργοποιημένα τα Google signals και τις διαφημιστικές λειτουργίες. Η Google εξηγεί [πώς χρησιμοποιεί πληροφορίες από ιστότοπους που χρησιμοποιούν τις υπηρεσίες της]({{url.googlePartners}})."
             ]
           },
           {
@@ -308,6 +323,9 @@
           },
           {
             "p": "Η Resend, που παραδίδει τα μηνύματα της φόρμας επικοινωνίας, είναι επίσης αμερικανική εταιρεία, επομένως τα στοιχεία που συμπληρώνετε στη φόρμα υποβάλλονται σε επεξεργασία στις Ηνωμένες Πολιτείες. Η Resend αναφέρει ότι βασίζεται σε τυποποιημένες συμβατικές ρήτρες, που περιλαμβάνονται στη σύμβαση επεξεργασίας δεδομένων της, και στη συμμετοχή της στο Πλαίσιο Προστασίας Δεδομένων ΕΕ-ΗΠΑ."
+          },
+          {
+            "p": "Αν αποδεχτείτε τα cookies στατιστικών, τα δεδομένα του Google Analytics μπορεί να υποβάλλονται σε επεξεργασία από την Google LLC στις Ηνωμένες Πολιτείες. Η Google αναφέρει ότι για τέτοιες διαβιβάσεις βασίζεται στην πιστοποίησή της στο Πλαίσιο Προστασίας Δεδομένων ΕΕ-ΗΠΑ και σε τυποποιημένες συμβατικές ρήτρες."
           }
         ]
       },
@@ -320,7 +338,8 @@
               "**Μηνύματα που δεν οδηγούν σε συνεργασία** (μαζί με τα αιτήματα προσφοράς): 12 μήνες από την τελευταία μας επικοινωνία. Μετά τα διαγράφουμε ή τα ανωνυμοποιούμε, εκτός αν συγκεκριμένη νομική υποχρέωση ή δικαιολογημένη ανάγκη, όπως μια εκκρεμής διαφορά, απαιτεί να τα κρατήσουμε περισσότερο.",
               "**Μηνύματα που στέλνονται μέσω της φόρμας επικοινωνίας:** φτάνουν στο γραμματοκιβώτιό μας και τηρούνται όπως περιγράφεται παραπάνω για τα μηνύματα. Η Resend τηρεί στοιχεία κάθε αποστολής, μαζί με το μήνυμα, για περιορισμένο διάστημα σύμφωνα με τις δικές της πρακτικές· ο ιστότοπος δεν κρατά κανένα αντίγραφο.",
               "**Πελάτες:** συμβάσεις, τιμολόγια, λογιστικά αρχεία και η σχετική αλληλογραφία τηρούνται για όσο διαρκεί η συνεργασία και στη συνέχεια για όσο απαιτεί η ισχύουσα φορολογική και εμπορική νομοθεσία. Τα διαστήματα αυτά ορίζονται από τον νόμο και μπορεί να ξεπερνούν τους 12 μήνες.",
-              "**Τεχνικά δεδομένα επισκέψεων:** δεν λειτουργούμε δικό μας διακομιστή ιστού και δεν τηρούμε δικά μας αρχεία καταγραφής επισκεπτών. Η Cloudflare επεξεργάζεται τα δεδομένα αιτημάτων σύμφωνα με τις δικές της πρακτικές τήρησης, όπως τις περιγράφει στην πολιτική απορρήτου της."
+              "**Τεχνικά δεδομένα επισκέψεων:** δεν λειτουργούμε δικό μας διακομιστή ιστού και δεν τηρούμε δικά μας αρχεία καταγραφής επισκεπτών. Η Cloudflare επεξεργάζεται τα δεδομένα αιτημάτων σύμφωνα με τις δικές της πρακτικές τήρησης, όπως τις περιγράφει στην πολιτική απορρήτου της.",
+              "**Google Analytics:** τα δεδομένα επισκέψεων που συνδέονται με το αναγνωριστικό του cookie τηρούνται στο Google Analytics για 2 μήνες και μετά διαγράφονται αυτόματα· οι συγκεντρωτικές αναφορές που βλέπουμε δεν ταυτοποιούν κανέναν. Τα cookies λήγουν μετά από 2 χρόνια το πολύ και διαγράφονται όταν ανακαλείτε τη συγκατάθεσή σας."
             ]
           },
           {
@@ -342,7 +361,8 @@
               "διαγραφής των δεδομένων σας, όπου το επιτρέπει ο νόμος·",
               "περιορισμού της επεξεργασίας σε ορισμένες περιπτώσεις·",
               "εναντίωσης σε επεξεργασία που βασίζεται στο έννομο συμφέρον μας·",
-              "λήψης των δεδομένων που μας δώσατε σε δομημένη και κοινώς χρησιμοποιούμενη μορφή, όταν η επεξεργασία βασίζεται σε σύμβαση."
+              "λήψης των δεδομένων που μας δώσατε σε δομημένη και κοινώς χρησιμοποιούμενη μορφή, όταν η επεξεργασία βασίζεται σε σύμβαση·",
+              "ανάκλησης της συγκατάθεσής σας για τα στατιστικά οποτεδήποτε, από τις «Ρυθμίσεις cookies» στο κάτω μέρος κάθε σελίδας."
             ]
           },
           {

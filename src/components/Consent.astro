@@ -1,0 +1,88 @@
+---
+import { getDictionary } from '../i18n';
+import type { Locale } from '../i18n/locales';
+import { pathFor } from '../i18n/routes';
+import { analyticsFacts } from '../content/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getDictionary(locale);
+---
+
+{/* The analytics consent banner (src/scripts/consent.ts). Hidden until the script finds no stored choice, so without
+    scripting nothing shows and nothing loads. Not a modal: the page stays usable, and focus is never trapped. Accept and
+    Reject are the same kind of button, side by side, as the Hellenic DPA's guidance on cookies asks. */}
+<section
+  class="consent s-ink"
+  aria-label={t.consent.label}
+  data-consent
+  data-measurement-id={analyticsFacts.measurementId}
+  hidden
+>
+  <p>
+    {t.consent.text}
+    {' '}<a href={pathFor('cookies', locale)}>{t.pages.cookies.heading}</a>
+  </p>
+  <div class="actions">
+    <button type="button" class="btn" data-consent-accept>{t.consent.accept}</button>
+    <button type="button" class="btn" data-consent-reject>{t.consent.reject}</button>
+  </div>
+</section>
+
+<script>
+  import '../scripts/consent';
+</script>
+
+<style>
+  .consent {
+    position: fixed;
+    /* Above the header (50), below the homepage intro (60, 70), which ends on its own within seconds. */
+    z-index: 55;
+    left: var(--space-margin);
+    bottom: 20px;
+    max-width: min(560px, calc(100vw - 2 * var(--space-margin)));
+    padding: 22px 24px 24px;
+    border: 1px solid var(--line);
+    font-size: var(--text-small);
+    box-shadow: 0 18px 48px rgba(8, 14, 30, 0.28);
+  }
+  .consent[hidden] {
+    display: none;
+  }
+  p {
+    color: var(--sec-c);
+  }
+  a {
+    color: var(--color-paper);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .btn {
+    min-height: 46px;
+    padding: 0 26px;
+    font: inherit;
+    font-weight: var(--weight-ui);
+    border: 0;
+    cursor: pointer;
+  }
+  @media (max-width: 480px) {
+    .consent {
+      right: var(--space-margin);
+      bottom: 12px;
+      padding: 18px;
+    }
+    .actions .btn {
+      flex: 1 1 0;
+    }
+  }
+</style>

@@ -77,6 +77,10 @@ const insights = locale === insightsLocale ? { href: insightsPath(), label: insi
             </li>
           ))
         }
+        {/* Reopens the analytics consent banner (src/scripts/consent.ts), so a choice can be changed at any time. */}
+        <li>
+          <button type="button" data-consent-open>{t.consent.settings}</button>
+        </li>
       </ul>
     </nav>
   </div>
@@ -193,9 +197,14 @@ const insights = locale === insightsLocale ? { href: insightsPath(), label: insi
     flex-wrap: wrap;
     column-gap: 24px;
   }
-  .legal a {
+  .legal a,
+  .legal button {
     display: inline-block;
     padding: 6px 0;
+    font: inherit;
+    background: none;
+    border: 0;
+    cursor: pointer;
     color: var(--sec-c);
     text-decoration: underline;
     text-decoration-thickness: 1px;
@@ -205,7 +214,12 @@ const insights = locale === insightsLocale ? { href: insightsPath(), label: insi
       color var(--duration-fast) var(--ease-state),
       text-decoration-color var(--duration-fast) var(--ease-state);
   }
+  /* The consent button needs the script; without it there is no banner to reopen. */
+  :global(html:not(.js)) .legal button {
+    display: none;
+  }
   .legal a:hover,
+  .legal button:hover,
   .legal a[aria-current='page'] {
     color: var(--color-paper);
     text-decoration-color: currentColor;

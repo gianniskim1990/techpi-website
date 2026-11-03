@@ -13,7 +13,7 @@
 // 5. Search Console is described as it is (owner-confirmed 2026-10-16): the techpi.eu Domain property is verified. Each
 //    page must carry its exact statement, in its language. Retired or unsupported claims stay out: the former
 //    prospective wording ("we intend to use"), a submitted sitemap, the site already being indexed, reports already
-//    generated, Google Analytics, Search Console identifying visitors, and the absolute statement that TechPi itself
+//    generated, Search Console identifying visitors, and the absolute statement that TechPi itself
 //    makes no transfers outside the EEA.
 // 7. All four pages show the same version date.
 // 6. Both GEMI and VAT numbers must be present on each Privacy page, with plausible numeric formats (GEMI
@@ -50,8 +50,6 @@ const RETIRED = [
   /sitemap[^.]*(has been|was|is) submitted/i,
   /(already|is|has been) indexed (by|in) Google/i,
   /ευρετηριασ|έχει υποβληθεί[^.]*sitemap|sitemap[^.]*έχει υποβληθεί/i,
-  /(we use|we have installed|uses) Google Analytics/i,
-  /Χρησιμοποιούμε (το )?Google Analytics/,
   /Search Console[^.]*(identifies|tells us who)/i,
   /Search Console[^.]*(reports show|has (shown|reported))/i,
   /do not transfer your personal data outside/i,

@@ -154,7 +154,12 @@ walk('');
 for (const f of all) {
   const html = read(f);
   check(!/\/el\/insights/.test(html), `${f}: no link to /el/insights`);
-  check(!TRACKERS.test(html), `${f}: no analytics or tag manager`);
+  // Google Analytics is allowed only as src/scripts/consent.ts adds it after consent: its hosts may appear in the CSP
+  // policy (scripts/security/validate.mjs checks them) and in that script, never as a tag anywhere else in the page.
+  const page = html
+    .replace(/<meta http-equiv="content-security-policy"[^>]*>/, '')
+    .replace(/<script type="module">(?:(?!<\/script>)[\s\S])*techpi-analytics-consent[\s\S]*?<\/script>/, '');
+  check(!TRACKERS.test(page), `${f}: no analytics or tag manager in the page`);
   check(!/<script[^>]+src="https?:\/\//.test(html), `${f}: no third-party script`);
 }
 // The Greek footer and the Greek EU Projects page do not point to English-only articles.
