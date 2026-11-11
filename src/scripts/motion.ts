@@ -115,12 +115,17 @@ function initHeader() {
   const header = document.querySelector<HTMLElement>('.site-header');
   if (!header) return;
   root.classList.add('hdr');
-  // True when something outside the header holds focus and sits under the header's bar. The header must not cover it.
+  // True when a control outside the header has keyboard focus and sits under the header's bar. The header must not
+  // cover it. Only keyboard focus counts (:focus-visible): a click inside <main> or the footer (both tabindex="-1", so
+  // the skip link can move focus there) focuses that whole region, which always reaches the top of the window, and
+  // would otherwise keep the header hidden for good. A region taller than the window is never a reason either.
   const coversFocus = () => {
     const a = document.activeElement;
     // The skip link is meant to sit over the top of the page, so it is not a case for the header to step aside.
     if (!a || a === document.body || header.contains(a) || a.classList.contains('skip-link')) return false;
+    if (!a.matches(':focus-visible')) return false;
     const r = a.getBoundingClientRect();
+    if (r.height >= window.innerHeight) return false;
     return r.bottom > 0 && r.top < header.offsetHeight;
   };
   let last = window.scrollY;
