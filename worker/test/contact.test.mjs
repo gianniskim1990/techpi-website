@@ -19,6 +19,7 @@ const VALID = {
   organisation: 'Example SA',
   message: 'We need a new booking system for our clinic.',
   timeframe: '1-3-months',
+  service: 'digital-products',
   locale: 'el',
   token: 'turnstile-token',
   website: '',
@@ -209,6 +210,8 @@ describe('validation', () => {
     ['whitespace-only message', { message: '   \n   ' }, 'message'],
     ['message too long', { message: 'x'.repeat(5001) }, 'message'],
     ['unknown timeframe', { timeframe: 'yesterday' }, 'timeframe'],
+    ['unknown service', { service: 'hosting' }, 'service'],
+    ['non-string service', { service: ['web-experiences'] }, 'service'],
     ['non-string field', { name: { $ne: 1 } }, 'name'],
   ];
   for (const [label, change, field] of invalid) {
@@ -294,7 +297,14 @@ describe('delivery', () => {
     assert.equal(payload.subject, 'Website enquiry: Maria Papadopoulou');
     assert.ok(!JSON.stringify(payload).includes('attacker@example.com'));
     assert.match(payload.text, /Timeframe: In 1–3 months/);
+    assert.match(payload.text, /Service: Digital product or platform/);
     assert.match(payload.text, /Form: Greek/);
+  });
+  it('accepts a form without a service (a page loaded before the field existed) as "Not sure yet"', async () => {
+    const { service, ...older } = VALID;
+    const r = await read(await post(older));
+    assert.equal(r.status, 200);
+    assert.match(JSON.parse(resendCalls()[0].init.body).text, /Service: Not sure yet/);
   });
   it('escapes HTML in the email', async () => {
     await post({ ...VALID, name: '<b>Eve</b>', message: '<script>alert(1)</script> & "quotes"' });
