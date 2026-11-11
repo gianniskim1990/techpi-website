@@ -67,6 +67,17 @@ export const en = {
     optional: 'optional',
     message: 'Your project or question',
     messageHint: 'What you need to solve, and anything we should know.',
+    /** Values: worker/contact.js SERVICES. */
+    service: 'What can we help you with?',
+    services: {
+      '': 'Not sure yet',
+      'digital-products': 'Digital product or platform (web app, SaaS)',
+      'web-experiences': 'Website or online shop',
+      intelligence: 'AI and automation',
+      'digital-visibility': 'SEO and digital visibility',
+      'eu-project': 'EU project website or platform',
+      other: 'Something else',
+    },
     timeframe: 'Timeframe',
     timeframes: {
       '': 'Not decided',
@@ -86,6 +97,7 @@ export const en = {
       email: 'Please enter a valid email address.',
       organisation: 'Please shorten the organisation name.',
       message: 'Please enter your project or question.',
+      service: 'Please choose a service from the list.',
       timeframe: 'Please choose a timeframe from the list.',
       invalid: 'Please check the highlighted fields.',
       verification: 'We could not confirm that this message was sent by a person. Please try again.',

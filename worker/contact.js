@@ -20,6 +20,8 @@ export const RECIPIENT = 'info@techpi.eu';
 export const MAX_BODY = 16 * 1024;
 export const LIMITS = { name: 100, email: 254, organisation: 150, message: 5000, token: 2048 };
 export const TIMEFRAMES = ['', 'asap', '1-3-months', '3-6-months', 'later'];
+/** The service a visitor is asking about: the four capabilities (src/content/capabilities.ts), EU projects, or other. */
+export const SERVICES = ['', 'digital-products', 'web-experiences', 'intelligence', 'digital-visibility', 'eu-project', 'other'];
 const LOCALES = ['en', 'el'];
 
 const TURNSTILE_VERIFY = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
@@ -113,6 +115,7 @@ export function validate(body) {
   const organisation = str('organisation');
   const message = str('message');
   const timeframe = str('timeframe');
+  const service = str('service');
   const locale = str('locale');
   const token = str('token');
   const website = str('website');
@@ -123,10 +126,11 @@ export function validate(body) {
   const text = message === null ? null : message.replace(/\r\n?/g, '\n');
   if (text === null || !text || chars(text) > LIMITS.message || MESSAGE_CONTROLS.test(text)) fields.push('message');
   if (timeframe === null || !TIMEFRAMES.includes(timeframe)) fields.push('timeframe');
+  if (service === null || !SERVICES.includes(service)) fields.push('service');
   if (locale === null || (locale && !LOCALES.includes(locale))) fields.push('locale');
   if (token === null || !token || token.length > LIMITS.token) fields.push('token');
   if (fields.length) return { fields };
-  return { value: { name, email, organisation, message: text, timeframe, locale: locale || 'en', token }, bot: Boolean(website) };
+  return { value: { name, email, organisation, message: text, timeframe, service, locale: locale || 'en', token }, bot: Boolean(website) };
 }
 
 /** Cloudflare Turnstile, server-side. True only for a fresh, successful token for this action and this hostname. */
@@ -142,6 +146,15 @@ async function verifyTurnstile(token, cfg, request) {
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const TIMEFRAME_TEXT = { '': 'Not decided', asap: 'As soon as possible', '1-3-months': 'In 1–3 months', '3-6-months': 'In 3–6 months', later: 'Later' };
+const SERVICE_TEXT = {
+  '': 'Not sure yet',
+  'digital-products': 'Digital product or platform',
+  'web-experiences': 'Website or online shop',
+  intelligence: 'AI and automation',
+  'digital-visibility': 'SEO and digital visibility',
+  'eu-project': 'EU project website or platform',
+  other: 'Something else',
+};
 const LOCALE_TEXT = { en: 'English (/contact)', el: 'Greek (/el/contact)' };
 
 /** The email TechPi receives. Every value is escaped for HTML; the subject is built from a single-line, checked name. */
@@ -151,6 +164,7 @@ export function composeEmail(v, from) {
     ['Name', v.name],
     ['Email', v.email],
     ['Organisation', v.organisation || '(not given)'],
+    ['Service', SERVICE_TEXT[v.service]],
     ['Timeframe', TIMEFRAME_TEXT[v.timeframe]],
     ['Form', LOCALE_TEXT[v.locale]],
   ];

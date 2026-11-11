@@ -7,10 +7,10 @@
       "el": "/el/privacy"
     },
     "kind": "legal",
-    "updated": "2026-11-03",
+    "updated": "2026-11-11",
     "updatedText": {
-      "en": "3 November 2026",
-      "el": "3 Νοεμβρίου 2026"
+      "en": "11 November 2026",
+      "el": "11 Νοεμβρίου 2026"
     }
   },
   "en": {
@@ -64,7 +64,7 @@
             "p": "**When you contact us.** If you email or call us, we receive the information you choose to give us: usually your name, your email address or telephone number, your organisation, the content of your message and any files you attach. During a call we may note what is needed to follow up."
           },
           {
-            "p": "**When you use the contact form.** The form on our Contact page asks for your name, your email address and your message, and optionally your organisation and a timeframe. When you send it, these details are delivered by email to {{email}} and handled like any other enquiry. The website does not keep a copy in a database. Before the form can be sent, Cloudflare Turnstile checks that the request comes from a person rather than automated software; for this purpose only, it processes technical signals such as your IP address and information about your browser. To prevent abuse, the number of messages that can be sent from one IP address in a short time is also limited."
+            "p": "**When you use the contact form.** The form on our Contact page asks for your name, your email address and your message, and optionally your organisation, the service you are interested in and a timeframe. When you send it, these details are delivered by email to {{email}} and handled like any other enquiry. The website does not keep a copy in a database. Before the form can be sent, Cloudflare Turnstile checks that the request comes from a person rather than automated software; for this purpose only, it processes technical signals such as your IP address and information about your browser. To prevent abuse, the number of messages that can be sent from one IP address in a short time is also limited."
           },
           {
             "p": "**When you visit the website.** To deliver the website and protect it from abuse, our hosting and security provider processes technical information about each request: your IP address, the date and time, the page requested, information your browser sends (such as its type and language) and security signals derived from these. We do not use this information to identify you or to build a profile."
@@ -257,7 +257,7 @@
             "p": "**Όταν επικοινωνείτε μαζί μας.** Αν μας στείλετε email ή μας τηλεφωνήσετε, λαμβάνουμε όσα στοιχεία επιλέγετε να μας δώσετε: συνήθως το όνομά σας, τη διεύθυνση email ή τον αριθμό τηλεφώνου σας, τον οργανισμό σας, το περιεχόμενο του μηνύματος και τυχόν συνημμένα αρχεία. Σε μια κλήση μπορεί να κρατήσουμε σημειώσεις για όσα χρειάζονται για τη συνέχεια."
           },
           {
-            "p": "**Όταν χρησιμοποιείτε τη φόρμα επικοινωνίας.** Η φόρμα στη σελίδα Επικοινωνίας ζητά το ονοματεπώνυμό σας, τη διεύθυνση email σας και το μήνυμά σας και, προαιρετικά, την επιχείρηση ή τον οργανισμό σας και ένα χρονοδιάγραμμα. Όταν τη στέλνετε, τα στοιχεία αυτά παραδίδονται με email στο {{email}} και τα χειριζόμαστε όπως κάθε άλλο μήνυμα. Ο ιστότοπος δεν κρατά αντίγραφο σε βάση δεδομένων. Πριν σταλεί η φόρμα, το Cloudflare Turnstile ελέγχει ότι το αίτημα προέρχεται από άνθρωπο και όχι από αυτοματοποιημένο λογισμικό· μόνο για τον σκοπό αυτό επεξεργάζεται τεχνικές ενδείξεις, όπως τη διεύθυνση IP σας και πληροφορίες για το πρόγραμμα περιήγησής σας. Για την αποτροπή κατάχρησης, περιορίζεται επίσης ο αριθμός των μηνυμάτων που μπορούν να σταλούν από μία διεύθυνση IP σε σύντομο χρόνο."
+            "p": "**Όταν χρησιμοποιείτε τη φόρμα επικοινωνίας.** Η φόρμα στη σελίδα Επικοινωνίας ζητά το ονοματεπώνυμό σας, τη διεύθυνση email σας και το μήνυμά σας και, προαιρετικά, την επιχείρηση ή τον οργανισμό σας, την υπηρεσία που σας ενδιαφέρει και ένα χρονοδιάγραμμα. Όταν τη στέλνετε, τα στοιχεία αυτά παραδίδονται με email στο {{email}} και τα χειριζόμαστε όπως κάθε άλλο μήνυμα. Ο ιστότοπος δεν κρατά αντίγραφο σε βάση δεδομένων. Πριν σταλεί η φόρμα, το Cloudflare Turnstile ελέγχει ότι το αίτημα προέρχεται από άνθρωπο και όχι από αυτοματοποιημένο λογισμικό· μόνο για τον σκοπό αυτό επεξεργάζεται τεχνικές ενδείξεις, όπως τη διεύθυνση IP σας και πληροφορίες για το πρόγραμμα περιήγησής σας. Για την αποτροπή κατάχρησης, περιορίζεται επίσης ο αριθμός των μηνυμάτων που μπορούν να σταλούν από μία διεύθυνση IP σε σύντομο χρόνο."
           },
           {
             "p": "**Όταν επισκέπτεστε τον ιστότοπο.** Για να παρέχεται ο ιστότοπος και να προστατεύεται από κατάχρηση, ο πάροχος φιλοξενίας και ασφάλειας επεξεργάζεται τεχνικές πληροφορίες για κάθε αίτημα: τη διεύθυνση IP σας, την ημερομηνία και ώρα, τη σελίδα που ζητήθηκε, πληροφορίες που στέλνει το πρόγραμμα περιήγησής σας (όπως τον τύπο και τη γλώσσα του) και ενδείξεις ασφαλείας που προκύπτουν από αυτές. Δεν χρησιμοποιούμε αυτές τις πληροφορίες για να σας ταυτοποιήσουμε ή για να δημιουργήσουμε προφίλ."

@@ -30,6 +30,7 @@ const client = {
   errors: Object.fromEntries(Object.entries(t.errors).map(([k, v]) => [k, v.replace('{email}', email)])),
 };
 const timeframes = Object.entries(t.timeframes) as [string, string][];
+const services = Object.entries(t.services) as [string, string][];
 const [noscriptBefore, noscriptAfter] = withEmail(t.noscript);
 ---
 
@@ -69,6 +70,15 @@ const [noscriptBefore, noscriptAfter] = withEmail(t.noscript);
           </select>
         </div>
         <p class="err" id="cf-timeframe-err" data-error="timeframe"></p>
+      </div>
+      <div class="field wide">
+        <label for="cf-service">{t.service} <span class="opt">({t.optional})</span></label>
+        <div class="select">
+          <select id="cf-service" name="service" aria-describedby="cf-service-err">
+            {services.map(([value, label]) => <option value={value}>{label}</option>)}
+          </select>
+        </div>
+        <p class="err" id="cf-service-err" data-error="service"></p>
       </div>
       <div class="field wide">
         <label for="cf-message">{t.message}</label>
@@ -390,7 +400,7 @@ const [noscriptBefore, noscriptAfter] = withEmail(t.noscript);
       el.setAttribute('aria-invalid', String(on));
       err.textContent = on ? copy.errors[name] : '';
     }
-    const NAMES = ['name', 'email', 'organisation', 'timeframe', 'message'];
+    const NAMES = ['name', 'email', 'organisation', 'timeframe', 'service', 'message'];
     function check(): string[] {
       const v = (n: string) => field(n).value.trim();
       const bad: string[] = [];
@@ -437,6 +447,7 @@ const [noscriptBefore, noscriptAfter] = withEmail(t.noscript);
           email: field('email').value,
           organisation: field('organisation').value,
           timeframe: field('timeframe').value,
+          service: field('service').value,
           message: field('message').value,
           website: field('website').value,
           locale,
