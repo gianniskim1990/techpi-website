@@ -6,9 +6,9 @@
  *      after a short delay, so the page can never be left with hidden text.
  *   2. Start one-shot reveals: one IntersectionObserver adds `.in` to every [data-reveal] and [data-sequence]
  *      element the first time it enters the viewport. Nothing replays.
- *   3. Keep the header usable: it leaves when the reader scrolls down and returns, as a compact bar, when they
- *      scroll up. The scroll listener only compares numbers and toggles classes. It reads no layout, except that
- *      it will not bring the header back over a control that has keyboard focus (WCAG 2.4.11, focus not obscured).
+ *   3. Keep the header in view at all times: transparent over the top of the page, a compact Paper bar once the
+ *      reader scrolls. The page keeps the header's height clear when it scrolls a focused control or an anchor into
+ *      view (scroll-padding-top), so the header never covers it (WCAG 2.4.11, focus not obscured).
  *
  *   4. Drive the scroll scenes (desktop-sized windows, motion allowed: `html.sc`). Each [data-scene] element gets
  *      its scroll position as custom properties, and CSS turns them into geometry:
@@ -115,25 +115,17 @@ function initHeader() {
   const header = document.querySelector<HTMLElement>('.site-header');
   if (!header) return;
   root.classList.add('hdr');
-  // True when something outside the header holds focus and sits under the header's bar. The header must not cover it.
-  const coversFocus = () => {
-    const a = document.activeElement;
-    // The skip link is meant to sit over the top of the page, so it is not a case for the header to step aside.
-    if (!a || a === document.body || header.contains(a) || a.classList.contains('skip-link')) return false;
-    const r = a.getBoundingClientRect();
-    return r.bottom > 0 && r.top < header.offsetHeight;
+  // The header always stays in view (owner's decision, 2026-11-17). So that it never covers a control that gets
+  // keyboard focus or an anchor the page jumps to (WCAG 2.4.11), the page keeps the header's height clear at the top
+  // when it scrolls something into view.
+  const clearance = () => {
+    root.style.scrollPaddingTop = `${header.offsetHeight + 16}px`;
   };
-  let last = window.scrollY;
   let ticking = false;
   const update = () => {
     ticking = false;
-    const y = window.scrollY;
-    const away = y > 8;
-    header.classList.toggle('is-away', away);
-    // Hide only after the first screen's top area, and only on a real downward move.
-    if (y > last + 4 && y > 160) header.classList.add('is-hidden');
-    else if ((y < last - 4 || !away) && !coversFocus()) header.classList.remove('is-hidden');
-    last = y;
+    header.classList.toggle('is-away', window.scrollY > 8);
+    clearance();
   };
   window.addEventListener(
     'scroll',
@@ -145,13 +137,7 @@ function initHeader() {
     },
     { passive: true },
   );
-  // A keyboard user tabbing into the header always sees it.
-  header.addEventListener('focusin', () => header.classList.remove('is-hidden'));
-  // Focus moving to a control the returned header would cover: the header steps aside until the reader scrolls on.
-  document.addEventListener('focusin', (e) => {
-    const t = e.target as Element | null;
-    if (t && !header.contains(t) && coversFocus()) header.classList.add('is-hidden');
-  });
+  window.addEventListener('resize', clearance, { passive: true });
   update();
 }
 

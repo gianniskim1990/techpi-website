@@ -116,8 +116,8 @@ const items = navPages;
     color: var(--color-ink);
     --focus: var(--color-techpi-blue);
   }
-  /* With scripting the header is fixed. It is transparent over the top of the page, leaves when the reader
-     scrolls down and returns as a compact Paper bar when they scroll up (src/scripts/motion.ts). */
+  /* With scripting the header is fixed and always in view: transparent over the top of the page, a compact Paper
+     bar once the reader scrolls (src/scripts/motion.ts). */
   :global(.hdr) .site-header {
     position: fixed;
     transition:
@@ -143,12 +143,6 @@ const items = navPages;
   }
   :global(.hdr) .site-header.is-away::after {
     opacity: 1;
-  }
-  :global(.hdr) .site-header.is-hidden {
-    transform: translateY(-100%);
-  }
-  :global(.hdr) .site-header.is-hidden:focus-within {
-    transform: none;
   }
   .site-name {
     display: inline-flex;
