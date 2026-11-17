@@ -1,0 +1,137 @@
+{
+  "facts": {
+    "key": "accommodation-websites",
+    "pageKey": "accommodation",
+    "paths": {
+      "en": "/accommodation-websites",
+      "el": "/el/accommodation-websites"
+    },
+    "kind": "page"
+  },
+  "en": {
+    "seo": {
+      "title": "Websites for Holiday Rentals & Small Hotels | TechPi",
+      "description": "TechPi designs and builds websites for holiday rentals, villas, apartments and small hotels: photos, amenities, location and direct enquiries. See the live demo."
+    },
+    "hero": {
+      "heading": "Websites for places people stay.",
+      "lead": "We design and build websites for holiday rentals, villas, apartments and small hotels: a place of your own on the web, next to your listings on booking platforms, where guests can see the property, understand it and contact you directly.",
+      "cta": "Discuss your property"
+    },
+    "features": {
+      "heading": "What the website includes",
+      "items": [
+        {
+          "name": "Photos that sell the stay",
+          "text": "Large, fast-loading galleries of the rooms, the views and the details guests ask about."
+        },
+        {
+          "name": "Amenities and house information",
+          "text": "Facilities, house rules and what is nearby, written clearly and easy to find."
+        },
+        {
+          "name": "Location and directions",
+          "text": "Where the property is, how to get there and what is around it, with a map."
+        },
+        {
+          "name": "Availability and enquiries",
+          "text": "A clear route to check dates and contact you or book, built around the way you take bookings today."
+        },
+        {
+          "name": "Greek and English",
+          "text": "Both languages from the start, so guests from abroad read the website in their language."
+        },
+        {
+          "name": "Found in search",
+          "text": "Structure, speed and local information, so the property can be found in Google and by AI assistants."
+        }
+      ]
+    },
+    "demo": {
+      "label": "Live demo",
+      "heading": "See one working.",
+      "text": "Villa Xanthi is a demonstration website we built to show what a stay website can do: a full-screen welcome, a photo gallery, amenities, the location, a 3D view of the house and a booking section. It is an example, not a property you can book: its reviews, availability and contact details are illustrative.",
+      "load": "Load the demo here",
+      "privacy": "The demo opens only when you choose it. It is served from airbnb.pigiota314.gr and loads its 3D viewer from Sketchfab.",
+      "open": "Open the demo in a new tab",
+      "frameTitle": "Villa Xanthi, a demonstration accommodation website"
+    },
+    "audience": {
+      "heading": "Who it is for",
+      "items": [
+        "Owners of holiday homes, villas and apartments",
+        "Small hotels and guest houses",
+        "Property managers with several places to show"
+      ],
+      "note": "The website does not replace your listings on Airbnb or Booking.com. It gives the property a home of its own, which you control and which guests can return to."
+    },
+    "closer": {
+      "heading": "Have a place to show?",
+      "text": "Tell us about the property and how guests book today, and we will reply by email.",
+      "cta": "Discuss your property"
+    }
+  },
+  "el": {
+    "seo": {
+      "title": "Ιστοσελίδες για καταλύματα & Airbnb | TechPi",
+      "description": "Η TechPi σχεδιάζει και κατασκευάζει ιστοσελίδες για καταλύματα, βίλες, διαμερίσματα Airbnb και μικρά ξενοδοχεία: φωτογραφίες, παροχές, τοποθεσία, απευθείας επικοινωνία."
+    },
+    "hero": {
+      "heading": "Ιστοσελίδες για καταλύματα.",
+      "lead": "Σχεδιάζουμε και κατασκευάζουμε ιστοσελίδες για καταλύματα βραχυχρόνιας μίσθωσης, βίλες, διαμερίσματα και μικρά ξενοδοχεία: έναν δικό σας χώρο στο διαδίκτυο, δίπλα στις αγγελίες σας στις πλατφόρμες κρατήσεων, όπου οι επισκέπτες βλέπουν το κατάλυμα, το καταλαβαίνουν και επικοινωνούν απευθείας μαζί σας.",
+      "cta": "Συζητήστε για το κατάλυμά σας"
+    },
+    "features": {
+      "heading": "Τι περιλαμβάνει η ιστοσελίδα",
+      "items": [
+        {
+          "name": "Φωτογραφίες που δείχνουν τη διαμονή",
+          "text": "Μεγάλες, γρήγορες συλλογές με τα δωμάτια, τη θέα και τις λεπτομέρειες που ρωτούν οι επισκέπτες."
+        },
+        {
+          "name": "Παροχές και πληροφορίες",
+          "text": "Παροχές, κανόνες του σπιτιού και τι υπάρχει κοντά, γραμμένα καθαρά και εύκολα στην εύρεση."
+        },
+        {
+          "name": "Τοποθεσία και πρόσβαση",
+          "text": "Πού βρίσκεται το κατάλυμα, πώς φτάνει κανείς και τι υπάρχει γύρω, με χάρτη."
+        },
+        {
+          "name": "Διαθεσιμότητα και επικοινωνία",
+          "text": "Ένας καθαρός δρόμος για να δει κανείς ημερομηνίες και να επικοινωνήσει ή να κάνει κράτηση, με τον τρόπο που δέχεστε κρατήσεις σήμερα."
+        },
+        {
+          "name": "Ελληνικά και αγγλικά",
+          "text": "Και οι δύο γλώσσες από την αρχή, ώστε οι επισκέπτες από το εξωτερικό να διαβάζουν την ιστοσελίδα στη γλώσσα τους."
+        },
+        {
+          "name": "Ορατότητα στην αναζήτηση",
+          "text": "Δομή, ταχύτητα και τοπικές πληροφορίες, ώστε το κατάλυμα να βρίσκεται στη Google και από βοηθούς τεχνητής νοημοσύνης."
+        }
+      ]
+    },
+    "demo": {
+      "label": "Ζωντανό demo",
+      "heading": "Δείτε μία σε λειτουργία.",
+      "text": "Η Villa Xanthi είναι μια δοκιμαστική ιστοσελίδα που φτιάξαμε για να δείξουμε τι μπορεί να κάνει μια ιστοσελίδα καταλύματος: υποδοχή σε πλήρη οθόνη, συλλογή φωτογραφιών, παροχές, τοποθεσία, τρισδιάστατη προβολή του σπιτιού και ενότητα κρατήσεων. Είναι παράδειγμα και όχι κατάλυμα που μπορείτε να κλείσετε: οι κριτικές, η διαθεσιμότητα και τα στοιχεία επικοινωνίας της είναι ενδεικτικά.",
+      "load": "Φόρτωση του demo εδώ",
+      "privacy": "Το demo ανοίγει μόνο αν το επιλέξετε. Φορτώνεται από το airbnb.pigiota314.gr και η τρισδιάστατη προβολή του από το Sketchfab.",
+      "open": "Άνοιγμα του demo σε νέα καρτέλα",
+      "frameTitle": "Villa Xanthi, δοκιμαστική ιστοσελίδα καταλύματος"
+    },
+    "audience": {
+      "heading": "Για ποιους είναι",
+      "items": [
+        "Ιδιοκτήτες εξοχικών, βιλών και διαμερισμάτων",
+        "Μικρά ξενοδοχεία και ξενώνες",
+        "Διαχειριστές με περισσότερα από ένα καταλύματα"
+      ],
+      "note": "Η ιστοσελίδα δεν αντικαθιστά τις αγγελίες σας στο Airbnb ή στο Booking.com. Δίνει στο κατάλυμα έναν δικό του χώρο, που ελέγχετε εσείς και στον οποίο οι επισκέπτες μπορούν να επιστρέφουν."
+    },
+    "closer": {
+      "heading": "Έχετε ένα κατάλυμα να δείξετε;",
+      "text": "Πείτε μας για το κατάλυμα και πώς κάνουν κράτηση οι επισκέπτες σήμερα, και θα σας απαντήσουμε με email.",
+      "cta": "Συζητήστε για το κατάλυμά σας"
+    }
+  }
+}

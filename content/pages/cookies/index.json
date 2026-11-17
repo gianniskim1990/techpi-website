@@ -7,10 +7,10 @@
       "el": "/el/cookies"
     },
     "kind": "legal",
-    "updated": "2026-11-11",
+    "updated": "2026-11-16",
     "updatedText": {
-      "en": "11 November 2026",
-      "el": "11 Νοεμβρίου 2026"
+      "en": "16 November 2026",
+      "el": "16 Νοεμβρίου 2026"
     }
   },
   "en": {
@@ -43,7 +43,7 @@
             "ul": [
               "Analytics only with your consent: Google Analytics, described below.",
               "No advertising or social tracking: no Meta Pixel and no advertising networks. Google Analytics runs with Google signals and advertising features turned off.",
-              "No fonts or embedded content from other companies. Scripts from other companies: Google Analytics, only after you accept it, and Cloudflare Turnstile on the Contact page (see below)."
+              "No fonts or embedded content from other companies. Scripts from other companies: Google Analytics, only after you accept it, and Cloudflare Turnstile on the Contact page (see below). On the Accommodation websites page, our demonstration website (served from airbnb.pigiota314.gr, with a 3D viewer from Sketchfab) loads only if you choose to open it, and is then subject to those services’ own cookie practices."
             ]
           },
           {
@@ -170,7 +170,7 @@
             "ul": [
               "Στατιστικά μόνο με τη συγκατάθεσή σας: το Google Analytics, που περιγράφεται παρακάτω.",
               "Χωρίς διαφήμιση ή παρακολούθηση στα μέσα κοινωνικής δικτύωσης: χωρίς Meta Pixel και χωρίς διαφημιστικά δίκτυα. Το Google Analytics λειτουργεί με απενεργοποιημένα τα Google signals και τις διαφημιστικές λειτουργίες.",
-              "Χωρίς γραμματοσειρές ή ενσωματωμένο περιεχόμενο από άλλες εταιρείες. Scripts από άλλες εταιρείες: το Google Analytics, μόνο αφού το αποδεχτείτε, και το Cloudflare Turnstile στη σελίδα Επικοινωνίας (δείτε παρακάτω)."
+              "Χωρίς γραμματοσειρές ή ενσωματωμένο περιεχόμενο από άλλες εταιρείες. Scripts από άλλες εταιρείες: το Google Analytics, μόνο αφού το αποδεχτείτε, και το Cloudflare Turnstile στη σελίδα Επικοινωνίας (δείτε παρακάτω). Στη σελίδα «Ιστοσελίδες καταλυμάτων», η δοκιμαστική ιστοσελίδα μας (από το airbnb.pigiota314.gr, με τρισδιάστατη προβολή από το Sketchfab) φορτώνεται μόνο αν επιλέξετε να την ανοίξετε, και τότε ισχύουν οι πρακτικές αυτών των υπηρεσιών για τα cookies."
             ]
           },
           {

@@ -44,11 +44,13 @@ export const el: Dictionary = {
     work: { heading: 'Έργα' },
     capabilities: { heading: 'Δυνατότητες' },
     euProjects: { heading: 'Ευρωπαϊκά έργα' },
+    accommodation: { heading: 'Ιστοσελίδες καταλυμάτων' },
     about: { heading: 'Εταιρεία' },
     contact: { heading: 'Επικοινωνία' },
     privacy: { heading: 'Πολιτική Απορρήτου' },
     cookies: { heading: 'Πολιτική Cookies' },
   },
+  accommodationLink: 'Ιστοσελίδες για καταλύματα και Airbnb, με ζωντανό demo',
   notFound: {
     title: 'Η σελίδα δεν βρέθηκε | TechPi',
     heading: 'Η σελίδα δεν βρέθηκε',

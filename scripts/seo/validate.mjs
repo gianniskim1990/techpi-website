@@ -32,7 +32,7 @@ const PINNED_CASE_STUDIES = [
   'level-up-education', 'itsallaboutxanthi', 'local-xanthi', 'juliette-coffee-roasters', 'apox-fc', 'emoved',
 ];
 const CASE_STUDIES = [...PINNED_CASE_STUDIES, ...contentSlugs('content/case-studies').filter((s) => !PINNED_CASE_STUDIES.includes(s))];
-const CONTENT = ['/', '/work', ...CASE_STUDIES.map((slug) => `/work/${slug}`), '/capabilities', '/eu-projects', '/about', '/contact', '/privacy', '/cookies'];
+const CONTENT = ['/', '/work', ...CASE_STUDIES.map((slug) => `/work/${slug}`), '/capabilities', '/eu-projects', '/accommodation-websites', '/about', '/contact', '/privacy', '/cookies'];
 // English-only content (docs/production/routes.md, section 4.1): the Insights index and its seven articles, migrated
 // from pigiota314.eu with their slugs unchanged. No Greek version exists, so these have no hreflang and no counterpart.
 const PINNED_INSIGHTS = [
@@ -246,7 +246,7 @@ for (const route of ROUTES) {
     check(a.mainEntityOfPage && a.mainEntityOfPage['@id'] === `${url}#webpage`, where, 'Article is the main entity of its WebPage');
   }
   const services = byType('Service');
-  const wantServices = route.path.endsWith('/capabilities') ? 4 : route.path.endsWith('/eu-projects') ? 2 : 0;
+  const wantServices = route.path.endsWith('/capabilities') ? 4 : route.path.endsWith('/eu-projects') ? 2 : route.path.endsWith('/accommodation-websites') ? 1 : 0;
   check(services.length === wantServices, where, `${services.length} Service nodes, expected ${wantServices}`);
   for (const s of services) check(s.provider && s.provider['@id'] === `${ORIGIN}/#organization` && s.name && s.description, where, `Service ${s['@id']} has name, description and provider`);
   const nodes = allNodes(graph);
@@ -264,8 +264,10 @@ for (const route of ROUTES) {
   checks++;
   idsByPage.set(where, ids);
 
-  // URL hygiene in the head: absolute production URLs only, no development or preview origin.
-  for (const re of LEAKS) check(!re.test(p.head), where, `head contains ${re}`);
+  // URL hygiene in the head: absolute production URLs only, no development or preview origin. The CSP policy is not a
+  // URL the page points to: the accommodation page's policy names its demo's frame origin (airbnb.pigiota314.gr).
+  const head = p.head.replace(/<meta http-equiv="content-security-policy"[^>]*>/, '');
+  for (const re of LEAKS) check(!re.test(head), where, `head contains ${re}`);
   for (const u of p.head.matchAll(/(?:content|href)="(https?:\/\/[^"]+)"/g)) check(u[1].startsWith(`${ORIGIN}/`), where, `URL off the production origin: ${u[1]}`);
   check(!/[?#]/.test(p.canonicals[0] || '') , where, 'canonical has no query or fragment');
 

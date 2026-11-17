@@ -108,6 +108,7 @@ test('every page saves into its own branch and PR, touching only its own file; n
     work: (c) => { c.en.filterAll = 'All projects'; },
     capabilities: (c) => { c.el.lead += ' Δοκιμή.'; },
     'eu-projects': (c) => { c.en.process.steps[0].text += ' Edited.'; c.el.after.items.reverse(); },
+    'accommodation-websites': (c) => { c.el.demo.load = 'Άνοιγμα του demo εδώ'; },
     about: (c) => { c.en.changeHeading = 'What stayed and what changed'; },
     contact: (c) => { c.el.heading = 'Έχετε κάτι που αξίζει να φτιαχτεί;'; },
     privacy: (c) => { c.en.sections[1].heading = 'What this policy is about'; },
@@ -120,7 +121,7 @@ test('every page saves into its own branch and PR, touching only its own file; n
     assert.equal(r.status, 200, `${key}: ${r.text}`);
     prs[key] = r.data.draft.number;
   }
-  assert.equal(new Set(Object.values(prs)).size, 8, 'one PR per page');
+  assert.equal(new Set(Object.values(prs)).size, 9, 'one PR per page');
   for (const w of gh.state.writes) {
     const key = w.branch.replace('cms/pages/', '');
     assert.ok(EDITS[key], `write on ${w.branch}`);
@@ -213,7 +214,7 @@ test('main is never the base; an invalid file is not loaded or saved over; an un
   const broken = structuredClone(DOC.capabilities); broken.facts.paths.en = '/caps';
   gh.externalEdit(BASE, fileOf('capabilities'), JSON.stringify(broken));
   assert.equal((await call('GET', '/api/pages/capabilities')).status, 502);
-  assert.equal((await call('GET', '/api/pages')).data.entries.length, 7);
+  assert.equal((await call('GET', '/api/pages')).data.entries.length, 8);
   assert.equal(gh.state.writes.length, 0);
 });
 
