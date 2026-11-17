@@ -31,6 +31,7 @@ const metaIn = (locale: Locale): Record<PageKey, PageMeta> => ({
   capabilities: pageDocs.capabilities[locale].seo,
   euProjects: pageDocs.euProjects[locale].seo,
   accommodation: pageDocs.accommodation[locale].seo,
+  webDesignXanthi: pageDocs.webDesignXanthi[locale].seo,
   about: pageDocs.about[locale].seo,
   contact: pageDocs.contact[locale].seo,
   privacy: pageDocs.privacy[locale].seo,

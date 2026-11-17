@@ -22,6 +22,8 @@ const t = getDictionary(locale);
 // The same visible navigation as the header, from the route map. In English only, Insights follows EU Projects: the
 // articles are English-only, so the Greek footer has no link to them (docs/production/routes.md, section 4.1).
 const items = navPages;
+// Service pages outside the main menu, listed in the footer so every page links to them.
+const servicePages = ['webDesignXanthi', 'accommodation'] as const;
 const insights = locale === insightsLocale ? { href: insightsPath(), label: insightsCopy.back } : undefined;
 ---
 
@@ -54,6 +56,14 @@ const insights = locale === insightsLocale ? { href: insightsPath(), label: insi
                   </a>
                 </li>
               )}
+              {key === 'euProjects' &&
+                servicePages.map((s) => (
+                  <li>
+                    <a href={pathFor(s, locale)} aria-current={s === page ? 'page' : undefined}>
+                      {t.pages[s].heading}
+                    </a>
+                  </li>
+                ))}
             </>
           ))
         }

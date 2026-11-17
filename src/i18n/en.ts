@@ -48,6 +48,7 @@ export const en = {
     capabilities: { heading: 'Capabilities' },
     euProjects: { heading: 'EU Projects' },
     accommodation: { heading: 'Accommodation websites' },
+    webDesignXanthi: { heading: 'Websites in Xanthi' },
     about: { heading: 'About' },
     contact: { heading: 'Contact' },
     privacy: { heading: 'Privacy Policy' },
@@ -55,6 +56,10 @@ export const en = {
   },
   /** The link from the Web experiences capability to the accommodation service page. */
   accommodationLink: 'Websites for holiday rentals and small hotels, with a live demo',
+  /** The link from the Web experiences capability to the local service page. */
+  xanthiLink: 'Website and e-shop development in Xanthi, Greece',
+  /** The footer's list of service pages that are not in the main menu. */
+  servicesLabel: 'Services',
   notFound: {
     title: 'Page not found | TechPi',
     heading: 'Page not found',

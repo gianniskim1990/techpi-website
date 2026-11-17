@@ -94,8 +94,8 @@ test('sign-in fails closed in production: no session, forged session, other GitH
   assert.equal(gh.state.log.length, 0, 'nothing reached GitHub');
 });
 
-// ---------- reading: the 34 items from main ----------
-test('production reads all 34 items from main and reports the mode', async () => {
+// ---------- reading: the 35 items from main ----------
+test('production reads all 35 items from main and reports the mode', async () => {
   const s = await call('GET', '/api/session');
   assert.equal(s.data.mode, 'production');
   assert.equal(s.data.baseBranch, 'main');
@@ -114,7 +114,7 @@ test('production reads all 34 items from main and reports the mode', async () =>
       assert.equal(r.data.sha, gitSha(FILES[Object.keys(FILES).find((f) => f.includes(`/${col}/${k}/`))]));
     }
   }
-  assert.deepEqual(counts, { 'case-studies': 18, insights: 7, pages: 9 });
+  assert.deepEqual(counts, { 'case-studies': 18, insights: 7, pages: 10 });
   assert.ok(gh.state.log.filter((l) => l.includes('/contents/')).every((l) => l.includes('ref=main')), 'every published read is from main');
   assert.equal(gh.state.writes.length, 0);
 });

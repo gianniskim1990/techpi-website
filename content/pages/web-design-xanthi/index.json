@@ -1,0 +1,241 @@
+{
+  "facts": {
+    "key": "web-design-xanthi",
+    "pageKey": "webDesignXanthi",
+    "paths": {
+      "en": "/web-design-xanthi",
+      "el": "/el/web-design-xanthi"
+    },
+    "kind": "page"
+  },
+  "en": {
+    "seo": {
+      "title": "Website & E-shop Development in Xanthi, Greece | TechPi",
+      "description": "TechPi, formerly pigiota314, designs and builds websites, e-shops and web applications in Xanthi, Greece: design, development, SEO and support for businesses."
+    },
+    "hero": {
+      "heading": "Websites and e-shops, built in Xanthi.",
+      "lead": "TechPi, the evolution of pigiota314, designs and builds websites, online shops and web applications for businesses in Xanthi and across Greece: fast, secure, in Greek and English, and built to be found in Google and by AI assistants.",
+      "cta": "Ask for a proposal"
+    },
+    "services": {
+      "heading": "What we build",
+      "items": [
+        {
+          "name": "Business websites",
+          "text": "Websites that present the business, its services and its contact details clearly, on desktop and on mobile."
+        },
+        {
+          "name": "Online shops (e-shops)",
+          "text": "Shops with a product catalogue, basket and checkout, set up around the way you sell."
+        },
+        {
+          "name": "Web applications and platforms",
+          "text": "Custom systems for the way the business runs: bookings, orders, customers and workflows."
+        },
+        {
+          "name": "Online booking and ordering",
+          "text": "Appointments for salons, physiotherapists and professionals, and online ordering for restaurants, directly from your own website."
+        },
+        {
+          "name": "Websites for places to stay",
+          "text": "Websites for villas, apartments and small hotels, with photos, amenities and direct contact."
+        },
+        {
+          "name": "SEO and digital visibility",
+          "text": "Structure, speed and local information, so customers find you in Google, on maps and through AI assistants."
+        }
+      ]
+    },
+    "local": {
+      "heading": "A technology team in Xanthi",
+      "text": "We are based in Xanthi and work with businesses in the city, in Thrace and across Greece. We can meet in person or online, whichever suits you, and after launch your website has someone nearby who knows it.",
+      "areasLabel": "Where we work",
+      "areas": [
+        "Xanthi",
+        "Komotini",
+        "Kavala",
+        "Alexandroupoli",
+        "All of Greece, online"
+      ]
+    },
+    "proof": {
+      "heading": "Work from Xanthi and beyond",
+      "text": "Some of our projects, each with its own case study."
+    },
+    "process": {
+      "heading": "How we work",
+      "steps": [
+        {
+          "name": "Conversation",
+          "text": "We talk about what the business needs and what the website has to achieve."
+        },
+        {
+          "name": "Proposal",
+          "text": "You receive a written proposal with the content, the cost and the timeline."
+        },
+        {
+          "name": "Design and build",
+          "text": "Structure, design and development, with checkpoints where you review the work."
+        },
+        {
+          "name": "Launch and support",
+          "text": "Publishing, setup for Google and support after launch."
+        }
+      ]
+    },
+    "faq": {
+      "heading": "Frequently asked questions",
+      "items": [
+        {
+          "q": "How much does a website cost in Xanthi?",
+          "a": "It depends on the size, the features and whether you need an e-shop or a booking system. After a short conversation we send you a written proposal that lists everything it includes."
+        },
+        {
+          "q": "How long does it take?",
+          "a": "It depends on the project: a business website is much quicker than an e-shop or an application. The timeline is agreed in writing at the start."
+        },
+        {
+          "q": "Do you build e-shops too?",
+          "a": "Yes. We design and build e-shops with a product catalogue, basket and checkout, as well as platforms for online orders and bookings."
+        },
+        {
+          "q": "Will my website appear in Google?",
+          "a": "Every website is built with the structure, speed and local information that search engines and AI assistants rely on. Nobody can guarantee a position in the results, but we can also help you with your Google Business Profile."
+        },
+        {
+          "q": "Do I need to be in Xanthi to work with you?",
+          "a": "No. We are in Xanthi and can meet in person, but we work just as well online with businesses across Greece and Europe."
+        },
+        {
+          "q": "Can you redo my existing website?",
+          "a": "Yes. We start from what exists, keep what works, and make sure the old addresses lead to the new pages, so you do not lose your place in Google."
+        },
+        {
+          "q": "What is pigiota314?",
+          "a": "pigiota314 is where TechPi comes from. TechPi is its evolution: the Pi stays, and the Tech shows where we are going, towards digital products, platforms and intelligent systems."
+        }
+      ]
+    },
+    "closer": {
+      "heading": "Have a business in Xanthi?",
+      "text": "Tell us what you need and we will reply by email.",
+      "cta": "Ask for a proposal"
+    }
+  },
+  "el": {
+    "seo": {
+      "title": "Κατασκευή ιστοσελίδων & eshop στην Ξάνθη | TechPi",
+      "description": "Κατασκευή ιστοσελίδων, eshop και web εφαρμογών στην Ξάνθη από την TechPi (πρώην pigiota314): σχεδιασμός, ανάπτυξη, SEO και υποστήριξη για επιχειρήσεις."
+    },
+    "hero": {
+      "heading": "Κατασκευή ιστοσελίδων και eshop στην Ξάνθη.",
+      "lead": "Η TechPi, η εξέλιξη της pigiota314, σχεδιάζει και κατασκευάζει ιστοσελίδες, ηλεκτρονικά καταστήματα και web εφαρμογές για επιχειρήσεις στην Ξάνθη και σε όλη την Ελλάδα: γρήγορες, ασφαλείς, στα ελληνικά και στα αγγλικά, και φτιαγμένες για να σας βρίσκουν στη Google και οι βοηθοί τεχνητής νοημοσύνης.",
+      "cta": "Ζητήστε προσφορά"
+    },
+    "services": {
+      "heading": "Τι κατασκευάζουμε",
+      "items": [
+        {
+          "name": "Εταιρικές ιστοσελίδες",
+          "text": "Ιστοσελίδες που παρουσιάζουν καθαρά την επιχείρηση, τις υπηρεσίες και τα στοιχεία επικοινωνίας της, σε υπολογιστή και κινητό."
+        },
+        {
+          "name": "Ηλεκτρονικά καταστήματα (eshop)",
+          "text": "Καταστήματα με κατάλογο προϊόντων, καλάθι και ολοκλήρωση παραγγελίας, στημένα γύρω από τον τρόπο που πουλάτε."
+        },
+        {
+          "name": "Web εφαρμογές και πλατφόρμες",
+          "text": "Ειδικά σχεδιασμένα συστήματα για τη λειτουργία της επιχείρησης: κρατήσεις, παραγγελίες, πελάτες και ροές εργασίας."
+        },
+        {
+          "name": "Online ραντεβού και παραγγελίες",
+          "text": "Ραντεβού για κομμωτήρια, φυσικοθεραπευτήρια και επαγγελματίες, και online παραγγελίες για εστίαση, απευθείας από τη δική σας ιστοσελίδα."
+        },
+        {
+          "name": "Ιστοσελίδες για καταλύματα",
+          "text": "Ιστοσελίδες για βίλες, διαμερίσματα και μικρά ξενοδοχεία, με φωτογραφίες, παροχές και απευθείας επικοινωνία."
+        },
+        {
+          "name": "SEO και ψηφιακή ορατότητα",
+          "text": "Δομή, ταχύτητα και τοπικές πληροφορίες, ώστε να σας βρίσκουν στη Google, στους χάρτες και μέσα από βοηθούς τεχνητής νοημοσύνης."
+        }
+      ]
+    },
+    "local": {
+      "heading": "Μια ομάδα τεχνολογίας στην Ξάνθη",
+      "text": "Βρισκόμαστε στην Ξάνθη και συνεργαζόμαστε με επιχειρήσεις της πόλης, της Θράκης και όλης της Ελλάδας. Τα λέμε από κοντά ή online, όπως σας βολεύει, και μετά την παράδοση η ιστοσελίδα σας έχει κάποιον κοντά σας που την ξέρει.",
+      "areasLabel": "Πού δραστηριοποιούμαστε",
+      "areas": [
+        "Ξάνθη",
+        "Κομοτηνή",
+        "Καβάλα",
+        "Αλεξανδρούπολη",
+        "Όλη η Ελλάδα, online"
+      ]
+    },
+    "proof": {
+      "heading": "Έργα από την Ξάνθη και όχι μόνο",
+      "text": "Μερικά από τα έργα μας, με αναλυτική παρουσίαση για το καθένα."
+    },
+    "process": {
+      "heading": "Πώς δουλεύουμε",
+      "steps": [
+        {
+          "name": "Γνωριμία",
+          "text": "Συζητάμε τι χρειάζεται η επιχείρηση και τι πρέπει να πετύχει η ιστοσελίδα."
+        },
+        {
+          "name": "Πρόταση",
+          "text": "Λαμβάνετε γραπτή πρόταση με το περιεχόμενο, το κόστος και το χρονοδιάγραμμα."
+        },
+        {
+          "name": "Σχεδιασμός και κατασκευή",
+          "text": "Δομή, σχεδιασμός και ανάπτυξη, με ενδιάμεσα σημεία όπου ελέγχετε τη δουλειά."
+        },
+        {
+          "name": "Παράδοση και υποστήριξη",
+          "text": "Δημοσίευση, ρύθμιση για τη Google και υποστήριξη μετά την παράδοση."
+        }
+      ]
+    },
+    "faq": {
+      "heading": "Συχνές ερωτήσεις",
+      "items": [
+        {
+          "q": "Πόσο κοστίζει η κατασκευή ιστοσελίδας στην Ξάνθη;",
+          "a": "Εξαρτάται από το μέγεθος, τις λειτουργίες και το αν χρειάζεστε eshop ή σύστημα κρατήσεων. Μετά από μια σύντομη συζήτηση σας στέλνουμε γραπτή προσφορά με όλα όσα περιλαμβάνει."
+        },
+        {
+          "q": "Πόσο χρόνο χρειάζεται;",
+          "a": "Εξαρτάται από το έργο: μια εταιρική ιστοσελίδα γίνεται πολύ πιο γρήγορα από ένα eshop ή μια εφαρμογή. Το χρονοδιάγραμμα συμφωνείται γραπτά από την αρχή."
+        },
+        {
+          "q": "Φτιάχνετε και ηλεκτρονικά καταστήματα (eshop);",
+          "a": "Ναι. Σχεδιάζουμε και κατασκευάζουμε eshop με κατάλογο προϊόντων, καλάθι και ολοκλήρωση παραγγελίας, καθώς και πλατφόρμες για online παραγγελίες και κρατήσεις."
+        },
+        {
+          "q": "Θα εμφανίζεται η ιστοσελίδα μου στη Google;",
+          "a": "Κάθε ιστοσελίδα φτιάχνεται με τη δομή, την ταχύτητα και τις τοπικές πληροφορίες που χρειάζονται οι μηχανές αναζήτησης και οι βοηθοί τεχνητής νοημοσύνης. Θέση στα αποτελέσματα δεν μπορεί να εγγυηθεί κανείς, μπορούμε όμως να σας βοηθήσουμε και με το Google Business Profile."
+        },
+        {
+          "q": "Πρέπει να είμαι στην Ξάνθη για να συνεργαστούμε;",
+          "a": "Όχι. Είμαστε στην Ξάνθη και μπορούμε να τα πούμε από κοντά, αλλά δουλεύουμε εξίσου καλά online με επιχειρήσεις σε όλη την Ελλάδα και την Ευρώπη."
+        },
+        {
+          "q": "Μπορείτε να ανανεώσετε την ιστοσελίδα που ήδη έχω;",
+          "a": "Ναι. Ξεκινάμε από ό,τι υπάρχει, κρατάμε ό,τι λειτουργεί και φροντίζουμε οι παλιές διευθύνσεις να οδηγούν στις νέες σελίδες, ώστε να μη χάσετε τη θέση σας στη Google."
+        },
+        {
+          "q": "Τι είναι η pigiota314;",
+          "a": "Η pigiota314 είναι η αφετηρία της TechPi. Η TechPi είναι η εξέλιξή της: το Pi μένει, και το Tech δείχνει πού πηγαίνουμε, σε ψηφιακά προϊόντα, πλατφόρμες και ευφυή συστήματα."
+        }
+      ]
+    },
+    "closer": {
+      "heading": "Έχετε επιχείρηση στην Ξάνθη;",
+      "text": "Πείτε μας τι χρειάζεστε και θα σας απαντήσουμε με email.",
+      "cta": "Ζητήστε προσφορά"
+    }
+  }
+}
