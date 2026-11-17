@@ -54,6 +54,7 @@ export const el: Dictionary = {
   accommodationLink: 'Ιστοσελίδες για καταλύματα και Airbnb, με ζωντανό demo',
   xanthiLink: 'Κατασκευή ιστοσελίδων και eshop στην Ξάνθη',
   servicesLabel: 'Υπηρεσίες',
+  social: { label: 'Η TechPi στα μέσα κοινωνικής δικτύωσης', on: 'Η TechPi στο {name} (ανοίγει σε νέα καρτέλα)', heading: 'Social media' },
   notFound: {
     title: 'Η σελίδα δεν βρέθηκε | TechPi',
     heading: 'Η σελίδα δεν βρέθηκε',

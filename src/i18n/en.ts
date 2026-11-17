@@ -60,6 +60,8 @@ export const en = {
   xanthiLink: 'Website and e-shop development in Xanthi, Greece',
   /** The footer's list of service pages that are not in the main menu. */
   servicesLabel: 'Services',
+  /** TechPi's social profiles (src/components/SocialLinks.astro). {name} is the network. */
+  social: { label: 'TechPi on social media', on: 'TechPi on {name} (opens in a new tab)', heading: 'Social media' },
   notFound: {
     title: 'Page not found | TechPi',
     heading: 'Page not found',
