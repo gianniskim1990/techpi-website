@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ContactForm from '../../components/secondary/ContactForm.astro';
 import FactRows from '../../components/secondary/FactRows.astro';
+import SocialLinks from '../../components/SocialLinks.astro';
 import PageIntro from '../../components/secondary/PageIntro.astro';
 import SectionSplit from '../../components/secondary/SectionSplit.astro';
 import { pagesCopy } from '../../content/copy';
@@ -32,7 +33,7 @@ csp.insertDirective('frame-src https://challenges.cloudflare.com');
 
 {/* Contact. The lead, the contact form (ContactForm.astro, worker/contact.js), then the three confirmed direct facts:
     email, phone, location, as editorial fact rows, no cards. The direct facts stay: the form adds a way, it replaces
-    none. No WhatsApp, social links, office hours, street address or map: none is confirmed. The location is the town only. */}
+    none. Then TechPi's social profiles (confirmed 2026-11-17), as icons. No WhatsApp, office hours, street address or map: none is confirmed. The location is the town only. */}
 <BaseLayout locale={locale} page="contact" title={meta.title} description={meta.description} pageType="ContactPage" bleed>
   <PageIntro heading={copy.heading} lead={copy.lead} />
   <SectionSplit id="message" heading={getDictionary(locale).contactForm.heading}>
@@ -47,11 +48,25 @@ csp.insertDirective('frame-src https://challenges.cloudflare.com');
         { label: copy.location, value: copy.locationValue },
       ]}
     />
+    <div class="social-block">
+      <p class="social-label">{getDictionary(locale).social.heading}</p>
+      <SocialLinks locale={locale} size={26} />
+    </div>
   </SectionSplit>
   <div class="end"></div>
 </BaseLayout>
 
 <style>
+  .social-block {
+    margin-top: 36px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+  }
+  .social-label {
+    color: var(--ter);
+    font-size: var(--text-small);
+    margin-bottom: 6px;
+  }
   .end {
     height: calc(var(--space-section) * 1.2);
   }

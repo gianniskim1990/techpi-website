@@ -5,6 +5,7 @@ import { contactFacts, operatorFacts } from '../content/site';
 import { insightsCopy } from '../content/insights';
 import { insightsLocale, insightsPath, legalPages, navPages, pathFor, type LanguageFallback, type PageKey, type Translations } from '../i18n/routes';
 import LanguageSwitch from './LanguageSwitch.astro';
+import SocialLinks from './SocialLinks.astro';
 
 interface Props {
   locale: Locale;
@@ -40,6 +41,7 @@ const insights = locale === insightsLocale ? { href: insightsPath(), label: insi
         <a class="phone" href={`tel:${contactFacts.phoneDial}`}>{contactFacts.phoneDisplay}</a>
         <span>{operatorFacts.town[locale]}</span>
       </address>
+      <div class="social-row"><SocialLinks locale={locale} /></div>
     </div>
     <nav aria-label={t.footer.label}>
       <ul>
@@ -144,6 +146,10 @@ const insights = locale === insightsLocale ? { href: insightsPath(), label: insi
   }
   .contact a:hover {
     text-decoration-color: currentColor;
+  }
+  .social-row {
+    margin-top: 14px;
+    color: var(--color-paper);
   }
   .contact .phone {
     white-space: nowrap;
