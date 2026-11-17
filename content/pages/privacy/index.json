@@ -7,10 +7,10 @@
       "el": "/el/privacy"
     },
     "kind": "legal",
-    "updated": "2026-11-11",
+    "updated": "2026-11-16",
     "updatedText": {
-      "en": "11 November 2026",
-      "el": "11 Νοεμβρίου 2026"
+      "en": "16 November 2026",
+      "el": "16 Νοεμβρίου 2026"
     }
   },
   "en": {
@@ -73,7 +73,7 @@
             "p": "**Analytics, only with your consent.** If you accept analytics cookies in the cookie banner, Google Analytics collects information about your visit: the pages you view, how you arrived, the time of the visit, your approximate location (country and city, derived from your IP address), your device, browser and screen size, and an online identifier kept in a cookie. Google Analytics does not log or store IP addresses. If you reject analytics cookies, or make no choice, none of this is collected."
           },
           {
-            "p": "**What we do not do.** Apart from the contact form, the website has no forms, and it has no user accounts. It does not use advertising, tracking or profiling tools, and it does not load fonts or scripts from other companies, except Google Analytics after your consent and Cloudflare Turnstile on the Contact page. See the [Cookies Policy]({{path.cookies}})."
+            "p": "**What we do not do.** Apart from the contact form, the website has no forms, and it has no user accounts. It does not use advertising, tracking or profiling tools, and it does not load fonts or scripts from other companies, except Google Analytics after your consent, Cloudflare Turnstile on the Contact page, and our demonstration website on the Accommodation websites page, only if you choose to open it. That demo is hosted by Vercel and loads a 3D viewer from Sketchfab, which then receive your IP address and information about your browser, as any website you visit does. See the [Cookies Policy]({{path.cookies}})."
           }
         ]
       },
@@ -266,7 +266,7 @@
             "p": "**Στατιστικά, μόνο με τη συγκατάθεσή σας.** Αν αποδεχτείτε τα cookies στατιστικών στο μήνυμα για τα cookies, το Google Analytics συλλέγει πληροφορίες για την επίσκεψή σας: τις σελίδες που βλέπετε, πώς φτάσατε στον ιστότοπο, την ώρα της επίσκεψης, την κατά προσέγγιση τοποθεσία σας (χώρα και πόλη, που προκύπτουν από τη διεύθυνση IP σας), τη συσκευή, το πρόγραμμα περιήγησης και το μέγεθος της οθόνης σας, καθώς και ένα επιγραμμικό αναγνωριστικό που φυλάσσεται σε cookie. Το Google Analytics δεν καταγράφει ούτε αποθηκεύει διευθύνσεις IP. Αν απορρίψετε τα cookies στατιστικών ή δεν κάνετε καμία επιλογή, δεν συλλέγεται τίποτα από αυτά."
           },
           {
-            "p": "**Τι δεν κάνουμε.** Εκτός από τη φόρμα επικοινωνίας, ο ιστότοπος δεν έχει φόρμες ούτε λογαριασμούς χρηστών. Δεν χρησιμοποιεί εργαλεία διαφήμισης, παρακολούθησης ή δημιουργίας προφίλ και δεν φορτώνει γραμματοσειρές ή scripts από άλλες εταιρείες, εκτός από το Google Analytics μετά τη συγκατάθεσή σας και το Cloudflare Turnstile στη σελίδα Επικοινωνίας. Δείτε την [Πολιτική Cookies]({{path.cookies}})."
+            "p": "**Τι δεν κάνουμε.** Εκτός από τη φόρμα επικοινωνίας, ο ιστότοπος δεν έχει φόρμες ούτε λογαριασμούς χρηστών. Δεν χρησιμοποιεί εργαλεία διαφήμισης, παρακολούθησης ή δημιουργίας προφίλ και δεν φορτώνει γραμματοσειρές ή scripts από άλλες εταιρείες, εκτός από το Google Analytics μετά τη συγκατάθεσή σας, το Cloudflare Turnstile στη σελίδα Επικοινωνίας και τη δοκιμαστική ιστοσελίδα μας στη σελίδα «Ιστοσελίδες καταλυμάτων», μόνο αν επιλέξετε να την ανοίξετε. Το demo φιλοξενείται στη Vercel και φορτώνει τρισδιάστατη προβολή από το Sketchfab, που τότε λαμβάνουν τη διεύθυνση IP σας και πληροφορίες για το πρόγραμμα περιήγησής σας, όπως κάθε ιστότοπος που επισκέπτεστε. Δείτε την [Πολιτική Cookies]({{path.cookies}})."
           }
         ]
       },

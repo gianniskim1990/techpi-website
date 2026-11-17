@@ -4,13 +4,14 @@ import home from '../../content/pages/home/index.json';
 import work from '../../content/pages/work/index.json';
 import capabilities from '../../content/pages/capabilities/index.json';
 import euProjects from '../../content/pages/eu-projects/index.json';
+import accommodation from '../../content/pages/accommodation-websites/index.json';
 import about from '../../content/pages/about/index.json';
 import contact from '../../content/pages/contact/index.json';
 import privacy from '../../content/pages/privacy/index.json';
 import cookies from '../../content/pages/cookies/index.json';
 
 /**
- * The 8 website pages, managed in the admin since Task M3: one file each, content/pages/<key>/index.json, holding the
+ * The 9 website pages, managed in the admin since Task M3: one file each, content/pages/<key>/index.json, holding the
  * page's own copy and its search title and description in English and Greek (and, for the legal pages, the version
  * date). Listed explicitly: a file is published only when it is listed here. Every file is validated on every build
  * (admin/shared/page-content.js), so an invalid draft fails the build instead of reaching the site.
@@ -19,7 +20,7 @@ import cookies from '../../content/pages/cookies/index.json';
  * (site.ts), the capabilities (capabilities.ts), case studies, Insights, the shell labels (i18n) and the copy shared
  * by several pages (pages.en.ts / pages.el.ts: case-study labels and the closing line).
  */
-const files = { home, work, capabilities, 'eu-projects': euProjects, about, contact, privacy, cookies } as const;
+const files = { home, work, capabilities, 'eu-projects': euProjects, 'accommodation-websites': accommodation, about, contact, privacy, cookies } as const;
 
 function checked<T>(key: keyof typeof files): T {
   const doc = files[key];
@@ -41,6 +42,7 @@ export const pageDocs = {
   work: checked<PageDoc<Record<string, unknown>>>('work'),
   capabilities: checked<PageDoc<Record<string, unknown>>>('capabilities'),
   euProjects: checked<PageDoc<Record<string, unknown>>>('eu-projects'),
+  accommodation: checked<PageDoc<Record<string, unknown>>>('accommodation-websites'),
   about: checked<PageDoc<Record<string, unknown>>>('about'),
   contact: checked<PageDoc<Record<string, unknown>>>('contact'),
   privacy: checked<PageDoc<Record<string, unknown>>>('privacy'),

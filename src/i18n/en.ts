@@ -47,11 +47,14 @@ export const en = {
     work: { heading: 'Work' },
     capabilities: { heading: 'Capabilities' },
     euProjects: { heading: 'EU Projects' },
+    accommodation: { heading: 'Accommodation websites' },
     about: { heading: 'About' },
     contact: { heading: 'Contact' },
     privacy: { heading: 'Privacy Policy' },
     cookies: { heading: 'Cookies Policy' },
   },
+  /** The link from the Web experiences capability to the accommodation service page. */
+  accommodationLink: 'Websites for holiday rentals and small hotels, with a live demo',
   notFound: {
     title: 'Page not found | TechPi',
     heading: 'Page not found',

@@ -8,7 +8,7 @@ import { defaultLocale, locales, type Locale } from './locales';
  * and the two language roots keep theirs ("/" and "/el/").
  * Never derive these from Astro.url: with build.format "preserve" it contains ".html".
  */
-export const pages = ['home', 'work', 'capabilities', 'euProjects', 'about', 'contact', 'privacy', 'cookies'] as const;
+export const pages = ['home', 'work', 'capabilities', 'euProjects', 'accommodation', 'about', 'contact', 'privacy', 'cookies'] as const;
 export type PageKey = (typeof pages)[number];
 
 /**
@@ -26,6 +26,7 @@ const slugs: Record<Exclude<PageKey, 'home'>, string> = {
   work: 'work',
   capabilities: 'capabilities',
   euProjects: 'eu-projects',
+  accommodation: 'accommodation-websites',
   about: 'about',
   contact: 'contact',
   privacy: 'privacy',

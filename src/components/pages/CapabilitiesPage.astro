@@ -10,6 +10,7 @@ import { pageMeta } from '../../content/seo';
 import { service } from '../../seo/schema';
 import type { Locale } from '../../i18n/locales';
 import { caseStudyPath, pathFor } from '../../i18n/routes';
+import { getDictionary } from '../../i18n';
 
 interface Props {
   locale: Locale;
@@ -20,6 +21,7 @@ const pages = pagesCopy[locale];
 const copy = pages.capabilities;
 const capabilities = capabilitiesIn(locale);
 const meta = pageMeta[locale].capabilities;
+const t = getDictionary(locale);
 // One Service node per capability, with the name and summary shown on the page.
 const url = new URL(pathFor('capabilities', locale), Astro.site).href;
 const services = capabilities.map((c) => service(url, { id: c.id, name: c.name, description: c.summary, locale }));
@@ -52,6 +54,11 @@ const services = capabilities.map((c) => service(url, { id: c.id, name: c.name, 
             <li>{item}</li>
           ))}
         </ul>
+        {c.id === 'web-experiences' && (
+          <p class="service-link">
+            <a class="tlink" href={pathFor('accommodation', locale)}>{t.accommodationLink}</a>
+          </p>
+        )}
         {caseStudiesWith(c.id, locale).length > 0 && (
           <p class="seen">
             <span class="label">{copy.seenIn}</span>
@@ -126,6 +133,9 @@ const services = capabilities.map((c) => service(url, { id: c.id, name: c.name, 
   }
   .cover-list li:nth-last-child(2):nth-child(odd) {
     border-bottom: 1px solid var(--line);
+  }
+  .service-link {
+    margin-top: 22px;
   }
   .seen {
     margin-top: 28px;

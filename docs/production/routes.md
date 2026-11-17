@@ -14,6 +14,7 @@ English is the default language and has no prefix. Greek lives under `/el/`. Slu
 | Case study | `/work/[slug]` | `/el/work/[slug]` |
 | Capabilities | `/capabilities` | `/el/capabilities` |
 | EU Projects | `/eu-projects` | `/el/eu-projects` |
+| Accommodation websites (not in the menu; linked from Capabilities, Web experiences) | `/accommodation-websites` | `/el/accommodation-websites` |
 | About | `/about` | `/el/about` |
 | Contact | `/contact` | `/el/contact` |
 | Privacy | `/privacy` | `/el/privacy` |
@@ -59,8 +60,8 @@ Notes:
 
 | Request | Result |
 |---|---|
-| `/`, `/work`, `/capabilities`, `/eu-projects`, `/about`, `/contact` | 200 |
-| `/el/`, `/el/work`, `/el/capabilities`, `/el/eu-projects`, `/el/about`, `/el/contact` | 200 |
+| `/`, `/work`, `/capabilities`, `/eu-projects`, `/accommodation-websites`, `/about`, `/contact` | 200 |
+| `/el/`, `/el/work`, `/el/capabilities`, `/el/eu-projects`, `/el/accommodation-websites`, `/el/about`, `/el/contact` | 200 |
 | `/privacy`, `/cookies`, `/el/privacy`, `/el/cookies` (Phase 2B, Wrangler 2026-10-13) | 200; their `/…/` and `….html` variants 301 to the canonical form (explicit rules in `public/_redirects`) |
 | All 18 case studies, `/work/<slug>` and `/el/work/<slug>` (Phase 2E, Wrangler 2026-10-17) | 200; their `/…/` and `….html` variants 301 to the canonical form: 72 rules. Before Phase 2E only 3 case studies had rules, and production answered `/work/mavie/` with Cloudflare's automatic **307** |
 | Insights, `/insights` and `/insights/<slug>` (Phase 2D) | 200; `/…/` and `….html` variants 301: 16 rules |

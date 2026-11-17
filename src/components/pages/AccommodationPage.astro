@@ -1,0 +1,221 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ClosingCTA from '../../components/secondary/ClosingCTA.astro';
+import PageIntro from '../../components/secondary/PageIntro.astro';
+import SectionSplit from '../../components/secondary/SectionSplit.astro';
+import { copyOf } from '../../content/pages-content';
+import { pageMeta } from '../../content/seo';
+import { service } from '../../seo/schema';
+import type { Locale } from '../../i18n/locales';
+import { pathFor } from '../../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+interface Copy {
+  hero: { heading: string; lead: string; cta: string };
+  features: { heading: string; items: { name: string; text: string }[] };
+  demo: { label: string; heading: string; text: string; load: string; privacy: string; open: string; frameTitle: string };
+  audience: { heading: string; items: string[]; note: string };
+  closer: { heading: string; text: string; cta: string };
+}
+
+/** The demonstration website shown on this page (a separate project, on its own subdomain). */
+const DEMO_ORIGIN = 'https://airbnb.pigiota314.gr';
+
+const { locale } = Astro.props;
+const c = copyOf<Copy>('accommodation', locale);
+const meta = pageMeta[locale].accommodation;
+const contact = pathFor('contact', locale);
+const url = new URL(pathFor('accommodation', locale), Astro.site).href;
+const services = [service(url, { id: 'accommodation-websites', name: meta.title.replace(/ \| TechPi$/, ''), description: c.hero.lead, locale })];
+
+// The demo is embedded on this page only, and only after the visitor asks for it (the script below): until then the
+// page contacts nothing outside techpi.eu. The CSP allows exactly that one frame origin here (scripts/security).
+const csp = Astro.csp;
+if (!csp) throw new Error('AccommodationPage: the CSP API is required (astro.config.mjs security.csp)');
+csp.insertDirective(`frame-src ${DEMO_ORIGIN}`);
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+{/* A service page: what TechPi builds for holiday rentals and small hotels, and a live demonstration website. The demo
+    is labelled as a demonstration on the page: no client, booking, review or result is claimed. */}
+<BaseLayout locale={locale} page="accommodation" title={meta.title} description={meta.description} schema={services} bleed>
+  <PageIntro heading={c.hero.heading} lead={c.hero.lead}>
+    <Fragment slot="after">
+      <a class="tlink hero-cta" href={contact}>{c.hero.cta}</a>
+    </Fragment>
+  </PageIntro>
+
+  <SectionSplit id="features" heading={c.features.heading}>
+    <ol class="features">
+      {
+        c.features.items.map((f, i) => (
+          <li>
+            <span class="num">{pad(i + 1)}</span>
+            <h3>{f.name}</h3>
+            <p>{f.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </SectionSplit>
+
+  <section class="demo s-ink" id="demo" aria-labelledby="demo-h">
+    <div class="demo-head" data-reveal="fade">
+      <p class="meta-label">{c.demo.label}</p>
+      <h2 id="demo-h">{c.demo.heading}</h2>
+      <p class="demo-text">{c.demo.text}</p>
+    </div>
+    <div class="stage" data-demo data-src={`${DEMO_ORIGIN}/`} data-title={c.demo.frameTitle}>
+      <div class="poster">
+        <p class="poster-name" aria-hidden="true">Villa Xanthi</p>
+        <button type="button" class="btn" data-demo-load>{c.demo.load}</button>
+        <p class="poster-note">{c.demo.privacy}</p>
+      </div>
+    </div>
+    <p class="open">
+      <a class="tlink" href={`${DEMO_ORIGIN}/`} target="_blank" rel="noopener noreferrer">{c.demo.open}<span aria-hidden="true"> ↗</span></a>
+    </p>
+  </section>
+
+  <SectionSplit id="audience" heading={c.audience.heading}>
+    <ul class="ruled audience">{c.audience.items.map((a) => <li>{a}</li>)}</ul>
+    <p class="note">{c.audience.note}</p>
+  </SectionSplit>
+
+  <ClosingCTA heading={c.closer.heading} text={c.closer.text} cta={c.closer.cta} href={contact} />
+</BaseLayout>
+
+<script>
+  // Click to load: the frame is created only now, so nothing from the demo's hosts loads before the visitor asks.
+  for (const stage of document.querySelectorAll<HTMLElement>('[data-demo]')) {
+    stage.querySelector('[data-demo-load]')?.addEventListener('click', () => {
+      const frame = document.createElement('iframe');
+      frame.src = stage.dataset.src!;
+      frame.title = stage.dataset.title!;
+      frame.referrerPolicy = 'no-referrer';
+      frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms');
+      frame.setAttribute('allow', 'fullscreen');
+      stage.replaceChildren(frame);
+      stage.classList.add('live');
+      frame.focus();
+    });
+  }
+</script>
+
+<style>
+  .hero-cta {
+    display: inline-block;
+    margin-top: 22px;
+  }
+  .features {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 36px var(--space-gap);
+  }
+  .features li {
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .features .num {
+    display: block;
+    color: var(--ter);
+    font-size: var(--text-small);
+    margin-bottom: 8px;
+  }
+  .features h3 {
+    font-size: 1.1875rem;
+    font-weight: var(--weight-ui);
+    margin-bottom: 8px;
+  }
+  .features p {
+    color: var(--sec-c);
+  }
+  .demo {
+    margin-top: var(--space-section);
+    padding: clamp(64px, 7vw, 112px) var(--space-margin);
+  }
+  .demo-head {
+    max-width: 60ch;
+  }
+  .meta-label {
+    color: var(--sec-c);
+    font-size: var(--text-small);
+    margin-bottom: 14px;
+  }
+  .demo h2 {
+    font-size: var(--text-display-m);
+    font-weight: var(--weight-display);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+  }
+  .demo-text {
+    margin-top: 22px;
+    color: var(--sec-c);
+    font-size: var(--text-lead);
+    line-height: 1.45;
+  }
+  .stage {
+    margin-top: 48px;
+    aspect-ratio: 16 / 10;
+    max-height: 82svh;
+    width: 100%;
+    border: 1px solid var(--line);
+    background:
+      radial-gradient(60% 70% at 70% 40%, rgba(8, 65, 200, 0.45), rgba(8, 65, 200, 0) 70%),
+      var(--color-ink-raised);
+    display: grid;
+    place-items: center;
+  }
+  .stage :global(iframe) {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #fff;
+  }
+  .poster {
+    display: grid;
+    justify-items: center;
+    gap: 22px;
+    padding: 24px;
+    text-align: center;
+  }
+  .poster-name {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: var(--weight-display);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .poster .btn {
+    border: 0;
+    font: inherit;
+    font-weight: var(--weight-ui);
+    cursor: pointer;
+  }
+  .poster-note {
+    max-width: 46ch;
+    color: var(--sec-c);
+    font-size: var(--text-small);
+  }
+  .open {
+    margin-top: 20px;
+  }
+  .audience {
+    margin-bottom: 24px;
+  }
+  .note {
+    color: var(--sec-c);
+    max-width: 60ch;
+  }
+
+  @media (max-width: 760px) {
+    .features {
+      grid-template-columns: 1fr;
+    }
+    .stage {
+      aspect-ratio: 3 / 4;
+    }
+  }
+</style>

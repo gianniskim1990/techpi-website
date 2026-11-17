@@ -42,11 +42,11 @@ walk('');
 // --- Pages ---
 const sha = (s) => `'sha256-${crypto.createHash('sha256').update(s).digest('base64')}'`;
 const pages = files.filter((f) => f.endsWith('.html'));
-// 8 pages (6 + Privacy and Cookies) and every case study in each of two languages, the English-only Insights index and
+// 9 pages (7, including Accommodation websites, + Privacy and Cookies) and every case study in each of two languages, the English-only Insights index and
 // its articles, and a 404 per language. Case studies and articles are counted from content/ (the admin can add them):
-// with the 18 migrated case studies and 7 articles, 62 pages.
+// with the 18 migrated case studies and 7 articles, 64 pages.
 const contentDirs = (d) => (fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }).filter((e) => e.isDirectory() && fs.existsSync(path.join(d, e.name, 'index.json'))).length : 0);
-const expectedPages = 2 * 8 + 2 * contentDirs('content/case-studies') + 1 + contentDirs('content/insights') + 2;
+const expectedPages = 2 * 9 + 2 * contentDirs('content/case-studies') + 1 + contentDirs('content/insights') + 2;
 check(pages.length === expectedPages, 'build', `${pages.length} pages, expected ${expectedPages}`);
 for (const f of pages) {
   const html = fs.readFileSync(path.join(DIST, f), 'utf8');
@@ -75,7 +75,10 @@ for (const f of pages) {
   const hosts = (policy['script-src'] || []).filter((x) => /^https?:/.test(x)).sort();
   const expectHosts = ['https://www.googletagmanager.com', ...(contactPage ? ['https://challenges.cloudflare.com'] : [])].sort();
   check(hosts.join(' ') === expectHosts.join(' '), f, `script-src origins: ${hosts.join(' ') || 'none'}`);
-  check(contactPage ? policy['frame-src']?.join(' ') === 'https://challenges.cloudflare.com' : !policy['frame-src'], f, `frame-src: ${policy['frame-src']?.join(' ') || 'none'}`);
+  // The accommodation page embeds its demonstration website, from exactly that origin, after a click.
+  const demoPage = f === 'accommodation-websites.html' || f === 'el/accommodation-websites.html';
+  const expectFrame = contactPage ? 'https://challenges.cloudflare.com' : demoPage ? 'https://airbnb.pigiota314.gr' : undefined;
+  check(policy['frame-src']?.join(' ') === expectFrame, f, `frame-src: ${policy['frame-src']?.join(' ') || 'none'}`);
   check(policy['connect-src']?.join(' ') === "'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com", f, `connect-src: ${policy['connect-src']?.join(' ')}`);
   check(policy['img-src']?.join(' ') === "'self' https://*.google-analytics.com https://*.googletagmanager.com", f, `img-src: ${policy['img-src']?.join(' ')}`);
   check(!policy['form-action']?.some((x) => x !== "'self'"), f, "form-action stays 'self'");

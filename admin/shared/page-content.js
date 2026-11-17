@@ -1,5 +1,5 @@
 /**
- * The 8 website pages managed by the admin (Task M3). Shared by the admin Worker (the authority: every save is checked
+ * The 9 website pages managed by the admin (Task M3). Shared by the admin Worker (the authority: every save is checked
  * here before anything is written), the admin UI (instant feedback, field labels) and the public site's build
  * (src/content/pages-content.ts validates every committed file on every build, so an invalid file fails the build).
  *
@@ -26,12 +26,13 @@
 
 export const PAGE = { name: 'pages', folder: 'content/pages', file: 'index.json', branchPrefix: 'cms/pages/' };
 
-/** The 8 pages: the file and branch key, the site's page key, and the name the admin shows. In the site's menu order. */
+/** The 9 pages: the file and branch key, the site's page key, and the name the admin shows. In the site's menu order. */
 export const PAGES = [
   { key: 'home', pageKey: 'home', name: 'Home' },
   { key: 'work', pageKey: 'work', name: 'Work' },
   { key: 'capabilities', pageKey: 'capabilities', name: 'Capabilities' },
   { key: 'eu-projects', pageKey: 'euProjects', name: 'EU Projects' },
+  { key: 'accommodation-websites', pageKey: 'accommodation', name: 'Accommodation websites' },
   { key: 'about', pageKey: 'about', name: 'About' },
   { key: 'contact', pageKey: 'contact', name: 'Contact' },
   { key: 'privacy', pageKey: 'privacy', name: 'Privacy Policy' },
@@ -41,7 +42,8 @@ export const PAGE_KEYS = PAGES.map((p) => p.key);
 export const LOCALES = ['en', 'el'];
 export const PATHS = {
   home: { en: '/', el: '/el/' }, work: { en: '/work', el: '/el/work' }, capabilities: { en: '/capabilities', el: '/el/capabilities' },
-  'eu-projects': { en: '/eu-projects', el: '/el/eu-projects' }, about: { en: '/about', el: '/el/about' }, contact: { en: '/contact', el: '/el/contact' },
+  'eu-projects': { en: '/eu-projects', el: '/el/eu-projects' },
+  'accommodation-websites': { en: '/accommodation-websites', el: '/el/accommodation-websites' }, about: { en: '/about', el: '/el/about' }, contact: { en: '/contact', el: '/el/contact' },
   privacy: { en: '/privacy', el: '/el/privacy' }, cookies: { en: '/cookies', el: '/el/cookies' },
 };
 
@@ -126,6 +128,17 @@ export const SCHEMA = {
     ['process.steps.*.name', 'Process step name', 'text'], ['process.steps.*.text', 'Process step text', 'para'],
     ['before.heading', 'Before launch: heading', 'text'], ['before.text', 'Before launch: text', 'para'], ['before.items.*', 'Before launch item', 'item'], ['before.note', 'Before launch: note', 'para'],
     ['after.heading', 'After launch: heading', 'text'], ['after.text', 'After launch: text', 'para'], ['after.items.*', 'After launch item', 'item'],
+    ['closer.heading', 'Closing: heading', 'text'], ['closer.text', 'Closing: text', 'para'], ['closer.cta', 'Closing: button', 'text'],
+  ],
+  'accommodation-websites': [
+    ...SEO,
+    ['hero.heading', 'Hero heading', 'text'], ['hero.lead', 'Hero lead', 'para'], ['hero.cta', 'Hero button', 'text'],
+    ['features.heading', 'Features: heading', 'text'],
+    ['features.items.*.name', 'Feature name', 'text'], ['features.items.*.text', 'Feature text', 'para'],
+    ['demo.label', 'Demo: label', 'text'], ['demo.heading', 'Demo: heading', 'text'], ['demo.text', 'Demo: text', 'para'],
+    ['demo.load', 'Demo: load button', 'text'], ['demo.privacy', 'Demo: what loading it connects to', 'para'],
+    ['demo.open', 'Demo: open in a new tab', 'text'], ['demo.frameTitle', 'Demo: frame title (screen readers)', 'text'],
+    ['audience.heading', 'Audience: heading', 'text'], ['audience.items.*', 'Audience item', 'item'], ['audience.note', 'Audience: note', 'para'],
     ['closer.heading', 'Closing: heading', 'text'], ['closer.text', 'Closing: text', 'para'], ['closer.cta', 'Closing: button', 'text'],
   ],
   about: [
