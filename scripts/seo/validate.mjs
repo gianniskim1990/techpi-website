@@ -218,6 +218,8 @@ for (const route of ROUTES) {
   check(org && org['@id'] === `${ORIGIN}/#organization` && org.url === `${ORIGIN}/` && org.name === 'TechPi', where, 'Organization node');
   if (org) {
     check(org.email === 'info@techpi.eu' && org.telephone === '+30 697 594 6984', where, 'Organization contact facts');
+    // The owner-confirmed social profiles (src/content/site.ts, 2026-11-17), exactly.
+    check(JSON.stringify(org.sameAs) === JSON.stringify(['https://www.facebook.com/techpiagency', 'https://www.instagram.com/techpi_agency', 'https://www.linkedin.com/company/122754278', 'https://www.tiktok.com/@techpi.agency']), where, `Organization sameAs: ${JSON.stringify(org.sameAs)}`);
     const logo = org.logo && org.logo.url;
     check(logo === `${ORIGIN}/techpi-logo.png` && exists('techpi-logo.png'), where, `Organization logo ${logo}`);
   }
@@ -253,7 +255,8 @@ for (const route of ROUTES) {
   const nodes = allNodes(graph);
   for (const n of nodes) {
     if (FORBIDDEN_TYPES.includes(n['@type'])) fail(where, `forbidden schema type ${n['@type']}`);
-    for (const k of FORBIDDEN_KEYS) if (k in n) fail(where, `forbidden schema property ${k}`);
+    // sameAs is allowed on the organisation only, checked against the confirmed list below.
+    for (const k of FORBIDDEN_KEYS) if (k in n && !(k === 'sameAs' && n['@id'] === `${ORIGIN}/#organization`)) fail(where, `forbidden schema property ${k}`);
   }
   checks++;
   // Every @id is on the production origin, and every reference resolves within the page's graph.

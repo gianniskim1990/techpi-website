@@ -107,8 +107,8 @@ One `<script type="application/ld+json">` per content page with an `@graph`. Bui
 | `Service` x 4 | `<canonical>#service-<id>` | Capabilities, both languages | Each capability's visible name and summary, `provider` the Organization |
 | `Service` x 2 | `<canonical>#service-eu-projects`, `…#service-eu-project-websites` | EU Projects, both languages | The page's visible hero heading and lead, and its "EU project websites" section heading and introduction |
 
-Deliberately absent: `legalName`, VAT, street address, founding date, employee count, `sameAs` (no confirmed social
-profile), `SearchAction` (the site has no search), reviews, ratings, awards, `FAQPage`, and any case-study markup
+`sameAs` on the organisation only: the four owner-confirmed profiles (Facebook, Instagram, LinkedIn, TikTok; `socialProfiles` in
+`src/content/site.ts`, 2026-11-17). Deliberately absent: `legalName`, VAT, street address, founding date, employee count, `SearchAction` (the site has no search), reviews, ratings, awards, `FAQPage`, and any case-study markup
 (`Product`, `SoftwareApplication`, or an invented "CaseStudy" type). `Article` exists only on the Insights articles
 (above); the validator rejects it, and `BlogPosting` and `NewsArticle`, everywhere else. `CreativeWork` for a case study was
 considered (the planning document proposed it) and left out: the WebPage and breadcrumb already describe the page,
