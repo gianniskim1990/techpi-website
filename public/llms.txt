@@ -1,0 +1,31 @@
+# TechPi
+
+> TechPi is an independent technology business in Xanthi, Greece, and the evolution of pigiota314. It designs and builds websites, e-shops, web applications, SaaS platforms and AI integrations for businesses in Greece, and websites and digital platforms for EU-funded projects (Horizon Europe, Erasmus+, Interreg and other programmes). It is not affiliated with or endorsed by the European Commission.
+
+The site is bilingual: English at https://techpi.eu/ and Greek at https://techpi.eu/el/. Contact: info@techpi.eu.
+
+## Services (English)
+
+- [EU project websites and digital platforms](https://techpi.eu/eu-projects): websites, platforms, web applications and support for EU-funded research, innovation and cooperation projects.
+- [Capabilities](https://techpi.eu/capabilities): digital products, web experiences (websites and e-commerce), intelligence (AI and automation), digital visibility (SEO and GEO).
+- [Website and e-shop development in Xanthi, Greece](https://techpi.eu/web-design-xanthi)
+- [Websites for holiday rentals and small hotels](https://techpi.eu/accommodation-websites), with a live demo.
+- [Work](https://techpi.eu/work): client projects, each with a case study.
+- [Insights](https://techpi.eu/insights): notes on EU project websites, deliverables, accessibility and dissemination.
+- [About](https://techpi.eu/about) · [Contact](https://techpi.eu/contact)
+
+## Υπηρεσίες (Ελληνικά)
+
+- [Κατασκευή ιστοσελίδων και eshop στην Ξάνθη](https://techpi.eu/el/web-design-xanthi)
+- [Δυνατότητες](https://techpi.eu/el/capabilities): ψηφιακά προϊόντα, ιστοσελίδες και ηλεκτρονικά καταστήματα, τεχνητή νοημοσύνη και αυτοματισμοί, SEO και ψηφιακή ορατότητα.
+- [Ιστοσελίδες για καταλύματα και Airbnb](https://techpi.eu/el/accommodation-websites), με ζωντανό demo.
+- [Ιστοσελίδες και πλατφόρμες για ευρωπαϊκά έργα](https://techpi.eu/el/eu-projects)
+- [Έργα](https://techpi.eu/el/work) · [Η εταιρεία](https://techpi.eu/el/about) · [Επικοινωνία](https://techpi.eu/el/contact)
+
+## Selected case studies
+
+- [Rocketeer](https://techpi.eu/work/rocketeer): delivery operations platform.
+- [Arman's Ethnic Street Food](https://techpi.eu/work/armans): direct online ordering platform.
+- [Rantevo.gr](https://techpi.eu/work/rantevo): multi-sector SaaS booking platform.
+- [Saloon](https://techpi.eu/work/saloon) and [Physio](https://techpi.eu/work/physio): booking and client management platforms.
+- [Logotherapia Xanthi](https://techpi.eu/work/logotherapia-xanthi): website for a speech and occupational therapy centre in Xanthi.

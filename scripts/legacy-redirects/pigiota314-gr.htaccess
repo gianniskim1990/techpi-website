@@ -37,7 +37,7 @@ RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteRule ^2022/07/?$ https://techpi.eu/el/capabilities? [R=301,NC,L]
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr(:[0-9]+)?$ [NC]
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
-RewriteRule ^2022/07/26/αναβάθμιση-ή-κατασκευή-e-shop-με-επιδότηση-90/?$ https://techpi.eu/el/capabilities? [R=301,NC,L]
+RewriteRule ^2022/07/26/αναβάθμιση-ή-κατασκευή-e-shop-με-επιδότηση-90/?$ https://techpi.eu/el/web-design-xanthi? [R=301,NC,L]
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr(:[0-9]+)?$ [NC]
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteRule ^2025/01/25/hello-world/?$ - [G,NC]
@@ -49,7 +49,7 @@ RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteRule ^αρχική/?$ https://techpi.eu/el/? [R=301,NC,L]
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr(:[0-9]+)?$ [NC]
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
-RewriteRule ^κατασκευή-ιστοσελίδας-eshop/?$ https://techpi.eu/el/capabilities? [R=301,NC,L]
+RewriteRule ^κατασκευή-ιστοσελίδας-eshop/?$ https://techpi.eu/el/web-design-xanthi? [R=301,NC,L]
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr(:[0-9]+)?$ [NC]
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteRule ^καφετζής-ηλίας-graphic-design/?$ https://techpi.eu/el/work? [R=301,NC,L]
@@ -235,10 +235,10 @@ RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteRule ^itsallaboutxanthi-website-social-media-graphic-design-digital-marketing/?$ https://techpi.eu/el/work/itsallaboutxanthi? [R=301,NC,L]
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr(:[0-9]+)?$ [NC]
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
-RewriteRule ^kataskevi-eshop-espa/?$ https://techpi.eu/el/capabilities? [R=301,NC,L]
+RewriteRule ^kataskevi-eshop-espa/?$ https://techpi.eu/el/web-design-xanthi? [R=301,NC,L]
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr(:[0-9]+)?$ [NC]
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
-RewriteRule ^kataskevi-istoselidon-xanthi/?$ https://techpi.eu/el/capabilities? [R=301,NC,L]
+RewriteRule ^kataskevi-istoselidon-xanthi/?$ https://techpi.eu/el/web-design-xanthi? [R=301,NC,L]
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr(:[0-9]+)?$ [NC]
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteRule ^level-up-education-ekpaideftiki-web-efarmogi/?$ https://techpi.eu/el/work/level-up-education-app? [R=301,NC,L]
@@ -538,7 +538,7 @@ RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteRule ^type/video/?$ - [G,NC]
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr(:[0-9]+)?$ [NC]
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
-RewriteRule ^web-design/?$ https://techpi.eu/el/capabilities? [R=301,NC,L]
+RewriteRule ^web-design/?$ https://techpi.eu/el/web-design-xanthi? [R=301,NC,L]
 RewriteCond %{HTTP_HOST} ^(www\.)?pigiota314\.gr(:[0-9]+)?$ [NC]
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteRule ^webdesign-social-media-graphic-design/?$ https://techpi.eu/el/work? [R=301,NC,L]

@@ -42,11 +42,11 @@ walk('');
 // --- Pages ---
 const sha = (s) => `'sha256-${crypto.createHash('sha256').update(s).digest('base64')}'`;
 const pages = files.filter((f) => f.endsWith('.html'));
-// 9 pages (7, including Accommodation websites, + Privacy and Cookies) and every case study in each of two languages, the English-only Insights index and
+// 10 pages (8, including Accommodation websites and Websites in Xanthi, + Privacy and Cookies) and every case study in each of two languages, the English-only Insights index and
 // its articles, and a 404 per language. Case studies and articles are counted from content/ (the admin can add them):
-// with the 18 migrated case studies and 7 articles, 64 pages.
+// with the 18 migrated case studies and 7 articles, 66 pages.
 const contentDirs = (d) => (fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }).filter((e) => e.isDirectory() && fs.existsSync(path.join(d, e.name, 'index.json'))).length : 0);
-const expectedPages = 2 * 9 + 2 * contentDirs('content/case-studies') + 1 + contentDirs('content/insights') + 2;
+const expectedPages = 2 * 10 + 2 * contentDirs('content/case-studies') + 1 + contentDirs('content/insights') + 2;
 check(pages.length === expectedPages, 'build', `${pages.length} pages, expected ${expectedPages}`);
 for (const f of pages) {
   const html = fs.readFileSync(path.join(DIST, f), 'utf8');

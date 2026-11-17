@@ -1,4 +1,4 @@
-// Task M3: the 9 committed page files and the page rules: locked structure and facts, every page editable in both
+// Task M3: the 10 committed page files and the page rules: locked structure and facts, every page editable in both
 // languages, SEO limits, approved-identity mentions, the EU claim guard, and the legal tokens and integrity rules.
 // Also checks that these rules agree with the site's validators. No GitHub involved.
 import { test } from 'node:test';
@@ -17,8 +17,8 @@ const edit = (key, fn) => { const c = structuredClone(editableOf(DOCS[key])); fn
 const ok = (key, fn) => { const r = edit(key, fn); assert.ok(r.ok, `${key}: ${JSON.stringify(r.errors)}`); return r.value; };
 const bad = (key, fn, field) => { const r = edit(key, fn); assert.ok(!r.ok, `${key}: expected a refusal at ${field}`); if (field) assert.ok(r.errors[field], `${key}: ${field} not refused: ${JSON.stringify(r.errors)}`); return r.errors; };
 
-test('exactly 9 pages: the allowlist, the folders, the site loader and the routes agree', () => {
-  assert.deepEqual(PAGE_KEYS, ['home', 'work', 'capabilities', 'eu-projects', 'accommodation-websites', 'about', 'contact', 'privacy', 'cookies']);
+test('exactly 10 pages: the allowlist, the folders, the site loader and the routes agree', () => {
+  assert.deepEqual(PAGE_KEYS, ['home', 'work', 'capabilities', 'eu-projects', 'accommodation-websites', 'web-design-xanthi', 'about', 'contact', 'privacy', 'cookies']);
   assert.deepEqual(fs.readdirSync(path.join(repo, 'content', 'pages')).sort(), [...PAGE_KEYS].sort());
   const loader = fs.readFileSync(path.join(repo, 'src', 'content', 'pages-content.ts'), 'utf8');
   for (const k of PAGE_KEYS) assert.ok(loader.includes(`content/pages/${k}/index.json`), k);
@@ -45,6 +45,7 @@ const EDITS = {
   capabilities: (c) => { c.en.lead = 'Four capabilities, combined around the problem.'; c.el.seenIn = 'Θα το δείτε στα'; },
   'eu-projects': (c) => { c.en.lifecycle.stages[0].text += ' Edited.'; c.el.websites.groups[1].items[0] += ' (δοκιμή)'; },
   'accommodation-websites': (c) => { c.en.features.items[0].name = 'Photos first'; c.el.audience.items.reverse(); },
+  'web-design-xanthi': (c) => { c.en.faq.items[1].a += ' Edited.'; c.el.local.areas.reverse(); },
   about: (c) => { c.en.principles[0].text = 'We start with how an organisation works, then choose the technology.'; c.el.stayed.text += ' Δοκιμή.'; },
   contact: (c) => { c.en.heading = 'Something worth building?'; c.el.lead = 'Πείτε μας ποιο πρόβλημα θέλετε να λύσετε, σύντομα.'; },
   privacy: (c) => { c.en.sections[2].heading = 'The data we process'; c.el.lead += ' Δοκιμή.'; },
@@ -196,10 +197,10 @@ test('no shared fact is duplicated into the page files', () => {
   const caps = fs.readFileSync(path.join(repo, 'src', 'content', 'capabilities.ts'), 'utf8');
   for (const summary of [...caps.matchAll(/summary:\s*'([^']{30,})'/g)].map((m) => m[1])) assert.ok(!all.includes(summary), 'capability copy stays in capabilities.ts');
   // The case-study labels and the secondary pages' closing line are shared: they stay in pages.*.ts, not in a page file.
-  // (The EU Projects and Accommodation websites pages have their own, different closing sections.)
+  // (The EU Projects and the service pages have their own, different closing sections.)
   for (const key of PAGE_KEYS) {
     assert.ok(!('caseStudy' in DOCS[key].en), `${key}: no case-study labels`);
-    if (key !== 'eu-projects' && key !== 'accommodation-websites') assert.ok(!('closer' in DOCS[key].en), `${key}: no shared closing line`);
+    if (!['eu-projects', 'accommodation-websites', 'web-design-xanthi'].includes(key)) assert.ok(!('closer' in DOCS[key].en), `${key}: no shared closing line`);
   }
   const pagesEn = fs.readFileSync(path.join(repo, 'src', 'content', 'pages.en.ts'), 'utf8');
   assert.ok(/caseStudy: \{/.test(pagesEn) && /closer: \{/.test(pagesEn));

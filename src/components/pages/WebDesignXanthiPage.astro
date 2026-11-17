@@ -1,0 +1,219 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ClosingCTA from '../../components/secondary/ClosingCTA.astro';
+import PageIntro from '../../components/secondary/PageIntro.astro';
+import SectionSplit from '../../components/secondary/SectionSplit.astro';
+import { copyOf } from '../../content/pages-content';
+import { caseStudiesIn } from '../../content/projects';
+import { pageMeta } from '../../content/seo';
+import { service } from '../../seo/schema';
+import type { Locale } from '../../i18n/locales';
+import { caseStudyPath, pathFor } from '../../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+interface Copy {
+  hero: { heading: string; lead: string; cta: string };
+  services: { heading: string; items: { name: string; text: string }[] };
+  local: { heading: string; text: string; areasLabel: string; areas: string[] };
+  proof: { heading: string; text: string };
+  process: { heading: string; steps: { name: string; text: string }[] };
+  faq: { heading: string; items: { q: string; a: string }[] };
+  closer: { heading: string; text: string; cta: string };
+}
+
+/** Published case studies shown as local proof: three from Xanthi first, then a website, an ordering and a booking platform. */
+const PROOF = ['logotherapia-xanthi', 'local-xanthi', 'itsallaboutxanthi', 'alexandra-apartment', 'armans', 'saloon'];
+
+const { locale } = Astro.props;
+const c = copyOf<Copy>('webDesignXanthi', locale);
+const meta = pageMeta[locale].webDesignXanthi;
+const contact = pathFor('contact', locale);
+const url = new URL(pathFor('webDesignXanthi', locale), Astro.site).href;
+const services = [service(url, { id: 'web-design-xanthi', name: meta.title.replace(/ \| TechPi$/, ''), description: c.hero.lead, locale })];
+const projects = caseStudiesIn(locale);
+const proof = PROOF.map((slug) => projects.find((p) => p.slug === slug)).filter((p) => p !== undefined);
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+{/* The local service page for Greek searches ("κατασκευή ιστοσελίδων Ξάνθη"): what TechPi builds, that it is in
+    Xanthi, published work as proof, how a project runs, and plain answers to the questions people ask. The answers
+    state no price, delivery time or ranking promise. The questions are visible text; no FAQPage markup (the SEO
+    validator forbids it). */}
+<BaseLayout locale={locale} page="webDesignXanthi" title={meta.title} description={meta.description} schema={services} bleed>
+  <PageIntro heading={c.hero.heading} lead={c.hero.lead}>
+    <Fragment slot="after">
+      <a class="tlink hero-cta" href={contact}>{c.hero.cta}</a>
+    </Fragment>
+  </PageIntro>
+
+  <SectionSplit id="services" heading={c.services.heading}>
+    <ol class="grid">
+      {
+        c.services.items.map((s, i) => (
+          <li>
+            <span class="num">{pad(i + 1)}</span>
+            <h3>{s.name}</h3>
+            <p>{s.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </SectionSplit>
+
+  <section class="band s-ink" aria-labelledby="local-h">
+    <div class="band-text" data-reveal="fade">
+      <h2 id="local-h">{c.local.heading}</h2>
+      <p>{c.local.text}</p>
+    </div>
+    <div class="areas" data-reveal="fade">
+      <p class="meta-label">{c.local.areasLabel}</p>
+      <ul>{c.local.areas.map((a) => <li>{a}</li>)}</ul>
+    </div>
+  </section>
+
+  <SectionSplit id="work" heading={c.proof.heading}>
+    <p class="intro-p">{c.proof.text}</p>
+    <ul class="ruled proof">
+      {
+        proof.map((p) => (
+          <li>
+            <a class="tlink" href={caseStudyPath(p.slug, locale)}>{p.name}</a>
+            <span class="cat">{p.category}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </SectionSplit>
+
+  <SectionSplit id="process" heading={c.process.heading}>
+    <ol class="grid">
+      {
+        c.process.steps.map((s, i) => (
+          <li>
+            <span class="num">{pad(i + 1)}</span>
+            <h3>{s.name}</h3>
+            <p>{s.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </SectionSplit>
+
+  <SectionSplit id="faq" heading={c.faq.heading}>
+    <div class="faq">
+      {
+        c.faq.items.map((f) => (
+          <div class="qa">
+            <h3>{f.q}</h3>
+            <p>{f.a}</p>
+          </div>
+        ))
+      }
+    </div>
+  </SectionSplit>
+
+  <ClosingCTA heading={c.closer.heading} text={c.closer.text} cta={c.closer.cta} href={contact} />
+</BaseLayout>
+
+<style>
+  .hero-cta {
+    display: inline-block;
+    margin-top: 22px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 36px var(--space-gap);
+  }
+  .grid li {
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .num {
+    display: block;
+    color: var(--ter);
+    font-size: var(--text-small);
+    margin-bottom: 8px;
+  }
+  h3 {
+    font-size: 1.1875rem;
+    font-weight: var(--weight-ui);
+    margin-bottom: 8px;
+  }
+  .grid p,
+  .qa p,
+  .intro-p {
+    color: var(--sec-c);
+  }
+  .band {
+    margin-top: var(--space-section);
+    padding: clamp(64px, 7vw, 112px) var(--space-margin);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-gap);
+    row-gap: 40px;
+  }
+  .band-text {
+    grid-column: 1 / span 7;
+  }
+  .band h2 {
+    font-size: var(--text-display-m);
+    font-weight: var(--weight-display);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+  }
+  .band-text p {
+    margin-top: 22px;
+    color: var(--sec-c);
+    font-size: var(--text-lead);
+    line-height: 1.45;
+    max-width: 56ch;
+  }
+  .areas {
+    grid-column: 9 / span 4;
+    align-self: end;
+  }
+  .meta-label {
+    color: var(--sec-c);
+    font-size: var(--text-small);
+    margin-bottom: 12px;
+  }
+  .areas li {
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+  }
+  .intro-p {
+    margin-bottom: 20px;
+  }
+  .proof li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px 24px;
+  }
+  .cat {
+    color: var(--ter);
+    font-size: var(--text-small);
+  }
+  .faq {
+    display: grid;
+    gap: 28px;
+  }
+  .qa {
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  @media (max-width: 760px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .band-text,
+    .areas {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

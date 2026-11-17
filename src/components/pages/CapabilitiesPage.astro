@@ -56,6 +56,9 @@ const services = capabilities.map((c) => service(url, { id: c.id, name: c.name, 
         </ul>
         {c.id === 'web-experiences' && (
           <p class="service-link">
+            <a class="tlink" href={pathFor('webDesignXanthi', locale)}>{t.xanthiLink}</a>
+          </p>
+          <p class="service-link">
             <a class="tlink" href={pathFor('accommodation', locale)}>{t.accommodationLink}</a>
           </p>
         )}

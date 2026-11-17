@@ -21,7 +21,7 @@ type Node = Record<string, unknown>;
  */
 export function organization(): Node {
   return {
-    '@type': 'Organization',
+    '@type': 'ProfessionalService',
     '@id': ORGANIZATION_ID,
     name: 'TechPi',
     alternateName: 'pigiota314',
@@ -38,7 +38,27 @@ export function organization(): Node {
     image: { '@id': `${SITE}#logo` },
     email: contactFacts.email,
     telephone: contactFacts.phoneDisplay,
-    address: { '@type': 'PostalAddress', addressLocality: 'Xanthi', addressCountry: 'GR' },
+    address: { '@type': 'PostalAddress', addressLocality: 'Xanthi', addressRegion: 'Eastern Macedonia and Thrace', addressCountry: 'GR' },
+    // Where TechPi works and what it does, for search engines and AI assistants: the town and region it is based in,
+    // Greece, and EU-funded projects across Europe.
+    areaServed: [
+      { '@type': 'City', name: 'Xanthi' },
+      { '@type': 'AdministrativeArea', name: 'Eastern Macedonia and Thrace' },
+      { '@type': 'Country', name: 'Greece' },
+      { '@type': 'Place', name: 'European Union' },
+    ],
+    knowsAbout: [
+      'Website development',
+      'E-commerce development',
+      'Web application development',
+      'SaaS platforms',
+      'Online booking systems',
+      'Online ordering systems',
+      'AI integration and automation',
+      'Search engine optimisation (SEO)',
+      'Generative engine optimisation (GEO)',
+      'EU project websites and digital platforms',
+    ],
   };
 }
 

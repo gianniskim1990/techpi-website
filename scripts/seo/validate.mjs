@@ -32,7 +32,7 @@ const PINNED_CASE_STUDIES = [
   'level-up-education', 'itsallaboutxanthi', 'local-xanthi', 'juliette-coffee-roasters', 'apox-fc', 'emoved',
 ];
 const CASE_STUDIES = [...PINNED_CASE_STUDIES, ...contentSlugs('content/case-studies').filter((s) => !PINNED_CASE_STUDIES.includes(s))];
-const CONTENT = ['/', '/work', ...CASE_STUDIES.map((slug) => `/work/${slug}`), '/capabilities', '/eu-projects', '/accommodation-websites', '/about', '/contact', '/privacy', '/cookies'];
+const CONTENT = ['/', '/work', ...CASE_STUDIES.map((slug) => `/work/${slug}`), '/capabilities', '/eu-projects', '/accommodation-websites', '/web-design-xanthi', '/about', '/contact', '/privacy', '/cookies'];
 // English-only content (docs/production/routes.md, section 4.1): the Insights index and its seven articles, migrated
 // from pigiota314.eu with their slugs unchanged. No Greek version exists, so these have no hreflang and no counterpart.
 const PINNED_INSIGHTS = [
@@ -213,7 +213,8 @@ for (const route of ROUTES) {
     fail(where, `JSON-LD does not parse: ${e.message}`);
   }
   const byType = (t) => graph.filter((n) => n['@type'] === t);
-  const org = byType('Organization')[0];
+  // The organisation is a ProfessionalService (a schema.org Organization subtype): a local business with an area served.
+  const org = byType('ProfessionalService')[0];
   check(org && org['@id'] === `${ORIGIN}/#organization` && org.url === `${ORIGIN}/` && org.name === 'TechPi', where, 'Organization node');
   if (org) {
     check(org.email === 'info@techpi.eu' && org.telephone === '+30 697 594 6984', where, 'Organization contact facts');
@@ -246,7 +247,7 @@ for (const route of ROUTES) {
     check(a.mainEntityOfPage && a.mainEntityOfPage['@id'] === `${url}#webpage`, where, 'Article is the main entity of its WebPage');
   }
   const services = byType('Service');
-  const wantServices = route.path.endsWith('/capabilities') ? 4 : route.path.endsWith('/eu-projects') ? 2 : route.path.endsWith('/accommodation-websites') ? 1 : 0;
+  const wantServices = route.path.endsWith('/capabilities') ? 4 : route.path.endsWith('/eu-projects') ? 2 : route.path.endsWith('/accommodation-websites') || route.path.endsWith('/web-design-xanthi') ? 1 : 0;
   check(services.length === wantServices, where, `${services.length} Service nodes, expected ${wantServices}`);
   for (const s of services) check(s.provider && s.provider['@id'] === `${ORIGIN}/#organization` && s.name && s.description, where, `Service ${s['@id']} has name, description and provider`);
   const nodes = allNodes(graph);
