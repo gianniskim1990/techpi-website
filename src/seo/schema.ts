@@ -1,10 +1,11 @@
-import { contactFacts } from '../content/site';
+import { contactFacts, socialProfiles } from '../content/site';
 import type { Locale } from '../i18n/locales';
 
 /**
  * JSON-LD for every content page, built at build time and written into the HTML. No client script, no library.
  * Conservative by rule (docs/production/seo.md): only facts the site itself publishes. Never reviews, ratings,
- * awards, founding dates, employee counts, sameAs profiles, a SearchAction or an FAQ.
+ * awards, founding dates, employee counts, a SearchAction or an FAQ. `sameAs` only on the organisation, and only
+ * the owner-confirmed social profiles (site.ts).
  *
  * Stable identifiers: the Organization and the WebSite have one @id each for the whole site. Every other node is
  * scoped to its page's canonical URL (`<canonical>#webpage`, `<canonical>#breadcrumb`, `<canonical>#service-…`).
@@ -41,6 +42,7 @@ export function organization(): Node {
     address: { '@type': 'PostalAddress', addressLocality: 'Xanthi', addressRegion: 'Eastern Macedonia and Thrace', addressCountry: 'GR' },
     // Where TechPi works and what it does, for search engines and AI assistants: the town and region it is based in,
     // Greece, and EU-funded projects across Europe.
+    sameAs: [...socialProfiles],
     areaServed: [
       { '@type': 'City', name: 'Xanthi' },
       { '@type': 'AdministrativeArea', name: 'Eastern Macedonia and Thrace' },

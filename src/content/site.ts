@@ -3,7 +3,8 @@
  * Only facts approved for public display belong here. Nothing is inferred.
  *
  * Confirmed 2026-10-07: email, phone, and the town. Confirmed 2026-10-13 for the legal pages: the operator (below).
- * Not confirmed, so deliberately absent: postal code, social profiles, office hours. VAT and GEMI numbers: see
+ * Confirmed 2026-11-17: the social profiles (socialProfiles, below).
+ * Not confirmed, so deliberately absent: postal code, office hours. VAT and GEMI numbers: see
  * registrationFacts below.
  * See docs/production/launch-blockers.md.
  */
@@ -43,6 +44,18 @@ export const registrationFacts: { gemi: string | null; vat: string | null } = {
   gemi: '151838746000',
   vat: '142536715',
 };
+
+/**
+ * TechPi's own social profiles, supplied by the owner on 2026-11-17. Used as `sameAs` on the organisation in the
+ * JSON-LD (src/seo/schema.ts), so search engines and AI assistants connect the site and the profiles to one business.
+ * scripts/seo/validate.mjs requires exactly this list.
+ */
+export const socialProfiles = [
+  'https://www.facebook.com/techpiagency',
+  'https://www.instagram.com/techpi_agency',
+  'https://www.linkedin.com/company/122754278',
+  'https://www.tiktok.com/@techpi.agency',
+] as const;
 
 /**
  * Google Analytics 4, approved by the owner on 2026-11-03 (replacing decision O16, "Search Console only"). It loads only
